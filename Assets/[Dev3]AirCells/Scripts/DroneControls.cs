@@ -34,6 +34,11 @@ public class DroneControls : MonoBehaviour
         public float HoverHeight;
         public float ThrustAcceleration;
         public float FullThrustTime;
+        public float ImpulseAcceleration;
+        public float ImpulseMaxCharge;
+        public float ImpulseRecharge;
+        public float ImpulseStartupTime;
+        public float ImpulseShutdownTime;
     }
 
     [System.Serializable]
@@ -77,6 +82,14 @@ public class DroneControls : MonoBehaviour
 
     #region Flight Control Data
     public float Thrust;
+
+    public float ImpulseCharge;
+    public bool ImpulseActive;
+    public float ImpulseTimer;
+    public float LastImpulseBurn;
+    public float ImpulseThreshold;
+
+    public float InputErrorTimer;
     #endregion
 
     #region Physics Engine Values
@@ -96,10 +109,6 @@ public class DroneControls : MonoBehaviour
     #region Object Components
     private Rigidbody DronePhysics;
     private BoxCollider DroneCollider;
-    #endregion
-
-    #region Drone Parts
-    public AnimationCurve TransitionCurve;
     #endregion
 
     #region Lift Coefficients
@@ -199,7 +208,73 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #region Impulse Drive
+
+        if (InputControl.FlightControls.ImpulseThrust.IsPressed())
+        {
+            if (InputErrorTimer != 0) InputErrorTimer = 0;
+            ImpulseTimer += Time.fixedDeltaTime;
+
+            if (!ImpulseActive && ImpulseTimer >= NetLinker.MainBody.DroneBodyStats[0].ImpulseStartupTime && ImpulseCharge > ImpulseThreshold)
+            {
+                ImpulseActive = true;
+            }
+        }
+        else if (InputErrorTimer < NetLinker.MainBody.DroneBodyStats[0].ImpulseShutdownTime && LastImpulseBurn != 0)
+        {
+            ImpulseTimer += Time.fixedDeltaTime;
+            InputErrorTimer += Time.fixedDeltaTime;
+        }
+        else
+        {
+            if (ImpulseActive)
+            {
+                ImpulseTimer += Time.fixedDeltaTime;
+
+                if ((ImpulseTimer - LastImpulseBurn) >= NetLinker.MainBody.DroneBodyStats[0].ImpulseShutdownTime) ImpulseActive = false;
+            }
+            else if (ImpulseTimer != 0) ImpulseTimer = 0;
+
+            if (LastImpulseBurn != 0)
+            {
+                ImpulseThreshold = (NetLinker.MainBody.DroneBodyStats[0].ImpulseStartupTime / 3) + (LastImpulseBurn / NetLinker.MainBody.DroneBodyStats[0].ImpulseMaxCharge);
+                ImpulseTimer = 0;
+                LastImpulseBurn = 0;
+            }
+        }
+
+        if (ImpulseActive)
+        {
+            Memory = Quaternion.Inverse(PhysicsRotation) * transform.forward;
+            PhysicsAcceleration += NetLinker.MainBody.DroneBodyStats[0].ImpulseAcceleration * Memory;
+            ImpulseCharge -= Time.fixedDeltaTime;
+            LastImpulseBurn += Time.fixedDeltaTime;
+
+            if (Thrust != 0) Thrust = 0;
+
+            if (ImpulseCharge < 0)
+            {
+                ImpulseActive = false;
+
+                if (LastImpulseBurn != 0)
+                {
+                    ImpulseThreshold = 0.5f + (LastImpulseBurn / NetLinker.MainBody.DroneBodyStats[0].ImpulseMaxCharge);
+                    ImpulseTimer = 0;
+                    LastImpulseBurn = 0;
+                }
+            }
+        }
+        else if (ImpulseCharge != NetLinker.MainBody.DroneBodyStats[0].ImpulseMaxCharge)
+        {
+            ImpulseCharge += Time.fixedDeltaTime * NetLinker.MainBody.DroneBodyStats[0].ImpulseRecharge;
+            ImpulseCharge = Mathf.Clamp(ImpulseCharge, 0, NetLinker.MainBody.DroneBodyStats[0].ImpulseMaxCharge);
+        }
+
+        #endregion
+
         #region Hovering
+        
+        Memory = Quaternion.Inverse(PhysicsRotation) * transform.up;
 
         if (InputControl.FlightControls.Hovering.IsPressed())
         {
@@ -207,7 +282,7 @@ public class DroneControls : MonoBehaviour
             {
                 if (PhysicsPosition.y <= NetLinker.MainBody.DroneBodyStats[0].HoverHeight)
                 {
-                    PhysicsAcceleration += (2 - (PhysicsPosition.y / NetLinker.MainBody.DroneBodyStats[0].HoverHeight)) * (float)C.GaleG * Vector3.up;
+                    PhysicsAcceleration += (2 - (PhysicsPosition.y / NetLinker.MainBody.DroneBodyStats[0].HoverHeight)) * (float)C.GaleG * Memory;
                 }
                 else if (PhysicsVelocity.y < 0)
                 {

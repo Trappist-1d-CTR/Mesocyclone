@@ -23,7 +23,12 @@
             "SideBrakesCd": 0.09,
             "HoverHeight": 50,
             "ThrustAcceleration": 7,
-            "FullThrustTime": 2
+            "FullThrustTime": 2,
+            "ImpulseAcceleration": 40,
+            "ImpulseMaxCharge": 3,
+            "ImpulseRecharge": 0.2,
+            "ImpulseStartupTime": 1.5,
+            "ImpulseShutdownTime": 0.15
         }
     ],
 

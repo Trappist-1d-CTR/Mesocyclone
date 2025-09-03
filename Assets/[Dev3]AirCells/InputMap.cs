@@ -249,10 +249,10 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f26ef8fb-fc20-4162-a934-a2d230992622"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
                     ""action"": ""ImpulseThrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
