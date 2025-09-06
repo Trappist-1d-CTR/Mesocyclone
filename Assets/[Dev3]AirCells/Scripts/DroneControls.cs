@@ -203,7 +203,7 @@ public class DroneControls : MonoBehaviour
             Thrust = Mathf.Clamp01(Thrust);
         }
 
-        Memory = Quaternion.Inverse(PhysicsRotation) * transform.forward;
+        Memory = transform.forward;
         PhysicsAcceleration += Thrust * NetLinker.MainBody.DroneBodyStats[0].ThrustAcceleration * Memory;
 
         #endregion
@@ -245,7 +245,7 @@ public class DroneControls : MonoBehaviour
 
         if (ImpulseActive)
         {
-            Memory = Quaternion.Inverse(PhysicsRotation) * transform.forward;
+            Memory = transform.forward;
             PhysicsAcceleration += NetLinker.MainBody.DroneBodyStats[0].ImpulseAcceleration * Memory;
             ImpulseCharge -= Time.fixedDeltaTime;
             LastImpulseBurn += Time.fixedDeltaTime;
@@ -274,7 +274,7 @@ public class DroneControls : MonoBehaviour
 
         #region Hovering
         
-        Memory = Quaternion.Inverse(PhysicsRotation) * transform.up;
+        Memory = transform.up;
 
         if (InputControl.FlightControls.Hovering.IsPressed())
         {
@@ -417,20 +417,20 @@ public class DroneControls : MonoBehaviour
 
         #region Drag Physics
 
-        Memory = Quaternion.Inverse(PhysicsRotation) * transform.forward;
+        Memory = transform.forward;
         MainStats s = NetLinker.MainBody.DroneBodyStats[0];
 
         //Forward Drag
         PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, transform.forward), 2) * (Vector3.Dot(AirSpeed, transform.forward) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
         //   Debug.Log("Wind: " + Wind + "; Forward Drag: " + Check);
 
-        Memory = Quaternion.Inverse(PhysicsRotation) * transform.up;
+        Memory = transform.up;
 
         //Vertical Drag
         PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, transform.up), 2) * (Vector3.Dot(AirSpeed, transform.up) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
            Debug.Log("Wind: " + Wind + "; Vertical Drag: " + Check);
 
-        Memory = Quaternion.Inverse(PhysicsRotation) * transform.right;
+        Memory = transform.right;
 
         //Side Drag
         PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, transform.right), 2) * (Vector3.Dot(AirSpeed, transform.right) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
@@ -441,7 +441,7 @@ public class DroneControls : MonoBehaviour
 
         //   Debug.Log(PhysicsVelocity + " ; " + DronePhysics.velocity);
 
-        DronePhysics.AddRelativeForce(PhysicsAcceleration, ForceMode.Acceleration);
+        DronePhysics.AddForce(PhysicsAcceleration, ForceMode.Acceleration);
         //DronePhysics.AddRelativeTorque(PhysicsTorque);
     }
 
