@@ -31,7 +31,6 @@ public class DroneControls : MonoBehaviour
         public float BottomCd;
         public float SideCd;
         public float SideBrakesCd;
-        public float HoverHeight;
         public float ThrustAcceleration;
         public float FullThrustTime;
         public float ImpulseAcceleration;
@@ -39,6 +38,9 @@ public class DroneControls : MonoBehaviour
         public float ImpulseRecharge;
         public float ImpulseStartupTime;
         public float ImpulseShutdownTime;
+        public float HoverMaxThrust;
+        public float HoverJerk;
+        public float LandingSpeed;
     }
 
     [System.Serializable]
@@ -81,6 +83,8 @@ public class DroneControls : MonoBehaviour
     #endregion
 
     #region Flight Control Data
+    public float InputMargin;
+
     public float Thrust;
 
     public float ImpulseCharge;
@@ -88,8 +92,17 @@ public class DroneControls : MonoBehaviour
     public float ImpulseTimer;
     public float LastImpulseBurn;
     public float ImpulseThreshold;
+    public float ImpulseInputErrorTimer;
 
-    public float InputErrorTimer;
+    public float HoverThrust;
+    public float HoverTarget;
+    public bool HoverAuto;
+    public int HoverMode = 1;
+    public bool HoverActive;
+    public float HoverTimer;
+    public int HoverMaxAngle;
+    public float[] HoverTargetSpeed;
+    public float HoverInputErrorTimer;
     #endregion
 
     #region Physics Engine Values
@@ -187,17 +200,17 @@ public class DroneControls : MonoBehaviour
         PhysicsVelocity = DronePhysics.velocity;
         Air.DronePosition = PhysicsPosition = DronePhysics.position;
         PhysicsAcceleration = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD / DronePhysics.mass * Vector3.up);
+        //Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
         PhysicsRotation = DronePhysics.rotation;
         DronePhysics.angularDrag = 0.2f;
 
         Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3((float)Air.InterpolatedValues[0], (float)Air.InterpolatedValues[1], (float)Air.InterpolatedValues[2]) : Vector3.zero;
-
         #endregion
 
         #region Main Engine Thrust
 
         //Main Thrust
-        if (InputControl.FlightControls.Thrust.IsPressed())
+        if (InputControl.FlightControls.Thrust.inProgress)
         {
             Thrust += InputControl.FlightControls.Thrust.ReadValue<float>() * Time.fixedDeltaTime / NetLinker.MainBody.DroneBodyStats[0].FullThrustTime;
             Thrust = Mathf.Clamp01(Thrust);
@@ -210,9 +223,9 @@ public class DroneControls : MonoBehaviour
 
         #region Impulse Drive
 
-        if (InputControl.FlightControls.ImpulseThrust.IsPressed())
+        if (InputControl.FlightControls.ImpulseThrust.inProgress)
         {
-            if (InputErrorTimer != 0) InputErrorTimer = 0;
+            if (ImpulseInputErrorTimer != 0) ImpulseInputErrorTimer = 0;
             ImpulseTimer += Time.fixedDeltaTime;
 
             if (!ImpulseActive && ImpulseTimer >= NetLinker.MainBody.DroneBodyStats[0].ImpulseStartupTime && ImpulseCharge > ImpulseThreshold)
@@ -220,10 +233,10 @@ public class DroneControls : MonoBehaviour
                 ImpulseActive = true;
             }
         }
-        else if (InputErrorTimer < NetLinker.MainBody.DroneBodyStats[0].ImpulseShutdownTime && LastImpulseBurn != 0)
+        else if (ImpulseInputErrorTimer < NetLinker.MainBody.DroneBodyStats[0].ImpulseShutdownTime && LastImpulseBurn != 0)
         {
             ImpulseTimer += Time.fixedDeltaTime;
-            InputErrorTimer += Time.fixedDeltaTime;
+            ImpulseInputErrorTimer += Time.fixedDeltaTime;
         }
         else
         {
@@ -276,26 +289,148 @@ public class DroneControls : MonoBehaviour
         
         Memory = transform.up;
 
-        if (InputControl.FlightControls.Hovering.IsPressed())
+        #region Hover Controls
+
+        InputControl.FlightControls.MouseClick.performed += ToggleAutoMode;
+        InputControl.FlightControls.MouseScroll.performed += SwitchModes;
+
+        if (InputControl.FlightControls.Hovering.inProgress)
         {
-            if (PhysicsPosition.y > -1)
+            if (HoverInputErrorTimer != 0) HoverInputErrorTimer = 0;
+
+            HoverTimer += Time.fixedDeltaTime;
+
+            if (!HoverActive && HoverTimer > InputMargin)
             {
-                if (PhysicsPosition.y <= NetLinker.MainBody.DroneBodyStats[0].HoverHeight)
+                HoverActive = true;
+            }
+        }
+        else if (HoverInputErrorTimer < InputMargin)
+        {
+            HoverTimer += Time.fixedDeltaTime;
+            HoverInputErrorTimer += Time.fixedDeltaTime;
+        }
+        else
+        {
+            if (HoverTimer != 0) HoverTimer = 0;
+            if (HoverActive) HoverActive = false;
+        }
+
+        #endregion
+
+        #region Hover Modes and Execution
+
+        if (HoverActive)
+        {
+            float mem = (2 * NetLinker.MainBody.DroneBodyStats[0].HoverJerk) / (NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust - (float)C.GaleG);
+
+            switch (HoverMode)
+            {
+                case 1:
+                    HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+                    break;
+
+                case 2:
+                    if (DronePhysics.velocity.y <= -16.77 + HoverTargetSpeed[0])
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+                    }
+                    else if (DronePhysics.velocity.y < HoverTargetSpeed[0])
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y + HoverTargetSpeed[0]));
+                    }
+                    else
+                    {
+                        HoverTarget = 0;
+                    }
+                    break;
+
+                case 3:
+                    if (DronePhysics.velocity.y <= -16.77)
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+                    }
+                    else if (DronePhysics.velocity.y < 0)
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * DronePhysics.velocity.y);
+                    }
+                    else
+                    {
+                        HoverTarget = 0;
+                    }
+                    break;
+
+                case 4:
+                    HoverTarget = (float)C.GaleG;
+                    break;
+
+                case 5:
+                    if (DronePhysics.velocity.y <= -16.77 + HoverTargetSpeed[1])
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+                    }
+                    else if (DronePhysics.velocity.y < HoverTargetSpeed[1])
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y + HoverTargetSpeed[1]));
+                    }
+                    else
+                    {
+                        HoverTarget = 0;
+                    }
+                    break;
+
+                case 6:
+                    if (DronePhysics.velocity.y <= -16.77 + NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+                    }
+                    else if (DronePhysics.velocity.y < NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                    {
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed));
+                    }
+                    else
+                    {
+                        HoverTarget = 0;
+                    }
+                    break;
+
+                default:
+
+                    break;
+            }
+
+            if (Mathf.Abs(Vector3.Angle(Memory, Vector3.up)) >= HoverMaxAngle)
+            {
+                HoverTarget = 0;
+            }
+            else
+            {
+                HoverTarget /= Mathf.Cos(Mathf.Deg2Rad * Mathf.Abs(Vector3.Angle(Memory, Vector3.up)));
+            }
+
+            HoverTarget = Mathf.Clamp(HoverTarget, 0, NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust);
+
+            if (HoverThrust != HoverTarget)
+            {
+                if (Mathf.Abs(HoverThrust - HoverTarget) < NetLinker.MainBody.DroneBodyStats[0].HoverJerk * Time.fixedDeltaTime)
                 {
-                    PhysicsAcceleration += (2 - (PhysicsPosition.y / NetLinker.MainBody.DroneBodyStats[0].HoverHeight)) * (float)C.GaleG * Memory;
-                }
-                else if (PhysicsVelocity.y < 0)
-                {
-                    PhysicsAcceleration += (float)C.GaleG * 2 * Vector3.up;
+                    HoverThrust = HoverTarget;
                 }
                 else
                 {
-                    PhysicsAcceleration += (float)C.GaleG * 1.3f * Vector3.up;
+                    HoverThrust += (HoverThrust < HoverTarget ? 1 : -1) * NetLinker.MainBody.DroneBodyStats[0].HoverJerk * Time.fixedDeltaTime;
                 }
             }
-
-            DronePhysics.angularDrag = 0.9f;
         }
+        else if (HoverThrust != 0)
+        {
+            HoverThrust -= NetLinker.MainBody.DroneBodyStats[0].HoverJerk * Time.fixedDeltaTime;
+            if (HoverThrust < 0) HoverThrust = 0;
+        }
+
+        PhysicsAcceleration += HoverThrust * Memory;
+
+        #endregion
 
         #endregion
 
@@ -321,7 +456,7 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(-NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
             NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
 
-            DronePhysics.AddRelativeTorque(0, 0, 0.03f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>());
+            DronePhysics.AddRelativeTorque(0, 0, 0.1f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>());
         }
         else
         {
@@ -412,7 +547,7 @@ public class DroneControls : MonoBehaviour
 
         if (Wind.magnitude > 1)
         {
-            Debug.Log("Offc: " + Wind);
+            //Debug.Log("Offc: " + Wind);
         }
 
         #region Drag Physics
@@ -444,6 +579,19 @@ public class DroneControls : MonoBehaviour
         DronePhysics.AddForce(PhysicsAcceleration, ForceMode.Acceleration);
         //DronePhysics.AddRelativeTorque(PhysicsTorque);
     }
+
+    #region Hover Modes Control
+    private void ToggleAutoMode(InputAction.CallbackContext obj)
+    {
+        HoverAuto = !HoverAuto;
+    }
+
+    private void SwitchModes(InputAction.CallbackContext obj)
+    {
+        HoverMode += InputControl.FlightControls.MouseScroll.ReadValue<float>() > 0 ? -1 : 1;
+        HoverMode = Mathf.Clamp(HoverMode, 1, 6);
+    }
+    #endregion
 
     public void CalculateFlightCoefficients(int i)
     {

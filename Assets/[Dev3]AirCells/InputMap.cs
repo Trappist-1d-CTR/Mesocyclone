@@ -42,7 +42,7 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                     ""id"": ""b07dc9a3-a571-4354-8200-1a8a3abf468b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -58,6 +58,24 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                     ""name"": ""Hovering"",
                     ""type"": ""Button"",
                     ""id"": ""794bab40-801c-4917-b5dc-5b7340943e0a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseScroll"",
+                    ""type"": ""Button"",
+                    ""id"": ""5e49db7a-66e9-4446-bd98-c059880cc06f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""54bbe36d-2fb5-4cb7-b08e-401b31a88706"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -208,7 +226,7 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
                     ""action"": ""Thrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -219,7 +237,7 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
                     ""action"": ""Thrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -237,7 +255,18 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""bb254b08-082c-41ff-a931-59d197a50e6f"",
+                    ""id"": ""f26ef8fb-fc20-4162-a934-a2d230992622"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""ImpulseThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8f35f32d-76f3-4173-bb70-2ab88f534656"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -248,14 +277,47 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f26ef8fb-fc20-4162-a934-a2d230992622"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""id"": ""a342e0b4-d4d5-49ea-aeb2-9b4e1b97def3"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""ImpulseThrust"",
+                    ""action"": ""MouseClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""ScrollAxis"",
+                    ""id"": ""88616ab2-a41e-489b-a040-5247fa2da8b1"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScroll"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""39340c75-7a98-49d6-b7ad-0eddd72352ca"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""MouseScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""0fc4570d-58c1-4316-9393-7f885f2b5518"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""MouseScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -285,6 +347,8 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         m_FlightControls_ImpulseThrust = m_FlightControls.FindAction("ImpulseThrust", throwIfNotFound: true);
         m_FlightControls_AirBrakes = m_FlightControls.FindAction("AirBrakes", throwIfNotFound: true);
         m_FlightControls_Hovering = m_FlightControls.FindAction("Hovering", throwIfNotFound: true);
+        m_FlightControls_MouseScroll = m_FlightControls.FindAction("MouseScroll", throwIfNotFound: true);
+        m_FlightControls_MouseClick = m_FlightControls.FindAction("MouseClick", throwIfNotFound: true);
         m_FlightControls_Pitch = m_FlightControls.FindAction("Pitch", throwIfNotFound: true);
         m_FlightControls_Roll = m_FlightControls.FindAction("Roll", throwIfNotFound: true);
         m_FlightControls_Yaw = m_FlightControls.FindAction("Yaw", throwIfNotFound: true);
@@ -351,6 +415,8 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
     private readonly InputAction m_FlightControls_ImpulseThrust;
     private readonly InputAction m_FlightControls_AirBrakes;
     private readonly InputAction m_FlightControls_Hovering;
+    private readonly InputAction m_FlightControls_MouseScroll;
+    private readonly InputAction m_FlightControls_MouseClick;
     private readonly InputAction m_FlightControls_Pitch;
     private readonly InputAction m_FlightControls_Roll;
     private readonly InputAction m_FlightControls_Yaw;
@@ -362,6 +428,8 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         public InputAction @ImpulseThrust => m_Wrapper.m_FlightControls_ImpulseThrust;
         public InputAction @AirBrakes => m_Wrapper.m_FlightControls_AirBrakes;
         public InputAction @Hovering => m_Wrapper.m_FlightControls_Hovering;
+        public InputAction @MouseScroll => m_Wrapper.m_FlightControls_MouseScroll;
+        public InputAction @MouseClick => m_Wrapper.m_FlightControls_MouseClick;
         public InputAction @Pitch => m_Wrapper.m_FlightControls_Pitch;
         public InputAction @Roll => m_Wrapper.m_FlightControls_Roll;
         public InputAction @Yaw => m_Wrapper.m_FlightControls_Yaw;
@@ -386,6 +454,12 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                 @Hovering.started -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnHovering;
                 @Hovering.performed -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnHovering;
                 @Hovering.canceled -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnHovering;
+                @MouseScroll.started -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseScroll;
+                @MouseScroll.performed -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseScroll;
+                @MouseScroll.canceled -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseScroll;
+                @MouseClick.started -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseClick;
+                @MouseClick.performed -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseClick;
+                @MouseClick.canceled -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnMouseClick;
                 @Pitch.started -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnPitch;
                 @Pitch.performed -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnPitch;
                 @Pitch.canceled -= m_Wrapper.m_FlightControlsActionsCallbackInterface.OnPitch;
@@ -411,6 +485,12 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                 @Hovering.started += instance.OnHovering;
                 @Hovering.performed += instance.OnHovering;
                 @Hovering.canceled += instance.OnHovering;
+                @MouseScroll.started += instance.OnMouseScroll;
+                @MouseScroll.performed += instance.OnMouseScroll;
+                @MouseScroll.canceled += instance.OnMouseScroll;
+                @MouseClick.started += instance.OnMouseClick;
+                @MouseClick.performed += instance.OnMouseClick;
+                @MouseClick.canceled += instance.OnMouseClick;
                 @Pitch.started += instance.OnPitch;
                 @Pitch.performed += instance.OnPitch;
                 @Pitch.canceled += instance.OnPitch;
@@ -439,6 +519,8 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         void OnImpulseThrust(InputAction.CallbackContext context);
         void OnAirBrakes(InputAction.CallbackContext context);
         void OnHovering(InputAction.CallbackContext context);
+        void OnMouseScroll(InputAction.CallbackContext context);
+        void OnMouseClick(InputAction.CallbackContext context);
         void OnPitch(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
         void OnYaw(InputAction.CallbackContext context);
