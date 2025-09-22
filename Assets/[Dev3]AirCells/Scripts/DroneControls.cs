@@ -111,6 +111,8 @@ public class DroneControls : MonoBehaviour
     private Vector3 PhysicsAcceleration;
 
     private Quaternion PhysicsRotation;
+    private Vector3 PhysicsAngVelocity;
+    public Vector3 PhysicsTorque;
     /*private Vector3 PhysicsTorque;*/
     #endregion
 
@@ -128,11 +130,21 @@ public class DroneControls : MonoBehaviour
     public float[] AspectRatio;
     public AnimationCurve[] LiftAoA;
     public AnimationCurve[] InducedDragAoA;
+    public AnimationCurve[] TorqueAoA;
     #endregion
 
     #region Reference Scripts
     private AGlobalValues C;
     public AirCellBehavior Air;
+    #endregion
+
+    #region Center Of Mass Correction
+
+    private bool CenterOfMassFound = true;
+    private Vector3 VectorA;
+    public Vector3 CenterOfMass;
+    private double B;
+
     #endregion
 
     #region Script Optimization Memory
@@ -175,11 +187,12 @@ public class DroneControls : MonoBehaviour
         InputControl.Enable();
 
         PhysicsPosition = Vector3.up;
-        DronePhysics.centerOfMass = new Vector3(NetLinker.MainBody.DroneBodyStats[0].CenterMassX, NetLinker.MainBody.DroneBodyStats[0].CenterMassY, NetLinker.MainBody.DroneBodyStats[0].CenterMassZ);
+        CenterOfMass = DronePhysics.centerOfMass = new Vector3(NetLinker.MainBody.DroneBodyStats[0].CenterMassX, NetLinker.MainBody.DroneBodyStats[0].CenterMassY, NetLinker.MainBody.DroneBodyStats[0].CenterMassZ);
 
         AspectRatio = new float[NetLinker.Parts.DronePartStats.Length];
         LiftAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
         InducedDragAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
+        TorqueAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
 
         for (int i = 0; i < AspectRatio.Length; i++)
         {
@@ -190,24 +203,35 @@ public class DroneControls : MonoBehaviour
         {
             CalculateFlightCoefficients(i);
         }
+
         #endregion
     }
 
     private void FixedUpdate()
     {
+        if (!CenterOfMassFound)
+        {
+            VectorA = Vector3.zero;
+            B = 0;
+        }
+
         #region Physics Setup
 
         PhysicsVelocity = DronePhysics.velocity;
         Air.DronePosition = PhysicsPosition = DronePhysics.position;
         PhysicsAcceleration = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD / DronePhysics.mass * Vector3.up);
-        //Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
+        //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
         PhysicsRotation = DronePhysics.rotation;
+        PhysicsAngVelocity = DronePhysics.angularVelocity;
+        PhysicsTorque = Vector3.zero;
         DronePhysics.angularDrag = 0.2f;
 
         Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3((float)Air.InterpolatedValues[0], (float)Air.InterpolatedValues[1], (float)Air.InterpolatedValues[2]) : Vector3.zero;
         #endregion
 
         #region Main Engine Thrust
+
+        Memory = transform.right;
 
         //Main Thrust
         if (InputControl.FlightControls.Thrust.inProgress)
@@ -216,7 +240,6 @@ public class DroneControls : MonoBehaviour
             Thrust = Mathf.Clamp01(Thrust);
         }
 
-        Memory = transform.forward;
         PhysicsAcceleration += Thrust * NetLinker.MainBody.DroneBodyStats[0].ThrustAcceleration * Memory;
 
         #endregion
@@ -258,7 +281,6 @@ public class DroneControls : MonoBehaviour
 
         if (ImpulseActive)
         {
-            Memory = transform.forward;
             PhysicsAcceleration += NetLinker.MainBody.DroneBodyStats[0].ImpulseAcceleration * Memory;
             ImpulseCharge -= Time.fixedDeltaTime;
             LastImpulseBurn += Time.fixedDeltaTime;
@@ -438,9 +460,9 @@ public class DroneControls : MonoBehaviour
 
         if (InputControl.FlightControls.Pitch.IsPressed())
         {
-            NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(NetLinker.Parts.DronePartStats[0].ControlAngle * InputControl.FlightControls.Pitch.ReadValue<float>(), 0, 0);
+            NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, NetLinker.Parts.DronePartStats[0].ControlAngle * InputControl.FlightControls.Pitch.ReadValue<float>());
 
-            DronePhysics.AddRelativeTorque(-0.15f * DronePhysics.mass * InputControl.FlightControls.Pitch.ReadValue<float>(), 0, 0);
+            DronePhysics.AddRelativeTorque(0, 0, 0.05f * DronePhysics.mass * InputControl.FlightControls.Pitch.ReadValue<float>());
         }
         else
         {
@@ -453,10 +475,10 @@ public class DroneControls : MonoBehaviour
 
         if (InputControl.FlightControls.Roll.IsPressed())
         {
-            NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(-NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
-            NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
+            NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, -NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>());
+            NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>());
 
-            DronePhysics.AddRelativeTorque(0, 0, 0.1f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>());
+            DronePhysics.AddRelativeTorque(0.025f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
         }
         else
         {
@@ -470,114 +492,143 @@ public class DroneControls : MonoBehaviour
 
         if (InputControl.FlightControls.Yaw.IsPressed())
         {
-            NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(-NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 90, 0);
-            NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(-NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 90, 0);
+            NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
+            NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(-90, NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
 
-            DronePhysics.AddRelativeTorque(0, -0.15f * DronePhysics.mass * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
+            DronePhysics.AddRelativeTorque(0, -0.05f * DronePhysics.mass * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
         }
         else
         {
-            NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
-            NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(0, 90, 0);
+            NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(-90, 0, 0);
         }
 
         #endregion
-
+        
         Vector3 Check;
+        Vector3 L;
+        Transform t;
         float AoA;
         for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
         {
-            #region Lift, Induced Drag, Torque
-            AirSpeed = PhysicsVelocity - Wind + Vector3.Cross(DronePhysics.angularVelocity, new Vector3(NetLinker.Parts.DronePartStats[i].CenterMassX, NetLinker.Parts.DronePartStats[i].CenterMassY, NetLinker.Parts.DronePartStats[i].CenterMassZ) - (PhysicsPosition + DronePhysics.centerOfMass));
-            Transform t = NetLinker.Parts.DronePartStats[i].PartObject.transform;
+            L = new Vector3(NetLinker.Parts.DronePartStats[i].CenterMassX, NetLinker.Parts.DronePartStats[i].CenterMassY, NetLinker.Parts.DronePartStats[i].CenterMassZ);
+            t = NetLinker.Parts.DronePartStats[i].PartObject.transform;
+            AirSpeed = PhysicsVelocity - Wind; //+ Vector3.Cross(DronePhysics.angularVelocity, L - (PhysicsPosition + DronePhysics.centerOfMass));
+            AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.forward);
+            AoA = -Mathf.Rad2Deg * (Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right)) - ((Vector3.Dot(AirSpeed, t.up) > 0 && Vector3.Dot(AirSpeed, t.right) < 0) ? Mathf.PI : 0));
 
+            #region Lift
             Memory = t.up;
-            AirSpeed = Vector3.ProjectOnPlane(AirSpeed, Memory);
-
-            AoA = Mathf.Rad2Deg * Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.forward));
-            //   Debug.Log("AoA: " + AoA);
-
-            #region Lift Force
             PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-            //   Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+            //Debug.Log(AoA + " ; " + Check + " ; (" + Vector3.Dot(AirSpeed, t.up) + ", " + Vector3.Dot(AirSpeed, t.right) + ")");
             #endregion
 
-            Memory = -NetLinker.Parts.DronePartStats[i].PartObject.transform.forward;
+            if (NetLinker.Parts.DronePartStats[i].ID != 8)
+            {
+                PhysicsTorque += Vector3.Cross(Check, t.TransformDirection(L - CenterOfMass));
+                VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
+                B += NetLinker.Parts.DronePartStats[i].Area;
+            }
 
-            #region Induced Drag Force
+            #region Induced Drag
+            Memory = -AirSpeed.normalized;
             PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-            //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+            //Debug.Log(Check);
             #endregion
 
-            #region Torque
+            /*#region Torque
+            Memory = Vector3.Cross(L, t.up);
+            PhysicsTorque += Check = 0.05f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory;
+            Debug.DrawLine(Vector3.zero, Check);
+            Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].ID);
 
-            #endregion
+            VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
+            B += NetLinker.Parts.DronePartStats[i].Area;
+            Debug.Log((100f * VectorA) + " ; " + B);
+            #endregion*/
 
             if (NetLinker.Parts.DronePartStats[i].IDb != 0)
             {
-                AirSpeed = PhysicsVelocity - Wind + Vector3.Cross(DronePhysics.angularVelocity, new Vector3(NetLinker.Parts.DronePartStats[i].CenterMassX, NetLinker.Parts.DronePartStats[i].CenterMassY, -NetLinker.Parts.DronePartStats[i].CenterMassZ) - (PhysicsPosition + DronePhysics.centerOfMass));
+                L = new Vector3(L.x, L.y, -L.z);
                 t = NetLinker.Parts.DronePartStats[i].PartObjectb.transform;
+                AirSpeed = PhysicsVelocity - Wind; //+ Vector3.Cross(DronePhysics.angularVelocity, L - (PhysicsPosition + DronePhysics.centerOfMass));
+                AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.forward);
+                AoA = -Mathf.Rad2Deg * (Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right)) - ((Vector3.Dot(AirSpeed, t.up) > 0 && Vector3.Dot(AirSpeed, t.right) < 0) ? Mathf.PI : 0));
 
+                #region Lift
                 Memory = t.up;
-                AirSpeed = Vector3.ProjectOnPlane(AirSpeed, Memory);
-
-                AoA = Mathf.Rad2Deg * Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.forward));
-                //   Debug.Log("AoA: " + AoA);
-
-                #region Lift Force
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-                //   Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
                 #endregion
 
-                Memory = -NetLinker.Parts.DronePartStats[i].PartObject.transform.forward;
+                if (NetLinker.Parts.DronePartStats[i].ID != 8)
+                {
+                    PhysicsTorque += Vector3.Cross(Check, t.TransformDirection(L - CenterOfMass));
+                    VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
+                    B += NetLinker.Parts.DronePartStats[i].Area;
+                }
 
-                #region Induced Drag Force
+                #region Induced Drag
+                Memory = -AirSpeed.normalized;
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-                //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
                 #endregion
+                
+                /*#region Torque
+                Memory = Vector3.Cross(L, t.up);
+                PhysicsTorque += Check = 0.05f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory;
+                Debug.DrawLine(Vector3.zero, Check);
+                Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].IDb);
 
-                #region Torque
-
-                #endregion
+                VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
+                B += NetLinker.Parts.DronePartStats[i].Area;
+                Debug.Log((100f * VectorA) + " ; " + B);
+                #endregion*/
             }
-            #endregion
         }
 
-        AirSpeed = PhysicsVelocity - Wind;
-
-        if (Wind.magnitude > 1)
-        {
-            //Debug.Log("Offc: " + Wind);
-        }
+        AirSpeed = -PhysicsVelocity + Wind;
 
         #region Drag Physics
 
-        Memory = transform.forward;
+        Memory = transform.right;
         MainStats s = NetLinker.MainBody.DroneBodyStats[0];
 
         //Forward Drag
-        PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, transform.forward), 2) * (Vector3.Dot(AirSpeed, transform.forward) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
-        //   Debug.Log("Wind: " + Wind + "; Forward Drag: " + Check);
+        PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        //   Debug.Log("Wind: " + AirSpeed + "; Forward Drag: " + Check);
 
         Memory = transform.up;
 
         //Vertical Drag
-        PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, transform.up), 2) * (Vector3.Dot(AirSpeed, transform.up) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
-           Debug.Log("Wind: " + Wind + "; Vertical Drag: " + Check);
+        PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        //   Debug.Log("Vertical Drag: " + Check);
 
-        Memory = transform.right;
+        Memory = transform.forward;
 
         //Side Drag
-        PhysicsAcceleration += Check = -0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, transform.right), 2) * (Vector3.Dot(AirSpeed, transform.right) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
-        //   Debug.Log("Wind: " + Wind + "; Side Drag: " + Check);
+        PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        //   Debug.Log("Side Drag: " + Check);
 
         #endregion
 
 
         //   Debug.Log(PhysicsVelocity + " ; " + DronePhysics.velocity);
+        //   Debug.Log(PhysicsAcceleration);
 
         DronePhysics.AddForce(PhysicsAcceleration, ForceMode.Acceleration);
-        //DronePhysics.AddRelativeTorque(PhysicsTorque);
+        //DronePhysics.AddTorque(PhysicsTorque);
+        //Debug.DrawLine(DronePhysics.position, DronePhysics.position + VectorB, Color.yellow, 0.01f);
+
+        #region Center Of Mass Correction
+
+        if (!CenterOfMassFound)
+        {
+            Debug.Log("Ideal Center of Mass: " + (VectorA / (float)B));
+            CenterOfMass = VectorA / (float)B;
+            DronePhysics.centerOfMass = CenterOfMass;
+            CenterOfMassFound = true;
+        }
+
+        #endregion
     }
 
     #region Hover Modes Control
@@ -595,10 +646,11 @@ public class DroneControls : MonoBehaviour
 
     public void CalculateFlightCoefficients(int i)
     {
-        float memmoi, CN, CT, AoA;
+        float memmoi, CN, CT, CM, AoA;
         //float mem1, mem2, mem2s, mem2c, mem3;
         LiftAoA[i] = new();
         InducedDragAoA[i] = new();
+        TorqueAoA[i] = new();
         float iStep = 1;
 
         PartStats p = NetLinker.Parts.DronePartStats[i];
@@ -642,11 +694,26 @@ public class DroneControls : MonoBehaviour
         }
         #endregion
 
+        #region Torque - Low AoAs
+        CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
+
+        _ = TorqueAoA[i].AddKey(new(0, 0));
+        _ = TorqueAoA[i].AddKey(new(180, 0));
+        _ = TorqueAoA[i].AddKey(new(-180, 0));
+        _ = TorqueAoA[i].AddKey(d.StallAngle, CM);
+        _ = TorqueAoA[i].AddKey(-d.StallAngle, -CM);
+
+        CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * (1 - (AoA / Mathf.PI))))));
+
+        _ = TorqueAoA[i].AddKey(180 - d.StallAngle, CM);
+        _ = TorqueAoA[i].AddKey(-180 + d.StallAngle, -CM);
+        #endregion
+
         for (int i2 = 0; i2 < (180 - (2 * (d.StallAngle + 10))) / iStep; i2++)
         {
             AoA = (d.StallAngle + 10) + (i2 * iStep) - 180;
-            memmoi = -Mathf.Abs(Mathf.Deg2Rad * (Mathf.Abs(AoA) - (-d.MaxInducedAoA * Mathf.Abs(AoA) / (90 - (d.StallAngle + 10)))));
-            
+            memmoi = -Mathf.Abs(Mathf.Deg2Rad * (Mathf.Abs(AoA) - 0)); //(-d.MaxInducedAoA * Mathf.Abs(AoA) / (90 - (d.StallAngle + 10)))
+
             CN = d.BottomCd * Mathf.Sin(memmoi) * ((1f / (0.56f + (0.44f * Mathf.Sin(memmoi)))) - (0.41f * (1 - Mathf.Exp(-17f / AspectRatio[i]))));
             CT = (1f / 2f) * d.FrontCd * Mathf.Cos(memmoi);
 
@@ -659,6 +726,13 @@ public class DroneControls : MonoBehaviour
             _ = InducedDragAoA[i].AddKey(d.StallAngle + 10 + (i2 * iStep), (CN * Mathf.Sin(memmoi)) + (CT * Mathf.Cos(memmoi)));
             _ = InducedDragAoA[i].AddKey(-(d.StallAngle + 10 + (i2 * iStep)), (CN * Mathf.Sin(memmoi)) + (CT * Mathf.Cos(memmoi)));
             #endregion
+
+            #region Torque - High AoAs
+            CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
+
+            _ = TorqueAoA[i].AddKey(d.StallAngle + 10 + (i2 * iStep), CM);
+            _ = TorqueAoA[i].AddKey(-(d.StallAngle + 10 + (i2 * iStep)), -CM);
+            #endregion
         }
 
         #region Smoothing Tangents
@@ -667,7 +741,7 @@ public class DroneControls : MonoBehaviour
         {
             LiftAoA[i].SmoothTangents(i2, 1);
         }
-
+        /*
         for (int i2 = 0; i2 < InducedDragAoA[i].length; i2++)
         {
             if (Mathf.Abs(InducedDragAoA[i].keys[i2].time) != 180 && Mathf.Abs(InducedDragAoA[i].keys[i2].time) != d.StallAngle && Mathf.Abs(InducedDragAoA[i].keys[i2].time) != (180 - d.StallAngle) && InducedDragAoA[i].keys[i2].time != 0)
@@ -675,7 +749,92 @@ public class DroneControls : MonoBehaviour
                 InducedDragAoA[i].SmoothTangents(i2, 1);
             }
         }
-
+        */
         #endregion
     }
 }
+
+
+#region discarded Lift, Induced Drag, Torque
+/*
+for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
+{
+    L = new Vector3(NetLinker.Parts.DronePartStats[i].CenterMassX, NetLinker.Parts.DronePartStats[i].CenterMassY, NetLinker.Parts.DronePartStats[i].CenterMassZ);
+
+    #region Lift, Induced Drag, Torque
+    AirSpeed = PhysicsVelocity - Wind + Vector3.Cross(DronePhysics.angularVelocity, L - (PhysicsPosition + DronePhysics.centerOfMass));
+    Transform t = NetLinker.Parts.DronePartStats[i].PartObject.transform;
+
+    if (i != 7) Debug.DrawLine(DronePhysics.position, DronePhysics.position + t.up, Color.green, 0.01f);        //up = up
+    if (i != 7) Debug.DrawLine(DronePhysics.position, DronePhysics.position + t.right, Color.red, 0.01f);       //forward = right
+
+    AoA = AirSpeed.magnitude < 0.01f ? 0 : -Mathf.Rad2Deg * (Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right)) - ((Vector3.Dot(AirSpeed, t.up) > 0 && Vector3.Dot(AirSpeed, t.right) < 0) ? Mathf.PI : 0));
+    AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.forward);
+    if (i == 0) VectorB = AirSpeed;
+    if (i != 7) Debug.Log("AoA: " + AoA);
+
+    Memory = t.up;
+
+    #region Lift Force
+    PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+    //   Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+    //   Debug.DrawLine(DronePhysics.position + DronePhysics.centerOfMass, DronePhysics.position + DronePhysics.centerOfMass + Check, Color.magenta, 0.01f);
+    if (Check.magnitude > 1000)
+    {
+        Debug.Log("Help");
+    }
+    #endregion
+
+    Memory = -t.forward;
+
+    #region Induced Drag Force
+    //PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+    //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+    #endregion
+
+    Memory = L.magnitude * Vector3.Cross(L, t.up).normalized;
+    //
+    #region Torque
+    //PhysicsAngAcceleration += Check = 0.5f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+    if (Time.time > 10)
+    {
+    //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+    }
+    #endregion
+
+    if (NetLinker.Parts.DronePartStats[i].IDb != 0)
+    {
+        L = new Vector3(L.x, L.y, -L.z);
+
+        AirSpeed = PhysicsVelocity - Wind + Vector3.Cross(DronePhysics.angularVelocity, new Vector3(NetLinker.Parts.DronePartStats[i].CenterMassX, NetLinker.Parts.DronePartStats[i].CenterMassY, -NetLinker.Parts.DronePartStats[i].CenterMassZ) - (PhysicsPosition + DronePhysics.centerOfMass));
+        t = NetLinker.Parts.DronePartStats[i].PartObjectb.transform;
+
+        AoA = AirSpeed.magnitude < 0.01f ? 0 : -Mathf.Rad2Deg * (Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right)) - ((Vector3.Dot(AirSpeed, t.up) > 0 && Vector3.Dot(AirSpeed, t.right) < 0) ? Mathf.PI : 0));
+        AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.up);
+        if (i != 7) Debug.Log("AoA: " + AoA);
+
+        Memory = t.up;
+
+        #region Lift Force
+        PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+        //   Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+        //   Debug.DrawLine(DronePhysics.position + DronePhysics.centerOfMass, DronePhysics.position + DronePhysics.centerOfMass + Check, Color.magenta, 0.01f);
+        #endregion
+
+        Memory = -t.forward;
+
+        #region Induced Drag Force
+        //PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+        //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+        #endregion
+
+        Memory = L.magnitude * Vector3.Cross(L, t.up).normalized;
+
+        #region Torque
+        //PhysicsAngAcceleration += Check = 0.5f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+        //    Debug.Log("i = " + i + " : " + Check + " ; " + Memory);
+        #endregion
+    }
+    #endregion
+}*/
+#endregion
