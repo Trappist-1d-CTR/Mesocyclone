@@ -1796,4 +1796,6 @@ MonoBehaviour:
   InducedDragAoA: []
   TorqueAoA: []
   Air: {fileID: 2112915244}
+  CenterOfMassFound: 0
   CenterOfMass: {x: 0, y: 0, z: 0}
+  VisualizationMode: 1

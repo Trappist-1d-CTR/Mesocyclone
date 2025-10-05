@@ -37,6 +37,7 @@
     "DronePartStats": [
         {
             "ID": 10,
+            "IDb": 11,
             "Name": "Canard",
             "CenterMassX": 0.343849,
             "CenterMassY": 0,
@@ -68,7 +69,7 @@
         {
             "ID": 1,
             "Name": "MainWings",
-            "CenterMassX": 0.343849,
+            "CenterMassX": -0.192711,
             "CenterMassY": 0,
             "CenterMassZ": 0,
             "Area": 0.1657,

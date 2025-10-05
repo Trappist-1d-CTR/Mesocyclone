@@ -113,7 +113,6 @@ public class DroneControls : MonoBehaviour
     private Quaternion PhysicsRotation;
     private Vector3 PhysicsAngVelocity;
     public Vector3 PhysicsTorque;
-    /*private Vector3 PhysicsTorque;*/
     #endregion
 
     #region Atmospherical Physics
@@ -140,10 +139,21 @@ public class DroneControls : MonoBehaviour
 
     #region Center Of Mass Correction
 
-    private bool CenterOfMassFound = true;
+    public bool CenterOfMassFound = false;
     private Vector3 VectorA;
     public Vector3 CenterOfMass;
     private double B;
+
+    #endregion
+
+    #region Physics Visualizer
+
+    public int VisualizationMode;
+
+    private Vector3 TotThrust;
+    private Vector3 TotDrag;
+    private Vector3 TotLift;
+    private Vector3 TotWeight;
 
     #endregion
 
@@ -174,7 +184,15 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[i].PartObject = transform.Find("Corrective").GetChild(NetLinker.Parts.DronePartStats[i].ID).gameObject;
             if (NetLinker.Parts.DronePartStats[i].IDb != 0)
             {
-                NetLinker.Parts.DronePartStats[i].PartObjectb = transform.Find("Corrective").GetChild(NetLinker.Parts.DronePartStats[i].IDb).gameObject;
+                if (transform.Find("Corrective").childCount > NetLinker.Parts.DronePartStats[i].IDb)
+                {
+                    NetLinker.Parts.DronePartStats[i].PartObjectb = transform.Find("Corrective").GetChild(NetLinker.Parts.DronePartStats[i].IDb).gameObject;
+                }
+                else
+                {
+                    NetLinker.Parts.DronePartStats[i].PartObjectb = NetLinker.Parts.DronePartStats[i].PartObject;
+                    Debug.Log("PartObject with ID " + NetLinker.Parts.DronePartStats[i].IDb + " not found.");
+                }
             }
         }
 
@@ -215,11 +233,20 @@ public class DroneControls : MonoBehaviour
             B = 0;
         }
 
+        #region Measurement Values Reset
+
+        TotThrust = Vector3.zero;
+        TotDrag = Vector3.zero;
+        TotLift = Vector3.zero;
+        TotWeight = Vector3.zero;
+
+        #endregion
+
         #region Physics Setup
 
         PhysicsVelocity = DronePhysics.velocity;
         Air.DronePosition = PhysicsPosition = DronePhysics.position;
-        PhysicsAcceleration = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD / DronePhysics.mass * Vector3.up);
+        PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
         //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
         PhysicsRotation = DronePhysics.rotation;
         PhysicsAngVelocity = DronePhysics.angularVelocity;
@@ -240,7 +267,7 @@ public class DroneControls : MonoBehaviour
             Thrust = Mathf.Clamp01(Thrust);
         }
 
-        PhysicsAcceleration += Thrust * NetLinker.MainBody.DroneBodyStats[0].ThrustAcceleration * Memory;
+        PhysicsAcceleration += TotThrust = Thrust * NetLinker.MainBody.DroneBodyStats[0].ThrustAcceleration * Memory;
 
         #endregion
 
@@ -282,6 +309,7 @@ public class DroneControls : MonoBehaviour
         if (ImpulseActive)
         {
             PhysicsAcceleration += NetLinker.MainBody.DroneBodyStats[0].ImpulseAcceleration * Memory;
+            TotThrust += NetLinker.MainBody.DroneBodyStats[0].ImpulseAcceleration * Memory;
             ImpulseCharge -= Time.fixedDeltaTime;
             LastImpulseBurn += Time.fixedDeltaTime;
 
@@ -451,6 +479,7 @@ public class DroneControls : MonoBehaviour
         }
 
         PhysicsAcceleration += HoverThrust * Memory;
+        TotThrust += HoverThrust * Memory;
 
         #endregion
 
@@ -504,7 +533,9 @@ public class DroneControls : MonoBehaviour
         }
 
         #endregion
-        
+
+        Vector3 CM = PhysicsPosition + (DronePhysics.rotation * CenterOfMass);
+
         Vector3 Check;
         Vector3 L;
         Transform t;
@@ -520,32 +551,36 @@ public class DroneControls : MonoBehaviour
             #region Lift
             Memory = t.up;
             PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+            TotLift += Check;
             //Debug.Log(AoA + " ; " + Check + " ; (" + Vector3.Dot(AirSpeed, t.up) + ", " + Vector3.Dot(AirSpeed, t.right) + ")");
+
+            if (VisualizationMode == 2)
+                Debug.DrawLine(CM + (DronePhysics.rotation * L), CM + (DronePhysics.rotation * L) + (DronePhysics.mass * Check / 20), Color.green, 1 / Time.renderedFrameCount);
             #endregion
 
+            #region CenterOfMass Calculation
             if (NetLinker.Parts.DronePartStats[i].ID != 8)
             {
                 PhysicsTorque += Vector3.Cross(Check, t.TransformDirection(L - CenterOfMass));
                 VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
                 B += NetLinker.Parts.DronePartStats[i].Area;
             }
+            #endregion
 
             #region Induced Drag
             Memory = -AirSpeed.normalized;
             PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-            //Debug.Log(Check);
+            TotDrag += Check;
+
+            if (VisualizationMode == 2)
+                Debug.DrawLine(CM + (DronePhysics.rotation * L), CM + (DronePhysics.rotation * L) + (DronePhysics.mass * Check / 20), Color.red, 1 / Time.renderedFrameCount);
             #endregion
 
-            /*#region Torque
-            Memory = Vector3.Cross(L, t.up);
+            #region Torque
+            Memory = Vector3.Cross(L - CenterOfMass, Vector3.up);
             PhysicsTorque += Check = 0.05f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory;
-            Debug.DrawLine(Vector3.zero, Check);
-            Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].ID);
-
-            VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
-            B += NetLinker.Parts.DronePartStats[i].Area;
-            Debug.Log((100f * VectorA) + " ; " + B);
-            #endregion*/
+            //Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].ID);
+            #endregion
 
             if (NetLinker.Parts.DronePartStats[i].IDb != 0)
             {
@@ -558,30 +593,35 @@ public class DroneControls : MonoBehaviour
                 #region Lift
                 Memory = t.up;
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+                TotLift += Check;
+
+                if (VisualizationMode == 2)
+                    Debug.DrawLine(CM + (DronePhysics.rotation * L), CM + (DronePhysics.rotation * L) + (DronePhysics.mass * Check / 20), Color.green, 1 / Time.renderedFrameCount);
                 #endregion
 
+                #region CenterOfMass Calculation
                 if (NetLinker.Parts.DronePartStats[i].ID != 8)
                 {
                     PhysicsTorque += Vector3.Cross(Check, t.TransformDirection(L - CenterOfMass));
                     VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
                     B += NetLinker.Parts.DronePartStats[i].Area;
                 }
+                #endregion
 
                 #region Induced Drag
                 Memory = -AirSpeed.normalized;
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
-                #endregion
-                
-                /*#region Torque
-                Memory = Vector3.Cross(L, t.up);
-                PhysicsTorque += Check = 0.05f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory;
-                Debug.DrawLine(Vector3.zero, Check);
-                Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].IDb);
+                TotDrag += Check;
 
-                VectorA += L * NetLinker.Parts.DronePartStats[i].Area;
-                B += NetLinker.Parts.DronePartStats[i].Area;
-                Debug.Log((100f * VectorA) + " ; " + B);
-                #endregion*/
+                if (VisualizationMode == 2)
+                    Debug.DrawLine(CM + (DronePhysics.rotation * L), CM + (DronePhysics.rotation * L) + (DronePhysics.mass * Check / 20), Color.red, 1 / Time.renderedFrameCount);
+                #endregion
+
+                #region Torque
+                Memory = Vector3.Cross(L - CenterOfMass, Vector3.up);
+                PhysicsTorque += Check = 0.05f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory;
+                //Debug.Log(Check + " ; " + Check.magnitude + " ; ID = " + NetLinker.Parts.DronePartStats[i].IDb);
+                #endregion
             }
         }
 
@@ -594,29 +634,30 @@ public class DroneControls : MonoBehaviour
 
         //Forward Drag
         PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        TotDrag += Check;
         //   Debug.Log("Wind: " + AirSpeed + "; Forward Drag: " + Check);
 
         Memory = transform.up;
 
         //Vertical Drag
         PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        TotDrag += Check;
         //   Debug.Log("Vertical Drag: " + Check);
 
         Memory = transform.forward;
 
         //Side Drag
         PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * (Vector3.Dot(AirSpeed, Memory) > 0 ? 1 : -1) * Memory / DronePhysics.mass;
+        TotDrag += Check;
         //   Debug.Log("Side Drag: " + Check);
 
         #endregion
 
 
-        //   Debug.Log(PhysicsVelocity + " ; " + DronePhysics.velocity);
-        //   Debug.Log(PhysicsAcceleration);
-
+        //PhysicsVelocity += PhysicsAcceleration * Time.fixedDeltaTime / DronePhysics.mass;
         DronePhysics.AddForce(PhysicsAcceleration, ForceMode.Acceleration);
-        //DronePhysics.AddTorque(PhysicsTorque);
-        //Debug.DrawLine(DronePhysics.position, DronePhysics.position + VectorB, Color.yellow, 0.01f);
+        //DronePhysics.AddRelativeTorque(PhysicsTorque);
+
 
         #region Center Of Mass Correction
 
@@ -628,6 +669,33 @@ public class DroneControls : MonoBehaviour
             CenterOfMassFound = true;
         }
 
+        #endregion
+
+        #region Physics Visualizer
+
+        switch (VisualizationMode)
+        {
+            case 0:
+
+                break;
+
+            case 1:
+                Debug.DrawLine(CM, CM + (PhysicsVelocity / 20), Color.yellow, 1 / Time.renderedFrameCount);
+
+                Debug.DrawLine(CM, CM + (DronePhysics.mass * TotThrust / 20), Color.blue, 1 / Time.renderedFrameCount);
+                Debug.DrawLine(CM, CM + (DronePhysics.mass * TotDrag / 20), Color.red, 1 / Time.renderedFrameCount);
+                Debug.DrawLine(CM, CM + (DronePhysics.mass * TotLift / 20), Color.green, 1 / Time.renderedFrameCount);
+                Debug.DrawLine(CM, CM + (DronePhysics.mass * TotWeight / 20), Color.grey, 1 / Time.renderedFrameCount);
+                break;
+
+            case 2:
+                
+                break;
+
+            case 3:
+                
+                break;
+        }
         #endregion
     }
 
