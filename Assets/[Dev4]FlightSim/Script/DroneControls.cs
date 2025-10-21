@@ -245,13 +245,14 @@ public class DroneControls : MonoBehaviour
         #region Physics Setup
 
         PhysicsVelocity = DronePhysics.velocity;
-        Air.DronePosition = PhysicsPosition = DronePhysics.position;
+        PhysicsPosition = DronePhysics.position;
+        if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
         //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
         PhysicsRotation = DronePhysics.rotation;
         PhysicsAngVelocity = DronePhysics.angularVelocity;
         PhysicsTorque = Vector3.zero;
-        DronePhysics.angularDrag = 0.2f;
+        DronePhysics.angularDrag = 3f;
 
         Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3((float)Air.InterpolatedValues[0], (float)Air.InterpolatedValues[1], (float)Air.InterpolatedValues[2]) : Vector3.zero;
         #endregion
@@ -413,7 +414,7 @@ public class DroneControls : MonoBehaviour
                 case 4:
                     HoverTarget = (float)C.GaleG;
                     break;
-
+/*
                 case 5:
                     if (DronePhysics.velocity.y <= -16.77 + HoverTargetSpeed[1])
                     {
@@ -427,14 +428,14 @@ public class DroneControls : MonoBehaviour
                     {
                         HoverTarget = 0;
                     }
-                    break;
+                    break;*/
 
                 case 6:
-                    if (DronePhysics.velocity.y <= -16.77 + NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                    if (DronePhysics.velocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     }
-                    else if (DronePhysics.velocity.y < NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                    else if (DronePhysics.velocity.y < (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed));
                     }
@@ -491,7 +492,7 @@ public class DroneControls : MonoBehaviour
         {
             NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, NetLinker.Parts.DronePartStats[0].ControlAngle * InputControl.FlightControls.Pitch.ReadValue<float>());
 
-            DronePhysics.AddRelativeTorque(0, 0, 0.05f * DronePhysics.mass * InputControl.FlightControls.Pitch.ReadValue<float>());
+            DronePhysics.AddRelativeTorque(0, 0, 0.2f * DronePhysics.mass * InputControl.FlightControls.Pitch.ReadValue<float>());
         }
         else
         {
@@ -507,7 +508,7 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, -NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>());
             NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, NetLinker.Parts.DronePartStats[5].ControlAngle * InputControl.FlightControls.Roll.ReadValue<float>());
 
-            DronePhysics.AddRelativeTorque(0.025f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
+            DronePhysics.AddRelativeTorque(0.25f * DronePhysics.mass * InputControl.FlightControls.Roll.ReadValue<float>(), 0, 0);
         }
         else
         {
@@ -524,7 +525,7 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
             NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(-90, NetLinker.Parts.DronePartStats[7].ControlAngle * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
 
-            DronePhysics.AddRelativeTorque(0, -0.05f * DronePhysics.mass * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
+            DronePhysics.AddRelativeTorque(0, -0.2f * DronePhysics.mass * InputControl.FlightControls.Yaw.ReadValue<float>(), 0);
         }
         else
         {
@@ -707,7 +708,7 @@ public class DroneControls : MonoBehaviour
 
     private void SwitchModes(InputAction.CallbackContext obj)
     {
-        HoverMode += InputControl.FlightControls.MouseScroll.ReadValue<float>() > 0 ? -1 : 1;
+        HoverMode += InputControl.FlightControls.MouseScroll.ReadValue<float>() > 0 ? (HoverMode == 6 ? -2 : -1) : (HoverMode == 4 ? 2 : 1);
         HoverMode = Mathf.Clamp(HoverMode, 1, 6);
     }
     #endregion
@@ -728,12 +729,12 @@ public class DroneControls : MonoBehaviour
         memmoi = d.LiftCurveSlope * (AspectRatio[i] / (AspectRatio[i] + (2 * (AspectRatio[i] + 4) / (AspectRatio[i] + 2))));
         
         _ = LiftAoA[i].AddKey(new(0, 0, memmoi, memmoi));
-        _ = LiftAoA[i].AddKey(new(180, 0, -memmoi, -memmoi));
-        _ = LiftAoA[i].AddKey(new(-180, 0, -memmoi, -memmoi));
+        _ = LiftAoA[i].AddKey(new(180, 0, memmoi, 0));
+        _ = LiftAoA[i].AddKey(new(-180, 0, 0, memmoi));
         _ = LiftAoA[i].AddKey(new(d.StallAngle, d.StallAngle * memmoi, memmoi, 0));
         _ = LiftAoA[i].AddKey(new(-d.StallAngle, -d.StallAngle * memmoi, 0, memmoi));
-        _ = LiftAoA[i].AddKey(new(180 - d.StallAngle, -d.StallAngle * memmoi, memmoi, 0));
-        _ = LiftAoA[i].AddKey(new(-180 + d.StallAngle, d.StallAngle * memmoi, 0, memmoi));
+        _ = LiftAoA[i].AddKey(new(180 - d.StallAngle, -d.StallAngle * memmoi, 0, memmoi));
+        _ = LiftAoA[i].AddKey(new(-180 + d.StallAngle, d.StallAngle * memmoi, memmoi, 0));
         #endregion
 
         #region Induced Drag - Low AoAs
@@ -786,8 +787,8 @@ public class DroneControls : MonoBehaviour
             CT = (1f / 2f) * d.FrontCd * Mathf.Cos(memmoi);
 
             #region Lift - High AoAs
-            _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep), CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))/*, mem3, mem3*/));
-            _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep) - 180, CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))/*, mem3, mem3*/));
+            _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep), CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))));
+            _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep) - 180, CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))));
             #endregion
 
             #region Induced Drag - High AoAs
@@ -804,10 +805,13 @@ public class DroneControls : MonoBehaviour
         }
 
         #region Smoothing Tangents
-
-        for (int i2 = 0; i2 < LiftAoA[i].length; i2++)
+        
+        for (int i2 = 2; i2 < LiftAoA[i].length - 2; i2++)
         {
-            LiftAoA[i].SmoothTangents(i2, 1);
+            if (Mathf.Abs(LiftAoA[i].keys[i2].time) != 0 && Mathf.Abs(LiftAoA[i].keys[i2].time) != d.StallAngle)
+            {
+                LiftAoA[i].SmoothTangents(i2, 1);
+            }
         }
         /*
         for (int i2 = 0; i2 < InducedDragAoA[i].length; i2++)

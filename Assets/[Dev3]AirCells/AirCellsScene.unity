@@ -1786,7 +1786,6 @@ MonoBehaviour:
   HoverMaxAngle: 110
   HoverTargetSpeed:
   - 5
-  - -5
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
   Wind: {x: 0, y: 0, z: 0}
