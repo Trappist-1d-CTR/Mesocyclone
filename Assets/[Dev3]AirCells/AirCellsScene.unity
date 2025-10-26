@@ -1554,14 +1554,8 @@ MonoBehaviour:
   TempTest: 1300
   VelTest: {x: 0, y: 0, z: 0}
   AverageLocalTemp: 0
+  AverageLocalWind: {x: 0, y: 0, z: 0}
   CellGroupNumber: 30
-  InterpolatedValues:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
   DronePosition: {x: 0, y: 0, z: 0}
   CdTest: 1
   DistanceScale: 1
@@ -1749,7 +1743,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.7, y: -0.1, z: 0.8750007}
+  m_Size: {x: 0.7, y: 0.1, z: 0.8750007}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3469287836654862828
 MonoBehaviour:

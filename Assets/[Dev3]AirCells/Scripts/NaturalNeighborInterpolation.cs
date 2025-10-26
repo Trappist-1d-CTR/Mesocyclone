@@ -1,12 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MIConvexHull; // Install via NuGet: "MIConvexHull"
+
+
+public class AirVertex : IVertex
+{
+    public double[] Position { get; private set; }
+    public double[] Values;
+
+    public AirVertex()
+    {
+        Position = new[] { 0.0, 0.0, 0.0 };
+        Values = new[] { 0.0 };
+    }
+
+    public AirVertex(double x, double y, double z)
+    {
+        Position = new[] { x, y, z };
+        Values = new[] { 1.0 };
+    }
+
+    public AirVertex(double x, double y, double z, double[] values)
+    {
+        Position = new[] { x, y, z };
+        Values = values;
+    }
+
+    public AirVertex(double[] coords, double[] values)
+    {
+        Position = coords;
+        Values = values;
+    }
+}
+
+
+public static class NaturalNeighbour
+{
+    public static List<AirVertex> AirCells;
+    public static DelaunayTriangulation<AirVertex, DefaultTriangulationCell<AirVertex>> DelaT;
+
+    public static void DelaunayTriangulate()
+    {
+        DelaT = DelaunayTriangulation<AirVertex, DefaultTriangulationCell<AirVertex>>.Create(AirCells, 1e-10);
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
 
 // Define a vertex class for 3D points
 public class Vertex3 : IVertex
 {
     public double[] Position { get; private set; }
-    public bool IsList = false;
+    public bool ManyValues = false;
     public double Value; // Attribute (e.g., temperature)
     public double[] Values;
 
@@ -14,29 +69,30 @@ public class Vertex3 : IVertex
     {
         Position = new[] { 0.0, 0.0, 0.0 };
         Value = 0;
-        IsList = false;
+        ManyValues = false;
     }
 
     public Vertex3(double x, double y, double z, double value)
     {
         Position = new[] { x, y, z };
         Value = value;
-        IsList = false;
+        ManyValues = false;
     }
 
     public Vertex3(double x, double y, double z, double[] values)
     {
         Position = new[] { x, y, z };
         Values = values;
-        IsList = true;
+        ManyValues = true;
     }
 }
+
 
 public static class NaturalNeighborInterpolation
 {
     public static double[] Interpolate(Vertex3[] dataPoints, Vertex3 query)
     {
-        if (dataPoints[0].IsList)
+        if (dataPoints[0].ManyValues)
         {
             // Build Delaunay triangulation
             DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>> delaunay = DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>>.Create(dataPoints, 1e-10);
@@ -66,8 +122,10 @@ public static class NaturalNeighborInterpolation
         }
         else
         {
+
+
             // Build Delaunay triangulation
-            DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>> delaunay = DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>>.Create(dataPoints, 1e-10);
+            DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>> delaunay = DelaunayTriangulation<Vertex3, DefaultTriangulationCell<Vertex3>>.Create(dataPoints, 1e-5);
 
             // Find containing tetrahedron
             foreach (var cell in delaunay.Cells)
@@ -92,7 +150,7 @@ public static class NaturalNeighborInterpolation
     private static bool IsPointInTetrahedron(double[] p, DefaultTriangulationCell<Vertex3> cell)
     {
         double[] w = BarycentricCoordinates(p, cell);
-        return w.All(val => val >= -1e-9); // allow tiny epsilon
+        return w.All(val => val >= -1e-10); // allow tiny epsilon
     }
 
     // Compute barycentric coordinates of point p in tetrahedron

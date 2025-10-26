@@ -21,11 +21,12 @@ public class AirCellBehavior : MonoBehaviour
     public Vector3 VelTest;
     //public float CdTest;
     public double AverageLocalTemp;
+    public Vector3 AverageLocalWind;
     public int CellGroupNumber;
     #endregion
 
     #region Simulation Testing
-    public double[] InterpolatedValues = new double[6];
+    //public double[] InterpolatedValues = new double[6];
     public Vector3 DronePosition;
     public float CdTest;
     public float DistanceScale;
@@ -103,11 +104,17 @@ public class AirCellBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        #region Average Local temperature
+        #region Average Local Values
         AverageLocalTemp = 0;
         for (int i = 0; i < CellGroupNumber; i++)
         {
             AverageLocalTemp += AirCellGroup[i].Temperature / CellGroupNumber;
+        }
+
+        AverageLocalWind = Vector3.zero;
+        for (int i = 0; i < CellGroupNumber; i++)
+        {
+            AverageLocalWind += AirCellGroup[i].Velocity / CellGroupNumber;
         }
         #endregion
 
@@ -213,8 +220,8 @@ public class AirCellBehavior : MonoBehaviour
 
             #region Perform Air Cell Drag
             
-            AirCellGroup[i].PerformAcceleration(CdTest * Mathf.Pow(AirCellGroup[i].Velocity.y, 2) / (2 * (float)AirCellGroup[i].CellHeight) * -Vector3.Project(AirCellGroup[i].Velocity, Vector3.up).normalized);
-            AirCellGroup[i].PerformAcceleration(CdTest * Vector3.ProjectOnPlane(AirCellGroup[i].Velocity, Vector3.up).sqrMagnitude / (4 * (float)AirCellGroup[i].CellRadius) * -Vector3.ProjectOnPlane(AirCellGroup[i].Velocity, Vector3.up).normalized);
+            AirCellGroup[i].PerformAcceleration(CdTest * Mathf.Pow(AirCellGroup[i].Velocity.y - AverageLocalWind.y, 2) / (2 * (float)AirCellGroup[i].CellHeight) * -Vector3.Project(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
+            AirCellGroup[i].PerformAcceleration(CdTest * Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).sqrMagnitude / (4 * (float)AirCellGroup[i].CellRadius) * -Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
             
             #endregion
 
@@ -319,9 +326,6 @@ public class AirCellBehavior : MonoBehaviour
         #endregion
 
         #region Perform Physics
-
-        Vertex3[] CellVertexes = new Vertex3[CellGroupNumber];
-
         for (int i = 0; i < CellGroupNumber; i++)
         {
             DebugEverything(i);
@@ -337,6 +341,19 @@ public class AirCellBehavior : MonoBehaviour
             //To visualize the Cells
             CellObjectGroup[i].transform.position = AirCellGroup[i].CellCenter;
 
+            //For interpolation
+            if (InverseDistanceWeighting.Indexes.Contains(i))
+            {
+                if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) > InverseDistanceWeighting.R)
+                {
+                    InverseDistanceWeighting.Remove(i);
+                }
+            }
+            else if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) <= InverseDistanceWeighting.R)
+            {
+                InverseDistanceWeighting.Add(i);
+            }
+
             /*
             if (i == 0)
             {
@@ -347,20 +364,38 @@ public class AirCellBehavior : MonoBehaviour
             */
 
             DebugEverything(i);
+        }
+        #endregion
 
-            //Interpolation Values
-            if (CellGroupNumber > 4)
-            {
-                CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new double[6]
-                    { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
-            }
+        #region Interpolation
+        InverseDistanceWeighting.BeginInterp();
+
+        InverseDistanceWeighting.InterpolationStep(new Vector3(InverseDistanceWeighting.Query.x, 0, InverseDistanceWeighting.Query.z),
+            new float[6] { 0, 0, 0, (float)MoleTest, (float)AverageLocalTemp, 0 });
+        foreach (int i in InverseDistanceWeighting.Indexes)
+        {
+            InverseDistanceWeighting.InterpolationStep(AirCellGroup[i].CellCenter,
+                new float[6] { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, (float)AirCellGroup[i].Moles,
+                    (float)AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
         }
 
+        InverseDistanceWeighting.BroadcastInterp();
+
+        #region Natural Neighbour Interpolation Attempt
+        /* 
+        Vertex3[] CellVertexes = new Vertex3[CellGroupNumber];
+        //Interpolation Values
+        if (CellGroupNumber > 4)
+        {
+            CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new double[6]
+                { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
+        }
         InterpolatedValues = InterpolateAirCells.GetValues(CellVertexes, new(DronePosition.x, DronePosition.y, DronePosition.z, 0));
         //   Debug.Log(InterpolatedValues.Length);
-        /*   Debug.Log("Interpolated values at Drone Position: \n   Velocity = { " + InterpolatedValues[0] + ", " + InterpolatedValues[1] + ", " + InterpolatedValues[2] + " }\n   " +
+           Debug.Log("Interpolated values at Drone Position: \n   Velocity = { " + InterpolatedValues[0] + ", " + InterpolatedValues[1] + ", " + InterpolatedValues[2] + " }\n   " +
                "Moles = " + InterpolatedValues[3] + "\n   Temperature = " + InterpolatedValues[4] + "\n   Dynamic Volume = " + InterpolatedValues[5]);
         */
+        #endregion
         #endregion
     }
 

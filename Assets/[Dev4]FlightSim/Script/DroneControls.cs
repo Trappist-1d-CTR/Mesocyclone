@@ -245,7 +245,7 @@ public class DroneControls : MonoBehaviour
         #region Physics Setup
 
         PhysicsVelocity = DronePhysics.velocity;
-        PhysicsPosition = DronePhysics.position;
+        InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position;
         if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
         //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
@@ -254,7 +254,7 @@ public class DroneControls : MonoBehaviour
         PhysicsTorque = Vector3.zero;
         DronePhysics.angularDrag = 3f;
 
-        Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3((float)Air.InterpolatedValues[0], (float)Air.InterpolatedValues[1], (float)Air.InterpolatedValues[2]) : Vector3.zero;
+        Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
         #endregion
 
         #region Main Engine Thrust
