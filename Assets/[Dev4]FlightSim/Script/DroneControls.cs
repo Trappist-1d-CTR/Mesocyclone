@@ -254,7 +254,8 @@ public class DroneControls : MonoBehaviour
         PhysicsTorque = Vector3.zero;
         DronePhysics.angularDrag = 3f;
 
-        Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
+        if (InverseDistanceWeighting.Values != null)
+            Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
         #endregion
 
         #region Main Engine Thrust
