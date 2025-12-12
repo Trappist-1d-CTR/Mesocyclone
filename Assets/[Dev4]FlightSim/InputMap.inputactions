@@ -58,135 +58,9 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Pitch",
-                    "type": "Value",
-                    "id": "92efff31-c17c-4ca6-83f7-c69d4d810673",
-                    "expectedControlType": "Integer",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Roll",
-                    "type": "Value",
-                    "id": "10691f90-c872-4112-a795-25864875b0bd",
-                    "expectedControlType": "Integer",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Yaw",
-                    "type": "Value",
-                    "id": "62652a23-5cdb-4781-996a-fba27ac94c7a",
-                    "expectedControlType": "Integer",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 }
             ],
             "bindings": [
-                {
-                    "name": "Up/Down",
-                    "id": "eb6ebb6f-14bf-4a5f-a4a0-49c2cd3fba4d",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pitch",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "positive",
-                    "id": "8e6e3268-43a9-4a88-ad5b-38c46587f550",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Pitch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "cb7f814b-4837-4cb0-9227-e60013153131",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Pitch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Clock/Counter",
-                    "id": "3cdbb361-4f57-4e07-98ab-84c11f0a163d",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "fd9b8fa4-ca25-4d3f-9405-c9c3e55baa56",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "72d6c4fa-03fc-4a38-9278-169e497be311",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Right/Left",
-                    "id": "69e51a00-9491-467e-a511-13954df16a97",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Yaw",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "08c51568-db7c-4e2a-bd4f-79f2039ee302",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Yaw",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "32114c59-a38a-49d4-ae24-45111bc7043a",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC - KeyMouse (Standard)",
-                    "action": "Yaw",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
                 {
                     "name": "Thrust Controls",
                     "id": "a7c92610-83ac-4fca-9ace-6f3b1b9b00e8",
@@ -296,6 +170,134 @@
                     "action": "MouseScroll",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "ControlSurfaces",
+            "id": "cf501cd6-3384-431b-ac67-68a563aa565e",
+            "actions": [
+                {
+                    "name": "PitchUp",
+                    "type": "Button",
+                    "id": "9d9ddf46-e7e0-487c-90f9-59a8a915a2c4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "PitchDown",
+                    "type": "Button",
+                    "id": "0e742c79-d6ca-424f-b0de-ec8a55837695",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RollClock",
+                    "type": "Button",
+                    "id": "0a806f74-d753-4dd1-b478-4e2298d72955",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RollCounterClock",
+                    "type": "Button",
+                    "id": "9506b580-e4e3-44aa-bff1-291b29297354",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "YawRight",
+                    "type": "Button",
+                    "id": "e28b97d5-8f97-43f6-bd2a-856a19de330e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "YawLeft",
+                    "type": "Button",
+                    "id": "de49f581-4d65-40e8-9089-4f36be6c3ea6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3688190a-ebe9-4da5-9f92-5d6fdb4e8823",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "PitchUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c835dad-b094-4244-b9d1-bca5d2b7e8cc",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "PitchDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "56420366-f013-4678-8400-2e8b192c0f5f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "RollClock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c448fb7a-8169-4bbc-9321-21db88e9636f",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "RollCounterClock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0544b26b-b39b-479b-86d7-f2ec9f5fe23b",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "YawRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "59321424-5785-42b0-8a50-e8b42652db78",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "YawLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

@@ -3,7 +3,7 @@
         {
             "Name": "NetLinker",
             "Mass": 5.6,
-            "YesWind": true,
+            "YesWind": false,
             "CenterMassX": -0.033522,
             "CenterMassY": 0,
             "CenterMassZ": 0,
