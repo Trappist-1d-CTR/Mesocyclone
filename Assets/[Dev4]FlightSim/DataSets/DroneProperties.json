@@ -4,7 +4,7 @@
             "Name": "NetLinker",
             "Mass": 5.6,
             "YesWind": false,
-            "CenterMassX": -0.033522,
+            "CenterMassX": -0.11,
             "CenterMassY": 0,
             "CenterMassZ": 0,
             "DroneVolume": 0.0102,

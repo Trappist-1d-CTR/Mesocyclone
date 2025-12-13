@@ -1846,16 +1846,19 @@ MonoBehaviour:
   - 5
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
-  Wind: {x: -30, y: 0, z: 0}
+  Wind: {x: 0, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   AspectRatio: []
   LiftAoA: []
   InducedDragAoA: []
   TorqueAoA: []
+  PitchCtrl: 0.4
+  RollCtrl: 0.75
+  YawCtrl: 12
   Air: {fileID: 2112915244}
-  CenterOfMassFound: 0
+  CenterOfLiftFound: 0
   CenterOfLift: {x: 0, y: 0, z: 0}
-  CenterOfMass: {x: -0.1, y: 0, z: 0}
+  CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 3
   AirChamberTest: 1
 --- !u!1001 &8966088915275858557
