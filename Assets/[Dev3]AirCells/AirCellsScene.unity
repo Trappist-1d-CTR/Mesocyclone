@@ -1791,10 +1791,6 @@ MonoBehaviour:
   TorqueAoA: []
   Air: {fileID: 2112915244}
   CenterOfMassFound: 0
-<<<<<<< Updated upstream
-  CenterOfMass: {x: 0, y: 0, z: 0}
-  VisualizationMode: 1
-=======
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: -0.1, y: 0, z: 0}
   VisualizationMode: 3
@@ -1974,4 +1970,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
->>>>>>> Stashed changes

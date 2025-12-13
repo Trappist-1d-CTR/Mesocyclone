@@ -264,13 +264,9 @@ public class DroneControls : MonoBehaviour
         PhysicsTorque = Vector3.zero;
         DronePhysics.angularDrag = 3f;
 
-<<<<<<< Updated upstream
-        Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
-=======
         //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
         if (!AirChamberTest && InverseDistanceWeighting.Values != null)
             Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
->>>>>>> Stashed changes
         #endregion
 
         #region Main Engine Thrust
