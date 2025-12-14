@@ -628,7 +628,7 @@ public class DroneControls : MonoBehaviour
         }
         else if (csp && csn)
         {
-            ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > 1)
+            ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > pctrl / 5)
                 ? (ControlSurfaceAngle[0] < 0 ? 1 : -1) * pctrl * Time.fixedDeltaTime
                 : -ControlSurfaceAngle[0];
         }
@@ -637,7 +637,7 @@ public class DroneControls : MonoBehaviour
         {
             NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[0]);
         }
-        else if (Mathf.Abs(ControlSurfaceAngle[0]) < PitchCtrl / 5)
+        else if (Mathf.Abs(ControlSurfaceAngle[0]) < pctrl / 5)
         {
             ControlSurfaceAngle[0] = 0;
             NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -646,6 +646,14 @@ public class DroneControls : MonoBehaviour
         #endregion
 
         #region Roll
+        //Roll Control Assist Augmentations:
+        //  Lowered controls at high canards angle (progressive: 1/4 above or at 0.36 and 1/16 above or at 0.5);
+        //  Higher controls on retraction to neutral speed (x2);
+
+        if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.36f)
+            rctrl /= 4;
+        if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.5f)
+            rctrl /= 4;
 
         csp = InputControl.ControlSurfaces.RollClock.IsPressed();
         csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
@@ -659,8 +667,8 @@ public class DroneControls : MonoBehaviour
         }
         else if (csp && csn)
         {
-            ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > 1)
-                ? (ControlSurfaceAngle[1] < 0 ? 1 : -1) * rctrl * Time.fixedDeltaTime
+            ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > rctrl / 5)
+                ? (ControlSurfaceAngle[1] < 0 ? 1 : -1) * rctrl * 2 * Time.fixedDeltaTime
                 : -ControlSurfaceAngle[1];
         }
 
@@ -671,7 +679,7 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1]);
             NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1]);
         }
-        else if (Mathf.Abs(ControlSurfaceAngle[1]) < RollCtrl / 5)
+        else if (Mathf.Abs(ControlSurfaceAngle[1]) < rctrl / 5)
         {
             ControlSurfaceAngle[1] = 0;
             NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -696,7 +704,7 @@ public class DroneControls : MonoBehaviour
         }
         else if (csp && csn)
         {
-            ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > 1)
+            ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > yctrl / 10)
                 ? (ControlSurfaceAngle[2] < 0 ? 1 : -1) * yctrl * Time.fixedDeltaTime
                 : -ControlSurfaceAngle[2];
         }
@@ -706,7 +714,7 @@ public class DroneControls : MonoBehaviour
             NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
             NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
         }
-        else if (Mathf.Abs(ControlSurfaceAngle[2]) < YawCtrl / 5)
+        else if (Mathf.Abs(ControlSurfaceAngle[2]) < yctrl / 10)
         {
             ControlSurfaceAngle[2] = 0;
             NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);

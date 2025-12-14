@@ -1846,13 +1846,13 @@ MonoBehaviour:
   - 5
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
-  Wind: {x: 0, y: 0, z: 0}
+  Wind: {x: -30, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   AspectRatio: []
   LiftAoA: []
   InducedDragAoA: []
   TorqueAoA: []
-  PitchCtrl: 0.4
+  PitchCtrl: 0.15
   RollCtrl: 0.75
   YawCtrl: 12
   Air: {fileID: 2112915244}
