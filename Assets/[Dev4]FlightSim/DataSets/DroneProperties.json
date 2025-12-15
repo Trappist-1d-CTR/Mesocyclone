@@ -30,7 +30,8 @@
             "ImpulseShutdownTime": 0.15,
             "HoverMaxThrust": 55,
             "HoverJerk": 10,
-            "LandingSpeed": -1
+            "LandingSpeed": -1,
+            "ReactionWheelsTorqueJerk": 5
         }
     ],
 
