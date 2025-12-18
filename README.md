@@ -31,7 +31,22 @@ https://docs.google.com/spreadsheets/d/1iQJklqcxE3pQBaImazHuIJsGAS6dR0NKBTK6Brtr
 ## Questions
 If you got any questions regarding the code (I make little to no comments-) and/or project feel free to ask.
 
-[FYI: Still working on an Installation guide to put in the README]
+# Installation
+## Project
+Major Software Requirements:
+- Unity Hub
+- Unity
+- Code editor (Visual Studio, etc.)
+Steps:
+- Download the repository: Go to Mesocyclone's main page, Click on the green "Code" button, Select the option to download zip, Extract the zip file to wherever you want (but keep in mind where).
+- Open with Unity Hub: Open Unity Hub, Click on "Add" and select "Add from disk", Click on the project when it appears.
+- Run the project: Standard scene should appear, Switch between scenes located at [Dev3] and [Dev5] ([Dev1] and [Dev2] for older, unused stuff), Click on Play button on the viewport.
+Playing:
+Once you click on the Play button on the scene either in the [Dev3] or [Dev5] folders, you'll immediately become the drone. Press Ctrl + G to toggle fullscreen. You can click on the GameObject FlightDrone in the left side of the screen and then look right at the Inspector. Scrolling down, the very last two values are development functionalities:
+- VisualizationMode can be set to any number from 0 to 3. At 0 nothing's done, at 1 there will be drawn vectors showing the forces at play (lift, gravity, thrust, drag), at 2 the forces of each wing part (lift and induced drag) will be shown, at 3 torque forces from each wing part (represented as force vectors instead of torques: as the forces that push up or down certain parts of the plane) will be shown.
+- AirChamberTest can be set to false (unchecked) or true (checked). When true, the drone will not be able to move but will rotate freely and winds from Air Cells will be ignored. Instead, you can modify that value manually above by changing the "Wind" Vector3, as if the drone were in a controlled wind chamber. To simulate the drone flying straight ahead, a negative X value must be put. Flying straight backwards requires a positive X value. Flying upwards requires negative Y value, while for downwards a positive Y value. Flying rightwards requires a negative Z value, while for leftwards a negative Z value. You can combine these to get something like flying ahead but skewed to the left and downwards a bit: negative X, positive Y, positive Z.
+## Build
+[Not yet made, planned for the future]
 
 # Copyright
-Feel free to download and/or copy snippets of code and browse around the project in general. Do not, however, think about taking it (all or even chunks of it) and saying it is your own work and/or idea. You can use my code files for your own projects, of course (as I had to re-think the coding behind several systems like 3D data interpolation, Air Cell physics, flight physics, etc.) but always make sure to attribute me (name of project, link of project, and username will be enough) and actually expand on it with stuff of your own creation.
+Feel free to browse around the project in general and to download and/or copy any of the files, both in the project's entirety and in parts of it, as long as it's done either non-commercially or (in the case of a YouTube video) within the criteria of fair use. Moreover, while you can take parts of it (code snippets/files and unity scenes) and implement them into your own projects (with or without attribution), you cannot take the whole project and use it commercially (like selling). And whatever you end up doing with it, don't pretend to be the one to have made what you took from someone else (in general, not just regarding this project).
