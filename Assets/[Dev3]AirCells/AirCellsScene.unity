@@ -1848,13 +1848,14 @@ MonoBehaviour:
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
   CanardsCtrl: 0.25
-  AileronsCtrl: 0.75
+  AileronsCtrl: 1.5
   ElevatorsCtrl: 12
-  PitchCtrl: 0.07
-  RollCtrl: 0.08
-  YawCtrl: 0.2
+  PitchJerk: 0.35
+  RollJerk: 0.4
+  YawJerk: 1
   ReactionWheelsPower: 0
   ReactionWheelsTorque: []
+  StabilizingWheelTorque: {x: 0, y: 0, z: 0}
   Wind: {x: 0, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   AspectRatio: []
@@ -1865,7 +1866,7 @@ MonoBehaviour:
   CenterOfLiftFound: 0
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
-  VisualizationMode: 1
+  VisualizationMode: 0
   AirChamberTest: 1
 --- !u!1001 &8966088915275858557
 PrefabInstance:
