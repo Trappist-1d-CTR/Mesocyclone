@@ -951,13 +951,13 @@ public class DroneControls : MonoBehaviour
 
             StabilizingWheelTorque.x = (Mathf.Abs(T.x - StabilizingWheelTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
                 ? StabilizingWheelTorque.x + ((T.x - StabilizingWheelTorque.x > 0 ? 1 : -1) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : -T.x;
+                : T.x;
             StabilizingWheelTorque.y = (Mathf.Abs(T.y - StabilizingWheelTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
                 ? StabilizingWheelTorque.y + ((T.y - StabilizingWheelTorque.y > 0 ? 1 : -1) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : -T.y;
+                : T.y;
             StabilizingWheelTorque.z = (Mathf.Abs(T.z - StabilizingWheelTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
                 ? StabilizingWheelTorque.z + ((T.z - StabilizingWheelTorque.z > 0 ? 1 : -1) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : -T.z;
+                : T.z;
         }
         else if (StabilizingWheelTorque != Vector3.zero)
         {
