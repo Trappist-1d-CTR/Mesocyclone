@@ -31,7 +31,7 @@
             "HoverMaxThrust": 55,
             "HoverJerk": 10,
             "LandingSpeed": -1,
-            "ReactionWheelsTorqueJerk": 40
+            "ReactionWheelsTorqueJerk": 100
         }
     ],
 

@@ -651,11 +651,18 @@ public class DroneControls : MonoBehaviour
                 rctrl = AileronsCtrl;
                 yctrl = ElevatorsCtrl;
 
-                ReactionWheelsPower = 1 - Mathf.Pow((DynamicPressure - threshold1) / (threshold2 - threshold1), 0.5f);
+                ReactionWheelsPower = 1 - Mathf.Pow((DynamicPressure - threshold1) / (threshold2 - threshold1), 1);
             }
             #endregion
 
             #region Pitch
+            //Pitch Control Assist Augmentations:
+            //  Higher controls at low canards angles (8 at angles between -0.25 and 0.25);
+            //  Reason: Low canards angles seem to have no effect on actual pitch
+            if (Mathf.Abs(ControlSurfaceAngle[0]) <= 0.25)
+            {
+                pctrl *= 8;
+            }
 
             bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
             bool csn = InputControl.ControlSurfaces.PitchDown.IsPressed();
@@ -708,10 +715,10 @@ public class DroneControls : MonoBehaviour
 
             #region Roll
             //Roll Control Assist Augmentations:
-            //  Lowered controls at high canards angle (progressive: 1/4 above or at 0.36 and 1/16 above or at 0.5);
+            //  Lowered controls at high canards angle (progressive: 1/4 above or at 0.25 and 1/16 above or at 0.5);
             //  Higher controls on retraction to neutral speed (x2);
 
-            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.36f)
+            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.25f)
                 rctrl /= 4;
             if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.5f)
                 rctrl /= 4;
