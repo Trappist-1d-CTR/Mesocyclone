@@ -122,8 +122,8 @@ public class DroneControls : MonoBehaviour
     #endregion
 
     #region Control Surfaces and SAS
-    private float RefSqrAirSpeed1;
-    private float RefSqrAirSpeed7;
+    private float RefAirSpeed1;
+    private float RefAirSpeed7;
 
     private float pctrl, rctrl, yctrl;
     public float CanardsCtrl;
@@ -536,8 +536,8 @@ public class DroneControls : MonoBehaviour
             AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.forward);
             AoA = -Mathf.Rad2Deg * Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right));
 
-            if (i == 0) RefSqrAirSpeed1 = AirSpeed.sqrMagnitude;
-            else if (i == 7) RefSqrAirSpeed7 = AirSpeed.sqrMagnitude;
+            if (i == 0) RefAirSpeed1 = AirSpeed.magnitude;
+            else if (i == 7) RefAirSpeed7 = AirSpeed.magnitude;
 
             #region Lift
             Memory = t.up;
@@ -623,23 +623,23 @@ public class DroneControls : MonoBehaviour
 
         #region Control Surfaces and SAS
 
-        DynamicPressure = (float)C.GaleAtmD * RefSqrAirSpeed1;
+        DynamicPressure = (float)C.GaleAtmD * RefAirSpeed1;
 
         if (PrevDyanmicPressure == 0)
             PrevDyanmicPressure = DynamicPressure;
 
-        int threshold1 = 395;
-        int threshold2 = 3300;
+        int threshold1 = 81;
+        int threshold2 = 225;
 
-        if (DynamicPressure >= threshold1) //Above 9 m/s
+        if (DynamicPressure >= threshold1) //Above 18 m/s
         {
             #region Control Surfaces and Reaction Wheels Speed
 
-            if (DynamicPressure >= threshold2) //Above 27 m/s
+            if (DynamicPressure >= threshold2) //Above 50 m/s
             {
-                pctrl = CanardsCtrl * (900 * (float)C.GaleAtmD / DynamicPressure);
-                rctrl = AileronsCtrl * (900 * (float)C.GaleAtmD / DynamicPressure);
-                yctrl = ElevatorsCtrl * (900 * (float)C.GaleAtmD / DynamicPressure);
+                pctrl = CanardsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
+                rctrl = AileronsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
+                yctrl = ElevatorsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
                 //yctrl = YawCtrl * (((float)C.GaleAtmD / (float)C.GaleAtmD) * (900 / RefSqrAirSpeed7));
                 //Debug.Log("Control Surfaces: " + pctrl + " ; " + rctrl + " ; " + yctrl + " .");
 

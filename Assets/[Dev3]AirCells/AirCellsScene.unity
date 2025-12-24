@@ -1847,9 +1847,9 @@ MonoBehaviour:
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
-  CanardsCtrl: 0.25
-  AileronsCtrl: 1.5
-  ElevatorsCtrl: 12
+  CanardsCtrl: 0.1
+  AileronsCtrl: 0.75
+  ElevatorsCtrl: 10
   PitchJerk: 0.35
   RollJerk: 0.4
   YawJerk: 1
@@ -1867,7 +1867,7 @@ MonoBehaviour:
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
-  AirChamberTest: 1
+  AirChamberTest: 0
 --- !u!1001 &8966088915275858557
 PrefabInstance:
   m_ObjectHideFlags: 0

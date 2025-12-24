@@ -22,7 +22,7 @@
             "SideCd": 0.11,
             "SideBrakesCd": 0.09,
             "ThrustAcceleration": 15,
-            "FullThrustTime": 1.2,
+            "FullThrustTime": 4.8,
             "ImpulseAcceleration": 53.3,
             "ImpulseMaxCharge": 3,
             "ImpulseRecharge": 0.2,
