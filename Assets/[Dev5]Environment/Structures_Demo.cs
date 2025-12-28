@@ -56,7 +56,7 @@ public class Structures_Demo : MonoBehaviour
                     if (cube.ProgressCount >= LinkTime)
                     {
                         cube.Linked = true;
-                        Debug.Log(cube + " has been NetLinked!!!");
+                        Debug.LogWarning(cube + " has been NetLinked!!!");
                     }
                 }
             }

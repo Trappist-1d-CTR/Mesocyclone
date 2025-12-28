@@ -218,7 +218,7 @@ public class DroneControls : MonoBehaviour
                 else
                 {
                     NetLinker.Parts.DronePartStats[i].PartObjectb = NetLinker.Parts.DronePartStats[i].PartObject;
-                    Debug.Log("PartObject with ID " + NetLinker.Parts.DronePartStats[i].IDb + " not found.");
+                    //Debug.Log("PartObject with ID " + NetLinker.Parts.DronePartStats[i].IDb + " not found.");
                 }
             }
         }
@@ -1053,7 +1053,7 @@ public class DroneControls : MonoBehaviour
         if (!CenterOfLiftFound)
         {
             CenterOfLift = VectorA / (float)B;
-            Debug.Log("Center of Lift: " + CenterOfLift);
+            //Debug.Log("Center of Lift: " + CenterOfLift);
             CenterOfLiftFound = true;
             DronePhysics.centerOfMass = CenterOfLift;
         }

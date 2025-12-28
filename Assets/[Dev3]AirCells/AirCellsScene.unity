@@ -331,6 +331,9 @@ MonoBehaviour:
   - {fileID: 1991267078}
   - {fileID: 842495819}
   - {fileID: 406882114}
+  Performance:
+  - {fileID: 8966088915275858563}
+  - {fileID: 8966088915275858562}
 --- !u!1001 &299734737
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1847,7 +1850,6 @@ MonoBehaviour:
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
-  rctrl: 0
   CanardsCtrl: 0.1
   AileronsCtrl: 0.65
   ElevatorsCtrl: 10
@@ -2036,6 +2038,28 @@ MonoBehaviour:
 --- !u!114 &8966088915275858561 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2815971249482727571, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 8966088915275858557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8966088915275858562 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7656740147399162447, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 8966088915275858557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8966088915275858563 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2862165522193007966, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
   m_PrefabInstance: {fileID: 8966088915275858557}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

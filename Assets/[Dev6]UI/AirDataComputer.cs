@@ -25,6 +25,7 @@ public class AirDataComputer : MonoBehaviour
 
     #region Displays
     public TextMeshProUGUI[] SAO;
+    public TextMeshProUGUI[] Performance;
     #endregion
 
     #endregion
@@ -75,6 +76,12 @@ public class AirDataComputer : MonoBehaviour
         SAO[4].text = p.ToString("n1");
         SAO[5].text = r.ToString("n1");
         SAO[6].text = y.ToString("n1");
+        #endregion
+
+
+        #region Get and Display Performance
+        Performance[0].text = "FPS: " + (1f / Time.unscaledDeltaTime).ToString("n0");
+        Performance[1].text = "PhFPS: " + (1f / Time.fixedUnscaledDeltaTime).ToString("n0");
         #endregion
     }
 }

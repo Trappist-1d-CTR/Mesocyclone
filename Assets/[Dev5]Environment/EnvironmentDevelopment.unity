@@ -580,6 +580,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 115
       objectReference: {fileID: 0}
+    - target: {fileID: 1831901956197724303, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966088914410586770, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966088915978599261, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -667,6 +679,10 @@ PrefabInstance:
     - target: {fileID: 8966088916130560981, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Name
       value: CanvasUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966088916184433243, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -903,6 +919,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a5e886de03114df4086926fd7c6ca69e, type: 3}
   m_PrefabInstance: {fileID: 488232710}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &523630085 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2862165522193007966, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &669363427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1019,6 +1046,17 @@ Transform:
   m_Father: {fileID: 1453793532}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &711700568 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7656740147399162447, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &768527018
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1858,7 +1896,7 @@ MonoBehaviour:
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
   CanardsCtrl: 0.1
-  AileronsCtrl: 0.75
+  AileronsCtrl: 0.65
   ElevatorsCtrl: 10
   PitchJerk: 0.35
   RollJerk: 0.4
@@ -2132,6 +2170,9 @@ MonoBehaviour:
   - {fileID: 288317661}
   - {fileID: 288317660}
   - {fileID: 288317659}
+  Performance:
+  - {fileID: 523630085}
+  - {fileID: 711700568}
 --- !u!1001 &1586854988
 PrefabInstance:
   m_ObjectHideFlags: 0
