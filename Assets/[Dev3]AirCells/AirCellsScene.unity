@@ -1847,8 +1847,9 @@ MonoBehaviour:
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
+  rctrl: 0
   CanardsCtrl: 0.1
-  AileronsCtrl: 0.75
+  AileronsCtrl: 0.65
   ElevatorsCtrl: 10
   PitchJerk: 0.35
   RollJerk: 0.4
@@ -1856,7 +1857,7 @@ MonoBehaviour:
   ReactionWheelsPower: 0
   ReactionWheelsTorque: []
   StabilizingWheelTorque: {x: 0, y: 0, z: 0}
-  Wind: {x: 0, y: 0, z: 0}
+  Wind: {x: -55, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   AspectRatio: []
   LiftAoA: []
@@ -1867,7 +1868,7 @@ MonoBehaviour:
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
-  AirChamberTest: 0
+  AirChamberTest: 1
 --- !u!1001 &8966088915275858557
 PrefabInstance:
   m_ObjectHideFlags: 0

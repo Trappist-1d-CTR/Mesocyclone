@@ -657,11 +657,11 @@ public class DroneControls : MonoBehaviour
 
             #region Pitch
             //Pitch Control Assist Augmentations:
-            //  Higher controls at low canards angles (8 at angles between -0.25 and 0.25);
+            //  Higher controls at low canards angles (fixed 1°/sec at angles between -0.25 and 0.25);
             //  Reason: Low canards angles seem to have no effect on actual pitch
             if (Mathf.Abs(ControlSurfaceAngle[0]) <= 0.25)
             {
-                pctrl *= 8;
+                pctrl = 1;
             }
 
             bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
@@ -715,13 +715,13 @@ public class DroneControls : MonoBehaviour
 
             #region Roll
             //Roll Control Assist Augmentations:
-            //  Lowered controls at high canards angle (progressive: 1/4 above or at 0.25 and 1/16 above or at 0.5);
+            //  Lowered controls at high canards angle (progressive: 1/7 above or at 0.35 and 1/14 above or at 0.45);
             //  Higher controls on retraction to neutral speed (x2);
 
-            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.25f)
-                rctrl /= 4;
-            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.5f)
-                rctrl /= 4;
+            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.35f)
+                rctrl /= 7;
+            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.45f)
+                rctrl /= 2;
 
             csp = InputControl.ControlSurfaces.RollClock.IsPressed();
             csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
