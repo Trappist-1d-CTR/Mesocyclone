@@ -323,6 +323,8 @@ MonoBehaviour:
   p: 0
   r: 0
   y: 0
+  mt: 0
+  hm: 1
   SAO:
   - {fileID: 8966088915275858561}
   - {fileID: 8966088915275858560}
@@ -331,6 +333,8 @@ MonoBehaviour:
   - {fileID: 1991267078}
   - {fileID: 842495819}
   - {fileID: 406882114}
+  MainThrust: {fileID: 1660930479}
+  HoverMode: {fileID: 1660930478}
   Performance:
   - {fileID: 8966088915275858563}
   - {fileID: 8966088915275858562}
@@ -1067,6 +1071,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1660930478 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1787333499431847582, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 8966088915275858557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1660930479 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3411511835914123041, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 8966088915275858557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1767187470
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1823,7 +1849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 831e86c5b5199e4418366eb10e5224b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DroneDataTxt: {fileID: 4900000, guid: 59d0f1d97680329498dfa1fdf84858f0, type: 3}
+  DroneDataTxt: 
   NetLinker:
     MainBody:
       DroneBodyStats: []
@@ -1859,7 +1885,7 @@ MonoBehaviour:
   ReactionWheelsPower: 0
   ReactionWheelsTorque: []
   StabilizingWheelTorque: {x: 0, y: 0, z: 0}
-  Wind: {x: -55, y: 0, z: 0}
+  Wind: {x: -60, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   AspectRatio: []
   LiftAoA: []
@@ -1878,39 +1904,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 406882113, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -25
+    - target: {fileID: 2392695868217095951, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 842495817, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_Name
-      value: value [Roll]
-      objectReference: {fileID: 0}
-    - target: {fileID: 842495818, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 888625925, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 888625926, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_text
-      value: 'roll:'
-      objectReference: {fileID: 0}
-    - target: {fileID: 905310669, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -25
-      objectReference: {fileID: 0}
-    - target: {fileID: 905310670, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_text
-      value: 'yaw:
-
-'
-      objectReference: {fileID: 0}
-    - target: {fileID: 1251213715, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 115
+    - target: {fileID: 2927943660247835630, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Pivot.x

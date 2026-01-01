@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class AirDataComputer : MonoBehaviour
@@ -8,6 +9,7 @@ public class AirDataComputer : MonoBehaviour
     #region Variables
 
     private Rigidbody DroneBody;
+    private DroneControls DroneScript;
 
     #region Data
     public float h = 0; //Height
@@ -21,10 +23,15 @@ public class AirDataComputer : MonoBehaviour
     public float p = 0; //Pitch
     public float r = 0; //Roll
     public float y = 0; //Yaw
+
+    public float mt = 0; //Main Thrust
+    public int hm = 1; //Hover Mode
     #endregion
 
     #region Displays
     public TextMeshProUGUI[] SAO;
+    public Slider MainThrust;
+    public Slider HoverMode;
     public TextMeshProUGUI[] Performance;
     #endregion
 
@@ -34,6 +41,7 @@ public class AirDataComputer : MonoBehaviour
     void Start()
     {
         DroneBody = transform.GetComponentInParent<Rigidbody>();
+        DroneScript = transform.GetComponentInParent<DroneControls>();
     }
 
     private void FixedUpdate()
@@ -66,6 +74,11 @@ public class AirDataComputer : MonoBehaviour
         r = DroneBody.rotation.eulerAngles.x;
         if (r > 180) r -= 360;
         y = DroneBody.rotation.eulerAngles.y;
+
+        mt = DroneScript.Thrust;
+
+        hm = DroneScript.HoverMode;
+        if (hm == 6) hm = 5;
         #endregion
 
         #region Display Data
@@ -76,6 +89,8 @@ public class AirDataComputer : MonoBehaviour
         SAO[4].text = p.ToString("n1");
         SAO[5].text = r.ToString("n1");
         SAO[6].text = y.ToString("n1");
+        MainThrust.value = mt;
+        HoverMode.value = 1 - ((hm - 1) / 4f);
         #endregion
 
 

@@ -224,6 +224,8 @@ public class AGlobalValues : MonoBehaviour
         LapseRate = -0.01; //K/m
 
         #endregion
+
+        Debug.Log(new PFrac(-0.4f));
     }
 
     public double CalculateOrbit(double T)

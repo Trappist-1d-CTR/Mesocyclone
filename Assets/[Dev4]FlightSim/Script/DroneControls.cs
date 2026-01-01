@@ -79,7 +79,7 @@ public class DroneControls : MonoBehaviour
         public DronePartsList Parts;
     }
 
-    public TextAsset DroneDataTxt;
+    public string DroneDataTxt;
     public DroneObject NetLinker;
     #endregion
 
@@ -204,7 +204,9 @@ public class DroneControls : MonoBehaviour
         #endregion
 
         #region Read Drone Data
-        NetLinker = new DroneObject { MainBody = JsonUtility.FromJson<MainDroneStats>(DroneDataTxt.text), Parts = JsonUtility.FromJson<DronePartsList>(DroneDataTxt.text) };
+        DroneDataTxt = System.IO.File.ReadAllText(Application.streamingAssetsPath + "/DroneData/DroneProperties.json");
+
+        NetLinker = new DroneObject { MainBody = JsonUtility.FromJson<MainDroneStats>(DroneDataTxt), Parts = JsonUtility.FromJson<DronePartsList>(DroneDataTxt) };
 
         for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
         {
@@ -657,11 +659,11 @@ public class DroneControls : MonoBehaviour
 
             #region Pitch
             //Pitch Control Assist Augmentations:
-            //  Higher controls at low canards angles (fixed 1°/sec at angles between -0.25 and 0.25);
-            //  Reason: Low canards angles seem to have no effect on actual pitch
+            //  Higher controls at low canards angles (10 times at angles between -0.25 and 0.25);
+            //  Reason: Low canards angles seem to have no effect on actual pitch, but begin to at high speeds
             if (Mathf.Abs(ControlSurfaceAngle[0]) <= 0.25)
             {
-                pctrl = 1;
+                pctrl *= 10;
             }
 
             bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();

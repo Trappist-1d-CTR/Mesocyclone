@@ -1,0 +1,124 @@
+{
+    "DroneBodyStats": [
+        {
+            "Name": "NetLinker",
+            "Mass": 5.6,
+            "YesWind": true,
+            "CenterMassX": -0.11,
+            "CenterMassY": 0,
+            "CenterMassZ": 0,
+            "DroneVolume": 0.0102,
+            "DroneParts": 12,
+            "FrontArea": 0.0641,
+            "BrakeArea": 0.0795,
+            "BottomArea": 0.5921,
+            "SideArea": 0.20365,
+            "StallAngle": 30,
+            "MaxInducedAoA": 12,
+            "LiftCurveSlope": 0.1,
+            "FrontCd": 0.006,
+            "AirBrakesCd": 0.26,
+            "BottomCd": 0.54,
+            "SideCd": 0.11,
+            "SideBrakesCd": 0.09,
+            "ThrustAcceleration": 15,
+            "FullThrustTime": 4.8,
+            "ImpulseAcceleration": 53.3,
+            "ImpulseMaxCharge": 3,
+            "ImpulseRecharge": 0.2,
+            "ImpulseStartupTime": 1.5,
+            "ImpulseShutdownTime": 0.15,
+            "HoverMaxThrust": 55,
+            "HoverJerk": 10,
+            "LandingSpeed": -1,
+            "ReactionWheelsTorqueJerk": 100
+        }
+    ],
+
+    "DronePartStats": [
+        {
+            "ID": 10,
+            "IDb": 11,
+            "Name": "Canard",
+            "CenterMassX": 0.343849,
+            "CenterMassY": 0,
+            "CenterMassZ": 0.068621,
+            "Area": 0.01315,
+            "Chord": 0.1662,
+            "ControlAngle": 10
+        },
+        {
+            "ID": 0,
+            "Name": "Fuselage",
+            "CenterMassX": 0.033522,
+            "CenterMassY": 0,
+            "CenterMassZ": 0,
+            "Area": 0.1332,
+            "Chord": 0.8750,
+            "ControlAngle": 0
+        },
+        {
+            "ID": 2,
+            "Name": "AirIntake",
+            "CenterMassX": -0.103804,
+            "CenterMassY": 0,
+            "CenterMassZ": 0,
+            "Area": 0.15595,
+            "Chord": 0.7026,
+            "ControlAngle": 0
+        },
+        {
+            "ID": 1,
+            "Name": "MainWings",
+            "CenterMassX": -0.192711,
+            "CenterMassY": 0,
+            "CenterMassZ": 0,
+            "Area": 0.1657,
+            "Chord": 0.4000,
+            "ControlAngle": 0
+        },
+        {
+            "ID": 6,
+            "IDb": 7,
+            "Name": "FrontAileron",
+            "CenterMassX": -0.092534,
+            "CenterMassY": 0,
+            "CenterMassZ": 0.33259,
+            "Area": 0.01055,
+            "Chord": 0.04241,
+            "ControlAngle": 10
+        },
+        {
+            "ID": 4,
+            "IDb": 5,
+            "Name": "BackAileron",
+            "CenterMassX": -0.410702,
+            "CenterMassY": 0,
+            "CenterMassZ": 0.28,
+            "Area": 0.03615,
+            "Chord": 0.09861,
+            "ControlAngle": 10
+        },
+        {
+            "ID": 3,
+            "Name": "EngineOuttake",
+            "CenterMassX": -0.478441,
+            "CenterMassY": 0,
+            "CenterMassZ": 0,
+            "Area": 0.0005,
+            "Chord": 0.007500,
+            "ControlAngle": 0
+        },
+        {
+            "ID": 8,
+            "IDb": 9,
+            "Name": "Elevator",
+            "CenterMassX": -0.580994,
+            "CenterMassY": 0,
+            "CenterMassZ": 0.09707,
+            "Area": 0.0078,
+            "Chord": 0.2031,
+            "ControlAngle": 12
+        }
+    ]
+}
