@@ -523,6 +523,10 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #region Dev Commands
+        InputControl.Dev.ResetDrone.performed += ResetDrone;
+        #endregion
+
 
         Vector3 CM = DronePhysics.worldCenterOfMass;
 
@@ -1106,6 +1110,23 @@ public class DroneControls : MonoBehaviour
     {
         HoverMode += InputControl.FlightControls.MouseScroll.ReadValue<float>() > 0 ? (HoverMode == 6 ? -2 : -1) : (HoverMode == 4 ? 2 : 1);
         HoverMode = Mathf.Clamp(HoverMode, 1, 6);
+    }
+    #endregion
+
+    #region Reset Drone Position and Velocity
+    private void ResetDrone(InputAction.CallbackContext obj)
+    {
+        InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = Vector3.up;
+        PhysicsVelocity = DronePhysics.velocity = Vector3.zero;
+        if (Air != null) Air.DronePosition = PhysicsPosition;
+        PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
+        PhysicsRotation = DronePhysics.rotation = Quaternion.Euler(0f, 0f, 0f);
+        PhysicsAngVelocity = DronePhysics.angularVelocity = Vector3.zero;
+        PhysicsTorque = Vector3.zero;
+
+        //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
+        if (!AirChamberTest && InverseDistanceWeighting.Values != null)
+            Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
     }
     #endregion
 

@@ -300,6 +300,56 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Dev",
+            "id": "8648cdd1-ffcd-4ef2-8c64-d423a395a3ab",
+            "actions": [
+                {
+                    "name": "ResetDrone",
+                    "type": "Button",
+                    "id": "771b7114-93e2-4115-9cb6-2a7ef4bcc4b3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "One Modifier",
+                    "id": "6d7e5422-9da9-4459-bbfb-09e58bcfac3e",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResetDrone",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "0d9b298a-cc9a-4d60-9154-f683a1ebcf8c",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "ResetDrone",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "819abb0c-27da-485a-ade1-d36f411af54a",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC - KeyMouse (Standard)",
+                    "action": "ResetDrone",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
         }
     ],
     "controlSchemes": [

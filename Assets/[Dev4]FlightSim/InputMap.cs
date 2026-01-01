@@ -322,6 +322,56 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Dev"",
+            ""id"": ""8648cdd1-ffcd-4ef2-8c64-d423a395a3ab"",
+            ""actions"": [
+                {
+                    ""name"": ""ResetDrone"",
+                    ""type"": ""Button"",
+                    ""id"": ""771b7114-93e2-4115-9cb6-2a7ef4bcc4b3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""6d7e5422-9da9-4459-bbfb-09e58bcfac3e"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""0d9b298a-cc9a-4d60-9154-f683a1ebcf8c"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""819abb0c-27da-485a-ade1-d36f411af54a"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -359,6 +409,9 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         m_ControlSurfaces_RollCounterClock = m_ControlSurfaces.FindAction("RollCounterClock", throwIfNotFound: true);
         m_ControlSurfaces_YawRight = m_ControlSurfaces.FindAction("YawRight", throwIfNotFound: true);
         m_ControlSurfaces_YawLeft = m_ControlSurfaces.FindAction("YawLeft", throwIfNotFound: true);
+        // Dev
+        m_Dev = asset.FindActionMap("Dev", throwIfNotFound: true);
+        m_Dev_ResetDrone = m_Dev.FindAction("ResetDrone", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -560,6 +613,39 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         }
     }
     public ControlSurfacesActions @ControlSurfaces => new ControlSurfacesActions(this);
+
+    // Dev
+    private readonly InputActionMap m_Dev;
+    private IDevActions m_DevActionsCallbackInterface;
+    private readonly InputAction m_Dev_ResetDrone;
+    public struct DevActions
+    {
+        private @InputMap m_Wrapper;
+        public DevActions(@InputMap wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ResetDrone => m_Wrapper.m_Dev_ResetDrone;
+        public InputActionMap Get() { return m_Wrapper.m_Dev; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DevActions set) { return set.Get(); }
+        public void SetCallbacks(IDevActions instance)
+        {
+            if (m_Wrapper.m_DevActionsCallbackInterface != null)
+            {
+                @ResetDrone.started -= m_Wrapper.m_DevActionsCallbackInterface.OnResetDrone;
+                @ResetDrone.performed -= m_Wrapper.m_DevActionsCallbackInterface.OnResetDrone;
+                @ResetDrone.canceled -= m_Wrapper.m_DevActionsCallbackInterface.OnResetDrone;
+            }
+            m_Wrapper.m_DevActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @ResetDrone.started += instance.OnResetDrone;
+                @ResetDrone.performed += instance.OnResetDrone;
+                @ResetDrone.canceled += instance.OnResetDrone;
+            }
+        }
+    }
+    public DevActions @Dev => new DevActions(this);
     private int m_PCKeyMouseStandardSchemeIndex = -1;
     public InputControlScheme PCKeyMouseStandardScheme
     {
@@ -586,5 +672,9 @@ public partial class @InputMap : IInputActionCollection2, IDisposable
         void OnRollCounterClock(InputAction.CallbackContext context);
         void OnYawRight(InputAction.CallbackContext context);
         void OnYawLeft(InputAction.CallbackContext context);
+    }
+    public interface IDevActions
+    {
+        void OnResetDrone(InputAction.CallbackContext context);
     }
 }
