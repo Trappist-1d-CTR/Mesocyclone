@@ -39,17 +39,19 @@ public struct PFrac
     #endregion
 
     #region Functions
-    public Vector2Int ZToFraction(float Z)
+    public static Vector2Int ZToFraction(float Z)
     {
+        float epsilon = Mathf.Pow(2, -20);
+
         Z = Mathf.Abs(Z);
         int n = Mathf.FloorToInt(Z);
         float x = Z - n;
 
-        if (x < Mathf.Epsilon)
+        if (x < epsilon)
         {
             return new(n, 1);
         }
-        else if (1 - x < Mathf.Epsilon)
+        else if (1 - x < epsilon)
         {
             return new(n + 1, 1);
         }
@@ -67,8 +69,8 @@ public struct PFrac
             min = upn + lon;
             mid = upd + lod;
 
-            //Debug.Log(min + "/" + mid + " => " + (mid * (x + (n * Mathf.Pow(2, -20))) < min));
-            if (mid * (x + (n * Mathf.Pow(2, -20))) < min)
+            //Debug.Log(min + "/" + mid + " => " + (mid * (x + (n * epsilon)) < min));
+            if (mid * (x + (mid * epsilon)) < min)
             {
                 upn = min;
                 upd = mid;
@@ -78,7 +80,7 @@ public struct PFrac
             {
                 //Debug.Log("Second phase");
 
-                if (mid * (x - (n * Mathf.Pow(2, -20))) > min)
+                if (mid * (x - (mid * epsilon)) > min)
                 {
                     lon = min;
                     lod = mid;
@@ -98,7 +100,7 @@ public struct PFrac
         throw new System.Exception("Float to fraction conversion failure");
     }
 
-    public PFrac FloatToPFrac(float Z)
+    public static PFrac FloatToPFrac(float Z)
     {
         PFrac F = new();
         F.s = Z >= 0;
@@ -119,7 +121,7 @@ public struct PFrac
         return F;
     }
 
-    public void FloatToPFrac(float Z, out bool s, out List<byte> n, out List<byte> d)
+    public static void FloatToPFrac(float Z, out bool s, out List<byte> n, out List<byte> d)
     {
         s = Z >= 0;
 
@@ -137,8 +139,9 @@ public struct PFrac
         }
     }
 
-    public float PFracToFloat(PFrac F)
+    public static float PFracToFloat(PFrac F)
     {
+        F = +F;
         float Z;
 
         if (F.d.Count == 0) throw new System.Exception("Denominator can't be equal to zero");
@@ -150,23 +153,23 @@ public struct PFrac
         return Z;
     }
 
-    public int BytePow(byte b, byte e)
+    public static int BytePow(byte b, byte e)
     {
         int r = 1;
         for (int i = 0; i < e; i++) r *= b;
         return r;
     }
 
-    public int IntPow(int b, int e)
+    public static int IntPow(int b, int e)
     {
         int r = 1;
         for (int i = 0; i < e; i++) r *= b;
         return r;
     }
 
-    public int Abs(int N) { return (N < 0) ? -N : N; }
+    public static int Abs(int N) { return (N < 0) ? -N : N; }
 
-    public int FactorsToN(List<byte> P)
+    public static int FactorsToN(List<byte> P)
     {
         int N = (P.Count != 0) ? 1 : 0;
 
@@ -181,8 +184,11 @@ public struct PFrac
         return N;
     }
 
-    public List<byte> NToFactors(int N)
+    public static List<byte> NToFactors(int N)
     {
+        if (N == 0) return new() { };
+        if (N == 1 || N == -1) return new() { 1 };
+
         List<byte> P = new() { };
         N = Abs(N);
 
@@ -208,15 +214,91 @@ public struct PFrac
 
                 i++;
             }
-
-            if (P.Count == 0)
-            {
-                P = new() { 1 };
-            }
         }
 
         return P;
     }
+
+    public static List<byte> FacMCD(List<byte> a, List<byte> b)
+    {
+        if (a.Count == 0 || b.Count == 0) throw new System.Exception("MCD of 0 not possible");
+        if (a.Count == 1 || b.Count == 1) return new() { 1 };
+
+        List<byte> r = new() { };
+
+        int ii = 0;
+        for (int i = 0; i < a.Count && ii < b.Count; i+=2)
+        {
+            if (a[i] > b[ii])
+            {
+                ii += 2;
+            }
+            else if (a[i] == b[ii])
+            {
+                if (a[i + 1] != b[ii + 1])
+                {
+                    r.Add(a[i]);
+
+                    if (a[i + 1] < b[ii + 1])
+                        r.Add(a[i + 1]);
+                    else
+                        r.Add(b[i + 1]);
+                }
+
+                ii += 2;
+            }
+        }
+
+        if (r.Count == 0) r.Add(1);
+
+        return r;
+    }
+
+    public static List<byte> FacGCD(List<byte> a, List<byte> b) => FacMCD(a, b);
+
+    public static List<byte> FacGCF(List<byte> a, List<byte> b) => FacMCD(a, b);
+
+    public static List<byte> Facmcm(List<byte> a, List<byte> b)
+    {
+        if (a.Count == 0 || b.Count == 0) return new() { };
+        if (a.Count == 1) return b;
+        if (b.Count == 1) return a;
+
+        List<byte> r = new() { };
+
+        int ii = 0;
+        for (int i = 0; i < a.Count && ii < b.Count; i += 2)
+        {
+            if (a[i] < b[ii])
+            {
+                r.Add(a[i]);
+                r.Add(a[i + 1]);
+            }
+            else if (a[i] == b[ii])
+            {
+                r.Add(a[i]);
+
+                if (a[i + 1] >= b[ii + 1])
+                    r.Add(a[i + 1]);
+                else
+                    r.Add(b[ii + 1]);
+
+                ii += 2;
+            }
+            else
+            {
+                r.Add(b[ii]);
+                r.Add(b[ii + 1]);
+                ii += 2;
+            }
+        }
+
+        return r;
+    }
+
+    public static List<byte> FacLCM(List<byte> a, List<byte> b) => Facmcm(a, b);
+
+    public static List<byte> FacSCM(List<byte> a, List<byte> b) => Facmcm(a, b);
     #endregion
 
     #region Static properties
@@ -232,8 +314,57 @@ public struct PFrac
     #endregion
 
     #region Static operators
+    public static PFrac operator +(PFrac F)
+    {
+        if (F.n.Count == 1 || F.d.Count == 1) return F;
+        if (F.n.Count == 0 && F.n.Count == 0) return undefined;
+        if (F.n.Count == 0) return zero;
+        if (F.d.Count == 0) return infinity;
+
+        int ii = 0;
+        for (int i = 0; i < F.n.Count && ii < F.d.Count; i += 2)
+        {
+            if (F.n[i] > F.d[ii])
+            {
+                ii += 2;
+            }
+            else if (F.n[i] == F.d[ii])
+            {
+                if (F.n[i + 1] == F.d[ii + 1])
+                {
+                    F.n.RemoveAt(i + 1);
+                    F.n.RemoveAt(i);
+                    F.d.RemoveAt(ii + 1);
+                    F.d.RemoveAt(ii);
+                }
+                else if (F.n[i + 1] > F.d[ii + 1])
+                {
+                    F.n[i + 1] -= (byte)(F.d[ii + 1] + 1);
+                    F.d.RemoveAt(ii + 1);
+                    F.d.RemoveAt(ii);
+                }
+                else
+                {
+                    F.d[ii + 1] -= (byte)(F.n[i + 1] + 1);
+                    F.n.RemoveAt(i + 1);
+                    F.n.RemoveAt(i);
+                }
+            }
+        }
+
+        if (F.n.Count == 0) F.n = new() { 1 };
+        if (F.d.Count == 0) F.d = new() { 1 };
+
+        return F;
+    }
+
+    public static PFrac operator -(PFrac F) => +new PFrac(!F.s, F.n, F.d);
+
     public static PFrac operator *(PFrac left, PFrac right)
     {
+        left = +left;
+        right = +right;
+
         if (left.n.Count == 0 || right.n.Count == 0)
             return zero;
 
@@ -242,117 +373,206 @@ public struct PFrac
         else if (left.d.Count == 0 ^ right.d.Count == 0)
             return undefined;
 
+        if (left == plus1) return right;
+        if (right == plus1) return left;
+        if (left == minus1) return -right;
+        if (right == minus1) return -left;
+
 
         PFrac result = new();
         result.s = !(left.s ^ right.s);
         result.n = new() { };
         result.d = new() { };
 
-        int i = 0; int ii = 0;
-        while (i < left.n.Count || ii < right.n.Count)
-        {
-            if (i < left.n.Count && left.n[i] < right.n[ii])
-            {
-                result.n.Add(left.n[i]);
-                result.n.Add(left.n[i + 1]);
-                i += 2;
-            }
-            else if (i < left.n.Count && ii < right.n.Count && left.n[i] == right.n[ii])
-            {
-                result.n.Add(left.n[i]);
-                result.n.Add((byte)(left.n[i + 1] + right.n[ii + 1]));
-                i += 2;
-                ii += 2;
-            }
-            else if (ii < right.n.Count)
-            {
-                result.n.Add(right.n[ii]);
-                result.n.Add(right.n[ii + 1]);
-                ii += 2;
-            }
-        }
 
-        i = 0; ii = 0;
-        while (i < left.d.Count || ii < right.d.Count)
+        if (left.n.Count == 1)
+            result.n = right.n;
+        else if (right.n.Count == 1)
+            result.n = left.n;
+        else
         {
-            if (i < left.d.Count && left.d[i] < right.d[ii])
+            int i = 0; int ii = 0;
+            while (i < left.n.Count || ii < right.n.Count)
             {
-                result.d.Add(left.d[i]);
-                result.d.Add(left.d[i + 1]);
-                i += 2;
-            }
-            else if (i < left.d.Count && ii < right.d.Count && left.d[i] == right.d[ii])
-            {
-                result.d.Add(left.d[i]);
-                result.d.Add((byte)(left.d[i + 1] + right.d[ii + 1]));
-                i += 2;
-                ii += 2;
-            }
-            else if (ii < right.d.Count)
-            {
-                result.d.Add(right.d[ii]);
-                result.d.Add(right.d[ii + 1]);
-                ii += 2;
-            }
-        }
-
-        ii = 0;
-        for (i = 0; i < result.n.Count; i += 2)
-        {
-            if (result.d[ii] < result.n[i])
-            {
-                ii += 2;
-            }
-            else if (ii < result.d.Count && result.d[ii] == result.n[i])
-            {
-                if (result.n[i + 1] > result.d[ii + 1])
+                if (i < left.n.Count && (ii >= right.d.Count || left.n[i] < right.n[ii]))
                 {
-                    result.n[i + 1] -= (byte)(result.d[ii + 1] + 1);
-
-                    result.d.RemoveAt(ii + 1);
-                    result.d.RemoveAt(ii);
+                    result.n.Add(left.n[i]);
+                    result.n.Add(left.n[i + 1]);
+                    i += 2;
                 }
-                else if (result.n[i + 1] == result.d[ii + 1])
+                else if (i < left.n.Count && ii < right.n.Count && left.n[i] == right.n[ii])
                 {
-                    result.n.RemoveAt(i + 1);
-                    result.n.RemoveAt(i);
-                    result.d.RemoveAt(ii + 1);
-                    result.d.RemoveAt(ii);
+                    result.n.Add(left.n[i]);
+                    result.n.Add((byte)(left.n[i + 1] + right.n[ii + 1] + 1));
+                    i += 2;
+                    ii += 2;
                 }
-                else
+                else if (i >= left.n.Count || ii < right.n.Count)
                 {
-                    result.d[ii + 1] -= (byte)(result.n[i + 1] + 1);
-
-                    result.n.RemoveAt(i + 1);
-                    result.n.RemoveAt(i);
+                    result.n.Add(right.n[ii]);
+                    result.n.Add(right.n[ii + 1]);
+                    ii += 2;
                 }
             }
         }
 
-        return result;
+        if (left.d.Count == 1)
+            result.d = right.d;
+        else if (right.d.Count == 1)
+            result.d = left.d;
+        else
+        {
+            int i = 0; int ii = 0;
+            while (i < left.d.Count || ii < right.d.Count)
+            {
+                if (i < left.d.Count && (ii >= right.d.Count || left.d[i] < right.d[ii]))
+                {
+                    result.d.Add(left.d[i]);
+                    result.d.Add(left.d[i + 1]);
+                    i += 2;
+                }
+                else if (i < left.d.Count && ii < right.d.Count && left.d[i] == right.d[ii])
+                {
+                    result.d.Add(left.d[i]);
+                    result.d.Add((byte)(left.d[i + 1] + right.d[ii + 1] + 1));
+                    i += 2;
+                    ii += 2;
+                }
+                else if (i >= left.d.Count || ii < right.d.Count)
+                {
+                    result.d.Add(right.d[ii]);
+                    result.d.Add(right.d[ii + 1]);
+                    ii += 2;
+                }
+            }
+        }
+
+        return +result;
     }
 
     public static PFrac operator /(PFrac left, PFrac right)
     {
-        return left * new PFrac(right.s, right.d, right.n);
+        left = +left;
+        right = +right;
+
+        return +(left * new PFrac(right.s, right.d, right.n));
     }
 
     public static PFrac operator *(PFrac left, int right)
     {
-        return left * new PFrac(right >= 0, new PFrac().NToFactors(right), new() { 1 });
+        left = +left;
+
+        return +(left * new PFrac(right >= 0, NToFactors(right), new() { 1 }));
     }
 
     public static PFrac operator *(int left, PFrac right) => right * left;
 
     public static PFrac operator /(PFrac left, int right)
     {
-        return left * new PFrac(right >= 0, new() { 1 }, new PFrac().NToFactors(right));
+        left = +left;
+
+        return +(left * new PFrac(right >= 0, new() { 1 }, NToFactors(right)));
     }
 
-    public static PFrac operator /(int left, PFrac right) => right / left;
+    //public static PFrac operator /(int left, PFrac right) => right / left;
+
+    public static PFrac operator +(PFrac left, PFrac right)
+    {
+        left = +left;
+        right = +right;
+
+        if (left == right) return left * 2;
+        if (left == -right) return zero;
+
+        PFrac r = new();
+
+        if (!(left.s ^ right.s))
+        {
+            r.s = left.s;
+            r.d = Facmcm(left.d, right.d);
+
+            r.n = NToFactors((FactorsToN(left.n) * FactorsToN(r.d) / FactorsToN(left.d)) + (FactorsToN(right.n) * FactorsToN(r.d) / FactorsToN(right.d)));
+        }
+        else
+        {
+            r.s = left > right;
+            r.d = Facmcm(left.d, right.d);
+
+            r.n = NToFactors((FactorsToN(left.n) * FactorsToN(r.d) / FactorsToN(left.d)) - (FactorsToN(right.n) * FactorsToN(r.d) / FactorsToN(right.d)));
+        }
+
+        return +r;
+    }
+
+    public static PFrac operator -(PFrac left, PFrac right) => left + (-right);
+
+    public static bool operator >(PFrac left, PFrac right)
+    {
+        left = +left;
+        right = +right;
+
+        if (left.s)
+        {
+            if (!right.s) return true;
+
+            if (left.d == right.d)
+            {
+                return FactorsToN(left.n) > FactorsToN(right.n);
+            }
+            else if (left.n == right.n)
+            {
+                return FactorsToN(left.d) < FactorsToN(right.d);
+            }
+            else
+            {
+                return PFracToFloat(left) > PFracToFloat(right);
+            }
+        }
+        else
+        {
+            if (right.s) return false;
+
+            if (left.d == right.d)
+            {
+                return FactorsToN(left.n) < FactorsToN(right.n);
+            }
+            else if (left.n == right.n)
+            {
+                return FactorsToN(left.d) > FactorsToN(right.d);
+            }
+            else
+            {
+                return PFracToFloat(left) > PFracToFloat(right);
+            }
+        }
+        
+    }
+
+    public static bool operator <(PFrac left, PFrac right) => right > left;
+
+    public static bool operator ==(PFrac left, PFrac right)
+    {
+        left = +left;
+        right = +right;
+
+        return left.s == right.s && left.n == right.n && left.d == right.d;
+    } 
+
+    public static bool operator !=(PFrac left, PFrac right) => !(left == right);
+
+    public static explicit operator PFrac(float Z) => FloatToPFrac(Z);
+
+    public static explicit operator PFrac(int N) => FloatToPFrac(N);
     #endregion
 
     #region Static overrides
     public override string ToString() => $"{(s ? '+' : '-')}{FactorsToN(n)}/{FactorsToN(d)}";
+
+    public override bool Equals(object obj) => new PFrac(s, n, d) == (PFrac)obj;
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
     #endregion
 }

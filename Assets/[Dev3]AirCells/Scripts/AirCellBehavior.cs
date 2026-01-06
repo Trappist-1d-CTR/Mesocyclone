@@ -55,6 +55,8 @@ public class AirCellBehavior : MonoBehaviour
 
     #endregion
 
+    int iy = 0;
+
     private void Awake()
     {
         //Get Script Reference
@@ -104,6 +106,14 @@ public class AirCellBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
+        iy++;
+
+        if (iy == 100)
+        {
+            Debug.Log("");
+            iy = 0;
+        }
+
         #region Average Local Values
         AverageLocalTemp = 0;
         for (int i = 0; i < CellGroupNumber; i++)
@@ -148,14 +158,14 @@ public class AirCellBehavior : MonoBehaviour
             DebugEverything(i);
 
             #region Diffusion
-            AirCellGroup[i].Temperature += C.EOS_Diffusion[iLocal] / C.EOS_AtmC;
+            AirCellGroup[i].Temperature += (C.EOS_Diffusion[iLocal] / C.EOS_AtmC) * Time.fixedDeltaTime;
             #endregion
             //if (i == 0) Debug.Log("Diffusion: " + (C.EOS_Diffusion[0] / C.EOS_AtmC));
 
             DebugEverything(i);
 
             #region Radiative Heating/Cooling
-            mem = C.GreekS * C.AtmSpecificEmissivity * ((2 * AirCellGroup[i].CellCircleArea) + (2 * System.Math.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.Math.Pow(AirCellGroup[i].Temperature, 4);
+            mem = C.GreekS * C.AtmSpecificEmissivity * ((2 * AirCellGroup[i].CellCircleArea) + (2 * System.Math.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.Math.Pow(AirCellGroup[i].Temperature, 4) * Time.fixedDeltaTime;
             //if (i == 0)   Debug.Log("Radiative Cooling: " + (mem / (AirCellGroup[i].Moles * C.GaleAtmMM * C.EOS_AtmC)));
             AirCellGroup[i].Temperature -= mem / (AirCellGroup[i].Moles * C.GaleAtmMM * C.EOS_AtmC);
             #endregion
@@ -240,20 +250,20 @@ public class AirCellBehavior : MonoBehaviour
 
             if (Mathf.Abs(AirCellGroup[i].CellCenter.x) >= 500.1)
             {
-                AirCellGroup[i].Velocity = Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(-1, 1, 1));
-                AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x > 0 ? 500 : -500, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z);
+                AirCellGroup[i].Velocity += new Vector3(Mathf.Sign(AirCellGroup[i].CellCenter.x) * -50 * Time.fixedDeltaTime, 0, 0); //Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(-0.1f, 1, 1));
+                //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x > 0 ? 500 : -500, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z);
             }
 
             if (Mathf.Abs(AirCellGroup[i].CellCenter.z) >= 500.1)
             {
-                AirCellGroup[i].Velocity = Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(1, 1, -1));
-                AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z > 0 ? 500 : -500);
+                AirCellGroup[i].Velocity += new Vector3(0, 0, Mathf.Sign(AirCellGroup[i].CellCenter.z) * -50 * Time.fixedDeltaTime);
+                //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z > 0 ? 500 : -500);
             }
 
             if (AirCellGroup[i].CellCenter.y >= C.SimulationHeight + 0.1)
             {
-                AirCellGroup[i].Velocity = Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(1, -1, 1));
-                AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, (float)C.SimulationHeight, AirCellGroup[i].CellCenter.z);
+                AirCellGroup[i].Velocity += new Vector3(0, Mathf.Sign(AirCellGroup[i].CellCenter.y) * -50 * Time.fixedDeltaTime, 0);
+                //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, (float)C.SimulationHeight, AirCellGroup[i].CellCenter.z);
             }
 
             #endregion
