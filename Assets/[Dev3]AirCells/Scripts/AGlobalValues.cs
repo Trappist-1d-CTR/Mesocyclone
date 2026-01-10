@@ -91,7 +91,6 @@ public class AGlobalValues : MonoBehaviour
     public double Inclination, RiAscAscendNode, ArgPeriapsis;
     public Vector3 Perpendicular, OriginPosition;
     public double TrueAnomaly, MeanAnomaly, EccentricAnomaly;
-    private bool abReversed;
     #endregion
 
     #region EOS-ESTM
@@ -139,6 +138,8 @@ public class AGlobalValues : MonoBehaviour
         kb = 1.380649 * Mathf.Pow(10f, -23); // J/K
         //Universla Gravitational Constant
         G = 6.674 * Mathf.Pow(10f, -11); // m^3/(kg * s^2)
+        //Omega Constant
+        Omega = 0.567143290409783873; //Omega * e^(Omega) = 1
         #endregion
 
         #region Setup Sun Data

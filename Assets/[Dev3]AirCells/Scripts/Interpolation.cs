@@ -34,6 +34,8 @@ public static class InverseDistanceWeighting
 
     public static void InterpolationStep(Vector3 Xi, float[] u)
     {
+        if (R == 0) throw new System.Exception("Interpolation Step attempt with null radius");
+
         if (!LockValues)
         {
             double d = Vector3.Distance(Query, Xi);
@@ -53,10 +55,14 @@ public static class InverseDistanceWeighting
                 SUM_wu[i] += w * u[i];
             }
         }
+
+        return;
     }
 
     public static void BroadcastInterp()
     {
+        if (SUM_w == 0) throw new System.Exception("Interpolation Broadcast attempt with null weight");
+
         if (!LockValues)
         {
             Values = new float[SUM_wu.Length];

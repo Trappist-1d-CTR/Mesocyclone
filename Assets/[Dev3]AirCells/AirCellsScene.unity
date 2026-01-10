@@ -1896,7 +1896,7 @@ MonoBehaviour:
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
-  AirChamberTest: 1
+  AirChamberTest: 0
 --- !u!1001 &8966088915275858557
 PrefabInstance:
   m_ObjectHideFlags: 0

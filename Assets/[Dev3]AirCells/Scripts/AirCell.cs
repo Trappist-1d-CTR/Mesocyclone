@@ -28,8 +28,6 @@ public class AirCell
     public double StiffnessConstant;
     #endregion
 
-    private double memory;
-
     #endregion
 
     #region Constructors
@@ -122,7 +120,7 @@ public class AirCell
     public void SetSizeV(double V)
     {
         CellStaticVolume = V;
-        CellHeight = System.Math.Pow(V, 0.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333);
+        CellHeight = System.Math.Pow(V, 1.0 / 3.0);
         CellCircleArea = V / CellHeight;
         CellRadius = System.Math.Sqrt(CellCircleArea / System.Math.PI);
     }
