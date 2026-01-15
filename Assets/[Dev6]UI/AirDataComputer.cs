@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class AirDataComputer : MonoBehaviour
@@ -10,6 +11,12 @@ public class AirDataComputer : MonoBehaviour
 
     private Rigidbody DroneBody;
     private DroneControls DroneScript;
+
+    #region Camera & UI
+    public Vector2 CameraRotation;
+    public Vector3 CameraVector;
+    public ButtonEventSystem BackgrES;
+    #endregion
 
     #region Data
     public float h = 0; //Height
@@ -42,10 +49,36 @@ public class AirDataComputer : MonoBehaviour
     {
         DroneBody = transform.GetComponentInParent<Rigidbody>();
         DroneScript = transform.GetComponentInParent<DroneControls>();
+
+        CameraRotation = Vector3.zero;
+        CameraVector = transform.localPosition;
     }
 
     private void FixedUpdate()
     {
+        #region Camera Controls
+        if (BackgrES.PointerOverElement)
+        {
+            if (ButtonEventSystem.PointerClickButtons == 1)
+            {
+                                     // Up/down rotation                                                 // Rotation around normal
+                CameraRotation = new(CameraRotation.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+
+                if (Mathf.Abs(CameraRotation.x) > 180)
+                {
+                    CameraRotation.x = Mathf.Sign(CameraRotation.x) * (Mathf.Abs(CameraRotation.x) - 360);
+                }
+                if (Mathf.Abs(CameraRotation.y) >= 360)
+                {
+                    CameraRotation.y -= Mathf.Sign(CameraRotation.y) * 360;
+                }
+            }
+        }
+
+        transform.localRotation = Quaternion.Euler(6 + CameraRotation.x, 90 + CameraRotation.y, 0);
+        transform.localPosition = Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * CameraVector);
+        #endregion
+
         #region Calculate Data
         if (prev_h == Mathf.Infinity)
         {

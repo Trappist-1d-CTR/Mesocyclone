@@ -260,7 +260,7 @@ Camera:
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
+  m_FocalLength: 28.970562
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -295,7 +295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 215281391}
   m_LocalRotation: {x: 0.03700707, y: 0.7061378, z: -0.03700707, w: 0.7061378}
-  m_LocalPosition: {x: -2.540254, y: 0.260126, z: 0.00000011920929}
+  m_LocalPosition: {x: -2.540254, y: 0.260126, z: 0}
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -314,6 +314,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e5ead60197afb044a1f43c990d75591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CameraRotation: {x: 0, y: 0}
+  CameraVector: {x: 0, y: 0, z: 0}
+  BackgrES: {fileID: 1688888382}
   h: 0
   prev_h: Infinity
   delta_h: 0
@@ -1091,6 +1094,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1688888382 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5717290762145121952, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 8966088915275858557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78ce6b5e4c6247e4e944aaf6de634efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1767187470
