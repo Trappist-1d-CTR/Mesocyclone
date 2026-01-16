@@ -29,7 +29,7 @@ public class AGlobalValues : MonoBehaviour
     public double EarthR;
     public double EarthG;
     public double EarthAtmMM;
-    public double EarthAtmC;
+    public double EarthAtmC; // TODO: what value?
     public double EarthAtmCp;
     public double EarthAvgTemp;
     public double EarthKarman;
@@ -61,7 +61,7 @@ public class AGlobalValues : MonoBehaviour
 
     #region Gale Atmosphere
 
-    public List<double> GaleAtmosphericComposition;
+    public List<double> GaleAtmosphericComposition = new(5); // TODO: what value do i put for each index?
 
     public double GaleAtmCp;
     public double LapseRate;
@@ -196,7 +196,7 @@ public class AGlobalValues : MonoBehaviour
             e = System.Math.Sqrt(1 - System.Math.Pow(b / a, 2));
         }
 
-        c = System.Math.Sqrt(System.Math.Pow(a, 2) + System.Math.Pow(b, 2));
+        c = System.Math.Sqrt(System.Math.Pow(a, 2) - System.Math.Pow(b, 2));
 
         OrbitalPeriod = System.Math.Sqrt(System.Math.Pow(a, 3) * (4 * System.Math.Pow(System.Math.PI, 2) / (G * StarM)));
 
@@ -206,7 +206,7 @@ public class AGlobalValues : MonoBehaviour
 
         Perpendicular = new Vector3((float)(-System.Math.Cos(RiAscAscendNode) * System.Math.Sin(Inclination)), (float)(System.Math.Cos(Inclination) * System.Math.Cos(RiAscAscendNode)), (float)(System.Math.Sin(RiAscAscendNode) * System.Math.Sin(Inclination)));
 
-        //OriginPosition = Quaternion.AngleAxis((float)(ArgPeriapsis / 0.0174532924), Perpendicular) * -(Quaternion.AngleAxis((float)(RiAscAscendNode / 0.0174532924), Vector3.up) * ((float)(c * System.Math.Cos(Inclination)) * Vector3.right));
+        //OriginPosition = Quaternion.AngleAxis((float)(ArgPeriapsis / 0.0174532924), Perpendicular) * -(Quaternion.AngleAxis((float)(RiAscAscendNode / 0.0174532924), Vector3.up) * ((float)(c * System.Math.Cos(Inclination)) * Vector3.right)); // leave out commented for now
 
         #endregion
 
@@ -302,6 +302,8 @@ public class AGlobalValues : MonoBehaviour
     public double AvgDensityAtHeight(double Height)
     {
         //   Debug.Log("p = " + (Height - GaleKarman) / ((-StaticPressureAtHeight(Height) / GaleG) + (13519.1 * GaleAtmMM / (R * GaleAvgTemp))));
+        if (Height >= GaleKarman)
+            return 0;
         return ((-StaticPressureAtHeight(Height) / GaleG) + (13519.1 * GaleAtmMM / (R * GaleAvgTemp))) / (Height - GaleKarman);
     }
 
@@ -366,7 +368,7 @@ public class AGlobalValues : MonoBehaviour
 
         double MeanInsolation = GreekS * System.Math.Pow(StarR / GaleSemiMajor, 2) * System.Math.Pow(StarT, 4);
 
-        for (int i = 0; i < N / 2; i++)
+        for (int i = 0; i < N; i++)
         {
             Result[i] = MeanInsolation * System.Math.Cos(0.01745329 * ((i + 0.5) * (180 / N))) * (1 + (EOS_AtmA / (1 - EOS_AtmA)));
         }
@@ -487,19 +489,16 @@ public class AGlobalValues : MonoBehaviour
 
             for (int i = 0; i < EOS_N; i++)
             {
-                EOS_Temperature[i] += EOS_Insolation[i] * (1 - EOS_A) * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
-
                 for (int i2 = i + 1; i2 < EOS_N; i2++)
                 {
-                    /*EOS_X[(i * EOS_N) - (i * (i + 1) / 2) + i2 - i - 1]*/
-
-                    double mem;
-
-                    mem = (EOS_D[0] * ((EOS_Temperature[i2] - EOS_Temperature[i]) * System.Math.Pow(EOS_X[(i * EOS_N) - (i * (i + 1) / 2) + i2 - i - 1], 2))) / 2;
-
+                    int index = (i * EOS_N) - (i * (i + 1) / 2) + i2 - i - 1;
+                    
+                    double mem = (EOS_D[0] * ((EOS_Temperature[i2] - EOS_Temperature[i]) * 
+                                 System.Math.Pow(EOS_X[index], 2))) / 2;
+                    
                     EOS_Diffusion[i] += mem * Time.fixedDeltaTime;
                     EOS_Diffusion[i2] -= mem * Time.fixedDeltaTime;
-
+                    
                     EOS_Temperature[i] += mem * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
                     EOS_Temperature[i2] -= mem * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
                 }
