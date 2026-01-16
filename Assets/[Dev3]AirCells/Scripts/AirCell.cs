@@ -20,7 +20,7 @@ public class AirCell
     public Vector3 Acceleration;    //Resulting due to forces, dynamic
 
     public double CellStaticVolume;
-    public double CellDynamicVolume;
+    // public double CellDynamicVolume; // never initialized or referenced : what value?
     public double CellCircleArea;
     public double CellRadius;
     public double CellHeight;
@@ -105,8 +105,11 @@ public class AirCell
 
     public void AccAlongVelocity(float Acc)
     {
-        Acceleration = Velocity.normalized * Acc;
-        Velocity += Acceleration * Time.deltaTime;
+        if (Velocity.sqrMagnitude > 1e-10)
+        {  
+            Acceleration = Velocity.normalized * Acc;
+            Velocity += Acceleration * Time.fixedDeltaTime;   
+        }
     }
 
     public void AccAlongVelocity(float Acc, float deltaTime)
