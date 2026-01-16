@@ -55,12 +55,27 @@ public class AirCellBehavior : MonoBehaviour
 
     #endregion
 
-    int iy = 0;
+    // int iy = 0;
 
     private void Awake()
     {
-        //Get Script Reference
-        C = GameObject.FindGameObjectWithTag("GameController").GetComponent<AGlobalValues>();
+        // GameObject reference
+        GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+        if (controller == null)
+        {
+            Debug.LogError('No GameObject with tag "GameController"');
+            return;
+        }
+
+        // component reference
+        C = controller.GetComponent<AGlobalValues>();
+        if (C == null)
+        {
+            Debug.LogError("No 'AGlobalValues' Component attached to controller object");
+            return;
+        }
+
+        CellsRepulsionSOM = new List<Vector3>();
 
         #region Instantiate Air Cells
         float l = Mathf.Floor(Mathf.Pow(CellGroupNumber, (float)(1f / 3f)));
@@ -106,14 +121,15 @@ public class AirCellBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        iy++;
+        // iy++;
 
-        if (iy == 100)
+        /* if (iy == 100)
         {
             Debug.Log("");
             iy = 0;
         }
-
+        */
+        
         #region Average Local Values
         AverageLocalTemp = 0;
         for (int i = 0; i < CellGroupNumber; i++)
@@ -273,7 +289,7 @@ public class AirCellBehavior : MonoBehaviour
         #endregion
 
         #region Inter-Cell Behavior
-        CellsRepulsionSOM = new List<Vector3>();
+        CellsRepulsionSOM.Clear();
         float d, r1, r2, d1, d2, A, h;
 
         for (int i = 0; i < CellGroupNumber; i++)
@@ -308,8 +324,8 @@ public class AirCellBehavior : MonoBehaviour
 
                     if (h * A > 0 && DynVolumeSOM[i] > 0 && DynVolumeSOM[i2] > 0)
                     {
-                        DynVolumeSOM[i] -= A * h / 2;
-                        DynVolumeSOM[i2] -= A * h / 2;
+                        DynVolumeSOM[i] = System.Math.Max(0, DynVolumeSOM[i] - A * h / 2);
+                        DynVolumeSOM[i2] = System.Math.Max(0, DynVolumeSOM[i2] - A * h / 2);
 
                         CellsRepulsionSOM.Add(new Vector3(i, i2, A * h));
                     }
@@ -452,7 +468,7 @@ AirCellGroup[i].PerformAcceleration((float)C.GaleG * DistanceScale * GravityScal
 //Force from Ceiling (y = 1000)
 //AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - AirCellGroup[i].CellCenter.y) / DistanceScale))) * DistanceScale * Vector3.down);
 
-//Force from walls (x = ± 1000, y = ± 1000)
+//Force from walls (x = Â± 1000, y = Â± 1000)
 AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.x)) / DistanceScale))) * (AirCellGroup[i].CellCenter.x > 0 ? 1 : -1) * DistanceScale * Vector3.left);
 AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.z)) / DistanceScale))) * (AirCellGroup[i].CellCenter.z > 0 ? 1 : -1) * DistanceScale * Vector3.back);
 
