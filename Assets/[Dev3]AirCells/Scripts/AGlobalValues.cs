@@ -61,7 +61,7 @@ public class AGlobalValues : MonoBehaviour
 
     #region Gale Atmosphere
 
-    public List<double> GaleAtmosphericComposition = new(5); // TODO: what value do i put for each index?
+    public List<double> GaleAtmosphericComposition = new(5) { 0.0002, 0.134, 0.417, 0.3628, 0.086 };
 
     public double GaleAtmCp;
     public double LapseRate;
@@ -489,6 +489,8 @@ public class AGlobalValues : MonoBehaviour
 
             for (int i = 0; i < EOS_N; i++)
             {
+                EOS_Temperature[i] += EOS_Insolation[i] * (1 - EOS_A) * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
+                
                 for (int i2 = i + 1; i2 < EOS_N; i2++)
                 {
                     int index = (i * EOS_N) - (i * (i + 1) / 2) + i2 - i - 1;
