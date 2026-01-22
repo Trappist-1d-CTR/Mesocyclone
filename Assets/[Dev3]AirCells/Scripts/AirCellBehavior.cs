@@ -63,7 +63,7 @@ public class AirCellBehavior : MonoBehaviour
         GameObject controller = GameObject.FindGameObjectWithTag("GameController");
         if (controller == null)
         {
-            Debug.LogError('No GameObject with tag "GameController"');
+            Debug.LogError("No GameObject with tag GameController");
             return;
         }
 

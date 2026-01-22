@@ -14,8 +14,8 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b1cfd2c44d7a97f4fba8567fac6eaa96, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_Sun: {fileID: 2018913409}
+  m_IndirectSpecularColor: {r: 0.23082641, g: 0.24990082, b: 0.27222797, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 36694490}
   - component: {fileID: 36694489}
   - component: {fileID: 36694488}
+  - component: {fileID: 36694491}
   m_Layer: 0
   m_Name: Structure (1)
   m_TagString: Untagged
@@ -220,6 +221,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 36694486}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &36694491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36694486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure0
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1001 &77339315
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -286,6 +305,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d77650a6c14fd06419c8b2c4e7ab28bf, type: 3}
       propertyPath: m_Name
       value: Drone Canards
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d77650a6c14fd06419c8b2c4e7ab28bf, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d77650a6c14fd06419c8b2c4e7ab28bf, type: 3}
@@ -361,6 +384,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone Fuselage
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
 --- !u!4 &97875631 stripped
@@ -380,6 +407,7 @@ GameObject:
   - component: {fileID: 204013446}
   - component: {fileID: 204013445}
   - component: {fileID: 204013444}
+  - component: {fileID: 204013447}
   m_Layer: 0
   m_Name: Structure (3)
   m_TagString: Untagged
@@ -465,6 +493,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 204013442}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &204013447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204013442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure2
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1001 &225347479
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -532,6 +578,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone LeftElevator
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b6c8728f02df4b64e9a4d93184a65903, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6c8728f02df4b64e9a4d93184a65903, type: 3}
 --- !u!4 &225347480 stripped
@@ -552,6 +602,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2927943660247835630, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3004273391924647397, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3474897985511922805, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909096492175387911, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592090197389616602, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592090197389616602, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -641,6 +711,10 @@ PrefabInstance:
     - target: {fileID: 8966088916130560981, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Name
       value: CanvasUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966088916130560981, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -881,6 +955,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone EngineOuttake
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a5e886de03114df4086926fd7c6ca69e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5e886de03114df4086926fd7c6ca69e, type: 3}
 --- !u!4 &488232711 stripped
@@ -966,6 +1044,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone AirIntake
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f70de32164fadf141a6b3e01deca2fb9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f70de32164fadf141a6b3e01deca2fb9, type: 3}
 --- !u!4 &669363428 stripped
@@ -993,7 +1075,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 699235492}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Corrective
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1104,6 +1186,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone LeftBackAileron
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f6afbb37327de384f8f9bfcb8d12a6e6, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6afbb37327de384f8f9bfcb8d12a6e6, type: 3}
 --- !u!4 &768527019 stripped
@@ -1177,6 +1263,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b148956424e24704db41503068fe56c9, type: 3}
       propertyPath: m_Name
       value: Drone LeftFrontAileron
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b148956424e24704db41503068fe56c9, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b148956424e24704db41503068fe56c9, type: 3}
@@ -1490,6 +1580,17 @@ Transform:
   m_Father: {fileID: 1901281956}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1329184840 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8906286457922796432, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1399176967
 GameObject:
   m_ObjectHideFlags: 0
@@ -1502,6 +1603,7 @@ GameObject:
   - component: {fileID: 1399176971}
   - component: {fileID: 1399176970}
   - component: {fileID: 1399176969}
+  - component: {fileID: 1399176972}
   m_Layer: 0
   m_Name: Structure (6)
   m_TagString: Untagged
@@ -1587,6 +1689,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399176967}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1399176972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399176967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure4
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1001 &1415949710
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1653,6 +1773,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 924e960e67765024ab0e192a902577ff, type: 3}
       propertyPath: m_Name
       value: Drone RightBackAileron
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 924e960e67765024ab0e192a902577ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 924e960e67765024ab0e192a902577ff, type: 3}
@@ -1727,6 +1851,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e8e2df879eb404140bc45242f4f5e9c1, type: 3}
       propertyPath: m_Name
       value: Drone RightFrontAileron
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e8e2df879eb404140bc45242f4f5e9c1, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8e2df879eb404140bc45242f4f5e9c1, type: 3}
@@ -1827,9 +1955,9 @@ GameObject:
   - component: {fileID: 1453793529}
   - component: {fileID: 1453793528}
   - component: {fileID: 1453793527}
+  - component: {fileID: 1453793534}
   - component: {fileID: 1453793526}
-  - component: {fileID: 1453793533}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlightDrone
   m_TagString: Player
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
@@ -2022,7 +2150,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1453793533
+--- !u!114 &1453793534
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2031,11 +2159,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1453793525}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47c4fa3096027a2489dc3bafc6525cb7, type: 3}
+  m_Script: {fileID: 11500000, guid: daa001d0a5e97ff41a1cb3dab624faec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetLinkerRange: 20
-  LinkTime: 1
+  DroneNet: []
+  Structures: []
+  NetLinkerRange: 150
+  DataTransferRate: 15
+  Linking: {fileID: 1329184840}
 --- !u!1 &1546591350
 GameObject:
   m_ObjectHideFlags: 0
@@ -2048,7 +2179,7 @@ GameObject:
   - component: {fileID: 1546591351}
   - component: {fileID: 1546591352}
   - component: {fileID: 1546591354}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DroneComputer
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -2079,8 +2210,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 45
+  far clip plane: 10000
+  field of view: 35.154
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -2227,6 +2358,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone MainWings
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5676e56943534c24eabc3dcd7bf1d83d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5676e56943534c24eabc3dcd7bf1d83d, type: 3}
 --- !u!4 &1586854989 stripped
@@ -2246,6 +2381,7 @@ GameObject:
   - component: {fileID: 1674180535}
   - component: {fileID: 1674180534}
   - component: {fileID: 1674180533}
+  - component: {fileID: 1674180536}
   m_Layer: 0
   m_Name: Structure (5)
   m_TagString: Untagged
@@ -2331,6 +2467,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674180531}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1674180536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674180531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure3
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1001 &1729123364
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2398,6 +2552,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drone RightElevator
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 40a23eded4875354585dc3ea028df79c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40a23eded4875354585dc3ea028df79c, type: 3}
 --- !u!4 &1729123365 stripped
@@ -2417,6 +2575,7 @@ GameObject:
   - component: {fileID: 1759765003}
   - component: {fileID: 1759765002}
   - component: {fileID: 1759765001}
+  - component: {fileID: 1759765004}
   m_Layer: 0
   m_Name: Structure (7)
   m_TagString: Untagged
@@ -2502,6 +2661,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759764999}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1759765004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759764999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure5
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1 &1805376280
 GameObject:
   m_ObjectHideFlags: 0
@@ -2514,6 +2691,7 @@ GameObject:
   - component: {fileID: 1805376284}
   - component: {fileID: 1805376283}
   - component: {fileID: 1805376282}
+  - component: {fileID: 1805376285}
   m_Layer: 0
   m_Name: Structure (8)
   m_TagString: Untagged
@@ -2599,6 +2777,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1805376280}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1805376285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805376280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure6
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1 &1901281955
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,6 +2842,7 @@ GameObject:
   - component: {fileID: 1917580427}
   - component: {fileID: 1917580426}
   - component: {fileID: 1917580425}
+  - component: {fileID: 1917580428}
   m_Layer: 0
   m_Name: Structure (2)
   m_TagString: Untagged
@@ -2731,6 +2928,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917580423}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1917580428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917580423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Structure1
+  Type: Unknown
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!114 &1972597787 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1787333499431847582, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -2753,7 +2968,7 @@ GameObject:
   - component: {fileID: 2018913410}
   - component: {fileID: 2018913409}
   m_Layer: 0
-  m_Name: Directional Light
+  m_Name: GaleStar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2770,7 +2985,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.972549, g: 0.96862745, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -2803,7 +3018,7 @@ Light:
       e33: 1
     m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
-  m_DrawHalo: 1
+  m_DrawHalo: 0
   m_Flare: {fileID: 0}
   m_RenderMode: 0
   m_CullingMask:
@@ -2828,14 +3043,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2018913408}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.090606816, y: 0.079000615, z: -0.00721047, w: 0.9927222}
   m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 10.43, y: 9.1, z: 0}
 --- !u!1 &2074921258
 GameObject:
   m_ObjectHideFlags: 0
@@ -2848,6 +3063,7 @@ GameObject:
   - component: {fileID: 2074921262}
   - component: {fileID: 2074921261}
   - component: {fileID: 2074921260}
+  - component: {fileID: 2074921263}
   m_Layer: 0
   m_Name: Structure (4)
   m_TagString: Untagged
@@ -2933,6 +3149,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2074921258}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2074921263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074921258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Rising Gas
+  Type: Weather Station
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
 --- !u!1 &2083857063
 GameObject:
   m_ObjectHideFlags: 0
@@ -2942,7 +3176,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2083857064}
-  - component: {fileID: 2083857065}
   m_Layer: 0
   m_Name: Structures (Demo)
   m_TagString: ArtificialStructure
@@ -2974,20 +3207,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2083857065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083857063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47c4fa3096027a2489dc3bafc6525cb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetLinkerRange: 0
-  LinkTime: 0
 --- !u!1 &2133457044
 GameObject:
   m_ObjectHideFlags: 0
@@ -3000,6 +3219,7 @@ GameObject:
   - component: {fileID: 2133457047}
   - component: {fileID: 2133457046}
   - component: {fileID: 2133457045}
+  - component: {fileID: 2133457049}
   m_Layer: 0
   m_Name: Structure (0)
   m_TagString: Untagged
@@ -3085,3 +3305,21 @@ Transform:
   m_Father: {fileID: 2083857064}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133457049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133457044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Station
+  Type: Drone Silo
+  t: {fileID: 0}
+  Data2Link: 10
+  LinkedData: 0
+  Linked: 0
