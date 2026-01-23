@@ -236,7 +236,7 @@ MonoBehaviour:
   Name: Structure0
   Type: Unknown
   t: {fileID: 0}
-  Data2Link: 10
+  Data2Link: 25
   LinkedData: 0
   Linked: 0
 --- !u!1001 &77339315
@@ -624,6 +624,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8906286457922796432, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_FillAmount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -715,6 +719,10 @@ PrefabInstance:
     - target: {fileID: 8966088916130560981, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9092946095756578525, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -103
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -1119,6 +1127,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &725916101 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 223130076635827279, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &768527018
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1353,6 +1366,17 @@ Transform:
   m_Father: {fileID: 1901281956}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &960956693 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6887355116898544287, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1133035715
 GameObject:
   m_ObjectHideFlags: 0
@@ -2164,9 +2188,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DroneNet: []
   Structures: []
-  NetLinkerRange: 150
+  FocusStructure: 0
+  NetLinkerRange: 500
   DataTransferRate: 15
-  Linking: {fileID: 1329184840}
+  RadarRange: 1000
+  StructureName: {fileID: 960956693}
+  LinkingAnimation: {fileID: 1329184840}
+  Radar: {fileID: 725916101}
+  RadarList: []
+  StructureSprite: {fileID: 21300000, guid: de931593127008f4bbdeb6b9a915556c, type: 3}
+  AnimCurve:
+  - serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &1546591350
 GameObject:
   m_ObjectHideFlags: 0
@@ -3164,7 +3218,7 @@ MonoBehaviour:
   Name: Rising Gas
   Type: Weather Station
   t: {fileID: 0}
-  Data2Link: 10
+  Data2Link: 70
   LinkedData: 0
   Linked: 0
 --- !u!1 &2083857063
@@ -3320,6 +3374,6 @@ MonoBehaviour:
   Name: Station
   Type: Drone Silo
   t: {fileID: 0}
-  Data2Link: 10
+  Data2Link: 25
   LinkedData: 0
   Linked: 0
