@@ -14,7 +14,7 @@ It contains lots of physics, explanations, and nerdy af jokes (all of which will
 The codeitself is full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
 You can find the ones I coded myself, though, by peeking into the Assets Folder and locating all the ones marked with the following [Dev#] (# being a number) and then opening the folder named "Script(s)".
 
-Everything was made in Unity, Visual Studio, and C#
+Everything was made in Unity, Blender, Visual Studio, and C#
 
 - [Dev1] was my attempt, as one of my school teachers suggested, to analyze how gas particles would behave as singular particles rather than how they're actually dealt with in the actual project. Useful for physics demonstration or if you need a foundation to base yourself on.
 - [Dev2] was my initial attempt at simulating gas physics, with fixed grids made out of hexagons which would exchange particles, heat, etc. Because of performance issues, however, this idea was discarded. I don't remember too much about it, so feel free to explore it yourself.
