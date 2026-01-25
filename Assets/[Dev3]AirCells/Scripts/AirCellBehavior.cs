@@ -297,8 +297,12 @@ public class AirCellBehavior : MonoBehaviour
             for (int i2 = i + 1; i2 < CellGroupNumber; i2++)
             {
                 #region Check For and Calculate Overlaps
+                d = Vector2.Distance(new Vector2(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.z), 
+                                     new Vector2(AirCellGroup[i2].CellCenter.x, AirCellGroup[i2].CellCenter.z));
+                d = SafeDistance(d); // prevent division by zero
+
                 if ((h = System.Math.Abs(AirCellGroup[i].CellCenter.y - AirCellGroup[i2].CellCenter.y)) < ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2)
-                    && (d = Vector2.Distance(new Vector2(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.z), new Vector2(AirCellGroup[i2].CellCenter.x, AirCellGroup[i2].CellCenter.z))) < (AirCellGroup[i].CellRadius + AirCellGroup[i2].CellRadius))
+                    && d < (AirCellGroup[i].CellRadius + AirCellGroup[i2].CellRadius))
                 {
                     #region Cell Overlap Calculations
 
@@ -441,6 +445,11 @@ public class AirCellBehavior : MonoBehaviour
 
         if (!float.IsFinite(AirCellGroup[i].CellCenter.x) || !float.IsFinite(AirCellGroup[i].CellCenter.y) || !float.IsFinite(AirCellGroup[i].CellCenter.z))
             Debug.LogError("NaN Position ; i = " + i);
+    }
+
+    float SafeDistance(float distance)
+    {
+        return Mathf.Max(distance, 1e-2);
     }
 }
 
