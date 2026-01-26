@@ -54,12 +54,16 @@ public class Structure : MonoBehaviour
         {
             RaycastHit hit;
             Vector3 direction = (t.position - AttemptPosition).normalized;
-            bool a = Physics.Raycast(AttemptPosition, direction, out hit, Range) && direction.y < -0.1f;
-            if (a && hit.transform == t)
+            bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
+            bool isPointingDown = direction.y < -0.1f; // only link to structures below??
+            if (hasLineOfSight && isPointingDown && hit.transform == t)
             {
                 //Debug.Log("Visible: " + Name);
+                
+                float distance = Vector3.Distance(AttemptPosition, t.position);
+                float effectiveRange = Mathf.Max(1e-3f, Range);
 
-                float Signal = 1 - (Vector3.Distance(AttemptPosition, t.position) / Range);
+                float Signal = 1f - Mathf.InverseLerp(0f, effectiveRange, distance);
 
                 if (Signal > Random.Range(0, Random.Range(3, 7)))
                 {
