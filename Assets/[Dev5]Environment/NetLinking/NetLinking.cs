@@ -95,15 +95,30 @@ public class NetLinking : MonoBehaviour
             {
                 GameObject mem;
 
+                // helpers
+                Transform radarChild = Radar.Find(s.Name);
+                Image radarImage = mem.GetComponent<Image>();
+                RectTransform radarRect = mem.GetComponent<RectTransform>();
+
                 if (RadarList.Contains(s.Name))
                 {
-                    if (Radar.Find(s.Name) != null)
+                    if (radarChild != null)
                     {
-                        mem = Radar.Find(s.Name).gameObject;
+                        mem = radarChild.gameObject;
                     }
                     else
                     {
-                        throw new System.Exception("Unable to find corresponding image");
+                        // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
+                        Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
+                        RadarList.Remove(s.Name);
+
+                        // recreate the radar element
+                        mem = new GameObject();
+                        _ = mem.AddComponent<Image>().sprite = StructureSprite;
+                        radarRect.SetParent(Radar);
+                        radarRect.sizeDelta = new(7, 7);
+                        radarImage.color = s.Linked ? Color.green : Color.yellow;
+                        _ = mem.name = s.Name;
                     }
                 }
                 else
@@ -112,12 +127,12 @@ public class NetLinking : MonoBehaviour
 
                     mem = new GameObject();
                     _ = mem.AddComponent<Image>().sprite = StructureSprite;
-                    mem.GetComponent<RectTransform>().SetParent(Radar);
-                    mem.GetComponent<RectTransform>().sizeDelta = new(7, 7);
-                    mem.GetComponent<Image>().color = s.Linked ? Color.green : Color.yellow;
+                    radarRect.SetParent(Radar);
+                    radarRect.sizeDelta = new(7, 7);
+                    radarImage.color = s.Linked ? Color.green : Color.yellow;
                     _ = mem.name = s.Name;
                 }
-                if (s.Linked && mem.GetComponent<Image>().color != Color.green)
+                if (s.Linked && radarImage.color != Color.green)
                 {
                     mem.GetComponent<Image>().color = Color.green;
                 }
@@ -125,12 +140,22 @@ public class NetLinking : MonoBehaviour
                 Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
                 d = D.magnitude;
                 d = 105 * Mathf.Sqrt(d / RadarRange);
-                float ang = Mathf.Acos(-D.normalized.z) * Mathf.Sign(D.x);
-                mem.GetComponent<RectTransform>().anchoredPosition = new Vector3(d * Mathf.Cos(ang), d * Mathf.Sin(ang));
+
+                // division by zero fix #19907
+                if (d > 1e-3f)
+                {
+                    float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
+                    radarRect.anchoredPosition = new Vector3(d * Mathf.Cos(ang), d * Mathf.Sin(ang));
+                }
+                else
+                {
+                    radarRect.anchoredPosition = Vector3.zero;
+                }
             }
             else if (RadarList.Contains(s.Name))
             {
-                Destroy(Radar.Find(s.Name).gameObject);
+                if (radarChild != null)
+                    Destroy(radarChild.gameObject);
                 RadarList.Remove(s.Name);
             }
         }
