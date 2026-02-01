@@ -93,6 +93,10 @@ public class AGlobalValues : MonoBehaviour
     public double TrueAnomaly, MeanAnomaly, EccentricAnomaly;
     #endregion
 
+    #region Shaders
+    public Material Atmosphere;
+    #endregion
+
     #region EOS-ESTM
 
     public AnimationCurve GlobalInsolation;
@@ -224,6 +228,17 @@ public class AGlobalValues : MonoBehaviour
 
         LapseRate = -0.01; //K/m
 
+        #endregion
+
+
+        #region Expose Values to Shaders
+        Atmosphere.SetFloat("_G", (float)GaleG);
+        Atmosphere.SetFloat("_SurfaceP", (float)GaleAtm);
+        Atmosphere.SetFloat("_MM", (float)GaleAtmMM);
+        Atmosphere.SetFloat("_R", (float)R);
+        Atmosphere.SetFloat("_AvgT", (float)GaleAvgTemp);
+        Atmosphere.SetFloat("_Karman", (float)GaleKarman);
+        Atmosphere.SetVector("_PlanetPos", new Vector3(0, -(float)GaleR, 0));
         #endregion
     }
 
