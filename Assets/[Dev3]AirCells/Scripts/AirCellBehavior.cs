@@ -449,7 +449,7 @@ public class AirCellBehavior : MonoBehaviour
 
     float SafeDistance(float distance)
     {
-        return Mathf.Max(distance, 1e-2);
+        return Mathf.Max(distance, (float)1e-2);
     }
 }
 

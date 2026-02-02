@@ -90,21 +90,24 @@ public class NetLinking : MonoBehaviour
         {
             Structure s = Structures[i];
 
+            //helpers
+            Transform radarChild = Radar.Find(s.Name);
             float d = Vector3.Distance(s.transform.position, transform.position);
             if (d < RadarRange)
             {
                 GameObject mem;
 
                 // helpers
-                Transform radarChild = Radar.Find(s.Name);
-                Image radarImage = mem.GetComponent<Image>();
-                RectTransform radarRect = mem.GetComponent<RectTransform>();
+                Image radarImage;
+                RectTransform radarRect;
 
                 if (RadarList.Contains(s.Name))
                 {
                     if (radarChild != null)
                     {
                         mem = radarChild.gameObject;
+                        radarImage = mem.GetComponent<Image>();
+                        radarRect = mem.GetComponent<RectTransform>();
                     }
                     else
                     {
@@ -114,7 +117,9 @@ public class NetLinking : MonoBehaviour
 
                         // recreate the radar element
                         mem = new GameObject();
-                        _ = mem.AddComponent<Image>().sprite = StructureSprite;
+                        radarImage = mem.AddComponent<Image>();
+                        _ = radarImage.sprite = StructureSprite;
+                        radarRect = mem.GetComponent<RectTransform>();
                         radarRect.SetParent(Radar);
                         radarRect.sizeDelta = new(7, 7);
                         radarImage.color = s.Linked ? Color.green : Color.yellow;
@@ -126,7 +131,9 @@ public class NetLinking : MonoBehaviour
                     RadarList.Add(s.Name);
 
                     mem = new GameObject();
-                    _ = mem.AddComponent<Image>().sprite = StructureSprite;
+                    radarImage = mem.AddComponent<Image>();
+                    _ = radarImage.sprite = StructureSprite;
+                    radarRect = mem.GetComponent<RectTransform>();
                     radarRect.SetParent(Radar);
                     radarRect.sizeDelta = new(7, 7);
                     radarImage.color = s.Linked ? Color.green : Color.yellow;
@@ -134,7 +141,7 @@ public class NetLinking : MonoBehaviour
                 }
                 if (s.Linked && radarImage.color != Color.green)
                 {
-                    mem.GetComponent<Image>().color = Color.green;
+                    radarImage.color = Color.green;
                 }
 
                 Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);

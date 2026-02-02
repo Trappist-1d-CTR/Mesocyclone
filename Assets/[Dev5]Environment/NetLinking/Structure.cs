@@ -9,6 +9,7 @@ public class Structure : MonoBehaviour
     public string Name;
     public string Type;
     public Transform t;
+    private Transform DroneT;
     public int Data2Link;
     public float LinkedData;
     public bool Linked = false;
@@ -46,6 +47,7 @@ public class Structure : MonoBehaviour
     private void Awake()
     {
         t = transform;
+        DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
     }
 
     public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
@@ -55,7 +57,7 @@ public class Structure : MonoBehaviour
             RaycastHit hit;
             Vector3 direction = (t.position - AttemptPosition).normalized;
             bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
-            bool isPointingDown = direction.y < -0.1f; // only link to structures below??
+            bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.06f; // only link to structures below??   A: Y E S
             if (hasLineOfSight && isPointingDown && hit.transform == t)
             {
                 //Debug.Log("Visible: " + Name);
