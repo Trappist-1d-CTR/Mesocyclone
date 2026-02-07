@@ -6,6 +6,8 @@ public class AirCellBehavior : MonoBehaviour
 {
     #region Variables
 
+    public bool TerrainAtSeaLevel;
+
     #region Cell Fundamentals
     private AirCell AirCellTest;
     private List<AirCell> AirCellGroup = new();
@@ -225,7 +227,7 @@ public class AirCellBehavior : MonoBehaviour
             DebugEverything(i);
 
             #region Air Cell Terrain Repulsion
-            if (AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
+            if (TerrainAtSeaLevel && AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
             {
                 DynVolumeSOM[i] *= 0.5 + (AirCellGroup[i].CellCenter.y / AirCellGroup[i].CellHeight);
                 AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
@@ -288,7 +290,7 @@ public class AirCellBehavior : MonoBehaviour
         }
         #endregion
 
-        #region Inter-Cell Behavior
+        #region Inter-Cell Repulsion
         CellsRepulsionSOM.Clear();
         float d, r1, r2, d1, d2, A, h;
 
@@ -344,7 +346,7 @@ public class AirCellBehavior : MonoBehaviour
                 #endregion
             }
         }
-        
+
         #region Repulsion Physics
         for (int i = 0; i < CellsRepulsionSOM.Count; i++)
         {
@@ -352,6 +354,28 @@ public class AirCellBehavior : MonoBehaviour
             AirCellGroup[(int)CellsRepulsionSOM[i].y].PerformAcceleration((float)(StaticPressureSOM[(int)CellsRepulsionSOM[i].y] * System.Math.Pow(CellsRepulsionSOM[i].z, (double)((double)2.0 / (double)3.0)) * (System.Math.Pow(AirCellGroup[(int)CellsRepulsionSOM[i].y].CellStaticVolume / DynVolumeSOM[(int)CellsRepulsionSOM[i].y], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[(int)CellsRepulsionSOM[i].y].Moles * C.GaleAtmMM)) * (AirCellGroup[(int)CellsRepulsionSOM[i].y].CellCenter - AirCellGroup[(int)CellsRepulsionSOM[i].x].CellCenter).normalized);
         }
         #endregion
+
+        #endregion
+
+        #region Cell-Terrain Repulsion
+
+        if (!TerrainAtSeaLevel)
+        {
+            for (int i = 0; i < CellGroupNumber; i++)
+            {
+                float maxD = Mathf.Sqrt(Mathf.Pow((float)AirCellGroup[i].CellRadius, 2) + Mathf.Pow((float)AirCellGroup[i].CellHeight / 2, 2));
+                RaycastHit hit;
+                if (Physics.SphereCast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), (float)AirCellGroup[i].CellRadius, Vector3.down, out hit, maxD, 1 << 3))
+                {
+                    float d3 = Mathf.Abs(hit.barycentricCoordinate.y - AirCellGroup[i].CellCenter.y);
+                    if (d3 < AirCellGroup[i].CellHeight / 2)
+                    {
+                        DynVolumeSOM[i] *= 0.5 + (d3 / AirCellGroup[i].CellHeight);
+                        AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
+                    }
+                }
+            }
+        }
 
         #endregion
 

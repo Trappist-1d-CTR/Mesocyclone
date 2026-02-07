@@ -867,7 +867,7 @@ GameObject:
   - component: {fileID: 1177891297}
   - component: {fileID: 1177891293}
   - component: {fileID: 1177891298}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TerrainExample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1495,6 +1495,7 @@ MonoBehaviour:
   TrueAnomaly: 0
   MeanAnomaly: 0
   EccentricAnomaly: 0
+  Atmosphere: {fileID: 2100000, guid: 0e9e72dba3dbce74db7c8918ab11fdc7, type: 2}
   GlobalInsolation:
     serializedVersion: 2
     m_Curve: []
@@ -1654,6 +1655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61b938b99d4a0fc4e8e737156d66acfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TerrainAtSeaLevel: 1
   CubeObject: {fileID: 8828998887846330892, guid: 9c68b50ddcd40bc429423ee4109a0633, type: 3}
   CenterTest: {x: 0, y: 0, z: 0}
   MoleTest: 100000
@@ -1924,6 +1926,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2927943660247835630, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592090197389616602, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}

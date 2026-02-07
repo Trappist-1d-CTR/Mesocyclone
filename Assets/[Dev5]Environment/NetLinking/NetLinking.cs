@@ -21,7 +21,7 @@ public class NetLinking : MonoBehaviour
     #region UI & Animations
     public TextMeshProUGUI StructureName;
     public Image LinkingAnimation;
-    public Transform Radar;
+    public RectTransform Radar;
     public List<string> RadarList;
     public Sprite StructureSprite;
 
@@ -146,7 +146,7 @@ public class NetLinking : MonoBehaviour
 
                 Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
                 d = D.magnitude;
-                d = 105 * Mathf.Sqrt(d / RadarRange);
+                d = (Radar.sizeDelta.y / 2f) * Mathf.Sqrt(d / RadarRange);
 
                 // division by zero fix #19907
                 if (d > 1e-3f)
