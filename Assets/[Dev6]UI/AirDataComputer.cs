@@ -93,11 +93,11 @@ public class AirDataComputer : MonoBehaviour
 
         if (prev_v == Mathf.Infinity)
         {
-            prev_v = v = DroneBody.velocity.magnitude;
+            prev_v = v = DroneBody.linearVelocity.magnitude;
         }
         else
         {
-            v = DroneBody.velocity.magnitude;
+            v = DroneBody.linearVelocity.magnitude;
             delta_v = (v - prev_v) / Time.fixedDeltaTime;
             prev_v = v;
         }

@@ -39,7 +39,7 @@ public class SimManager : MonoBehaviour
             AvgVelocity = 0;
             for (int i = 0; i < NParticles; i++)
             {
-                AvgVelocity += gameObject.transform.GetChild(i).GetComponent<Rigidbody2D>().velocity.magnitude / NParticles;
+                AvgVelocity += gameObject.transform.GetChild(i).GetComponent<Rigidbody2D>().linearVelocity.magnitude / NParticles;
             }
             AvgVelocity /= Mathf.Pow(10, 9) * Timestep;
 
@@ -51,7 +51,7 @@ public class SimManager : MonoBehaviour
             {
                 for (int i = 0; i < NParticles; i++)
                 {
-                    gameObject.transform.GetChild(i).GetComponent<Rigidbody2D>().velocity *= Mathf.Sqrt(SetTemp / Temperature);
+                    gameObject.transform.GetChild(i).GetComponent<Rigidbody2D>().linearVelocity *= Mathf.Sqrt(SetTemp / Temperature);
                 }
             }
 

@@ -279,7 +279,7 @@ public class DroneControls : MonoBehaviour
 
         #region Physics Setup
 
-        PhysicsVelocity = DronePhysics.velocity;
+        PhysicsVelocity = DronePhysics.linearVelocity;
         InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position;
         if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
@@ -287,7 +287,7 @@ public class DroneControls : MonoBehaviour
         PhysicsRotation = DronePhysics.rotation;
         PhysicsAngVelocity = DronePhysics.angularVelocity;
         PhysicsTorque = Vector3.zero;
-        DronePhysics.angularDrag = 3f;
+        DronePhysics.angularDamping = 3f;
 
         //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
         if (!AirChamberTest && InverseDistanceWeighting.Values != null)
@@ -420,13 +420,13 @@ public class DroneControls : MonoBehaviour
                     break;
 
                 case 2:
-                    if (DronePhysics.velocity.y <= -16.77 + HoverTargetSpeed[0])
+                    if (DronePhysics.linearVelocity.y <= -16.77 + HoverTargetSpeed[0])
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     }
-                    else if (DronePhysics.velocity.y < HoverTargetSpeed[0])
+                    else if (DronePhysics.linearVelocity.y < HoverTargetSpeed[0])
                     {
-                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y + HoverTargetSpeed[0]));
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y + HoverTargetSpeed[0]));
                     }
                     else
                     {
@@ -435,13 +435,13 @@ public class DroneControls : MonoBehaviour
                     break;
 
                 case 3:
-                    if (DronePhysics.velocity.y <= -16.77)
+                    if (DronePhysics.linearVelocity.y <= -16.77)
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     }
-                    else if (DronePhysics.velocity.y < 0)
+                    else if (DronePhysics.linearVelocity.y < 0)
                     {
-                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * DronePhysics.velocity.y);
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * DronePhysics.linearVelocity.y);
                     }
                     else
                     {
@@ -469,13 +469,13 @@ public class DroneControls : MonoBehaviour
                     break;*/
 
                 case 6:
-                    if (DronePhysics.velocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
+                    if (DronePhysics.linearVelocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     }
-                    else if (DronePhysics.velocity.y < (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
+                    else if (DronePhysics.linearVelocity.y < (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
                     {
-                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed));
+                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed));
                     }
                     else
                     {
@@ -1043,7 +1043,7 @@ public class DroneControls : MonoBehaviour
         else
         {
             DronePhysics.position = PhysicsPosition = Vector3.up;
-            DronePhysics.velocity = PhysicsVelocity = Vector3.zero;
+            DronePhysics.linearVelocity = PhysicsVelocity = Vector3.zero;
             DronePhysics.AddRelativeTorque(PhysicsTorque);
             //Debug.Log(PhysicsTorque);
 
@@ -1121,7 +1121,7 @@ public class DroneControls : MonoBehaviour
     private void ResetDrone(InputAction.CallbackContext obj)
     {
         InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = Vector3.up;
-        PhysicsVelocity = DronePhysics.velocity = Vector3.zero;
+        PhysicsVelocity = DronePhysics.linearVelocity = Vector3.zero;
         if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
         PhysicsRotation = DronePhysics.rotation = Quaternion.Euler(0f, 0f, 0f);

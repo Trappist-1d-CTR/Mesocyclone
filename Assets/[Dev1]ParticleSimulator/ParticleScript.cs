@@ -17,7 +17,7 @@ public class ParticleScript : MonoBehaviour
         gameObject.transform.localScale = new Vector3(Radius * 2, Radius * 2, Radius * 2);
 
         float rand = Random.Range(-0.01f, 0.01f);
-        Physics.velocity = new Vector2(5 - rand, -2 + rand);
+        Physics.linearVelocity = new Vector2(5 - rand, -2 + rand);
 
 
         //Physics.velocity
