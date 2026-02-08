@@ -15,6 +15,7 @@ public class NetLinking : MonoBehaviour
     public float NetLinkerRange;
     public int DataTransferRate;
     public int RadarRange;
+    public int SignalRange;
 
     #endregion
 
@@ -22,7 +23,9 @@ public class NetLinking : MonoBehaviour
     public TextMeshProUGUI StructureName;
     public Image LinkingAnimation;
     public RectTransform Radar;
+    public int RadarRadius;
     public List<string> RadarList;
+    public List<string> SignalList;
     public Sprite StructureSprite;
 
     private float[] AnimTimer;
@@ -95,6 +98,17 @@ public class NetLinking : MonoBehaviour
             float d = Vector3.Distance(s.transform.position, transform.position);
             if (d < RadarRange)
             {
+                #region Delete direction-only
+                if (SignalList.Contains(s.Name))
+                {
+                    if (radarChild != null)
+                        Destroy(radarChild.gameObject);
+                    SignalList.Remove(s.Name);
+                }
+                #endregion
+
+                #region Structure direction + position
+
                 GameObject mem;
 
                 // helpers
@@ -115,29 +129,12 @@ public class NetLinking : MonoBehaviour
                         Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
                         RadarList.Remove(s.Name);
 
-                        // recreate the radar element
-                        mem = new GameObject();
-                        radarImage = mem.AddComponent<Image>();
-                        _ = radarImage.sprite = StructureSprite;
-                        radarRect = mem.GetComponent<RectTransform>();
-                        radarRect.SetParent(Radar);
-                        radarRect.sizeDelta = new(7, 7);
-                        radarImage.color = s.Linked ? Color.green : Color.yellow;
-                        _ = mem.name = s.Name;
+                        radarRect = CreateRadarImage(true, 7, i, out radarImage);
                     }
                 }
                 else
                 {
-                    RadarList.Add(s.Name);
-
-                    mem = new GameObject();
-                    radarImage = mem.AddComponent<Image>();
-                    _ = radarImage.sprite = StructureSprite;
-                    radarRect = mem.GetComponent<RectTransform>();
-                    radarRect.SetParent(Radar);
-                    radarRect.sizeDelta = new(7, 7);
-                    radarImage.color = s.Linked ? Color.green : Color.yellow;
-                    _ = mem.name = s.Name;
+                    radarRect = CreateRadarImage(true, 7, i, out radarImage);
                 }
                 if (s.Linked && radarImage.color != Color.green)
                 {
@@ -146,7 +143,7 @@ public class NetLinking : MonoBehaviour
 
                 Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
                 d = D.magnitude;
-                d = (Radar.sizeDelta.y / 2f) * Mathf.Sqrt(d / RadarRange);
+                d = RadarRadius * Mathf.Pow(d / RadarRange, 0.5f);
 
                 // division by zero fix #19907
                 if (d > 1e-3f)
@@ -158,12 +155,66 @@ public class NetLinking : MonoBehaviour
                 {
                     radarRect.anchoredPosition = Vector3.zero;
                 }
+
+                #endregion
             }
             else if (RadarList.Contains(s.Name))
             {
                 if (radarChild != null)
                     Destroy(radarChild.gameObject);
                 RadarList.Remove(s.Name);
+            }
+            else
+            {
+                if (d < SignalRange)
+                {
+                    #region Structure direction-only
+
+                    GameObject mem;
+
+                    // helpers
+                    Image radarImage;
+                    RectTransform radarRect;
+
+                    if (SignalList.Contains(s.Name))
+                    {
+                        if (radarChild != null)
+                        {
+                            mem = radarChild.gameObject;
+                            radarImage = mem.GetComponent<Image>();
+                            radarRect = mem.GetComponent<RectTransform>();
+                        }
+                        else
+                        {
+                            // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
+                            Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
+                            SignalList.Remove(s.Name);
+
+                            radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                        }
+                    }
+                    else
+                    {
+                        radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                    }
+                    if (s.Linked && radarImage.color != Color.green)
+                    {
+                        radarImage.color = Color.green;
+                    }
+
+                    Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+
+                    float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
+                    radarRect.anchoredPosition = RadarRadius * new Vector3(Mathf.Cos(ang), Mathf.Sin(ang));
+
+                    #endregion
+                }
+                else if (SignalList.Contains(s.Name))
+                {
+                    if (radarChild != null)
+                        Destroy(radarChild.gameObject);
+                    SignalList.Remove(s.Name);
+                }
             }
         }
         #endregion
@@ -205,5 +256,31 @@ public class NetLinking : MonoBehaviour
             }
         }
         #endregion
+    }
+
+    private RectTransform CreateRadarImage(bool knownPos,int size, int i, out Image image)
+    {
+        GameObject mem;
+        RectTransform radarRect;
+
+        mem = new GameObject();
+        image = mem.AddComponent<Image>();
+        _ = image.sprite = StructureSprite;
+        radarRect = mem.GetComponent<RectTransform>();
+        radarRect.SetParent(Radar);
+        radarRect.sizeDelta = new(size, size);
+        image.color = Structures[i].Linked ? Color.green : Color.yellow;
+        _ = mem.name = Structures[i].Name;
+
+        if (knownPos)
+        {
+            RadarList.Add(Structures[i].Name);
+        }
+        else
+        {
+            SignalList.Add(Structures[i].Name);
+        }
+
+        return radarRect;
     }
 }

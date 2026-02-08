@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputMap",
     "maps": [
         {
@@ -9,7 +10,7 @@
                     "name": "Thrust",
                     "type": "Button",
                     "id": "15f3a9c0-f2f7-4ca6-8905-c70bea263c71",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -181,7 +182,7 @@
                     "name": "PitchUp",
                     "type": "Button",
                     "id": "9d9ddf46-e7e0-487c-90f9-59a8a915a2c4",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -309,7 +310,7 @@
                     "name": "ResetDrone",
                     "type": "Button",
                     "id": "771b7114-93e2-4115-9cb6-2a7ef4bcc4b3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false

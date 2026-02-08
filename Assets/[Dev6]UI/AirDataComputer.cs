@@ -42,6 +42,11 @@ public class AirDataComputer : MonoBehaviour
     public TextMeshProUGUI[] Performance;
     #endregion
 
+    #region Performance
+    int FPS, PhFPS;
+    float t = 0;
+    #endregion
+
     #endregion
 
     // Start is called before the first frame update
@@ -52,6 +57,8 @@ public class AirDataComputer : MonoBehaviour
 
         CameraRotation = Vector3.zero;
         CameraVector = transform.localPosition;
+
+        Application.targetFrameRate = -1;
     }
 
     private void FixedUpdate()
@@ -125,11 +132,30 @@ public class AirDataComputer : MonoBehaviour
         MainThrust.value = mt;
         HoverMode.value = 1 - ((hm - 1) / 4f);
         #endregion
+    }
 
+    private void Update()
+    {
+        #region Performance Stats
 
-        #region Get and Display Performance
-        Performance[0].text = "FPS: " + (1f / Time.unscaledDeltaTime).ToString("n0");
-        Performance[1].text = "PhFPS: " + (1f / Time.fixedUnscaledDeltaTime).ToString("n0");
+        t += Time.unscaledDeltaTime;
+        if (t - Mathf.Floor(t) >= 0.1f)
+        {
+            t += 0.9f;
+
+            FPS += Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
+            PhFPS += Mathf.RoundToInt(1f / Time.fixedUnscaledDeltaTime);
+        }
+        if (t >= 10)
+        {
+            t -= 10;
+            FPS /= 10;
+            PhFPS /= 10;
+
+            Performance[0].text = "FPS: " + FPS.ToString("n0");
+            Performance[1].text = "PhFPS: " + PhFPS.ToString("n0");
+        }
+
         #endregion
     }
 }

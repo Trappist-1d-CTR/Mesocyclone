@@ -186,6 +186,7 @@ public class DroneControls : MonoBehaviour
 
     #region Script Optimization Memory
     private Vector3 Memory;
+    private Vector3 ResetPosition;
     #endregion
 
     public InputMap InputControl;
@@ -233,7 +234,6 @@ public class DroneControls : MonoBehaviour
         InputControl = new();
         InputControl.Enable();
 
-        PhysicsPosition = Vector3.up;
         CenterOfMass = DronePhysics.centerOfMass = new Vector3(NetLinker.MainBody.DroneBodyStats[0].CenterMassX, NetLinker.MainBody.DroneBodyStats[0].CenterMassY, NetLinker.MainBody.DroneBodyStats[0].CenterMassZ);
 
         AspectRatio = new float[NetLinker.Parts.DronePartStats.Length];
@@ -256,6 +256,8 @@ public class DroneControls : MonoBehaviour
 
         NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
         NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
+
+        ResetPosition = DronePhysics.position;
 
         #endregion
     }
@@ -526,7 +528,6 @@ public class DroneControls : MonoBehaviour
 
         #region Dev Commands
         InputControl.Dev.ResetDrone.performed += ResetDrone;
-        InputControl.Dev.ResetDrone.performed -= ResetDrone;
         #endregion
 
 
@@ -1117,10 +1118,10 @@ public class DroneControls : MonoBehaviour
     }
     #endregion
 
-    #region Reset Drone Position and Velocity
+    #region Reset Drone Position, Velocity, and Engines
     private void ResetDrone(InputAction.CallbackContext obj)
     {
-        InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = Vector3.up;
+        InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = ResetPosition;
         PhysicsVelocity = DronePhysics.linearVelocity = Vector3.zero;
         if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
@@ -1128,9 +1129,14 @@ public class DroneControls : MonoBehaviour
         PhysicsAngVelocity = DronePhysics.angularVelocity = Vector3.zero;
         PhysicsTorque = Vector3.zero;
 
+        Thrust = 0;        HoverThrust = 0; HoverTarget = 0;        ImpulseCharge = 0;
+
         //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
         if (!AirChamberTest && InverseDistanceWeighting.Values != null)
             Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
+
+        InputControl.Dev.ResetDrone.performed -= ResetDrone;
+        return;
     }
     #endregion
 
