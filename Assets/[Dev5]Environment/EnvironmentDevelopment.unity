@@ -2275,6 +2275,9 @@ MonoBehaviour:
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
   AirChamberTest: 0
+  WindParticlesEnabled: 1
+  WindParticles: {fileID: 8976392749675329645}
+  ParticlesOriginDistance: 62.5
 --- !u!114 &1453793527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3753,7 +3756,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8976392749629155213, guid: c8544e3460b656144864ba317e446369, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.4
+      value: -62.5
       objectReference: {fileID: 0}
     - target: {fileID: 8976392749629155213, guid: c8544e3460b656144864ba317e446369, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3800,6 +3803,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8544e3460b656144864ba317e446369, type: 3}
+--- !u!198 &8976392749675329645 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8976392749629155212, guid: c8544e3460b656144864ba317e446369, type: 3}
+  m_PrefabInstance: {fileID: 8976392749675329644}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

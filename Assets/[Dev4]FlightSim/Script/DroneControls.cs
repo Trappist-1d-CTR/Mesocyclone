@@ -121,6 +121,10 @@ public class DroneControls : MonoBehaviour
     private float PrevDyanmicPressure;
     #endregion
 
+    #region Input Controls System
+    
+    #endregion
+
     #region Control Surfaces and SAS
     private float RefAirSpeed1;
     private float RefAirSpeed7;
@@ -182,6 +186,12 @@ public class DroneControls : MonoBehaviour
 
     public bool AirChamberTest = false;
 
+    #endregion
+
+    #region Wind Visualizer
+    public bool WindParticlesEnabled;
+    public ParticleSystem WindParticles;
+    public float ParticlesOriginDistance;
     #endregion
 
     #region Script Optimization Memory
@@ -531,6 +541,8 @@ public class DroneControls : MonoBehaviour
         #endregion
 
 
+        #region Drone Parts Physics
+
         Vector3 CM = DronePhysics.worldCenterOfMass;
 
         Vector3 Check;
@@ -629,6 +641,14 @@ public class DroneControls : MonoBehaviour
                 #endregion
             }
         }
+
+        #endregion
+
+        #region Input Controls System
+
+
+
+        #endregion
 
         #region Control Surfaces and SAS
 
@@ -1068,8 +1088,13 @@ public class DroneControls : MonoBehaviour
         }
         
         #endregion
+    }
 
+    [System.Obsolete]
+    private void Update()
+    {
         #region Physics Visualizer
+        Vector3 CM = DronePhysics.worldCenterOfMass;
 
         switch (VisualizationMode)
         {
@@ -1095,11 +1120,34 @@ public class DroneControls : MonoBehaviour
 
                 Debug.DrawLine(CM - (DronePhysics.rotation * new Vector3(0, 0.2f)), CM + (DronePhysics.rotation * new Vector3(0, 0.2f)), Color.yellow, 1 / Time.renderedFrameCount);
                 Debug.DrawLine(CM - (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), CM + (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), Color.yellow, 1 / Time.renderedFrameCount);
-                
+
                 Debug.DrawLine(PhysicsPosition + (DronePhysics.rotation * CenterOfLift) - (DronePhysics.rotation * new Vector3(0, 0.2f)), PhysicsPosition + (DronePhysics.rotation * CenterOfLift) + (DronePhysics.rotation * new Vector3(0, 0.2f)), Color.cyan, 1 / Time.renderedFrameCount);
                 Debug.DrawLine(PhysicsPosition + (DronePhysics.rotation * CenterOfLift) - (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), PhysicsPosition + (DronePhysics.rotation * CenterOfLift) + (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), Color.cyan, 1 / Time.renderedFrameCount);
                 break;
         }
+        #endregion
+
+        #region Wind Visualizer
+
+        if (WindParticlesEnabled)
+        {
+            AirSpeed = PhysicsVelocity - Wind;
+            if (AirSpeed.magnitude >= 1f)
+            {
+                if (!WindParticles.enableEmission) WindParticles.enableEmission = true;
+
+                WindParticles.transform.position = CM + (ParticlesOriginDistance * (AirSpeed.magnitude / 25f) * AirSpeed.normalized);
+                Vector3 forwardTarget = -Vector3.ProjectOnPlane((AirSpeed.normalized.y < 0.999f) ? Vector3.up : Vector3.forward, AirSpeed);
+                WindParticles.transform.rotation = Quaternion.LookRotation(forwardTarget, Quaternion.AngleAxis(90, AirSpeed) * forwardTarget);
+                WindParticles.startLifetime = 5f;
+
+                ParticleSystem.VelocityOverLifetimeModule ParticlesVel = WindParticles.velocityOverLifetime;
+                ParticlesVel.xMultiplier = AirSpeed.magnitude;
+            }
+            else if (WindParticles.enableEmission)
+                WindParticles.enableEmission = false;
+        }
+
         #endregion
     }
 
