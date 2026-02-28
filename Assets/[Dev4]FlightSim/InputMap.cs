@@ -129,10 +129,19 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""MouseScroll"",
+                    ""name"": ""ToggleSASMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""466d0984-732d-4329-b907-578e46475969"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ToggleHoverMode"",
                     ""type"": ""Button"",
                     ""id"": ""5e49db7a-66e9-4446-bd98-c059880cc06f"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -232,7 +241,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MouseScroll"",
+                    ""action"": ""ToggleHoverMode"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -243,7 +252,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""MouseScroll"",
+                    ""action"": ""ToggleHoverMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -254,9 +263,20 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""MouseScroll"",
+                    ""action"": ""ToggleHoverMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ff289981-0d4c-4d70-8f49-f88a0a12a913"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleSASMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -464,7 +484,8 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_FlightControls_ImpulseThrust = m_FlightControls.FindAction("ImpulseThrust", throwIfNotFound: true);
         m_FlightControls_AirBrakes = m_FlightControls.FindAction("AirBrakes", throwIfNotFound: true);
         m_FlightControls_Hovering = m_FlightControls.FindAction("Hovering", throwIfNotFound: true);
-        m_FlightControls_MouseScroll = m_FlightControls.FindAction("MouseScroll", throwIfNotFound: true);
+        m_FlightControls_ToggleSASMode = m_FlightControls.FindAction("ToggleSASMode", throwIfNotFound: true);
+        m_FlightControls_ToggleHoverMode = m_FlightControls.FindAction("ToggleHoverMode", throwIfNotFound: true);
         m_FlightControls_MouseClick = m_FlightControls.FindAction("MouseClick", throwIfNotFound: true);
         // ControlSurfaces
         m_ControlSurfaces = asset.FindActionMap("ControlSurfaces", throwIfNotFound: true);
@@ -563,7 +584,8 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     private readonly InputAction m_FlightControls_ImpulseThrust;
     private readonly InputAction m_FlightControls_AirBrakes;
     private readonly InputAction m_FlightControls_Hovering;
-    private readonly InputAction m_FlightControls_MouseScroll;
+    private readonly InputAction m_FlightControls_ToggleSASMode;
+    private readonly InputAction m_FlightControls_ToggleHoverMode;
     private readonly InputAction m_FlightControls_MouseClick;
     /// <summary>
     /// Provides access to input actions defined in input action map "FlightControls".
@@ -593,9 +615,13 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Hovering => m_Wrapper.m_FlightControls_Hovering;
         /// <summary>
-        /// Provides access to the underlying input action "FlightControls/MouseScroll".
+        /// Provides access to the underlying input action "FlightControls/ToggleSASMode".
         /// </summary>
-        public InputAction @MouseScroll => m_Wrapper.m_FlightControls_MouseScroll;
+        public InputAction @ToggleSASMode => m_Wrapper.m_FlightControls_ToggleSASMode;
+        /// <summary>
+        /// Provides access to the underlying input action "FlightControls/ToggleHoverMode".
+        /// </summary>
+        public InputAction @ToggleHoverMode => m_Wrapper.m_FlightControls_ToggleHoverMode;
         /// <summary>
         /// Provides access to the underlying input action "FlightControls/MouseClick".
         /// </summary>
@@ -638,9 +664,12 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Hovering.started += instance.OnHovering;
             @Hovering.performed += instance.OnHovering;
             @Hovering.canceled += instance.OnHovering;
-            @MouseScroll.started += instance.OnMouseScroll;
-            @MouseScroll.performed += instance.OnMouseScroll;
-            @MouseScroll.canceled += instance.OnMouseScroll;
+            @ToggleSASMode.started += instance.OnToggleSASMode;
+            @ToggleSASMode.performed += instance.OnToggleSASMode;
+            @ToggleSASMode.canceled += instance.OnToggleSASMode;
+            @ToggleHoverMode.started += instance.OnToggleHoverMode;
+            @ToggleHoverMode.performed += instance.OnToggleHoverMode;
+            @ToggleHoverMode.canceled += instance.OnToggleHoverMode;
             @MouseClick.started += instance.OnMouseClick;
             @MouseClick.performed += instance.OnMouseClick;
             @MouseClick.canceled += instance.OnMouseClick;
@@ -667,9 +696,12 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Hovering.started -= instance.OnHovering;
             @Hovering.performed -= instance.OnHovering;
             @Hovering.canceled -= instance.OnHovering;
-            @MouseScroll.started -= instance.OnMouseScroll;
-            @MouseScroll.performed -= instance.OnMouseScroll;
-            @MouseScroll.canceled -= instance.OnMouseScroll;
+            @ToggleSASMode.started -= instance.OnToggleSASMode;
+            @ToggleSASMode.performed -= instance.OnToggleSASMode;
+            @ToggleSASMode.canceled -= instance.OnToggleSASMode;
+            @ToggleHoverMode.started -= instance.OnToggleHoverMode;
+            @ToggleHoverMode.performed -= instance.OnToggleHoverMode;
+            @ToggleHoverMode.canceled -= instance.OnToggleHoverMode;
             @MouseClick.started -= instance.OnMouseClick;
             @MouseClick.performed -= instance.OnMouseClick;
             @MouseClick.canceled -= instance.OnMouseClick;
@@ -1002,12 +1034,19 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHovering(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "MouseScroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ToggleSASMode" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnMouseScroll(InputAction.CallbackContext context);
+        void OnToggleSASMode(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleHoverMode" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleHoverMode(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "MouseClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

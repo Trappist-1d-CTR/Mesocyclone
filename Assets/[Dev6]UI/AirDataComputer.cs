@@ -31,6 +31,8 @@ public class AirDataComputer : MonoBehaviour
     public float r = 0; //Roll
     public float y = 0; //Yaw
 
+    public Vector3 deltaPRY;
+
     public float mt = 0; //Main Thrust
     public int hm = 1; //Hover Mode
     #endregion
@@ -108,6 +110,8 @@ public class AirDataComputer : MonoBehaviour
             delta_v = (v - prev_v) / Time.fixedDeltaTime;
             prev_v = v;
         }
+
+        deltaPRY = DroneBody.angularVelocity * Mathf.Rad2Deg;
 
         p = DroneBody.rotation.eulerAngles.z;
         if (p > 180) p -= 360;

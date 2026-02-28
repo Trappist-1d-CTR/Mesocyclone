@@ -86,8 +86,6 @@ public class DroneControls : MonoBehaviour
     #region Engines Control Data
     public float InputMargin;
 
-    public float[] ControlSurfaceAngle;
-
     public float Thrust;
 
     public float ImpulseCharge;
@@ -117,30 +115,47 @@ public class DroneControls : MonoBehaviour
     private Vector3 PhysicsAngVelocity;
     public Vector3 PhysicsTorque;
 
-    public float DynamicPressure;
+    private float DynamicPressure;
     private float PrevDyanmicPressure;
     #endregion
 
     #region Input Controls System
-    
+    public byte SASMode;
+    private bool[] InputValues;
+    private Vector3 CurrentAngles;
+    public Vector3 ReactionWheelsDefaultTorque;
+    private float[] ReactionWheelsTargetTorque;
+    private float[] ReactionWheelsTorque;
+    public float[] ReactionWheelsJerk;
+
+    private float[] ReactionWheelsTorqueStabilization;
+
+    public float[] ControlSurfaceMaxAngles;
+    private float[] ControlSurfaceTargetAngle;
+    private float[] ControlSurfaceAngles;
+    public float[] ControlSurfaceAngularSpeed;
+
+    public float PitchTarget;
+    public float PitchSpeed;
+    public AnimationCurve PitchExpectedFromCanardsAngles;
+    public AnimationCurve CanardsAnglesExpectedFromPitch;
+
+    public float RollDefaultTorque;
+    public float RollJerk;
+
+    public float YawSpeed;
     #endregion
 
-    #region Control Surfaces and SAS
-    private float RefAirSpeed1;
-    private float RefAirSpeed7;
+    #region Control Surfaces and SAS (unused)
+    //public float CanardsCtrl;
+    //public float AileronsCtrl;
+    //public float ElevatorsCtrl;
 
-    private float pctrl, rctrl, yctrl;
-    public float CanardsCtrl;
-    public float AileronsCtrl;
-    public float ElevatorsCtrl;
-
-    public float PitchJerk;
+    /*public float PitchJerk;
     public float RollJerk;
-    public float YawJerk;
+    public float YawJerk;*/
 
-    public float ReactionWheelsPower;
-    public float[] ReactionWheelsTorque;
-    public Vector3 StabilizingWheelTorque;
+    //public float ReactionWheelsPower;
     #endregion
 
     #region Atmospherical Physics
@@ -153,16 +168,17 @@ public class DroneControls : MonoBehaviour
     private BoxCollider DroneCollider;
     #endregion
 
-    #region Lift Coefficients
-    public float[] AspectRatio;
-    public AnimationCurve[] LiftAoA;
-    public AnimationCurve[] InducedDragAoA;
-    public AnimationCurve[] TorqueAoA;
+    #region LiftDragTorque Coefficients
+    private float[] AspectRatio;
+    private AnimationCurve[] LiftAoA;
+    private AnimationCurve[] InducedDragAoA;
+    private AnimationCurve[] TorqueAoA;
     #endregion
 
     #region Reference Scripts
     private AGlobalValues C;
     public AirCellBehavior Air;
+    private AirDataComputer DataComputer;
     #endregion
 
     #region Center Of Mass Correction
@@ -203,7 +219,6 @@ public class DroneControls : MonoBehaviour
 
     #endregion
 
-    // Start is called before the first frame update
     void Start()
     {
         #region Get Components and Script Reference
@@ -211,6 +226,7 @@ public class DroneControls : MonoBehaviour
         DronePhysics = gameObject.GetComponent<Rigidbody>();
         DroneCollider = gameObject.GetComponent<BoxCollider>();
         C = GameObject.FindGameObjectWithTag("GameController").GetComponent<AGlobalValues>();
+        DataComputer = gameObject.GetComponentInChildren<AirDataComputer>(false);
 
         #endregion
 
@@ -241,32 +257,88 @@ public class DroneControls : MonoBehaviour
 
         #region Starting Setup
 
+        //Enables inputs
         InputControl = new();
         InputControl.Enable();
 
+        //Setup CenterOfMass from json drone data
         CenterOfMass = DronePhysics.centerOfMass = new Vector3(NetLinker.MainBody.DroneBodyStats[0].CenterMassX, NetLinker.MainBody.DroneBodyStats[0].CenterMassY, NetLinker.MainBody.DroneBodyStats[0].CenterMassZ);
 
+        //Initialize animation curves for following info
         AspectRatio = new float[NetLinker.Parts.DronePartStats.Length];
         LiftAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
         InducedDragAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
         TorqueAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
 
-        ControlSurfaceAngle = new float[3] { 0, 0, 0 };
+        //Initialize float3 for the ICS
+        ControlSurfaceTargetAngle = new float[3] { 0, 0, 0 };
         ReactionWheelsTorque = new float[3] { 0, 0, 0 };
+        ReactionWheelsTorqueStabilization = new float[3] { 0, 0, 0 };
+        ControlSurfaceAngles = new float[3] { 0, 0, 0 };
 
+        //Assign AspectRatio values
         for (int i = 0; i < AspectRatio.Length; i++)
         {
             AspectRatio[i] = NetLinker.Parts.DronePartStats[i].Chord * NetLinker.Parts.DronePartStats[i].Chord / NetLinker.Parts.DronePartStats[i].Area;
         }
-
+        //Calculate FlightCoefficients values
         for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
         {
             CalculateFlightCoefficients(i);
         }
 
+        #region Get ExpectedPitchFromCanardsAngles & its inverse
+        //Values obtained from an analysis of the drone's behavior with WindChamberTesting enabled and Wind at { -20, 0, 0 }
+        //The analysis consisted in noting the drone's pitch at several canards angles, plotting them as points on GeoGebra,
+        //and getting the equation these points follow through the FitImplicit() function set with an Order of 2
+        //Link for reference: https://www.geogebra.org/m/gks6cjz7
+
+        float[] I = new float[6] { /*a*/-0.0261729195437f, /*b*/0.9560484809729f, /*c*/0.0007982276005f, /*d*/-0.0224313802822f, /*e*/-0.0470688582808f, /*f*/0.2873447387781f };
+        float[] Lim = new float[4] { /*x0*/0.3030690912455f, /*x1*/4.1f, /*y0*/0, /*y1*/16f };
+
+        PitchExpectedFromCanardsAngles = new AnimationCurve();
+        int res = 40;
+        int s = 1;
+        for (float i = Lim[0]; i <= Lim[1]; i += s * (Lim[1] - Lim[0]) / ((res + 1) * (res / 2)))
+        {
+            float b, FOURac, mem;
+            b = I[3] + (i * I[4]);
+            FOURac = 4 * I[2] * ((I[0] * i * i) + (I[1] * i) - I[5]);
+            mem = (-b - Mathf.Sqrt((b * b) - FOURac)) / (2 * I[2]);
+            if (mem >= Lim[3] && mem < Lim[4])
+            {
+                mem = (-b + Mathf.Sqrt((b * b) - FOURac)) / (2 * I[2]);
+            }
+
+            PitchExpectedFromCanardsAngles.AddKey(i, mem);
+            s++;
+        }
+
+        CanardsAnglesExpectedFromPitch = new AnimationCurve();
+        for (int i = 0; i < PitchExpectedFromCanardsAngles.length; i++)
+        {
+            PitchExpectedFromCanardsAngles.SmoothTangents(i, 1);
+            CanardsAnglesExpectedFromPitch.AddKey(PitchExpectedFromCanardsAngles.keys[i].value, PitchExpectedFromCanardsAngles.keys[i].time);
+        }
+        for (int i = 0; i < CanardsAnglesExpectedFromPitch.length; i++)
+        {
+            CanardsAnglesExpectedFromPitch.SmoothTangents(i, 1);
+            if (i == CanardsAnglesExpectedFromPitch.length - 1)
+            {
+                ControlSurfaceMaxAngles[0] = CanardsAnglesExpectedFromPitch.keys[i].time;
+            }
+        }
+
+        #endregion
+
+        //Setup elevator objects rotation
         NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
         NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
 
+        InputValues = new bool[6] { false, false, false, false, false, false };
+        ReactionWheelsTargetTorque = new float[3] { 0, 0, 0 };
+
+        //Setup ResetPosition to position at Start()
         ResetPosition = DronePhysics.position;
 
         #endregion
@@ -392,7 +464,7 @@ public class DroneControls : MonoBehaviour
         #region Hover Controls
 
         InputControl.FlightControls.MouseClick.performed += ToggleAutoMode;
-        InputControl.FlightControls.MouseScroll.performed += SwitchModes;
+        InputControl.FlightControls.ToggleHoverMode.performed += SwitchModes;
         
 
         if (InputControl.FlightControls.Hovering.inProgress)
@@ -541,7 +613,7 @@ public class DroneControls : MonoBehaviour
         #endregion
 
 
-        #region Drone Parts Physics
+        #region Lift - Induced Drag - Torque
 
         Vector3 CM = DronePhysics.worldCenterOfMass;
 
@@ -557,8 +629,8 @@ public class DroneControls : MonoBehaviour
             AirSpeed = Vector3.ProjectOnPlane(AirSpeed, t.forward);
             AoA = -Mathf.Rad2Deg * Mathf.Atan2(Vector3.Dot(AirSpeed, t.up), Vector3.Dot(AirSpeed, t.right));
 
-            if (i == 0) RefAirSpeed1 = AirSpeed.magnitude;
-            else if (i == 7) RefAirSpeed7 = AirSpeed.magnitude;
+            //if (i == 0) RefAirSpeed1 = AirSpeed.magnitude;
+            //else if (i == 7) RefAirSpeed7 = AirSpeed.magnitude;
 
             #region Lift
             Memory = t.up;
@@ -644,342 +716,185 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
-        #region Input Controls System
+        #region Input Controls System (ICS)
 
+        CurrentAngles = new Vector3(DataComputer.p, DataComputer.r, DataComputer.y);
+        DynamicPressure = (float)C.DensityAtHeight(PhysicsPosition.y) * AirSpeed.sqrMagnitude;
 
+        #region Toggle Input
+        InputControl.FlightControls.ToggleSASMode.performed += ToggleSASModes;
+        #endregion
+
+        #region Orientation Input
+
+        InputValues[0] = InputControl.ControlSurfaces.PitchUp.IsPressed();
+        InputValues[1] = InputControl.ControlSurfaces.PitchDown.IsPressed();
+        InputValues[2] = InputControl.ControlSurfaces.RollClock.IsPressed();
+        InputValues[3] = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
+        InputValues[4] = InputControl.ControlSurfaces.YawRight.IsPressed();
+        InputValues[5] = InputControl.ControlSurfaces.YawLeft.IsPressed();
 
         #endregion
 
-        #region Control Surfaces and SAS
-
-        DynamicPressure = (float)C.GaleAtmD * RefAirSpeed1;
-
-        if (PrevDyanmicPressure == 0)
-            PrevDyanmicPressure = DynamicPressure;
-
-        int threshold1 = 81;
-        int threshold2 = 225;
-
-        if (DynamicPressure >= threshold1) //Above 18 m/s
+        switch (SASMode)
         {
-            #region Control Surfaces and Reaction Wheels Speed
+            case 0: // SAS disabled
 
-            if (DynamicPressure >= threshold2) //Above 50 m/s
-            {
-                pctrl = CanardsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
-                rctrl = AileronsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
-                yctrl = ElevatorsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
-                //yctrl = YawCtrl * (((float)C.GaleAtmD / (float)C.GaleAtmD) * (900 / RefSqrAirSpeed7));
-                //Debug.Log("Control Surfaces: " + pctrl + " ; " + rctrl + " ; " + yctrl + " .");
+                break;
 
-                if (ReactionWheelsPower != 0) ReactionWheelsPower = 0;
-            }
-            else
-            {
-                pctrl = CanardsCtrl;
-                rctrl = AileronsCtrl;
-                yctrl = ElevatorsCtrl;
+            case 1: // Hover-Heli mode
+                #region Hover-Heli SAS
 
-                ReactionWheelsPower = 1 - Mathf.Pow((DynamicPressure - threshold1) / (threshold2 - threshold1), 1);
-            }
-            #endregion
-
-            #region Pitch
-            //Pitch Control Assist Augmentations:
-            //  Higher controls at low canards angles (10 times at angles between -0.25 and 0.25);
-            //  Reason: Low canards angles seem to have no effect on actual pitch, but begin to at high speeds
-            if (Mathf.Abs(ControlSurfaceAngle[0]) <= 0.25)
-            {
-                pctrl *= 10;
-            }
-
-            bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
-            bool csn = InputControl.ControlSurfaces.PitchDown.IsPressed();
-            if (csp && !csn)
-            {
-                ControlSurfaceAngle[0] += pctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[0] += PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ControlSurfaceAngle[0] -= pctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[0] -= PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (csp && csn && (ControlSurfaceAngle[0] != 0 || ReactionWheelsTorque[0] != 0))
-            {
-                ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > pctrl / 5)
-                    ? Mathf.Sign(-ControlSurfaceAngle[0]) * pctrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[0];
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[0] += (Mathf.Abs(ReactionWheelsTorque[0]) > PitchJerk * ReactionWheelsPower / 5)
-                        ? Mathf.Sign(-ReactionWheelsTorque[0]) * PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime
-                        : -ReactionWheelsTorque[0];
-            }
-
-
-            if (csp || csn)
-            {
-                NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[0]);
-            }
-            else 
-            {
-                if (ControlSurfaceAngle[0] != 0 && Mathf.Abs(ControlSurfaceAngle[0]) < pctrl / 5)
+                #region Normalize Control Surfaces
+                for (int i = 0; i < 3; i++)
                 {
-                    ControlSurfaceAngle[0] = 0;
-                    NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                    if (ControlSurfaceTargetAngle[i] != 0) ControlSurfaceTargetAngle[i] = 0;
+                }
+                #endregion
+
+                #region Pitch
+
+                    if (InputValues[0] ^ InputValues[1])
+                {
+                    ReactionWheelsTargetTorque[0] = (InputValues[0] ? 1 : -1) * ReactionWheelsDefaultTorque.x;
+                }
+                else
+                {
+                    ReactionWheelsTargetTorque[0] = 0;
                 }
 
-                if (ReactionWheelsTorque[0] != 0 && Mathf.Abs(ReactionWheelsTorque[0]) < PitchJerk * ReactionWheelsPower / 5)
+                #endregion
+
+                #region Roll
+
+                if (InputValues[2] ^ InputValues[3])
                 {
-                    ReactionWheelsTorque[0] = 0;
+                    ReactionWheelsTargetTorque[1] = (InputValues[2] ? 1 : -1) * ReactionWheelsDefaultTorque.y;
                 }
-            }
-
-            #endregion
-
-            #region Roll
-            //Roll Control Assist Augmentations:
-            //  Lowered controls at high canards angle (progressive: 1/7 above or at 0.35 and 1/14 above or at 0.45);
-            //  Higher controls on retraction to neutral speed (x2);
-
-            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.35f)
-                rctrl /= 7;
-            if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.45f)
-                rctrl /= 2;
-
-            csp = InputControl.ControlSurfaces.RollClock.IsPressed();
-            csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
-            if (csp && !csn)
-            {
-                ControlSurfaceAngle[1] += rctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[1] += RollJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ControlSurfaceAngle[1] -= rctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[1] -= RollJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (csp && csn && (ControlSurfaceAngle[1] != 0 || ReactionWheelsTorque[1] != 0))
-            {
-                ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > rctrl / 5)
-                    ? (ControlSurfaceAngle[1] < 0 ? 2 : -2) * rctrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[1];
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[1] += (Mathf.Abs(ReactionWheelsTorque[1]) > RollJerk * ReactionWheelsPower / 5)
-                        ? (ReactionWheelsTorque[1] < 0 ? 2 : -2) * RollJerk * ReactionWheelsPower * Time.fixedDeltaTime
-                        : -ReactionWheelsTorque[1];
-            }
-            
-
-            if (csp || csn)
-            {
-                NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1] / 2);
-                NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1] / 2);
-                NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1]);
-                NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1]);
-            }
-            else
-            {
-                if (ControlSurfaceAngle[1] != 0 && Mathf.Abs(ControlSurfaceAngle[1]) < rctrl / 5)
+                else
                 {
-                    ControlSurfaceAngle[1] = 0;
-                    NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                    ReactionWheelsTargetTorque[1] = 0;
                 }
 
-                if (ReactionWheelsTorque[1] != 0 && Mathf.Abs(ReactionWheelsTorque[1]) < RollJerk * ReactionWheelsPower / 5)
+                #endregion
+
+                #region Yaw
+
+                if (InputValues[4] ^ InputValues[5])
                 {
-                    ReactionWheelsTorque[1] = 0;
+                    ReactionWheelsTargetTorque[2] = (InputValues[4] ? 1 : -1) * ReactionWheelsDefaultTorque.z;
                 }
-            }
-
-            #endregion
-
-            #region Yaw
-
-            csp = InputControl.ControlSurfaces.YawRight.IsPressed();
-            csn = InputControl.ControlSurfaces.YawLeft.IsPressed();
-            if (csp && !csn)
-            {
-                ControlSurfaceAngle[2] += yctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[2] += YawJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ControlSurfaceAngle[2] -= yctrl * Time.fixedDeltaTime;
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[2] -= YawJerk * ReactionWheelsPower * Time.fixedDeltaTime;
-            }
-            else if (csp && csn && (ControlSurfaceAngle[2] != 0 || ReactionWheelsTorque[2] != 0))
-            {
-                ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > yctrl / 10)
-                    ? Mathf.Sign(-ControlSurfaceAngle[2]) * yctrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[2];
-
-                if (ReactionWheelsPower != 0)
-                    ReactionWheelsTorque[2] += (Mathf.Abs(ReactionWheelsTorque[2]) > YawJerk * ReactionWheelsPower / 5)
-                        ? Mathf.Sign(-ReactionWheelsTorque[2]) * YawJerk * ReactionWheelsPower * Time.fixedDeltaTime
-                        : -ReactionWheelsTorque[2];
-            }
-
-
-            if (csp || csn)
-            {
-                NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
-                NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
-            }
-            else
-            {
-                if (ControlSurfaceAngle[2] != 0 && Mathf.Abs(ControlSurfaceAngle[2]) < yctrl / 10)
+                else
                 {
-                    ControlSurfaceAngle[2] = 0;
-                    NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
-                    NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
+                    ReactionWheelsTargetTorque[2] = 0;
                 }
 
-                if (ReactionWheelsTorque[2] != 0 && Mathf.Abs(ReactionWheelsTorque[2]) < YawJerk * ReactionWheelsPower / 5)
-                {
-                    ReactionWheelsTorque[2] = 0;
-                }
-            }
+                #endregion
 
-            #endregion
+                #region Undesired Torque Stabilization
+
+                ReactionWheelsTorqueStabilization[0] = -PhysicsTorque.x;
+                ReactionWheelsTorqueStabilization[1] = -PhysicsTorque.y;
+                ReactionWheelsTorqueStabilization[2] = -PhysicsTorque.z;
+
+                #endregion
+
+                #region Torque to Targets
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (ReactionWheelsTorque[i] != ReactionWheelsTargetTorque[i])
+                    {
+                        if (Mathf.Abs(ReactionWheelsTargetTorque[i] - ReactionWheelsTorque[i]) < ReactionWheelsJerk[i] * Time.fixedDeltaTime)
+                            ReactionWheelsTorque[i] = ReactionWheelsTargetTorque[i];
+                        else
+                            ReactionWheelsTorque[i] += Mathf.Sign(ReactionWheelsTargetTorque[i] - ReactionWheelsTorque[i]) * ReactionWheelsJerk[i] * Time.fixedDeltaTime;
+                    }
+                }
+
+                #endregion
+
+                #endregion
+                break;
+
+            case 2: // Plane mode
+                #region Check Requirements
+                if (DynamicPressure < 400)
+                {
+                    SASMode = 1;
+                    break;
+                }
+                #endregion
+
+                #region Plane SAS
+
+                #region Pitch
+
+                if (InputValues[0] || InputValues[1])
+                {
+                    PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
+                    PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
+                    ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
+                }
+
+                #endregion
+
+                #region Roll
+
+                #endregion
+
+                #region Yaw
+
+                if (InputValues[4] || InputValues[5])
+                {
+                    ControlSurfaceTargetAngle[2] += (InputValues[4] ? 1 : -1) * YawSpeed * Time.fixedDeltaTime;
+                    ControlSurfaceTargetAngle[2] = Mathf.Clamp(ControlSurfaceTargetAngle[2], -ControlSurfaceMaxAngles[2], ControlSurfaceMaxAngles[2]);
+                }
+
+                #endregion
+
+                #endregion
+                break;
+
+            default: //to please the IntelliSense
+                SASMode = 0;
+                break;
         }
-        else
+
+        #region Control Surfaces to Targets
+
+        ControlSurfaceAngles[0] = NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation.eulerAngles.z;
+        ControlSurfaceAngles[2] = -NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation.eulerAngles.y;
+
+        for (int i = 0; i < 3; i++)
         {
-            #region Neutral Canards
-
-            if (ControlSurfaceAngle[0] != 0)
+            if (ControlSurfaceAngles[i] != ControlSurfaceTargetAngle[i])
             {
-                ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > CanardsCtrl / 5)
-                    ? Mathf.Sign(-ControlSurfaceAngle[0]) * CanardsCtrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[0];
-
-                NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[0]);
+                if (Mathf.Abs(ControlSurfaceTargetAngle[i] - ControlSurfaceAngles[i]) < ControlSurfaceAngularSpeed[i] * Time.fixedDeltaTime)
+                {
+                    ControlSurfaceAngles[i] = ControlSurfaceTargetAngle[i];
+                }
+                else
+                {
+                    ControlSurfaceAngles[i] += Mathf.Sign(ControlSurfaceTargetAngle[i] - ControlSurfaceAngles[i]) * ControlSurfaceAngularSpeed[i] * Time.fixedDeltaTime;
+                }
             }
-            #endregion
-
-            #region Neutral Ailerons
-
-            if (ControlSurfaceAngle[1] != 0)
-            {
-                ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > AileronsCtrl / 5)
-                    ? Mathf.Sign(-ControlSurfaceAngle[1]) * AileronsCtrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[1];
-
-                NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1] / 2);
-                NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1] / 2);
-                NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1]);
-                NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1]);
-            }
-            #endregion
-
-            #region Neutral Elevators
-
-            if (ControlSurfaceAngle[2] != 0)
-            {
-                ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > ElevatorsCtrl / 5)
-                    ? Mathf.Sign(-ControlSurfaceAngle[2]) * ElevatorsCtrl * Time.fixedDeltaTime
-                    : -ControlSurfaceAngle[2];
-
-                NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
-                NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
-            }
-            #endregion
-
-            #region Reaction Wheels
-
-            if (ReactionWheelsPower != 1) ReactionWheelsPower = 1;
-
-            #region Pitch
-            bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
-            bool csn = InputControl.ControlSurfaces.PitchDown.IsPressed();
-            if (csp && !csn)
-            {
-                ReactionWheelsTorque[0] += PitchJerk * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ReactionWheelsTorque[0] -= PitchJerk * Time.fixedDeltaTime;
-            }
-            else if (!(csp ^ csn) && ReactionWheelsTorque[0] != 0)
-            {
-                ReactionWheelsTorque[0] += (Mathf.Abs(ReactionWheelsTorque[0]) > PitchJerk / 5)
-                    ? (ReactionWheelsTorque[0] < 0 ? 3 : -3) * PitchJerk * Time.fixedDeltaTime
-                    : -ReactionWheelsTorque[0];
-            }
-            #endregion
-
-            #region Roll
-            csp = InputControl.ControlSurfaces.RollClock.IsPressed();
-            csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
-            if (csp && !csn)
-            {
-                ReactionWheelsTorque[1] += RollJerk * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ReactionWheelsTorque[1] -= RollJerk * Time.fixedDeltaTime;
-            }
-            else if (!(csp ^ csn) && ReactionWheelsTorque[1] != 0)
-            {
-                ReactionWheelsTorque[1] += (Mathf.Abs(ReactionWheelsTorque[1]) > RollJerk / 5)
-                    ? (ReactionWheelsTorque[1] < 0 ? 6 : -6) * RollJerk * Time.fixedDeltaTime
-                    : -ReactionWheelsTorque[1];
-            }
-            #endregion
-
-            #region Yaw
-
-            csp = InputControl.ControlSurfaces.YawRight.IsPressed();
-            csn = InputControl.ControlSurfaces.YawLeft.IsPressed();
-            if (csp && !csn)
-            {
-                ReactionWheelsTorque[2] += YawJerk * Time.fixedDeltaTime;
-            }
-            else if (!csp && csn)
-            {
-                ReactionWheelsTorque[2] -= YawJerk * Time.fixedDeltaTime;
-            }
-            else if (!(csp ^ csn) && ReactionWheelsTorque[2] != 0)
-            {
-                ReactionWheelsTorque[2] += (Mathf.Abs(ReactionWheelsTorque[2]) > YawJerk / 5)
-                    ? (ReactionWheelsTorque[2] < 0 ? 3 : -3) * YawJerk * Time.fixedDeltaTime
-                    : -ReactionWheelsTorque[2];
-            }
-
-            #endregion
-
-            #endregion
-
-            #region SAS (unused)
-
-            /*PhysicsTorque = new((Mathf.Abs(PhysicsTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.x + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.x > 0 ? -1 : 1)) : 0,
-                (Mathf.Abs(PhysicsTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.y + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.y > 0 ? -1 : 1)) : 0,
-                (Mathf.Abs(PhysicsTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.z + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.z > 0 ? -1 : 1)) : 0);
-            */
-
-            //PhysicsTorque /= 15;
-
-            #endregion
         }
+
+        //Canards
+        NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngles[0]);
+        //Elevators
+        NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngles[2], 0);
+        NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngles[2], 0);
+
+        #endregion
+
+        #endregion
 
         #region SAS - Undesired Torque Stabilization
+
+        /*
+        ReactionWheelsPower = 1;
 
         if (ReactionWheelsPower != 0)
         {
@@ -1007,21 +922,10 @@ public class DroneControls : MonoBehaviour
                 ? StabilizingWheelTorque.z + (Mathf.Sign(StabilizingWheelTorque.z) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
                 : 0;
         }
-
-        #endregion
-
-        #region Apply Reaction Wheels Torque
-
-        PhysicsTorque += (Vector3.forward * ReactionWheelsTorque[0])
-            + (Vector3.left * ReactionWheelsTorque[1])
-            + (Vector3.up * ReactionWheelsTorque[2])
-            + StabilizingWheelTorque;
+        */
         #endregion
 
         PrevDyanmicPressure = DynamicPressure;
-
-        #endregion
-
         AirSpeed = -PhysicsVelocity + Wind;
 
         #region Drag Physics
@@ -1052,11 +956,14 @@ public class DroneControls : MonoBehaviour
 
 
         #region APPLY PHYSICS
+        PhysicsTorque += new Vector3(ReactionWheelsTorqueStabilization[0], ReactionWheelsTorqueStabilization[1], ReactionWheelsTorqueStabilization[2]);
+
         if (!AirChamberTest)
         {
             //PhysicsVelocity += PhysicsAcceleration * Time.fixedDeltaTime / DronePhysics.mass;
             DronePhysics.AddForce(PhysicsAcceleration, ForceMode.Acceleration);
-            DronePhysics.AddRelativeTorque(PhysicsTorque);
+            DronePhysics.AddRelativeTorque(PhysicsTorque, ForceMode.Force);
+            DronePhysics.AddRelativeTorque(new(-ReactionWheelsTorque[1], ReactionWheelsTorque[2], ReactionWheelsTorque[0]), ForceMode.Acceleration);
             //Debug.Log(PhysicsTorque);
 
             //MAJOR ISSUE: Torque from wings behaves weird
@@ -1065,7 +972,7 @@ public class DroneControls : MonoBehaviour
         {
             DronePhysics.position = PhysicsPosition = Vector3.up;
             DronePhysics.linearVelocity = PhysicsVelocity = Vector3.zero;
-            DronePhysics.AddRelativeTorque(PhysicsTorque);
+            DronePhysics.AddRelativeTorque(PhysicsTorque, ForceMode.Force);
             //Debug.Log(PhysicsTorque);
 
             /*
@@ -1151,18 +1058,34 @@ public class DroneControls : MonoBehaviour
         #endregion
     }
 
+    #region Toggle SAS Modes
+
+    private void ToggleSASModes(InputAction.CallbackContext obj)
+    {
+        if (SASMode == 1) SASMode = 2;
+        else if (SASMode == 2) SASMode = 1;
+        else if (SASMode == 0) SASMode = 1;
+        else SASMode = 0;
+        InputControl.FlightControls.ToggleSASMode.performed -= ToggleSASModes;
+        return;
+    }
+
+    #endregion
+
     #region Hover Modes Control
     private void ToggleAutoMode(InputAction.CallbackContext obj)
     {
         HoverAuto = !HoverAuto;
         InputControl.FlightControls.MouseClick.performed -= ToggleAutoMode;
+        return;
     }
 
     private void SwitchModes(InputAction.CallbackContext obj)
     {
-        HoverMode += InputControl.FlightControls.MouseScroll.ReadValue<float>() > 0 ? (HoverMode == 6 ? -2 : -1) : (HoverMode == 4 ? 2 : 1);
+        HoverMode += InputControl.FlightControls.ToggleHoverMode.ReadValue<float>() > 0 ? (HoverMode == 6 ? -2 : -1) : (HoverMode == 4 ? 2 : 1);
         HoverMode = Mathf.Clamp(HoverMode, 1, 6);
-        InputControl.FlightControls.MouseScroll.performed -= SwitchModes;
+        InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
+        return;
     }
     #endregion
 
@@ -1437,4 +1360,337 @@ for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
     }
     #endregion
 }*/
+#endregion
+
+#region discarded Control Surfaces and SAS
+/*
+DynamicPressure = (float)C.GaleAtmD * RefAirSpeed1;
+
+if (PrevDyanmicPressure == 0)
+    PrevDyanmicPressure = DynamicPressure;
+
+int threshold1 = 81;
+int threshold2 = 225;
+
+if (DynamicPressure >= threshold1) //Above 18 m/s
+{
+    #region Control Surfaces and Reaction Wheels Speed
+
+    if (DynamicPressure >= threshold2) //Above 50 m/s
+    {
+        pctrl = CanardsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
+        rctrl = AileronsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
+        yctrl = ElevatorsCtrl * (50 * (float)C.GaleAtmD / DynamicPressure);
+        //yctrl = YawCtrl * (((float)C.GaleAtmD / (float)C.GaleAtmD) * (900 / RefSqrAirSpeed7));
+        //Debug.Log("Control Surfaces: " + pctrl + " ; " + rctrl + " ; " + yctrl + " .");
+
+        if (ReactionWheelsPower != 0) ReactionWheelsPower = 0;
+    }
+    else
+    {
+        pctrl = CanardsCtrl;
+        rctrl = AileronsCtrl;
+        yctrl = ElevatorsCtrl;
+
+        ReactionWheelsPower = 1 - Mathf.Pow((DynamicPressure - threshold1) / (threshold2 - threshold1), 1);
+    }
+    #endregion
+
+    #region Pitch
+    //Pitch Control Assist Augmentations:
+    //  Higher controls at low canards angles (10 times at angles between -0.25 and 0.25);
+    //  Reason: Low canards angles seem to have no effect on actual pitch, but begin to at high speeds
+    if (Mathf.Abs(ControlSurfaceAngle[0]) <= 0.25)
+    {
+        pctrl *= 10;
+    }
+
+    bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
+    bool csn = InputControl.ControlSurfaces.PitchDown.IsPressed();
+    if (csp && !csn)
+    {
+        ControlSurfaceAngle[0] += pctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[0] += PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ControlSurfaceAngle[0] -= pctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[0] -= PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (csp && csn && (ControlSurfaceAngle[0] != 0 || ReactionWheelsTorque[0] != 0))
+    {
+        ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > pctrl / 5)
+            ? Mathf.Sign(-ControlSurfaceAngle[0]) * pctrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[0];
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[0] += (Mathf.Abs(ReactionWheelsTorque[0]) > PitchJerk * ReactionWheelsPower / 5)
+                ? Mathf.Sign(-ReactionWheelsTorque[0]) * PitchJerk * ReactionWheelsPower * Time.fixedDeltaTime
+                : -ReactionWheelsTorque[0];
+    }
+
+
+    if (csp || csn)
+    {
+        NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[0]);
+    }
+    else 
+    {
+        if (ControlSurfaceAngle[0] != 0 && Mathf.Abs(ControlSurfaceAngle[0]) < pctrl / 5)
+        {
+            ControlSurfaceAngle[0] = 0;
+            NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
+
+        if (ReactionWheelsTorque[0] != 0 && Mathf.Abs(ReactionWheelsTorque[0]) < PitchJerk * ReactionWheelsPower / 5)
+        {
+            ReactionWheelsTorque[0] = 0;
+        }
+    }
+
+    #endregion
+
+    #region Roll
+    //Roll Control Assist Augmentations:
+    //  Lowered controls at high canards angle (progressive: 1/7 above or at 0.35 and 1/14 above or at 0.45);
+    //  Higher controls on retraction to neutral speed (x2);
+
+    if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.35f)
+        rctrl /= 7;
+    if (Mathf.Abs(ControlSurfaceAngle[0]) >= 0.45f)
+        rctrl /= 2;
+
+    csp = InputControl.ControlSurfaces.RollClock.IsPressed();
+    csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
+    if (csp && !csn)
+    {
+        ControlSurfaceAngle[1] += rctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[1] += RollJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ControlSurfaceAngle[1] -= rctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[1] -= RollJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (csp && csn && (ControlSurfaceAngle[1] != 0 || ReactionWheelsTorque[1] != 0))
+    {
+        ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > rctrl / 5)
+            ? (ControlSurfaceAngle[1] < 0 ? 2 : -2) * rctrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[1];
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[1] += (Mathf.Abs(ReactionWheelsTorque[1]) > RollJerk * ReactionWheelsPower / 5)
+                ? (ReactionWheelsTorque[1] < 0 ? 2 : -2) * RollJerk * ReactionWheelsPower * Time.fixedDeltaTime
+                : -ReactionWheelsTorque[1];
+    }
+
+
+    if (csp || csn)
+    {
+        NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1] / 2);
+        NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1] / 2);
+        NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1]);
+        NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1]);
+    }
+    else
+    {
+        if (ControlSurfaceAngle[1] != 0 && Mathf.Abs(ControlSurfaceAngle[1]) < rctrl / 5)
+        {
+            ControlSurfaceAngle[1] = 0;
+            NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
+
+        if (ReactionWheelsTorque[1] != 0 && Mathf.Abs(ReactionWheelsTorque[1]) < RollJerk * ReactionWheelsPower / 5)
+        {
+            ReactionWheelsTorque[1] = 0;
+        }
+    }
+
+    #endregion
+
+    #region Yaw
+
+    csp = InputControl.ControlSurfaces.YawRight.IsPressed();
+    csn = InputControl.ControlSurfaces.YawLeft.IsPressed();
+    if (csp && !csn)
+    {
+        ControlSurfaceAngle[2] += yctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[2] += YawJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ControlSurfaceAngle[2] -= yctrl * Time.fixedDeltaTime;
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[2] -= YawJerk * ReactionWheelsPower * Time.fixedDeltaTime;
+    }
+    else if (csp && csn && (ControlSurfaceAngle[2] != 0 || ReactionWheelsTorque[2] != 0))
+    {
+        ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > yctrl / 10)
+            ? Mathf.Sign(-ControlSurfaceAngle[2]) * yctrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[2];
+
+        if (ReactionWheelsPower != 0)
+            ReactionWheelsTorque[2] += (Mathf.Abs(ReactionWheelsTorque[2]) > YawJerk * ReactionWheelsPower / 5)
+                ? Mathf.Sign(-ReactionWheelsTorque[2]) * YawJerk * ReactionWheelsPower * Time.fixedDeltaTime
+                : -ReactionWheelsTorque[2];
+    }
+
+
+    if (csp || csn)
+    {
+        NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
+        NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
+    }
+    else
+    {
+        if (ControlSurfaceAngle[2] != 0 && Mathf.Abs(ControlSurfaceAngle[2]) < yctrl / 10)
+        {
+            ControlSurfaceAngle[2] = 0;
+            NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        }
+
+        if (ReactionWheelsTorque[2] != 0 && Mathf.Abs(ReactionWheelsTorque[2]) < YawJerk * ReactionWheelsPower / 5)
+        {
+            ReactionWheelsTorque[2] = 0;
+        }
+    }
+
+    #endregion
+}
+else
+{
+    #region Neutral Canards
+
+    if (ControlSurfaceAngle[0] != 0)
+    {
+        ControlSurfaceAngle[0] += (Mathf.Abs(ControlSurfaceAngle[0]) > CanardsCtrl / 5)
+            ? Mathf.Sign(-ControlSurfaceAngle[0]) * CanardsCtrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[0];
+
+        NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[0]);
+    }
+    #endregion
+
+    #region Neutral Ailerons
+
+    if (ControlSurfaceAngle[1] != 0)
+    {
+        ControlSurfaceAngle[1] += (Mathf.Abs(ControlSurfaceAngle[1]) > AileronsCtrl / 5)
+            ? Mathf.Sign(-ControlSurfaceAngle[1]) * AileronsCtrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[1];
+
+        NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1] / 2);
+        NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1] / 2);
+        NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngle[1]);
+        NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngle[1]);
+    }
+    #endregion
+
+    #region Neutral Elevators
+
+    if (ControlSurfaceAngle[2] != 0)
+    {
+        ControlSurfaceAngle[2] += (Mathf.Abs(ControlSurfaceAngle[2]) > ElevatorsCtrl / 5)
+            ? Mathf.Sign(-ControlSurfaceAngle[2]) * ElevatorsCtrl * Time.fixedDeltaTime
+            : -ControlSurfaceAngle[2];
+
+        NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
+        NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngle[2], 0);
+    }
+    #endregion
+
+    #region Reaction Wheels
+
+    if (ReactionWheelsPower != 1) ReactionWheelsPower = 1;
+
+    #region Pitch
+    bool csp = InputControl.ControlSurfaces.PitchUp.IsPressed();
+    bool csn = InputControl.ControlSurfaces.PitchDown.IsPressed();
+    if (csp && !csn)
+    {
+        ReactionWheelsTorque[0] += PitchJerk * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ReactionWheelsTorque[0] -= PitchJerk * Time.fixedDeltaTime;
+    }
+    else if (!(csp ^ csn) && ReactionWheelsTorque[0] != 0)
+    {
+        ReactionWheelsTorque[0] += (Mathf.Abs(ReactionWheelsTorque[0]) > PitchJerk / 5)
+            ? (ReactionWheelsTorque[0] < 0 ? 3 : -3) * PitchJerk * Time.fixedDeltaTime
+            : -ReactionWheelsTorque[0];
+    }
+    #endregion
+
+    #region Roll
+    csp = InputControl.ControlSurfaces.RollClock.IsPressed();
+    csn = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
+    if (csp && !csn)
+    {
+        ReactionWheelsTorque[1] += RollJerk * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ReactionWheelsTorque[1] -= RollJerk * Time.fixedDeltaTime;
+    }
+    else if (!(csp ^ csn) && ReactionWheelsTorque[1] != 0)
+    {
+        ReactionWheelsTorque[1] += (Mathf.Abs(ReactionWheelsTorque[1]) > RollJerk / 5)
+            ? (ReactionWheelsTorque[1] < 0 ? 6 : -6) * RollJerk * Time.fixedDeltaTime
+            : -ReactionWheelsTorque[1];
+    }
+    #endregion
+
+    #region Yaw
+
+    csp = InputControl.ControlSurfaces.YawRight.IsPressed();
+    csn = InputControl.ControlSurfaces.YawLeft.IsPressed();
+    if (csp && !csn)
+    {
+        ReactionWheelsTorque[2] += YawJerk * Time.fixedDeltaTime;
+    }
+    else if (!csp && csn)
+    {
+        ReactionWheelsTorque[2] -= YawJerk * Time.fixedDeltaTime;
+    }
+    else if (!(csp ^ csn) && ReactionWheelsTorque[2] != 0)
+    {
+        ReactionWheelsTorque[2] += (Mathf.Abs(ReactionWheelsTorque[2]) > YawJerk / 5)
+            ? (ReactionWheelsTorque[2] < 0 ? 3 : -3) * YawJerk * Time.fixedDeltaTime
+            : -ReactionWheelsTorque[2];
+    }
+
+    #endregion
+
+    #endregion
+
+    #region SAS (unused)
+
+    /*PhysicsTorque = new((Mathf.Abs(PhysicsTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.x + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.x > 0 ? -1 : 1)) : 0,
+        (Mathf.Abs(PhysicsTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.y + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.y > 0 ? -1 : 1)) : 0,
+        (Mathf.Abs(PhysicsTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk) ? PhysicsTorque.z + (NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * (PhysicsTorque.z > 0 ? -1 : 1)) : 0);
+    */
+
+//PhysicsTorque /= 15;
+/*
+#endregion
+}
+
+
+*/
 #endregion

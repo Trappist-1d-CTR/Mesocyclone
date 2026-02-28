@@ -9,3 +9,4 @@ EditorBuildSettings:
     path: Assets/[Dev5]Environment/EnvironmentDevelopment.unity
     guid: 409628957ac379b49acd78beab55b35d
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

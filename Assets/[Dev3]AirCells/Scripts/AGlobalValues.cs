@@ -288,6 +288,11 @@ public class AGlobalValues : MonoBehaviour
         return GaleAtm * System.Math.Exp(-GaleG * GaleAtmMM * Height / (R * GaleAvgTemp));
     }
 
+    public double DensityAtHeight(double Height)
+    {
+        return GaleAtmD * System.Math.Exp(-GaleG * GaleAtmMM * Height / (R * GaleAvgTemp));
+    }
+
     public double GalePressGivenTemp(double Temp)
     {
         return GaleAtm * System.Math.Exp(-GaleG * GaleAtmMM * 10439 / (R * Temp));

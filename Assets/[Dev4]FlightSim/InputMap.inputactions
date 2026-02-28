@@ -43,10 +43,19 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MouseScroll",
+                    "name": "ToggleSASMode",
+                    "type": "Button",
+                    "id": "466d0984-732d-4329-b907-578e46475969",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ToggleHoverMode",
                     "type": "Button",
                     "id": "5e49db7a-66e9-4446-bd98-c059880cc06f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -146,7 +155,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseScroll",
+                    "action": "ToggleHoverMode",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -157,7 +166,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC - KeyMouse (Standard)",
-                    "action": "MouseScroll",
+                    "action": "ToggleHoverMode",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -168,9 +177,20 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC - KeyMouse (Standard)",
-                    "action": "MouseScroll",
+                    "action": "ToggleHoverMode",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ff289981-0d4c-4d70-8f49-f88a0a12a913",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleSASMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
