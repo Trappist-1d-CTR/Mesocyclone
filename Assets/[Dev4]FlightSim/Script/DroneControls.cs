@@ -119,7 +119,7 @@ public class DroneControls : MonoBehaviour
     private float PrevDyanmicPressure;
     #endregion
 
-    #region Input Controls System
+    #region Input Controls System (ICS)
     public byte SASMode;
     private bool[] InputValues;
     private Vector3 CurrentAngles;
@@ -141,7 +141,7 @@ public class DroneControls : MonoBehaviour
     public AnimationCurve PitchExpectedFromCanardsAngles;
     public AnimationCurve CanardsAnglesExpectedFromPitch;
 
-    public float RollDefaultAngle;
+    public float AileronsDefaultAngle;
     public float RollJerk;
 
     public float YawSpeed;
@@ -885,8 +885,8 @@ public class DroneControls : MonoBehaviour
 
                 if (InputValues[2] ^ InputValues[3])
                 {
-                    if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != RollDefaultAngle)
-                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * RollDefaultAngle;
+                    if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != AileronsDefaultAngle)
+                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle;
                 }
                 else
                 {
