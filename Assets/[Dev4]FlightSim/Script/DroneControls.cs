@@ -128,11 +128,12 @@ public class DroneControls : MonoBehaviour
     private float[] ReactionWheelsTorque;
     public float[] ReactionWheelsJerk;
 
+    public float TorqueStabilizationJerk;
     private float[] ReactionWheelsTorqueStabilization;
 
     public float[] ControlSurfaceMaxAngles;
-    private float[] ControlSurfaceTargetAngle;
-    private float[] ControlSurfaceAngles;
+    public float[] ControlSurfaceTargetAngle;
+    public float[] ControlSurfaceAngles;
     public float[] ControlSurfaceAngularSpeed;
 
     public float PitchTarget;
@@ -140,7 +141,7 @@ public class DroneControls : MonoBehaviour
     public AnimationCurve PitchExpectedFromCanardsAngles;
     public AnimationCurve CanardsAnglesExpectedFromPitch;
 
-    public float RollDefaultTorque;
+    public float RollDefaultAngle;
     public float RollJerk;
 
     public float YawSpeed;
@@ -754,7 +755,7 @@ public class DroneControls : MonoBehaviour
 
                 #region Pitch
 
-                    if (InputValues[0] ^ InputValues[1])
+                if (InputValues[0] ^ InputValues[1])
                 {
                     ReactionWheelsTargetTorque[0] = (InputValues[0] ? 1 : -1) * ReactionWheelsDefaultTorque.x;
                 }
@@ -792,10 +793,27 @@ public class DroneControls : MonoBehaviour
                 #endregion
 
                 #region Undesired Torque Stabilization
+                float catchException;
+                Vector3 T = -PhysicsTorque;
+                //Debug.Log(PhysicsTorque.magnitude.ToString() + " ; " + (PhysicsTorque.magnitude - T.magnitude).ToString());
 
-                ReactionWheelsTorqueStabilization[0] = -PhysicsTorque.x;
-                ReactionWheelsTorqueStabilization[1] = -PhysicsTorque.y;
-                ReactionWheelsTorqueStabilization[2] = -PhysicsTorque.z;
+                for (int i = 0; i < 3; i++)
+                {
+                    catchException = ReactionWheelsTorqueStabilization[i];
+                    if (Mathf.Abs((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
+                    {
+                        ReactionWheelsTorqueStabilization[i] = i == 0 ? T.x : (i == 1 ? T.y : T.z);
+                    }
+                    else
+                    {
+                        ReactionWheelsTorqueStabilization[i] += Mathf.Sign((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
+                    }
+
+                    if (Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException) > 2 * TorqueStabilizationJerk * Time.fixedDeltaTime)
+                    {
+                        throw new System.Exception("Impossible Torque Stabilization Jerk: " + Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException));
+                    }
+                }
 
                 #endregion
 
@@ -826,29 +844,68 @@ public class DroneControls : MonoBehaviour
                 }
                 #endregion
 
+                #region Remove Undesired Torque Stabilization
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (Mathf.Abs(ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
+                    {
+                        ReactionWheelsTorqueStabilization[i] = 0;
+                    }
+                    else
+                    {
+                        ReactionWheelsTorqueStabilization[i] += -Mathf.Sign(ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
+                    }
+                }
+
+                #endregion
+
                 #region Plane SAS
 
                 #region Pitch
 
                 if (InputValues[0] || InputValues[1])
                 {
-                    PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
-                    PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
-                    ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
+                    if (InputValues[0] && InputValues[1])
+                    {
+                        PitchTarget = 0;
+                        ControlSurfaceTargetAngle[0] = 0;
+                    }
+                    else
+                    {
+                        PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
+                        PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
+                        ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
+                    }
                 }
 
                 #endregion
 
                 #region Roll
 
+                if (InputValues[2] ^ InputValues[3])
+                {
+                    if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != RollDefaultAngle)
+                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * RollDefaultAngle;
+                }
+                else
+                {
+                    if (ControlSurfaceTargetAngle[1] != 0)
+                        ControlSurfaceTargetAngle[1] = 0;
+                }
+
                 #endregion
 
                 #region Yaw
 
-                if (InputValues[4] || InputValues[5])
+                if (InputValues[4] ^ InputValues[5])
                 {
                     ControlSurfaceTargetAngle[2] += (InputValues[4] ? 1 : -1) * YawSpeed * Time.fixedDeltaTime;
                     ControlSurfaceTargetAngle[2] = Mathf.Clamp(ControlSurfaceTargetAngle[2], -ControlSurfaceMaxAngles[2], ControlSurfaceMaxAngles[2]);
+                }
+                else if (InputValues[4] && InputValues[5] && ControlSurfaceTargetAngle[2] != 0)
+                {
+                    ControlSurfaceTargetAngle[2] = 0;
                 }
 
                 #endregion
@@ -862,9 +919,6 @@ public class DroneControls : MonoBehaviour
         }
 
         #region Control Surfaces to Targets
-
-        ControlSurfaceAngles[0] = NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation.eulerAngles.z;
-        ControlSurfaceAngles[2] = -NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation.eulerAngles.y;
 
         for (int i = 0; i < 3; i++)
         {
@@ -883,46 +937,17 @@ public class DroneControls : MonoBehaviour
 
         //Canards
         NetLinker.Parts.DronePartStats[0].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngles[0]);
+        //Ailerons
+        NetLinker.Parts.DronePartStats[4].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngles[1]);
+        NetLinker.Parts.DronePartStats[4].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngles[1]);
+        NetLinker.Parts.DronePartStats[5].PartObject.transform.localRotation = Quaternion.Euler(0, 0, ControlSurfaceAngles[1]);
+        NetLinker.Parts.DronePartStats[5].PartObjectb.transform.localRotation = Quaternion.Euler(0, 0, -ControlSurfaceAngles[1]);
         //Elevators
         NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngles[2], 0);
         NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, -ControlSurfaceAngles[2], 0);
 
         #endregion
 
-        #endregion
-
-        #region SAS - Undesired Torque Stabilization
-
-        /*
-        ReactionWheelsPower = 1;
-
-        if (ReactionWheelsPower != 0)
-        {
-            Vector3 T = -PhysicsTorque * ReactionWheelsPower;
-
-            StabilizingWheelTorque.x = (Mathf.Abs(T.x - StabilizingWheelTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.x + (Mathf.Sign(T.x - StabilizingWheelTorque.x) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : T.x;
-            StabilizingWheelTorque.y = (Mathf.Abs(T.y - StabilizingWheelTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.y + (Mathf.Sign(T.y - StabilizingWheelTorque.y) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : T.y;
-            StabilizingWheelTorque.z = (Mathf.Abs(T.z - StabilizingWheelTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.z + (Mathf.Sign(T.z - StabilizingWheelTorque.z) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : T.z;
-        }
-        else if (StabilizingWheelTorque != Vector3.zero)
-        {
-            StabilizingWheelTorque.x = (Mathf.Abs(StabilizingWheelTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.x + (Mathf.Sign(StabilizingWheelTorque.x) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : 0;
-            StabilizingWheelTorque.y = (Mathf.Abs(StabilizingWheelTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.y + (Mathf.Sign(StabilizingWheelTorque.y) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : 0;
-            StabilizingWheelTorque.z = (Mathf.Abs(StabilizingWheelTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                ? StabilizingWheelTorque.z + (Mathf.Sign(StabilizingWheelTorque.z) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
-                : 0;
-        }
-        */
         #endregion
 
         PrevDyanmicPressure = DynamicPressure;
@@ -1691,6 +1716,39 @@ else
 #endregion
 }
 
+
+#region SAS - Undesired Torque Stabilization (unused)
+
+        /*
+        ReactionWheelsPower = 1;
+
+        if (ReactionWheelsPower != 0)
+        {
+            Vector3 T = -PhysicsTorque * ReactionWheelsPower;
+
+            StabilizingWheelTorque.x = (Mathf.Abs(T.x - StabilizingWheelTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.x + (Mathf.Sign(T.x - StabilizingWheelTorque.x) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : T.x;
+            StabilizingWheelTorque.y = (Mathf.Abs(T.y - StabilizingWheelTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.y + (Mathf.Sign(T.y - StabilizingWheelTorque.y) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : T.y;
+            StabilizingWheelTorque.z = (Mathf.Abs(T.z - StabilizingWheelTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.z + (Mathf.Sign(T.z - StabilizingWheelTorque.z) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : T.z;
+        }
+        else if (StabilizingWheelTorque != Vector3.zero)
+        {
+            StabilizingWheelTorque.x = (Mathf.Abs(StabilizingWheelTorque.x) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.x + (Mathf.Sign(StabilizingWheelTorque.x) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : 0;
+            StabilizingWheelTorque.y = (Mathf.Abs(StabilizingWheelTorque.y) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.y + (Mathf.Sign(StabilizingWheelTorque.y) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : 0;
+            StabilizingWheelTorque.z = (Mathf.Abs(StabilizingWheelTorque.z) > NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                ? StabilizingWheelTorque.z + (Mathf.Sign(StabilizingWheelTorque.z) * NetLinker.MainBody.DroneBodyStats[0].ReactionWheelsTorqueJerk * Time.fixedDeltaTime)
+                : 0;
+        }
+#endregion
 
 */
 #endregion

@@ -2000,22 +2000,26 @@ MonoBehaviour:
   HoverTargetSpeed:
   - 5
   HoverInputErrorTimer: 0
-  SASMode: 2
-  ReactionWheelsDefaultTorque: {x: 2, y: 2, z: 2}
+  PhysicsTorque: {x: 0, y: 0, z: 0}
+  SASMode: 1
+  ReactionWheelsDefaultTorque: {x: 3, y: 3, z: 3}
   ReactionWheelsJerk:
-  - 14
-  - 16
-  - 40
+  - 1.4
+  - 1.6
+  - 4
+  TorqueStabilizationJerk: 5000
   ControlSurfaceMaxAngles:
   - 5
   - 5
   - 40
+  ControlSurfaceTargetAngle: []
+  ControlSurfaceAngles: []
   ControlSurfaceAngularSpeed:
-  - 2
-  - 2
-  - 2
+  - 3
+  - 5
+  - 10
   PitchTarget: 0
-  PitchSpeed: 5
+  PitchSpeed: 4
   PitchExpectedFromCanardsAngles:
     serializedVersion: 2
     m_Curve: []
@@ -2028,12 +2032,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  RollDefaultTorque: 0
+  RollDefaultAngle: 1
   RollJerk: 0
-  YawSpeed: 5
-  ReactionWheelsPower: 0
-  ReactionWheelsTorque: []
-  StabilizingWheelTorque: {x: 0, y: 0, z: 0}
+  YawSpeed: 7
   Wind: {x: -20, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
   Air: {fileID: 2112915244}
@@ -2041,7 +2042,7 @@ MonoBehaviour:
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
-  AirChamberTest: 0
+  AirChamberTest: 1
   WindParticlesEnabled: 0
   WindParticles: {fileID: 0}
   ParticlesOriginDistance: 0
