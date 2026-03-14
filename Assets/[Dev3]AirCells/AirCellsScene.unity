@@ -2001,6 +2001,8 @@ MonoBehaviour:
   - 5
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
+  DynamicPressure: 0
+  ReferenceDynPressure: 0
   SASMode: 1
   ReactionWheelsDefaultTorque: {x: 3, y: 3, z: 3}
   ReactionWheelsJerk:
@@ -2015,9 +2017,9 @@ MonoBehaviour:
   ControlSurfaceTargetAngle: []
   ControlSurfaceAngles: []
   ControlSurfaceAngularSpeed:
-  - 3
+  - 2
   - 5
-  - 10
+  - 15
   PitchTarget: 0
   PitchSpeed: 4
   PitchExpectedFromCanardsAngles:
@@ -2034,6 +2036,12 @@ MonoBehaviour:
     m_RotationOrder: 4
   RollDefaultAngle: 1
   RollJerk: 0
+  AngularVelocityFromAileronsAngles:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   YawSpeed: 7
   Wind: {x: -20, y: 0, z: 0}
   AirSpeed: {x: 0, y: 0, z: 0}
@@ -2046,6 +2054,9 @@ MonoBehaviour:
   WindParticlesEnabled: 0
   WindParticles: {fileID: 0}
   ParticlesOriginDistance: 0
+  DataTimeRate: 10
+  OutputData:
+    TableElements: []
 --- !u!1001 &8966088915275858557
 PrefabInstance:
   m_ObjectHideFlags: 0

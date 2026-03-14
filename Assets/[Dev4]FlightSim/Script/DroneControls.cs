@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -115,11 +116,14 @@ public class DroneControls : MonoBehaviour
     private Vector3 PhysicsAngVelocity;
     public Vector3 PhysicsTorque;
 
-    private float DynamicPressure;
+    public float DynamicPressure;
+    public float ReferenceDynPressure;
     private float PrevDyanmicPressure;
     #endregion
 
-    #region Input Controls System
+    #region Input Controls System    
+    public InputMap InputControl;
+
     public byte SASMode;
     private bool[] InputValues;
     private Vector3 CurrentAngles;
@@ -143,8 +147,11 @@ public class DroneControls : MonoBehaviour
 
     public float RollDefaultAngle;
     public float RollJerk;
+    public AnimationCurve AngularVelocityFromAileronsAngles;
 
     public float YawSpeed;
+
+    private float[] NeutralControlsTimer;
     #endregion
 
     #region Control Surfaces and SAS (unused)
@@ -216,7 +223,20 @@ public class DroneControls : MonoBehaviour
     private Vector3 ResetPosition;
     #endregion
 
-    public InputMap InputControl;
+    #region Data Output
+    [System.Serializable]
+    public class DataTable
+    {
+        public List<Vector3> TableElements;
+    }
+
+    private int DataTimeTick;
+    public int DataTimeRate;
+    public int DataGatherStage;
+    public DataTable OutputData;
+
+    private float TimeAtGatheringStart;
+    #endregion
 
     #endregion
 
@@ -276,6 +296,7 @@ public class DroneControls : MonoBehaviour
         ReactionWheelsTorque = new float[3] { 0, 0, 0 };
         ReactionWheelsTorqueStabilization = new float[3] { 0, 0, 0 };
         ControlSurfaceAngles = new float[3] { 0, 0, 0 };
+        NeutralControlsTimer = new float[3] { 0, 0, 0 };
 
         //Assign AspectRatio values
         for (int i = 0; i < AspectRatio.Length; i++)
@@ -332,6 +353,29 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #region Get AngularVelocityFromAileronsAngles & its inverse
+
+        //Values obtained from an analysis of the drone's behavior with WindChamberTesting enabled and RollDefaultAngle at 1
+        //Link for reference: https://www.geogebra.org/graphing/csrpqpbw
+
+        float Ia = 0.0015902837684f;
+
+        AngularVelocityFromAileronsAngles = new AnimationCurve();
+        res = 40;
+        s = 0;
+        for (float i = 0; i <= 7; i += s * 7 / ((res + 1) * (res / 2)))
+        {
+            AngularVelocityFromAileronsAngles.AddKey(i, Mathf.Pow(i, 2) * Ia);
+            s++;
+        }
+
+        for (int i = 0; i < AngularVelocityFromAileronsAngles.length; i++)
+        {
+            AngularVelocityFromAileronsAngles.SmoothTangents(i, 1);
+        }
+
+        #endregion
+
         //Setup elevator objects rotation
         NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
         NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
@@ -339,10 +383,17 @@ public class DroneControls : MonoBehaviour
         InputValues = new bool[6] { false, false, false, false, false, false };
         ReactionWheelsTargetTorque = new float[3] { 0, 0, 0 };
 
+        //Calculate ReferenceDynamicPressure
+        ReferenceDynPressure = (float)C.GaleAtmD * 400f;
+
         //Setup ResetPosition to position at Start()
         ResetPosition = DronePhysics.position;
 
         #endregion
+
+        DataGatherStage = 0;
+        OutputData = new();
+        DataTimeTick = 0;
     }
 
     private void FixedUpdate()
@@ -870,12 +921,19 @@ public class DroneControls : MonoBehaviour
                     {
                         PitchTarget = 0;
                         ControlSurfaceTargetAngle[0] = 0;
+
+                        if (NeutralControlsTimer[0] != InputMargin) NeutralControlsTimer[0] = InputMargin;
                     }
                     else
                     {
-                        PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
-                        PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
-                        ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
+                        if (NeutralControlsTimer[0] == 0)
+                        {
+                            PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
+                            PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
+                            ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
+                            if (PitchTarget == 0) ControlSurfaceTargetAngle[0] = 0;
+                        }
+                        else NeutralControlsTimer[0] = Mathf.Min(0, NeutralControlsTimer[0] - Time.fixedDeltaTime);
                     }
                 }
 
@@ -886,7 +944,12 @@ public class DroneControls : MonoBehaviour
                 if (InputValues[2] ^ InputValues[3])
                 {
                     if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != RollDefaultAngle)
-                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * RollDefaultAngle;
+                    {
+                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * RollDefaultAngle * (ReferenceDynPressure / DynamicPressure);
+                        ControlSurfaceTargetAngle[1] /= 1 + (7 * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
+                        //Adjustement above obtained from, again, plotting data on this graph: https://www.geogebra.org/graphing/nfkmbjyc
+                        //Specifically, y is the angular speed after 0.1 seconds of roll input and x is the initial pitch angle.
+                    }
                 }
                 else
                 {
@@ -900,12 +963,17 @@ public class DroneControls : MonoBehaviour
 
                 if (InputValues[4] ^ InputValues[5])
                 {
-                    ControlSurfaceTargetAngle[2] += (InputValues[4] ? 1 : -1) * YawSpeed * Time.fixedDeltaTime;
-                    ControlSurfaceTargetAngle[2] = Mathf.Clamp(ControlSurfaceTargetAngle[2], -ControlSurfaceMaxAngles[2], ControlSurfaceMaxAngles[2]);
+                    if (NeutralControlsTimer[2] == 0)
+                    {
+                        ControlSurfaceTargetAngle[2] += (InputValues[4] ? 1 : -1) * YawSpeed * Time.fixedDeltaTime;
+                        ControlSurfaceTargetAngle[2] = Mathf.Clamp(ControlSurfaceTargetAngle[2], -ControlSurfaceMaxAngles[2], ControlSurfaceMaxAngles[2]);
+                    }
+                    else NeutralControlsTimer[2] = Mathf.Min(0, NeutralControlsTimer[2] - Time.fixedDeltaTime);
                 }
-                else if (InputValues[4] && InputValues[5] && ControlSurfaceTargetAngle[2] != 0)
+                else if (InputValues[4] && InputValues[5])
                 {
-                    ControlSurfaceTargetAngle[2] = 0;
+                    if (ControlSurfaceTargetAngle[2] != 0) ControlSurfaceTargetAngle[2] = 0;
+                    if (NeutralControlsTimer[2] != InputMargin) NeutralControlsTimer[2] = InputMargin;
                 }
 
                 #endregion
@@ -948,6 +1016,48 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #endregion
+
+        #region Gather Data to Output
+        /*
+        if (ControlSurfaceTargetAngle[1] != 0 && DataGatherStage == 0)
+        {
+            DataGatherStage = 1;
+            TimeAtGatheringStart = Time.time;
+            //OutputData.TableElements = new();
+        }
+        else if (ControlSurfaceTargetAngle[1] == 0 && DataGatherStage == 1)
+        {
+            DataGatherStage = 2;
+        }
+
+        switch (DataGatherStage)
+        {
+            case 1:
+                if (Time.time >= TimeAtGatheringStart + 0.095f)
+                {
+                    Debug.Log(Time.time - TimeAtGatheringStart + " ; " + DronePhysics.angularVelocity.x);
+                    DataGatherStage = 2;
+                }
+                
+                if (DataTimeTick >= DataTimeRate)
+                {
+                    OutputData.TableElements.Add(new(Time.time, DronePhysics.rotation.eulerAngles.z - (DronePhysics.rotation.eulerAngles.z > 180 ? 360f : 0), DronePhysics.angularVelocity.x));
+                    DataTimeTick -= DataTimeRate;
+                }
+                DataTimeTick++;
+                
+                break;
+
+            case 2:
+                File.WriteAllText(Application.streamingAssetsPath + "/OutputData.json", JsonUtility.ToJson(OutputData, true));
+                DataGatherStage = 3;
+                break;
+
+            default:
+                break;
+        }
+        */
         #endregion
 
         PrevDyanmicPressure = DynamicPressure;
