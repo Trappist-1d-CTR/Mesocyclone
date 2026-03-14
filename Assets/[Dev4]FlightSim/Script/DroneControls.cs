@@ -121,7 +121,7 @@ public class DroneControls : MonoBehaviour
     private float PrevDyanmicPressure;
     #endregion
 
-    #region Input Controls System    
+    #region Input Controls System (ICS)  
     public InputMap InputControl;
 
     public byte SASMode;
@@ -145,7 +145,7 @@ public class DroneControls : MonoBehaviour
     public AnimationCurve PitchExpectedFromCanardsAngles;
     public AnimationCurve CanardsAnglesExpectedFromPitch;
 
-    public float RollDefaultAngle;
+    public float AileronsDefaultAngle;
     public float RollJerk;
     public AnimationCurve AngularVelocityFromAileronsAngles;
 
@@ -391,9 +391,11 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #region Data Output Setup
         DataGatherStage = 0;
         OutputData = new();
         DataTimeTick = 0;
+        #endregion
     }
 
     private void FixedUpdate()
@@ -945,7 +947,7 @@ public class DroneControls : MonoBehaviour
                 {
                     if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != RollDefaultAngle)
                     {
-                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * RollDefaultAngle * (ReferenceDynPressure / DynamicPressure);
+                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle * (ReferenceDynPressure / DynamicPressure);
                         ControlSurfaceTargetAngle[1] /= 1 + (7 * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
                         //Adjustement above obtained from, again, plotting data on this graph: https://www.geogebra.org/graphing/nfkmbjyc
                         //Specifically, y is the angular speed after 0.1 seconds of roll input and x is the initial pitch angle.
