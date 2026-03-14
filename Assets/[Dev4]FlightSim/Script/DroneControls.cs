@@ -945,7 +945,7 @@ public class DroneControls : MonoBehaviour
 
                 if (InputValues[2] ^ InputValues[3])
                 {
-                    if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != RollDefaultAngle)
+                    if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != AileronsDefaultAngle)
                     {
                         ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle * (ReferenceDynPressure / DynamicPressure);
                         ControlSurfaceTargetAngle[1] /= 1 + (7 * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
