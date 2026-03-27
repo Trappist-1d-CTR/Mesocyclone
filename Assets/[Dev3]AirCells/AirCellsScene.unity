@@ -2034,7 +2034,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  RollDefaultAngle: 1
+  AileronsDefaultAngle: 1.1
   RollJerk: 0
   AngularVelocityFromAileronsAngles:
     serializedVersion: 2
@@ -2055,6 +2055,7 @@ MonoBehaviour:
   WindParticles: {fileID: 0}
   ParticlesOriginDistance: 0
   DataTimeRate: 10
+  DataGatherStage: 0
   OutputData:
     TableElements: []
 --- !u!1001 &8966088915275858557

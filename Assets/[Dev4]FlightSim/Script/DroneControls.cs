@@ -948,7 +948,7 @@ public class DroneControls : MonoBehaviour
                     if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != AileronsDefaultAngle)
                     {
                         ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle * (ReferenceDynPressure / DynamicPressure);
-                        ControlSurfaceTargetAngle[1] /= 1 + (7 * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
+                        ControlSurfaceTargetAngle[1] /= 1 + (1.5f * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
                         //Adjustement above obtained from, again, plotting data on this graph: https://www.geogebra.org/graphing/nfkmbjyc
                         //Specifically, y is the angular speed after 0.1 seconds of roll input and x is the initial pitch angle.
                     }
