@@ -140,30 +140,15 @@ public class DroneControls : MonoBehaviour
     public float[] ControlSurfaceAngles;
     public float[] ControlSurfaceAngularSpeed;
 
-    public float PitchTarget;
     public float PitchSpeed;
-    public AnimationCurve PitchExpectedFromCanardsAngles;
-    public AnimationCurve CanardsAnglesExpectedFromPitch;
+    public float PitchNeutral;
 
     public float AileronsDefaultAngle;
     public float RollJerk;
-    public AnimationCurve AngularVelocityFromAileronsAngles;
 
     public float YawSpeed;
 
     private float[] NeutralControlsTimer;
-    #endregion
-
-    #region Control Surfaces and SAS (unused)
-    //public float CanardsCtrl;
-    //public float AileronsCtrl;
-    //public float ElevatorsCtrl;
-
-    /*public float PitchJerk;
-    public float RollJerk;
-    public float YawJerk;*/
-
-    //public float ReactionWheelsPower;
     #endregion
 
     #region Atmospherical Physics
@@ -180,7 +165,7 @@ public class DroneControls : MonoBehaviour
     private float[] AspectRatio;
     private AnimationCurve[] LiftAoA;
     private AnimationCurve[] InducedDragAoA;
-    private AnimationCurve[] TorqueAoA;
+    public AnimationCurve[] TorqueAoA;
     #endregion
 
     #region Reference Scripts
@@ -209,6 +194,8 @@ public class DroneControls : MonoBehaviour
     private Vector3 TotWeight;
 
     public bool AirChamberTest = false;
+    public bool SteadyFlightTest = false;
+    public float DesiredSteadySpeed;
 
     #endregion
 
@@ -292,7 +279,7 @@ public class DroneControls : MonoBehaviour
         TorqueAoA = new AnimationCurve[NetLinker.Parts.DronePartStats.Length];
 
         //Initialize float3 for the ICS
-        ControlSurfaceTargetAngle = new float[3] { 0, 0, 0 };
+        ControlSurfaceTargetAngle = new float[3] { PitchNeutral, 0, 0 };
         ReactionWheelsTorque = new float[3] { 0, 0, 0 };
         ReactionWheelsTorqueStabilization = new float[3] { 0, 0, 0 };
         ControlSurfaceAngles = new float[3] { 0, 0, 0 };
@@ -309,77 +296,11 @@ public class DroneControls : MonoBehaviour
             CalculateFlightCoefficients(i);
         }
 
-        #region Get ExpectedPitchFromCanardsAngles & its inverse
-        //Values obtained from an analysis of the drone's behavior with WindChamberTesting enabled and Wind at { -20, 0, 0 }
-        //The analysis consisted in noting the drone's pitch at several canards angles, plotting them as points on GeoGebra,
-        //and getting the equation these points follow through the FitImplicit() function set with an Order of 2
-        //Link for reference: https://www.geogebra.org/m/gks6cjz7
-
-        float[] I = new float[6] { /*a*/-0.0261729195437f, /*b*/0.9560484809729f, /*c*/0.0007982276005f, /*d*/-0.0224313802822f, /*e*/-0.0470688582808f, /*f*/0.2873447387781f };
-        float[] Lim = new float[4] { /*x0*/0.3030690912455f, /*x1*/4.1f, /*y0*/0, /*y1*/16f };
-
-        PitchExpectedFromCanardsAngles = new AnimationCurve();
-        int res = 40;
-        int s = 1;
-        for (float i = Lim[0]; i <= Lim[1]; i += s * (Lim[1] - Lim[0]) / ((res + 1) * (res / 2)))
-        {
-            float b, FOURac, mem;
-            b = I[3] + (i * I[4]);
-            FOURac = 4 * I[2] * ((I[0] * i * i) + (I[1] * i) - I[5]);
-            mem = (-b - Mathf.Sqrt((b * b) - FOURac)) / (2 * I[2]);
-            if (mem >= Lim[3] && mem < Lim[4])
-            {
-                mem = (-b + Mathf.Sqrt((b * b) - FOURac)) / (2 * I[2]);
-            }
-
-            PitchExpectedFromCanardsAngles.AddKey(i, mem);
-            s++;
-        }
-
-        CanardsAnglesExpectedFromPitch = new AnimationCurve();
-        for (int i = 0; i < PitchExpectedFromCanardsAngles.length; i++)
-        {
-            PitchExpectedFromCanardsAngles.SmoothTangents(i, 1);
-            CanardsAnglesExpectedFromPitch.AddKey(PitchExpectedFromCanardsAngles.keys[i].value, PitchExpectedFromCanardsAngles.keys[i].time);
-        }
-        for (int i = 0; i < CanardsAnglesExpectedFromPitch.length; i++)
-        {
-            CanardsAnglesExpectedFromPitch.SmoothTangents(i, 1);
-            if (i == CanardsAnglesExpectedFromPitch.length - 1)
-            {
-                ControlSurfaceMaxAngles[0] = CanardsAnglesExpectedFromPitch.keys[i].time;
-            }
-        }
-
-        #endregion
-
-        #region Get AngularVelocityFromAileronsAngles & its inverse
-
-        //Values obtained from an analysis of the drone's behavior with WindChamberTesting enabled and RollDefaultAngle at 1
-        //Link for reference: https://www.geogebra.org/graphing/csrpqpbw
-
-        float Ia = 0.0015902837684f;
-
-        AngularVelocityFromAileronsAngles = new AnimationCurve();
-        res = 40;
-        s = 0;
-        for (float i = 0; i <= 7; i += s * 7 / ((res + 1) * (res / 2)))
-        {
-            AngularVelocityFromAileronsAngles.AddKey(i, Mathf.Pow(i, 2) * Ia);
-            s++;
-        }
-
-        for (int i = 0; i < AngularVelocityFromAileronsAngles.length; i++)
-        {
-            AngularVelocityFromAileronsAngles.SmoothTangents(i, 1);
-        }
-
-        #endregion
-
         //Setup elevator objects rotation
         NetLinker.Parts.DronePartStats[7].PartObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
         NetLinker.Parts.DronePartStats[7].PartObjectb.transform.localRotation = Quaternion.Euler(90, 0, 0);
 
+        //Setup misc arrays
         InputValues = new bool[6] { false, false, false, false, false, false };
         ReactionWheelsTargetTorque = new float[3] { 0, 0, 0 };
 
@@ -389,12 +310,29 @@ public class DroneControls : MonoBehaviour
         //Setup ResetPosition to position at Start()
         ResetPosition = DronePhysics.position;
 
+        //Setup Steady Flight Test if enabled
+        if (SteadyFlightTest)
+        {
+            DroneCollider.enabled = false;
+            DronePhysics.linearVelocity = AirSpeed;
+        }
+
         #endregion
 
         #region Data Output Setup
         DataGatherStage = 0;
         OutputData = new();
         DataTimeTick = 0;
+        #endregion
+
+        #region Steady Flight Setup
+
+        if (SteadyFlightTest)
+        {
+            PhysicsVelocity = DronePhysics.linearVelocity = Vector3.right * DesiredSteadySpeed;
+            Thrust = 1;
+        }
+
         #endregion
     }
 
@@ -426,10 +364,17 @@ public class DroneControls : MonoBehaviour
         PhysicsAngVelocity = DronePhysics.angularVelocity;
         PhysicsTorque = Vector3.zero;
         DronePhysics.angularDamping = 3f;
+        if (DronePhysics.centerOfMass != CenterOfMass)
+        {
+            DronePhysics.centerOfMass = CenterOfMass;
+        }
 
         //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
-        if (!AirChamberTest && InverseDistanceWeighting.Values != null)
+        if (!AirChamberTest && !SteadyFlightTest && InverseDistanceWeighting.Values != null)
             Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InverseDistanceWeighting.Values[0], InverseDistanceWeighting.Values[1], InverseDistanceWeighting.Values[2]) : Vector3.zero;
+        else if (!AirChamberTest)
+            Wind = Vector3.zero;
+
         #endregion
 
         #region Main Engine Thrust
@@ -706,8 +651,11 @@ public class DroneControls : MonoBehaviour
             #endregion
 
             #region Torque
+
             Memory = 0.5f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
             PhysicsTorque += Check = Vector3.Cross(L - DronePhysics.centerOfMass, Memory);
+
+            //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
 
             if (VisualizationMode == 3)
                 Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
@@ -752,6 +700,8 @@ public class DroneControls : MonoBehaviour
                 #region Torque
                 Memory = 0.5f * (float)C.GaleAtmD * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
                 PhysicsTorque += Check = Vector3.Cross(L - DronePhysics.centerOfMass, Memory);
+
+                //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
 
                 if (VisualizationMode == 3)
                     Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
@@ -800,7 +750,8 @@ public class DroneControls : MonoBehaviour
                 #region Hover-Heli SAS
 
                 #region Normalize Control Surfaces
-                for (int i = 0; i < 3; i++)
+                if (ControlSurfaceTargetAngle[0] != PitchNeutral) ControlSurfaceTargetAngle[0] = PitchNeutral;
+                for (int i = 1; i < 3; i++)
                 {
                     if (ControlSurfaceTargetAngle[i] != 0) ControlSurfaceTargetAngle[i] = 0;
                 }
@@ -898,7 +849,7 @@ public class DroneControls : MonoBehaviour
                 #endregion
 
                 #region Remove Undesired Torque Stabilization
-
+                
                 for (int i = 0; i < 3; i++)
                 {
                     if (Mathf.Abs(ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
@@ -910,7 +861,7 @@ public class DroneControls : MonoBehaviour
                         ReactionWheelsTorqueStabilization[i] += -Mathf.Sign(ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
                     }
                 }
-
+                
                 #endregion
 
                 #region Plane SAS
@@ -921,19 +872,15 @@ public class DroneControls : MonoBehaviour
                 {
                     if (InputValues[0] && InputValues[1])
                     {
-                        PitchTarget = 0;
-                        ControlSurfaceTargetAngle[0] = 0;
-
+                        ControlSurfaceTargetAngle[0] = PitchNeutral;
                         if (NeutralControlsTimer[0] != InputMargin) NeutralControlsTimer[0] = InputMargin;
                     }
                     else
                     {
                         if (NeutralControlsTimer[0] == 0)
                         {
-                            PitchTarget += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
-                            PitchTarget = Mathf.Clamp(PitchTarget, -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
-                            ControlSurfaceTargetAngle[0] = Mathf.Sign(PitchTarget) * CanardsAnglesExpectedFromPitch.Evaluate(Mathf.Abs(PitchTarget));
-                            if (PitchTarget == 0) ControlSurfaceTargetAngle[0] = 0;
+                            ControlSurfaceTargetAngle[0] += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
+                            ControlSurfaceTargetAngle[0] = Mathf.Clamp(ControlSurfaceTargetAngle[0], -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
                         }
                         else NeutralControlsTimer[0] = Mathf.Min(0, NeutralControlsTimer[0] - Time.fixedDeltaTime);
                     }
@@ -947,10 +894,8 @@ public class DroneControls : MonoBehaviour
                 {
                     if (Mathf.Abs(ControlSurfaceTargetAngle[1]) != AileronsDefaultAngle)
                     {
-                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle * (ReferenceDynPressure / DynamicPressure);
-                        ControlSurfaceTargetAngle[1] /= 1 + (1.5f * Mathf.Abs(DronePhysics.rotation.eulerAngles.z - ((DronePhysics.rotation.eulerAngles.z > 180) ? 360 : 0)));
-                        //Adjustement above obtained from, again, plotting data on this graph: https://www.geogebra.org/graphing/nfkmbjyc
-                        //Specifically, y is the angular speed after 0.1 seconds of roll input and x is the initial pitch angle.
+                        ControlSurfaceTargetAngle[1] = (InputValues[2] ? 1 : -1) * AileronsDefaultAngle * Mathf.Sqrt(ReferenceDynPressure / DynamicPressure);
+                        //Adjustement above obtained from collecting data from a more proper testing scenario.
                     }
                 }
                 else
@@ -1022,11 +967,11 @@ public class DroneControls : MonoBehaviour
 
         #region Gather Data to Output
         /*
-        if (ControlSurfaceTargetAngle[1] != 0 && DataGatherStage == 0)
+        if (InputControl.ControlSurfaces.PitchUp.IsPressed() && DataGatherStage == 0)
         {
             DataGatherStage = 1;
             TimeAtGatheringStart = Time.time;
-            //OutputData.TableElements = new();
+            OutputData.TableElements = new();
         }
         else if (ControlSurfaceTargetAngle[1] == 0 && DataGatherStage == 1)
         {
@@ -1036,15 +981,15 @@ public class DroneControls : MonoBehaviour
         switch (DataGatherStage)
         {
             case 1:
-                if (Time.time >= TimeAtGatheringStart + 0.095f)
+                if (!InputControl.ControlSurfaces.PitchUp.IsPressed())
                 {
-                    Debug.Log(Time.time - TimeAtGatheringStart + " ; " + DronePhysics.angularVelocity.x);
+                    //Debug.Log(Time.time - TimeAtGatheringStart + " ; " + PhysicsTorque.z);
                     DataGatherStage = 2;
                 }
                 
                 if (DataTimeTick >= DataTimeRate)
                 {
-                    OutputData.TableElements.Add(new(Time.time, DronePhysics.rotation.eulerAngles.z - (DronePhysics.rotation.eulerAngles.z > 180 ? 360f : 0), DronePhysics.angularVelocity.x));
+                    OutputData.TableElements.Add(new(ControlSurfaceAngles[0], PhysicsTorque.z));
                     DataTimeTick -= DataTimeRate;
                 }
                 DataTimeTick++;
@@ -1093,6 +1038,7 @@ public class DroneControls : MonoBehaviour
 
 
         #region APPLY PHYSICS
+
         PhysicsTorque += new Vector3(ReactionWheelsTorqueStabilization[0], ReactionWheelsTorqueStabilization[1], ReactionWheelsTorqueStabilization[2]);
 
         if (!AirChamberTest)
@@ -1102,8 +1048,6 @@ public class DroneControls : MonoBehaviour
             DronePhysics.AddRelativeTorque(PhysicsTorque, ForceMode.Force);
             DronePhysics.AddRelativeTorque(new(-ReactionWheelsTorque[1], ReactionWheelsTorque[2], ReactionWheelsTorque[0]), ForceMode.Acceleration);
             //Debug.Log(PhysicsTorque);
-
-            //MAJOR ISSUE: Torque from wings behaves weird
         }
         else
         {
@@ -1111,24 +1055,18 @@ public class DroneControls : MonoBehaviour
             DronePhysics.linearVelocity = PhysicsVelocity = Vector3.zero;
             DronePhysics.AddRelativeTorque(PhysicsTorque, ForceMode.Force);
             //Debug.Log(PhysicsTorque);
-
-            /*
-            if (PhysicsTorque.magnitude < 0.01)
-            {
-                //Debug.Log("Stable Rotation");
-            }*/
         }
+
         #endregion
 
 
-        #region Match CoM with CoF
-        
+        #region Find CoF
+
         if (!CenterOfLiftFound)
         {
             CenterOfLift = VectorA / (float)B;
             //Debug.Log("Center of Lift: " + CenterOfLift);
             CenterOfLiftFound = true;
-            DronePhysics.centerOfMass = CenterOfLift;
         }
         
         #endregion
@@ -1255,7 +1193,7 @@ public class DroneControls : MonoBehaviour
         LiftAoA[i] = new();
         InducedDragAoA[i] = new();
         TorqueAoA[i] = new();
-        float iStep = 1;
+        float iStep = 2;
 
         PartStats p = NetLinker.Parts.DronePartStats[i];
         MainStats d = NetLinker.MainBody.DroneBodyStats[0];
@@ -1289,7 +1227,7 @@ public class DroneControls : MonoBehaviour
         {
             AoA = Mathf.Deg2Rad * ((i2 * iStep) - ((i2 * iStep) * memmoi / (Mathf.PI * AspectRatio[i])));
             CT = NetLinker.MainBody.DroneBodyStats[0].FrontCd * Mathf.Cos(AoA);
-            CN = ((d.StallAngle * memmoi) + (CT * Mathf.Sin(AoA))) / Mathf.Cos(AoA);
+            CN = (((i2 * iStep) * memmoi) + (CT * Mathf.Sin(AoA))) / Mathf.Cos(AoA);
 
             _ = InducedDragAoA[i].AddKey(i2 * iStep, (CN * Mathf.Sin(AoA)) + (CT * Mathf.Cos(AoA)));
             _ = InducedDragAoA[i].AddKey(-i2 * iStep, (CN * Mathf.Sin(AoA)) + (CT * Mathf.Cos(AoA)));
@@ -1299,18 +1237,34 @@ public class DroneControls : MonoBehaviour
         #endregion
 
         #region Torque - Low AoAs
-        CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
 
         _ = TorqueAoA[i].AddKey(new(0, 0));
         _ = TorqueAoA[i].AddKey(new(180, 0));
         _ = TorqueAoA[i].AddKey(new(-180, 0));
+
+        for (int i2 = 0; i2 < d.StallAngle / iStep; i2++)
+        {
+            AoA = Mathf.Deg2Rad * ((i2 * iStep) - ((i2 * iStep) * memmoi / (Mathf.PI * AspectRatio[i])));
+            CT = d.FrontCd * Mathf.Cos(AoA);
+            CN = (((i2 * iStep) * memmoi) + (CT * Mathf.Sin(AoA))) / Mathf.Cos(AoA);
+            CM = CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
+
+            _ = TorqueAoA[i].AddKey(i2 * iStep, CM);
+            _ = TorqueAoA[i].AddKey(-i2 * iStep, -CM);
+            _ = TorqueAoA[i].AddKey(180 - (i2 * iStep), CM);
+            _ = TorqueAoA[i].AddKey(-180 + (i2 * iStep), -CM);
+        }
+
+        AoA = Mathf.Deg2Rad * (d.StallAngle - (d.StallAngle * memmoi / (Mathf.PI * AspectRatio[i])));
+        CT = d.FrontCd * Mathf.Cos(AoA);
+        CN = ((d.StallAngle * memmoi) + (CT * Mathf.Sin(AoA))) / Mathf.Cos(AoA);
+        CM = 5 * CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
+
         _ = TorqueAoA[i].AddKey(d.StallAngle, CM);
         _ = TorqueAoA[i].AddKey(-d.StallAngle, -CM);
-
-        CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * (1 - (AoA / Mathf.PI))))));
-
         _ = TorqueAoA[i].AddKey(180 - d.StallAngle, CM);
         _ = TorqueAoA[i].AddKey(-180 + d.StallAngle, -CM);
+
         #endregion
 
         for (int i2 = 0; i2 < (180 - (2 * (d.StallAngle + 10))) / iStep; i2++)
@@ -1319,7 +1273,7 @@ public class DroneControls : MonoBehaviour
             memmoi = -Mathf.Abs(Mathf.Deg2Rad * (Mathf.Abs(AoA) - 0)); //(-d.MaxInducedAoA * Mathf.Abs(AoA) / (90 - (d.StallAngle + 10)))
 
             CN = d.BottomCd * Mathf.Sin(memmoi) * ((1f / (0.56f + (0.44f * Mathf.Sin(memmoi)))) - (0.41f * (1 - Mathf.Exp(-17f / AspectRatio[i]))));
-            CT = (1f / 2f) * d.FrontCd * Mathf.Cos(memmoi);
+            CT = 0.5f * d.FrontCd * Mathf.Cos(memmoi);
 
             #region Lift - High AoAs
             _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep), CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))));
@@ -1332,7 +1286,7 @@ public class DroneControls : MonoBehaviour
             #endregion
 
             #region Torque - High AoAs
-            CM = -CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
+            CM = CN * (float)(0.25 - (0.175 * (1 - (2 * AoA / Mathf.PI))));
 
             _ = TorqueAoA[i].AddKey(d.StallAngle + 10 + (i2 * iStep), CM);
             _ = TorqueAoA[i].AddKey(-(d.StallAngle + 10 + (i2 * iStep)), -CM);
@@ -1340,7 +1294,7 @@ public class DroneControls : MonoBehaviour
         }
 
         #region Smoothing Tangents
-        
+
         for (int i2 = 2; i2 < LiftAoA[i].length - 2; i2++)
         {
             if (Mathf.Abs(LiftAoA[i].keys[i2].time) != 0 && Mathf.Abs(LiftAoA[i].keys[i2].time) != d.StallAngle)
@@ -1348,15 +1302,7 @@ public class DroneControls : MonoBehaviour
                 LiftAoA[i].SmoothTangents(i2, 1);
             }
         }
-        /*
-        for (int i2 = 0; i2 < InducedDragAoA[i].length; i2++)
-        {
-            if (Mathf.Abs(InducedDragAoA[i].keys[i2].time) != 180 && Mathf.Abs(InducedDragAoA[i].keys[i2].time) != d.StallAngle && Mathf.Abs(InducedDragAoA[i].keys[i2].time) != (180 - d.StallAngle) && InducedDragAoA[i].keys[i2].time != 0)
-            {
-                InducedDragAoA[i].SmoothTangents(i2, 1);
-            }
-        }
-        */
+
         #endregion
     }
 }

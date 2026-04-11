@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 1930139998}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -200,7 +200,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -314,6 +314,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d77650a6c14fd06419c8b2c4e7ab28bf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: d77650a6c14fd06419c8b2c4e7ab28bf, type: 3}
       propertyPath: m_Name
       value: Drone Canards
@@ -396,6 +400,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
       propertyPath: m_Name
       value: Drone Fuselage
@@ -495,7 +503,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -609,6 +617,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b6c8728f02df4b64e9a4d93184a65903, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: b6c8728f02df4b64e9a4d93184a65903, type: 3}
       propertyPath: m_Name
       value: Drone LeftElevator
@@ -883,7 +895,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -1102,6 +1114,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a5e886de03114df4086926fd7c6ca69e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: a5e886de03114df4086926fd7c6ca69e, type: 3}
       propertyPath: m_Name
       value: Drone EngineOuttake
@@ -1195,6 +1211,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: f70de32164fadf141a6b3e01deca2fb9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: f70de32164fadf141a6b3e01deca2fb9, type: 3}
       propertyPath: m_Name
       value: Drone AirIntake
@@ -1346,6 +1366,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: f6afbb37327de384f8f9bfcb8d12a6e6, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: f6afbb37327de384f8f9bfcb8d12a6e6, type: 3}
       propertyPath: m_Name
       value: Drone LeftBackAileron
@@ -1428,6 +1452,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b148956424e24704db41503068fe56c9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: b148956424e24704db41503068fe56c9, type: 3}
       propertyPath: m_Name
       value: Drone LeftFrontAileron
@@ -1511,7 +1539,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -1765,7 +1793,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -1885,7 +1913,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1999,6 +2027,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 924e960e67765024ab0e192a902577ff, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: 924e960e67765024ab0e192a902577ff, type: 3}
       propertyPath: m_Name
       value: Drone RightBackAileron
@@ -2081,6 +2113,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: e8e2df879eb404140bc45242f4f5e9c1, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: e8e2df879eb404140bc45242f4f5e9c1, type: 3}
       propertyPath: m_Name
       value: Drone RightFrontAileron
@@ -2164,7 +2200,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -2234,7 +2270,6 @@ MonoBehaviour:
     Parts:
       DronePartStats: []
   InputMargin: 0.3
-  ControlSurfaceAngle: []
   Thrust: 0
   ImpulseCharge: 0
   ImpulseActive: 0
@@ -2254,20 +2289,31 @@ MonoBehaviour:
   HoverInputErrorTimer: 0
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
-  CanardsCtrl: 0.1
-  AileronsCtrl: 0.65
-  ElevatorsCtrl: 10
-  PitchJerk: 0.35
-  RollJerk: 0.4
-  YawJerk: 1
-  ReactionWheelsPower: 0
-  ReactionWheelsTorque: []
-  StabilizingWheelTorque: {x: 0, y: 0, z: 0}
-  Wind: {x: 0, y: 0, z: 0}
-  AirSpeed: {x: 0, y: 0, z: 0}
-  AspectRatio: []
-  LiftAoA: []
-  InducedDragAoA: []
+  ReferenceDynPressure: 0
+  SASMode: 2
+  ReactionWheelsDefaultTorque: {x: 3, y: 3, z: 3}
+  ReactionWheelsJerk:
+  - 1.4
+  - 1.6
+  - 4
+  TorqueStabilizationJerk: 5000
+  ControlSurfaceMaxAngles:
+  - 26
+  - 10
+  - 40
+  ControlSurfaceTargetAngle: []
+  ControlSurfaceAngles: []
+  ControlSurfaceAngularSpeed:
+  - 2
+  - 5
+  - 15
+  PitchSpeed: 1
+  PitchNeutral: 0
+  AileronsDefaultAngle: 2.5
+  RollJerk: 0
+  YawSpeed: 7
+  Wind: {x: -50, y: 0, z: 0}
+  AirSpeed: {x: -50, y: 0, z: 0}
   TorqueAoA: []
   Air: {fileID: 0}
   CenterOfLiftFound: 0
@@ -2275,9 +2321,15 @@ MonoBehaviour:
   CenterOfMass: {x: 0, y: 0, z: 0}
   VisualizationMode: 0
   AirChamberTest: 0
+  SteadyFlightTest: 0
+  DesiredSteadySpeed: 70
   WindParticlesEnabled: 1
   WindParticles: {fileID: 8976392749675329645}
   ParticlesOriginDistance: 62.5
+  DataTimeRate: 10
+  DataGatherStage: 0
+  OutputData:
+    TableElements: []
 --- !u!114 &1453793527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2598,6 +2650,7 @@ MonoBehaviour:
   p: 0
   r: 0
   y: 0
+  deltaPRY: {x: 0, y: 0, z: 0}
   mt: 0
   hm: 1
   SAO:
@@ -2677,6 +2730,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 5676e56943534c24eabc3dcd7bf1d83d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: 5676e56943534c24eabc3dcd7bf1d83d, type: 3}
       propertyPath: m_Name
       value: Drone MainWings
@@ -2776,7 +2833,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2890,6 +2947,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 40a23eded4875354585dc3ea028df79c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
     - target: {fileID: 919132149155446097, guid: 40a23eded4875354585dc3ea028df79c, type: 3}
       propertyPath: m_Name
       value: Drone RightElevator
@@ -2989,7 +3050,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3120,7 +3181,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3286,7 +3347,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3336,6 +3397,133 @@ MonoBehaviour:
   Data2Link: 10
   LinkedData: 0
   Linked: 0
+--- !u!1 &1930139996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1930139999}
+  - component: {fileID: 1930139998}
+  - component: {fileID: 1930139997}
+  m_Layer: 0
+  m_Name: LightSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1930139997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930139996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!108 &1930139998
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930139996}
+  m_Enabled: 1
+  serializedVersion: 12
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
+--- !u!4 &1930139999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930139996}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.07437622, y: 0, z: 0, w: 0.99723023}
+  m_LocalPosition: {x: 0, y: 50, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 8.530766, y: 0, z: 0}
 --- !u!114 &1972597787 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1787333499431847582, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -3525,7 +3713,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3681,7 +3869,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9117ea4cfd80dc14f9e97010c7501ac7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3819,3 +4007,4 @@ SceneRoots:
   - {fileID: 2083857064}
   - {fileID: 288317654}
   - {fileID: 398119971}
+  - {fileID: 1930139999}
