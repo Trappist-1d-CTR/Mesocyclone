@@ -22,7 +22,8 @@ Everything was made in Unity, Blender, Visual Studio, and C#
 - [Dev4] is the fight engine and simulation. It also contains my main drone's data (which is separated into multiple parts, some of which can behave like control surfaces). The engines works well, is quite realistic (you could even pull off a helicopter move if you spun the drone just right), and has a very good performance (1000 fps on my high-mid performance Laptop). Though I still am to enable the realistic torque section as I'm struggling with some more issues. For now, there's fixed Torque as a temporary (for real this time) substitute.
 - [Dev5] is the environment: the terrain. Not much more to it, but it's useful to get some points of reference of the drone's speed and controls.
 - [Dev6] is the UI. The data the player needs in order to fly the drone in a way to avoid experiencing unscheduled, very rapid disassembly.
-- [Dev7] is an experimental struct to store values in a more reliable way that bypasses the isses of floating point error (not actually implemented in the build, I plan to make its own public repository in the future).
+- [Dev7] are a collection of shaders I have, still unsuccessfully, attempted to use.
+- [Dev8] is the Main Menu. Yes, I am making Dev#s for anything now-
 - [Dev0] is not my code. It's a code I got from someone else to get fullscreen during testing without having to make 1000 builds.
 
 ## Gale - The Exoplanet
