@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Gale Atmosphere Material
+  m_Shader: {fileID: -6465566751694194690, guid: dffb8a6e0be78eb4e9b4f8b7996a8cf4, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _AvgT: 1300
+    - _BUILTIN_QueueControl: 0
+    - _BUILTIN_QueueOffset: 0
+    - _G: 22.055157
+    - _Karman: 204210
+    - _MM: 0.034277923
+    - _Mount_Height_Range: 0.03
+    - _Mount_Width_Ratio: 1
+    - _R: 8.31432
+    - _Star_Angular_Size: 35.154
+    - _Star_Brightness: 1
+    - _SurfaceP: 1509742.5
+    - _Transparency: 1
+    m_Colors:
+    - _Horizon_Color: {r: 0.895, g: 0.895, b: 0.895, a: 0.9372549}
+    - _PlanetPos: {r: 0, g: -10977233, b: 0, a: 0}
+    - _Sky_Color: {r: 0.753, g: 0.753, b: 0.753, a: 0.3137255}
+    - _Star_Color: {r: 0.972549, g: 0.96862745, b: 1, a: 1}
+    - _Star_Direction: {r: 0, g: 0.15, b: -1, a: 0}
+    - _Terrain_Color: {r: 0.08829338, g: 0.084745415, b: 0.21698102, a: 1}
+  m_BuildTextureStacks: []
+--- !u!114 &5828442629716744299
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 0

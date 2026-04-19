@@ -165,7 +165,7 @@ public class DroneControls : MonoBehaviour
     private float[] AspectRatio;
     private AnimationCurve[] LiftAoA;
     private AnimationCurve[] InducedDragAoA;
-    public AnimationCurve[] TorqueAoA;
+    private AnimationCurve[] TorqueAoA;
     #endregion
 
     #region Reference Scripts

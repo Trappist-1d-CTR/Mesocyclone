@@ -1931,7 +1931,7 @@ Transform:
   m_GameObject: {fileID: 919132149017924853}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 50, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2097,12 +2097,11 @@ MonoBehaviour:
   - 15
   PitchSpeed: 1
   PitchNeutral: 0
-  AileronsDefaultAngle: 2.5
+  AileronsDefaultAngle: 5
   RollJerk: 0
   YawSpeed: 7
   Wind: {x: -50, y: 0, z: 0}
   AirSpeed: {x: -50, y: 0, z: 0}
-  TorqueAoA: []
   Air: {fileID: 2112915244}
   CenterOfLiftFound: 0
   CenterOfLift: {x: 0, y: 0, z: 0}
