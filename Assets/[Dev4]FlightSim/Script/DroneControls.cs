@@ -105,7 +105,7 @@ public class DroneControls : MonoBehaviour
         /* half bread: what the fuck is 5??? */
         Landing = 6
     }
-    public HoverModeType HoverMode;
+    public HoverModeType HoverMode = HoverModeType.MaxThrust;
 
     public float HoverThrust;
     public float HoverTarget;
