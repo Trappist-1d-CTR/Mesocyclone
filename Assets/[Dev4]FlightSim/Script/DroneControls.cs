@@ -95,11 +95,21 @@ public class DroneControls : MonoBehaviour
     public float LastImpulseBurn;
     public float ImpulseThreshold;
     public float ImpulseInputErrorTimer;
+    
+    public enum HoverModeType : int
+    {
+        MaxThrust = 1,
+        SpeedTarget = 2,
+        Descent = 3,
+        Gravity = 4,
+        /* half bread: what the fuck is 5??? */
+        Landing = 6
+    }
+    public HoverModeType HoverMode;
 
     public float HoverThrust;
     public float HoverTarget;
     public bool HoverAuto;
-    public int HoverMode = 1;
     public bool HoverActive;
     public float HoverTimer;
     public int HoverMaxAngle;
@@ -118,13 +128,21 @@ public class DroneControls : MonoBehaviour
 
     public float DynamicPressure;
     public float ReferenceDynPressure;
-    private float PrevDyanmicPressure;
+    private float PrevDynamicPressure;
     #endregion
 
     #region Input Controls System (ICS)  
     public InputMap InputControl;
 
-    public byte SASMode;
+    // SAS = Stability Assist System
+    public enum SASModeType : byte
+    {
+        Disabled = 0,
+        Heli = 1,
+        Plane = 2
+    }
+    public SASModeType SASMode; 
+    
     private bool[] InputValues;
     private Vector3 CurrentAngles;
     public Vector3 ReactionWheelsDefaultTorque;
@@ -186,7 +204,14 @@ public class DroneControls : MonoBehaviour
 
     #region Physics Visualizer
 
-    public int VisualizationMode;
+    public enum VisualizationModeType : int
+    {
+        Off = 0,
+        Forces = 1,
+        LiftDrag = 2,
+        Torque = 3
+    }
+    public VisualizationModeType VisualizationMode;
 
     private Vector3 TotThrust;
     private Vector3 TotDrag;
@@ -219,7 +244,16 @@ public class DroneControls : MonoBehaviour
 
     private int DataTimeTick;
     public int DataTimeRate;
-    public int DataGatherStage;
+
+    public enum DataGatherStageType : int
+    {
+        Idle = 0,
+        Gathering = 1,
+        Saving = 2,
+        Done = 3
+    }
+    public DataGatherStageType DataGatherStage;
+    
     public DataTable OutputData;
 
     private float TimeAtGatheringStart;
@@ -320,7 +354,7 @@ public class DroneControls : MonoBehaviour
         #endregion
 
         #region Data Output Setup
-        DataGatherStage = 0;
+        DataGatherStage = DataGatherStageType.Idle;
         OutputData = new();
         DataTimeTick = 0;
         #endregion
@@ -498,11 +532,11 @@ public class DroneControls : MonoBehaviour
 
             switch (HoverMode)
             {
-                case 1:
+                case HoverModeType.MaxThrust:
                     HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     break;
 
-                case 2:
+                case HoverModeType.SpeedTarget:
                     if (DronePhysics.linearVelocity.y <= -16.77 + HoverTargetSpeed[0])
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
@@ -517,7 +551,7 @@ public class DroneControls : MonoBehaviour
                     }
                     break;
 
-                case 3:
+                case HoverModeType.Descent:
                     if (DronePhysics.linearVelocity.y <= -16.77)
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
@@ -532,7 +566,7 @@ public class DroneControls : MonoBehaviour
                     }
                     break;
 
-                case 4:
+                case HoverModeType.Gravity:
                     HoverTarget = (float)C.GaleG;
                     break;
 /*
@@ -551,7 +585,7 @@ public class DroneControls : MonoBehaviour
                     }
                     break;*/
 
-                case 6:
+                case HoverModeType.Landing:
                     if (DronePhysics.linearVelocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
@@ -637,7 +671,7 @@ public class DroneControls : MonoBehaviour
             TotLift += Check;
             //Debug.Log(AoA + " ; " + Check + " ; (" + Vector3.Dot(AirSpeed, t.up) + ", " + Vector3.Dot(AirSpeed, t.right) + ")");
 
-            if (VisualizationMode == 2)
+            if (VisualizationMode == VisualizationModeType.LiftDrag)
                 Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Check / 20), Color.green, 1 / Time.renderedFrameCount);
             #endregion
 
@@ -646,7 +680,7 @@ public class DroneControls : MonoBehaviour
             PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
             TotDrag += Check;
 
-            if (VisualizationMode == 2)
+            if (VisualizationMode == VisualizationModeType.LiftDrag)
                 Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Check / 20), Color.red, 1 / Time.renderedFrameCount);
             #endregion
 
@@ -657,7 +691,7 @@ public class DroneControls : MonoBehaviour
 
             //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
 
-            if (VisualizationMode == 3)
+            if (VisualizationMode == VisualizationModeType.Torque)
                 Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
             #endregion
 
@@ -684,7 +718,7 @@ public class DroneControls : MonoBehaviour
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                 TotLift += Check;
 
-                if (VisualizationMode == 2)
+                if (VisualizationMode == VisualizationModeType.LiftDrag)
                     Debug.DrawLine(CM + (DronePhysics.rotation * L), CM + (DronePhysics.rotation * L) + (DronePhysics.mass * Check / 20), Color.green, 1 / Time.renderedFrameCount);
                 #endregion
 
@@ -693,7 +727,7 @@ public class DroneControls : MonoBehaviour
                 PhysicsAcceleration += Check = 0.5f * (float)C.GaleAtmD * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                 TotDrag += Check;
 
-                if (VisualizationMode == 2)
+                if (VisualizationMode == VisualizationModeType.LiftDrag)
                     Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Check / 20), Color.red, 1 / Time.renderedFrameCount);
                 #endregion
 
@@ -703,7 +737,7 @@ public class DroneControls : MonoBehaviour
 
                 //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
 
-                if (VisualizationMode == 3)
+                if (VisualizationMode == VisualizationModeType.Torque)
                     Debug.DrawLine(t.position, t.position + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
                 #endregion
 
@@ -742,11 +776,10 @@ public class DroneControls : MonoBehaviour
 
         switch (SASMode)
         {
-            case 0: // SAS disabled
-
+            case SASModeType.Disabled:
                 break;
 
-            case 1: // Hover-Heli mode
+            case SASModeType.Heli: // Hover-Heli mode
                 #region Hover-Heli SAS
 
                 #region Normalize Control Surfaces
@@ -839,11 +872,11 @@ public class DroneControls : MonoBehaviour
                 #endregion
                 break;
 
-            case 2: // Plane mode
+            case SASModeType.Plane: // Plane mode
                 #region Check Requirements
                 if (DynamicPressure < 400)
                 {
-                    SASMode = 1;
+                    SASMode = SASModeType.Heli;
                     break;
                 }
                 #endregion
@@ -929,7 +962,7 @@ public class DroneControls : MonoBehaviour
                 break;
 
             default: //to please the IntelliSense
-                SASMode = 0;
+                SASMode = SASModeType.Disabled;
                 break;
         }
 
@@ -967,24 +1000,24 @@ public class DroneControls : MonoBehaviour
 
         #region Gather Data to Output
         /*
-        if (InputControl.ControlSurfaces.PitchUp.IsPressed() && DataGatherStage == 0)
+        if (InputControl.ControlSurfaces.PitchUp.IsPressed() && DataGatherStage == DataGatherStageType.Idle)
         {
-            DataGatherStage = 1;
+            DataGatherStage = DataGatherStageType.Gathering;
             TimeAtGatheringStart = Time.time;
             OutputData.TableElements = new();
         }
-        else if (ControlSurfaceTargetAngle[1] == 0 && DataGatherStage == 1)
+        else if (ControlSurfaceTargetAngle[1] == 0 && DataGatherStage == DataGatherStageType.Gathering)
         {
-            DataGatherStage = 2;
+            DataGatherStage = DataGatherStageType.Saving;
         }
 
         switch (DataGatherStage)
         {
-            case 1:
+            case DataGatherStageType.Gathering:
                 if (!InputControl.ControlSurfaces.PitchUp.IsPressed())
                 {
                     //Debug.Log(Time.time - TimeAtGatheringStart + " ; " + PhysicsTorque.z);
-                    DataGatherStage = 2;
+                    DataGatherStage = DataGatherStageType.Saving;
                 }
                 
                 if (DataTimeTick >= DataTimeRate)
@@ -996,9 +1029,9 @@ public class DroneControls : MonoBehaviour
                 
                 break;
 
-            case 2:
+            case DataGatherStageType.Saving:
                 File.WriteAllText(Application.streamingAssetsPath + "/OutputData.json", JsonUtility.ToJson(OutputData, true));
-                DataGatherStage = 3;
+                DataGatherStage = DataGatherStageType.Done;
                 break;
 
             default:
@@ -1007,7 +1040,7 @@ public class DroneControls : MonoBehaviour
         */
         #endregion
 
-        PrevDyanmicPressure = DynamicPressure;
+        PrevDynamicPressure = DynamicPressure;
         AirSpeed = -PhysicsVelocity + Wind;
 
         #region Drag Physics
@@ -1080,11 +1113,10 @@ public class DroneControls : MonoBehaviour
 
         switch (VisualizationMode)
         {
-            case 0:
-
+            case VisualizationModeType.Off:
                 break;
 
-            case 1:
+            case VisualizationModeType.Forces:
                 Debug.DrawLine(CM, CM + (PhysicsVelocity / 20), Color.yellow, 1 / Time.renderedFrameCount);
 
                 Debug.DrawLine(CM, CM + (DronePhysics.mass * TotThrust / 20), Color.blue, 1 / Time.renderedFrameCount);
@@ -1093,11 +1125,11 @@ public class DroneControls : MonoBehaviour
                 Debug.DrawLine(CM, CM + (DronePhysics.mass * TotWeight / 20), Color.grey, 1 / Time.renderedFrameCount);
                 break;
 
-            case 2:
+            case VisualizationModeType.LiftDrag:
                 //Check Lift and Induced Drag code regions
                 break;
 
-            case 3:
+            case VisualizationModeType.Torque:
                 //Check Torque code regions
 
                 Debug.DrawLine(CM - (DronePhysics.rotation * new Vector3(0, 0.2f)), CM + (DronePhysics.rotation * new Vector3(0, 0.2f)), Color.yellow, 1 / Time.renderedFrameCount);
@@ -1137,10 +1169,13 @@ public class DroneControls : MonoBehaviour
 
     private void ToggleSASModes(InputAction.CallbackContext obj)
     {
-        if (SASMode == 1) SASMode = 2;
-        else if (SASMode == 2) SASMode = 1;
-        else if (SASMode == 0) SASMode = 1;
-        else SASMode = 0;
+        SASMode = SASMode switch
+        {
+            SASModeType.Disabled => SASModeType.Heli,
+            SASModeType.Heli => SASModeType.Plane,
+            SASModeType.Plane => SASModeType.Disabled,
+            _ => SASModeType.Disabled
+        };
         InputControl.FlightControls.ToggleSASMode.performed -= ToggleSASModes;
         return;
     }
@@ -1157,8 +1192,10 @@ public class DroneControls : MonoBehaviour
 
     private void SwitchModes(InputAction.CallbackContext obj)
     {
-        HoverMode += InputControl.FlightControls.ToggleHoverMode.ReadValue<float>() > 0 ? (HoverMode == 6 ? -2 : -1) : (HoverMode == 4 ? 2 : 1);
-        HoverMode = Mathf.Clamp(HoverMode, 1, 6);
+        int mode = (int)HoverMode;
+        mode += InputControl.FlightControls.ToggleHoverMode.ReadValue<float>() > 0 ? (mode == 6 ? -2 : -1) : (mode == 4 ? 2 : 1);
+        mode = Mathf.Clamp(mode, 1, 6);
+        HoverMode = (HoverModeType)mode;
         InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
         return;
     }
@@ -1449,8 +1486,8 @@ for (int i = 0; i < NetLinker.Parts.DronePartStats.Length; i++)
 /*
 DynamicPressure = (float)C.GaleAtmD * RefAirSpeed1;
 
-if (PrevDyanmicPressure == 0)
-    PrevDyanmicPressure = DynamicPressure;
+if (PrevDynamicPressure == 0)
+    PrevDynamicPressure = DynamicPressure;
 
 int threshold1 = 81;
 int threshold2 = 225;
