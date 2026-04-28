@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class AirDataComputer : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class AirDataComputer : MonoBehaviour
     private DroneControls DroneScript;
 
     #region Camera & UI
+    public Camera Cam;
     public Vector2 CameraRotation;
     public Vector3 CameraVector;
     public ButtonEventSystem BackgrES;
@@ -35,6 +38,12 @@ public class AirDataComputer : MonoBehaviour
 
     public float mt = 0; //Main Thrust
     public int hm = 1; //Hover Mode
+    public int sas = 1; //SAS Mode
+    #endregion
+
+    #region Camera Effects
+    public Volume PostProcessing;
+    public AnimationCurve FOVFromSpeed;
     #endregion
 
     #region Displays
@@ -54,11 +63,16 @@ public class AirDataComputer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        #region Get Components and Vectors
+
         DroneBody = transform.GetComponentInParent<Rigidbody>();
         DroneScript = transform.GetComponentInParent<DroneControls>();
 
+        Cam = gameObject.GetComponent<Camera>();
         CameraRotation = Vector3.zero;
         CameraVector = transform.localPosition;
+
+        #endregion
 
         Application.targetFrameRate = -1;
     }
@@ -121,8 +135,9 @@ public class AirDataComputer : MonoBehaviour
 
         mt = DroneScript.Thrust;
 
-        hm = DroneScript.HoverMode;
-        if (hm == 6) hm = 5;
+        hm = (int)DroneScript.HoverMode;
+
+        sas = (int)DroneScript.SASMode;
         #endregion
 
         #region Display Data
@@ -158,6 +173,15 @@ public class AirDataComputer : MonoBehaviour
 
             Performance[0].text = "FPS: " + FPS.ToString("n0");
             Performance[1].text = "PhFPS: " + PhFPS.ToString("n0");
+        }
+
+        #endregion
+
+        #region FOV from Speed
+
+        if (FOVFromSpeed.keys.Length != 0)
+        {
+            Cam.fieldOfView = FOVFromSpeed.Evaluate(v);
         }
 
         #endregion

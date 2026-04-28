@@ -1,0 +1,6 @@
+
+fnuecke for his fullscreen script: https://gist.github.com/fnuecke/d4275087cc7969257eae0f939fac3d2f
+
+Code Monkey for his C# library
+
+Lepsima for their auto-exposure package: https://github.com/Lepsima/Auto-Exposure-Unity-6-URP

@@ -98,14 +98,14 @@ public class DroneControls : MonoBehaviour
     
     public enum HoverModeType : int
     {
-        MaxThrust = 1,
-        SpeedTarget = 2,
-        Descent = 3,
-        Gravity = 4,
-        /* half bread: what the fuck is 5??? */
-        Landing = 6
+        TOGA = 1,
+        Climb = 2,
+        Hover = 3,
+        Float = 4,
+        Landing = 5
+        /* half bread: what the fuck is 5??? ; Trappist-1 d: shhh~ */
     }
-    public HoverModeType HoverMode = HoverModeType.MaxThrust;
+    public HoverModeType HoverMode = HoverModeType.TOGA;
 
     public float HoverThrust;
     public float HoverTarget;
@@ -135,13 +135,13 @@ public class DroneControls : MonoBehaviour
     public InputMap InputControl;
 
     // SAS = Stability Assist System
-    public enum SASModeType : byte
+    public enum SASModeType : int
     {
         Disabled = 0,
         Heli = 1,
         Plane = 2
     }
-    public SASModeType SASMode; 
+    public SASModeType SASMode = SASModeType.Heli; 
     
     private bool[] InputValues;
     private Vector3 CurrentAngles;
@@ -245,7 +245,7 @@ public class DroneControls : MonoBehaviour
     private int DataTimeTick;
     public int DataTimeRate;
 
-    public enum DataGatherStageType : int
+    public enum DataGatherStageType : byte
     {
         Idle = 0,
         Gathering = 1,
@@ -532,11 +532,11 @@ public class DroneControls : MonoBehaviour
 
             switch (HoverMode)
             {
-                case HoverModeType.MaxThrust:
+                case HoverModeType.TOGA:
                     HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
                     break;
 
-                case HoverModeType.SpeedTarget:
+                case HoverModeType.Climb:
                     if (DronePhysics.linearVelocity.y <= -16.77 + HoverTargetSpeed[0])
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
@@ -551,7 +551,7 @@ public class DroneControls : MonoBehaviour
                     }
                     break;
 
-                case HoverModeType.Descent:
+                case HoverModeType.Hover:
                     if (DronePhysics.linearVelocity.y <= -16.77)
                     {
                         HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
@@ -566,24 +566,9 @@ public class DroneControls : MonoBehaviour
                     }
                     break;
 
-                case HoverModeType.Gravity:
+                case HoverModeType.Float:
                     HoverTarget = (float)C.GaleG;
                     break;
-/*
-                case 5:
-                    if (DronePhysics.velocity.y <= -16.77 + HoverTargetSpeed[1])
-                    {
-                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
-                    }
-                    else if (DronePhysics.velocity.y < HoverTargetSpeed[1])
-                    {
-                        HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.velocity.y + HoverTargetSpeed[1]));
-                    }
-                    else
-                    {
-                        HoverTarget = 0;
-                    }
-                    break;*/
 
                 case HoverModeType.Landing:
                     if (DronePhysics.linearVelocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
@@ -874,7 +859,7 @@ public class DroneControls : MonoBehaviour
 
             case SASModeType.Plane: // Plane mode
                 #region Check Requirements
-                if (DynamicPressure < 400)
+                if (DynamicPressure < 3600)
                 {
                     SASMode = SASModeType.Heli;
                     break;
@@ -1193,8 +1178,8 @@ public class DroneControls : MonoBehaviour
     private void SwitchModes(InputAction.CallbackContext obj)
     {
         int mode = (int)HoverMode;
-        mode += InputControl.FlightControls.ToggleHoverMode.ReadValue<float>() > 0 ? (mode == 6 ? -2 : -1) : (mode == 4 ? 2 : 1);
-        mode = Mathf.Clamp(mode, 1, 6);
+        mode += Mathf.RoundToInt(-Mathf.Sign(InputControl.FlightControls.ToggleHoverMode.ReadValue<float>()));
+        mode = Mathf.Clamp(mode, 1, 5);
         HoverMode = (HoverModeType)mode;
         InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
         return;
@@ -1211,6 +1196,7 @@ public class DroneControls : MonoBehaviour
         PhysicsRotation = DronePhysics.rotation = Quaternion.Euler(0f, 0f, 0f);
         PhysicsAngVelocity = DronePhysics.angularVelocity = Vector3.zero;
         PhysicsTorque = Vector3.zero;
+        SASMode = SASModeType.Heli;
 
         Thrust = 0;        HoverThrust = 0; HoverTarget = 0;        ImpulseCharge = 0;
 
