@@ -660,6 +660,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7792298915869762761, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1453793526}
     - target: {fileID: 8592090197389616602, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1567,6 +1571,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1901281956}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &960195715 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5127929665325153846, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &960956693 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6887355116898544287, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -2292,6 +2307,9 @@ MonoBehaviour:
   HoverTargetSpeed:
   - 5
   HoverInputErrorTimer: 0
+  FLIPPerforming: 0
+  FLIPCharge: 0
+  FLIPThrustPos: {x: -0.37, y: 0, z: -0.1}
   PhysicsTorque: {x: 0, y: 0, z: 0}
   DynamicPressure: 0
   ReferenceDynPressure: 0
@@ -2660,6 +2678,7 @@ MonoBehaviour:
   mt: 0
   hm: 1
   sas: 1
+  flipstate: 0
   PostProcessing: {fileID: 0}
   FOVFromSpeed:
     serializedVersion: 2
@@ -2695,6 +2714,8 @@ MonoBehaviour:
   - {fileID: 288317659}
   MainThrust: {fileID: 684350074}
   HoverMode: {fileID: 1972597787}
+  SASMode: {fileID: 960195715}
+  FLIPStatus: {fileID: 1758559124}
   Performance:
   - {fileID: 523630085}
   - {fileID: 711700568}
@@ -3045,6 +3066,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 40a23eded4875354585dc3ea028df79c, type: 3}
   m_PrefabInstance: {fileID: 1729123364}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1758559124 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6326688239353007511, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1759764999
 GameObject:
   m_ObjectHideFlags: 0

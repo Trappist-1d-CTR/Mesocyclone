@@ -43,6 +43,8 @@ public class DroneControls : MonoBehaviour
         public float HoverJerk;
         public float LandingSpeed;
         public float ReactionWheelsTorqueJerk;
+        public float FLIPThrust;
+        public float FLIPMaxCharge;
     }
 
     [System.Serializable]
@@ -115,6 +117,10 @@ public class DroneControls : MonoBehaviour
     public int HoverMaxAngle;
     public float[] HoverTargetSpeed;
     public float HoverInputErrorTimer;
+
+    public bool FLIPPerforming;
+    public float FLIPCharge;
+    public Vector3 FLIPThrustPos;
     #endregion
 
     #region Physics Engine Values
@@ -626,6 +632,34 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
+        #region Fast Launch Inversion Procedure
+
+        if (FLIPPerforming)
+        {
+            Memory = NetLinker.MainBody.DroneBodyStats[0].FLIPThrust * -transform.up;
+            PhysicsAcceleration += Memory;
+            TotThrust += Memory;
+
+            PhysicsTorque += Vector3.Cross(FLIPThrustPos, Memory);
+            if (VisualizationMode == VisualizationModeType.Torque)
+                Debug.DrawLine(transform.position + FLIPThrustPos, transform.position + FLIPThrustPos + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
+
+            FLIPCharge -= Time.fixedDeltaTime;
+            if (FLIPCharge <= 0)
+            {
+                FLIPCharge = 0;
+                FLIPPerforming = false;
+            }
+        }
+        else if (FLIPCharge != NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge)
+        {
+            FLIPCharge += Time.fixedDeltaTime;
+            if (FLIPCharge >= NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge)
+                FLIPCharge = NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge;
+        }
+
+        #endregion
+
         #region Dev Commands
         InputControl.Dev.ResetDrone.performed += ResetDrone;
         #endregion
@@ -819,21 +853,24 @@ public class DroneControls : MonoBehaviour
                 Vector3 T = -PhysicsTorque;
                 //Debug.Log(PhysicsTorque.magnitude.ToString() + " ; " + (PhysicsTorque.magnitude - T.magnitude).ToString());
 
-                for (int i = 0; i < 3; i++)
+                if (!FLIPPerforming)
                 {
-                    catchException = ReactionWheelsTorqueStabilization[i];
-                    if (Mathf.Abs((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
+                    for (int i = 0; i < 3; i++)
                     {
-                        ReactionWheelsTorqueStabilization[i] = i == 0 ? T.x : (i == 1 ? T.y : T.z);
-                    }
-                    else
-                    {
-                        ReactionWheelsTorqueStabilization[i] += Mathf.Sign((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
-                    }
+                        catchException = ReactionWheelsTorqueStabilization[i];
+                        if (Mathf.Abs((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
+                        {
+                            ReactionWheelsTorqueStabilization[i] = i == 0 ? T.x : (i == 1 ? T.y : T.z);
+                        }
+                        else
+                        {
+                            ReactionWheelsTorqueStabilization[i] += Mathf.Sign((i == 0 ? T.x : (i == 1 ? T.y : T.z)) - ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
+                        }
 
-                    if (Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException) > 2 * TorqueStabilizationJerk * Time.fixedDeltaTime)
-                    {
-                        throw new System.Exception("Impossible Torque Stabilization Jerk: " + Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException));
+                        if (Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException) > 2 * TorqueStabilizationJerk * Time.fixedDeltaTime)
+                        {
+                            throw new System.Exception("Impossible Torque Stabilization Jerk: " + Mathf.Abs(ReactionWheelsTorqueStabilization[i] - catchException));
+                        }
                     }
                 }
 
@@ -867,7 +904,7 @@ public class DroneControls : MonoBehaviour
                 #endregion
 
                 #region Remove Undesired Torque Stabilization
-                
+
                 for (int i = 0; i < 3; i++)
                 {
                     if (Mathf.Abs(ReactionWheelsTorqueStabilization[i]) < TorqueStabilizationJerk * Time.fixedDeltaTime)
@@ -879,7 +916,7 @@ public class DroneControls : MonoBehaviour
                         ReactionWheelsTorqueStabilization[i] += -Mathf.Sign(ReactionWheelsTorqueStabilization[i]) * TorqueStabilizationJerk * Time.fixedDeltaTime;
                     }
                 }
-                
+
                 #endregion
 
                 #region Plane SAS
@@ -1184,6 +1221,10 @@ public class DroneControls : MonoBehaviour
         InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
         return;
     }
+    #endregion
+
+    #region Trigger F.L.I.P.
+    public void FLIP() => FLIPPerforming = !FLIPPerforming && FLIPCharge == NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge;
     #endregion
 
     #region Reset Drone Position, Velocity, and Engines

@@ -39,6 +39,14 @@ public class AirDataComputer : MonoBehaviour
     public float mt = 0; //Main Thrust
     public int hm = 1; //Hover Mode
     public int sas = 1; //SAS Mode
+
+    public enum Status
+    {
+        Performing,
+        Ready,
+        Unavailable
+    }
+    public Status flipstate;
     #endregion
 
     #region Camera Effects
@@ -50,6 +58,8 @@ public class AirDataComputer : MonoBehaviour
     public TextMeshProUGUI[] SAO;
     public Slider MainThrust;
     public Slider HoverMode;
+    public TextMeshProUGUI SASMode;
+    public Image FLIPStatus;
     public TextMeshProUGUI[] Performance;
     #endregion
 
@@ -138,6 +148,9 @@ public class AirDataComputer : MonoBehaviour
         hm = (int)DroneScript.HoverMode;
 
         sas = (int)DroneScript.SASMode;
+
+        flipstate = DroneScript.FLIPPerforming ? Status.Performing :
+            DroneScript.FLIPCharge == DroneScript.NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge ? Status.Ready : Status.Unavailable;
         #endregion
 
         #region Display Data
@@ -149,7 +162,9 @@ public class AirDataComputer : MonoBehaviour
         SAO[5].text = r.ToString("n1");
         SAO[6].text = y.ToString("n1");
         MainThrust.value = mt;
+        SASMode.text = sas switch { 1 => "Heli", 2 => "Plane", _ => "None" };
         HoverMode.value = 1 - ((hm - 1) / 4f);
+        FLIPStatus.color = flipstate switch { Status.Performing => Color.red, Status.Ready => Color.green, _ => Color.gray5 };
         #endregion
     }
 
