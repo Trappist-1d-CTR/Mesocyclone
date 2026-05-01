@@ -502,7 +502,6 @@ public class DroneControls : MonoBehaviour
 
         #region Hover Controls
 
-        InputControl.FlightControls.MouseClick.performed += ToggleAutoMode;
         InputControl.FlightControls.ToggleHoverMode.performed += SwitchModes;
         
 
@@ -1195,7 +1194,7 @@ public class DroneControls : MonoBehaviour
         {
             SASModeType.Disabled => SASModeType.Heli,
             SASModeType.Heli => SASModeType.Plane,
-            SASModeType.Plane => SASModeType.Disabled,
+            SASModeType.Plane => SASModeType.Heli,
             _ => SASModeType.Disabled
         };
         InputControl.FlightControls.ToggleSASMode.performed -= ToggleSASModes;
@@ -1205,13 +1204,6 @@ public class DroneControls : MonoBehaviour
     #endregion
 
     #region Hover Modes Control
-    private void ToggleAutoMode(InputAction.CallbackContext obj)
-    {
-        HoverAuto = !HoverAuto;
-        InputControl.FlightControls.MouseClick.performed -= ToggleAutoMode;
-        return;
-    }
-
     private void SwitchModes(InputAction.CallbackContext obj)
     {
         int mode = (int)HoverMode;
@@ -1247,6 +1239,15 @@ public class DroneControls : MonoBehaviour
 
         InputControl.Dev.ResetDrone.performed -= ResetDrone;
         return;
+    }
+    #endregion
+
+    #region Hangar Controls
+    public IEnumerator InHangar(GameObject Sender)
+    {
+        yield return new WaitUntil(() => HoverActive);
+
+        Sender.SendMessage("LaunchHangar");
     }
     #endregion
 

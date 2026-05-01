@@ -109,7 +109,7 @@ public class AirDataComputer : MonoBehaviour
         }
 
         transform.localRotation = Quaternion.Euler(6 + CameraRotation.x, 90 + CameraRotation.y, 0);
-        transform.localPosition = Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * CameraVector);
+        transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * CameraVector));
         #endregion
 
         #region Calculate Data
@@ -200,5 +200,18 @@ public class AirDataComputer : MonoBehaviour
         }
 
         #endregion
+    }
+
+    private Vector3 CamDistance(Vector3 Vector)
+    {
+        RaycastHit HitInfo;
+        if (Physics.SphereCast(transform.parent.position, 0.05f, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
+        {
+            return Vector.normalized * HitInfo.distance;
+        }
+        else
+        {
+            return Vector;
+        }
     }
 }
