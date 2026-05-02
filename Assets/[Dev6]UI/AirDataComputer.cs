@@ -16,9 +16,14 @@ public class AirDataComputer : MonoBehaviour
 
     #region Camera & UI
     public Camera Cam;
-    public Vector2 CameraRotation;
-    public Vector3 CameraVector;
+    private Vector2 CameraRotation;
+    private Vector3 localCamRot;
+    private Vector3 CameraVector;
+    private float CameraScale;
     public ButtonEventSystem BackgrES;
+
+    public float MinCamScale;
+    public float MaxCamScale;
     #endregion
 
     #region Data
@@ -79,20 +84,24 @@ public class AirDataComputer : MonoBehaviour
         DroneScript = transform.GetComponentInParent<DroneControls>();
 
         Cam = gameObject.GetComponent<Camera>();
+        localCamRot = Vector3.zero;
         CameraRotation = Vector3.zero;
         CameraVector = transform.localPosition;
 
         #endregion
 
+        CameraScale = 1;
         Application.targetFrameRate = -1;
     }
 
     private void FixedUpdate()
     {
         #region Camera Controls
+        Vector3 ScaledCamVector = CameraVector * CameraScale;
+
         if (BackgrES.PointerOverElement)
         {
-            if (ButtonEventSystem.PointerClickButtons == 1)
+            if (ButtonEventSystem.PointerDown(1))
             {
                                      // Up/down rotation                                                 // Rotation around normal
                 CameraRotation = new(CameraRotation.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
@@ -106,10 +115,34 @@ public class AirDataComputer : MonoBehaviour
                     CameraRotation.y -= Mathf.Sign(CameraRotation.y) * 360;
                 }
             }
+            else if (ButtonEventSystem.PointerDown(0, 1))
+            {
+                // Camera scaling
+                CameraScale += -0.0008f * ButtonEventSystem.PointerDeltaPos.y;
+                CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
+            }
+            else if (ButtonEventSystem.PointerDown(2))
+            {
+                // Camera local rotation
+                localCamRot = new(localCamRot.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), localCamRot.y + ((Mathf.Abs(localCamRot.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+
+                if (Mathf.Abs(localCamRot.x) > 180)
+                {
+                    localCamRot.x = Mathf.Sign(localCamRot.x) * (Mathf.Abs(localCamRot.x) - 360);
+                }
+                if (Mathf.Abs(localCamRot.y) >= 360)
+                {
+                    localCamRot.y -= Mathf.Sign(localCamRot.y) * 360;
+                }
+            }
+            else if (ButtonEventSystem.PointerDown(1, 2))
+            {
+                localCamRot = Vector3.zero;
+            }
         }
 
-        transform.localRotation = Quaternion.Euler(6 + CameraRotation.x, 90 + CameraRotation.y, 0);
-        transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * CameraVector));
+        transform.localRotation = Quaternion.Euler(6 + CameraRotation.x + localCamRot.x, 90 + CameraRotation.y + localCamRot.y, 0);
+        transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
         #endregion
 
         #region Calculate Data
@@ -205,7 +238,7 @@ public class AirDataComputer : MonoBehaviour
     private Vector3 CamDistance(Vector3 Vector)
     {
         RaycastHit HitInfo;
-        if (Physics.SphereCast(transform.parent.position, 0.05f, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
+        if (Physics.SphereCast(transform.parent.position, 0.03f, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
         {
             return Vector.normalized * HitInfo.distance;
         }

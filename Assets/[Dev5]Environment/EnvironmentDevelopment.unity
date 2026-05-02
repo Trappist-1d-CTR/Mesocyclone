@@ -2606,7 +2606,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.05
+  near clip plane: 0.02
   far clip plane: 10000
   field of view: 45
   orthographic: 0
@@ -2665,6 +2665,8 @@ MonoBehaviour:
   CameraRotation: {x: 0, y: 0}
   CameraVector: {x: 0, y: 0, z: 0}
   BackgrES: {fileID: 426438150}
+  MinCamScale: 0.4
+  MaxCamScale: 10
   h: 0
   prev_h: Infinity
   delta_h: 0
