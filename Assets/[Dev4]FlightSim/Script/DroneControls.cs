@@ -236,6 +236,10 @@ public class DroneControls : MonoBehaviour
     public float ParticlesOriginDistance;
     #endregion
 
+    #region Engine Exhaust System
+    public GameObject EngineTrails;
+    #endregion
+
     #region Script Optimization Memory
     private Vector3 Memory;
     private Vector3 ResetPosition;
@@ -357,6 +361,11 @@ public class DroneControls : MonoBehaviour
             DronePhysics.linearVelocity = AirSpeed;
         }
 
+        //Disables engine trails
+        EmitHoverTrails();
+        EmitMainEngineTrail();
+        EmitFLIPTrail();
+
         #endregion
 
         #region Data Output Setup
@@ -418,6 +427,8 @@ public class DroneControls : MonoBehaviour
         #endregion
 
         #region Main Engine Thrust
+
+        EmitMainEngineTrail();
 
         Memory = transform.right;
 
@@ -531,6 +542,8 @@ public class DroneControls : MonoBehaviour
 
         #region Hover Modes and Execution
 
+        EmitHoverTrails();
+
         if (HoverActive)
         {
             float mem = (2 * NetLinker.MainBody.DroneBodyStats[0].HoverJerk) / (NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust - (float)C.GaleG);
@@ -633,12 +646,15 @@ public class DroneControls : MonoBehaviour
 
         #region Fast Launch Inversion Procedure
 
+        EmitFLIPTrail();
+
         if (FLIPPerforming)
         {
             Memory = NetLinker.MainBody.DroneBodyStats[0].FLIPThrust * -transform.up;
             PhysicsAcceleration += Memory;
             TotThrust += Memory;
 
+            Memory = NetLinker.MainBody.DroneBodyStats[0].FLIPThrust * DronePhysics.mass * Vector3.down;
             PhysicsTorque += Vector3.Cross(FLIPThrustPos, Memory);
             if (VisualizationMode == VisualizationModeType.Torque)
                 Debug.DrawLine(transform.position + FLIPThrustPos, transform.position + FLIPThrustPos + (DronePhysics.mass * Memory / 100), Color.blue, 1 / Time.renderedFrameCount);
@@ -1248,6 +1264,50 @@ public class DroneControls : MonoBehaviour
         yield return new WaitUntil(() => HoverActive);
 
         Sender.SendMessage("LaunchHangar");
+    }
+    #endregion
+
+    #region Engine Trails
+    private void EmitHoverTrails(/*bool b*/)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            ParticleSystem.MainModule particles = EngineTrails.transform.GetChild(i).GetComponent<ParticleSystem>().main;
+            particles.startSize = 0.02f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+        }
+
+        /* OLD CODE: INTENDED FOR LINE RENDERERS
+        for (int i = 0; i < 2; i++)
+        {
+            foreach (TrailRenderer trail in EngineTrails.transform.GetChild(i).GetComponentsInChildren<TrailRenderer>(false))
+            {
+                if (trail.emitting != b) trail.emitting = b;
+                trail.startWidth = 0.02f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
+            }
+        }*/
+    }
+
+    private void EmitMainEngineTrail(/*bool b*/)
+    {
+        ParticleSystem.MainModule particles = EngineTrails.transform.GetChild(2).GetComponent<ParticleSystem>().main;
+        particles.startSize = 0.02f * Thrust;
+
+        /* OLD CODE: INTENDED FOR LINE RENDERERS
+        TrailRenderer trail = EngineTrails.transform.GetChild(2).GetComponent<TrailRenderer>();
+        if (trail.emitting != b) trail.emitting = b;
+        trail.startWidth = 0.02f * Thrust;
+        */
+    }
+
+    private void EmitFLIPTrail(/*bool b*/)
+    {
+        ParticleSystem.MainModule particles = EngineTrails.transform.GetChild(3).GetComponent<ParticleSystem>().main;
+        particles.startSize = FLIPPerforming ? 0.03f : 0;
+
+        /* OLD CODE: INTENDED FOR LINE RENDERERS
+        TrailRenderer trail = EngineTrails.transform.GetChild(3).GetComponent<TrailRenderer>();
+        if (trail.emitting != b) trail.emitting = b;
+        */
     }
     #endregion
 

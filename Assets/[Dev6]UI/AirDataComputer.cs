@@ -20,6 +20,7 @@ public class AirDataComputer : MonoBehaviour
     private Vector3 localCamRot;
     private Vector3 CameraVector;
     private float CameraScale;
+    public float CamCollisionRadius;
     public ButtonEventSystem BackgrES;
 
     public float MinCamScale;
@@ -238,7 +239,7 @@ public class AirDataComputer : MonoBehaviour
     private Vector3 CamDistance(Vector3 Vector)
     {
         RaycastHit HitInfo;
-        if (Physics.SphereCast(transform.parent.position, 0.03f, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
+        if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
         {
             return Vector.normalized * HitInfo.distance;
         }
