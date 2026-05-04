@@ -458,6 +458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Cam: {fileID: 0}
+  CamCollisionRadius: 0.01
   BackgrES: {fileID: 0}
   MinCamScale: 0.4
   MaxCamScale: 10
