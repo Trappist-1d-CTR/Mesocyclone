@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class AirDataComputer : MonoBehaviour
 {
@@ -69,6 +70,13 @@ public class AirDataComputer : MonoBehaviour
     public TextMeshProUGUI[] Performance;
     #endregion
 
+    #region Pause Menu
+    public GameObject PausePanel;
+    public GameObject PauseMenu;
+    public GameObject SettingsMenu;
+    public GameObject FeedbackMenu;
+    #endregion
+
     #region Performance
     int FPS, PhFPS;
     float t = 0;
@@ -76,7 +84,6 @@ public class AirDataComputer : MonoBehaviour
 
     #endregion
 
-    // Start is called before the first frame update
     void Start()
     {
         #region Get Components and Vectors
@@ -89,6 +96,13 @@ public class AirDataComputer : MonoBehaviour
         CameraRotation = Vector3.zero;
         CameraVector = transform.localPosition;
 
+        #endregion
+
+        #region Disable Pause Menus
+        PausePanel.SetActive(false);
+        PauseMenu.SetActive(false);
+        SettingsMenu.SetActive(false);
+        FeedbackMenu.SetActive(false);
         #endregion
 
         CameraScale = 1;
@@ -239,7 +253,7 @@ public class AirDataComputer : MonoBehaviour
     private Vector3 CamDistance(Vector3 Vector)
     {
         RaycastHit HitInfo;
-        if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, Vector.normalized, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
+        if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, transform.parent.rotation * Vector, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
         {
             return Vector.normalized * HitInfo.distance;
         }
@@ -248,4 +262,41 @@ public class AirDataComputer : MonoBehaviour
             return Vector;
         }
     }
+
+    #region Pause Menus Controls
+    public void EscapeUI()
+    {
+        if (PauseMenu.activeInHierarchy)
+        {
+            PausePanel.SetActive(false);
+            PauseMenu.SetActive(false);
+            Time.timeScale = 1;
+        }
+        else if (FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
+        {
+            SettingsMenu.SetActive(false);
+            FeedbackMenu.SetActive(false);
+            Time.timeScale = 1;
+        }
+        else
+        {
+            PausePanel.SetActive(true);
+            PauseMenu.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+
+    public void ToggleMenu(int idx)
+    {
+        PausePanel.SetActive(idx == 0);
+        PauseMenu.SetActive(idx == 0);
+        SettingsMenu.SetActive(idx == 1);
+        FeedbackMenu.SetActive(idx == 2);
+    }
+
+    public void QuitToMenu()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+    #endregion
 }

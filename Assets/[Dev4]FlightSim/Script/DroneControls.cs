@@ -675,10 +675,6 @@ public class DroneControls : MonoBehaviour
 
         #endregion
 
-        #region Dev Commands
-        InputControl.Dev.ResetDrone.performed += ResetDrone;
-        #endregion
-
 
         #region Lift - Induced Drag - Torque
 
@@ -1145,6 +1141,18 @@ public class DroneControls : MonoBehaviour
     [System.Obsolete]
     private void Update()
     {
+        #region Time Independent Controls
+
+        #region Relay UI Controls
+        InputControl.UIControls.Esc.performed += SendEscapeUI;
+        #endregion
+
+        #region Dev Commands
+        InputControl.Dev.ResetDrone.performed += ResetDrone;
+        #endregion
+
+        #endregion
+
         #region Physics Visualizer
         Vector3 CM = DronePhysics.worldCenterOfMass;
 
@@ -1308,6 +1316,15 @@ public class DroneControls : MonoBehaviour
         TrailRenderer trail = EngineTrails.transform.GetChild(3).GetComponent<TrailRenderer>();
         if (trail.emitting != b) trail.emitting = b;
         */
+    }
+    #endregion
+
+    #region Relay UI Controls
+    private void SendEscapeUI(InputAction.CallbackContext obj)
+    {
+        DataComputer.EscapeUI();
+        InputControl.UIControls.Esc.performed -= SendEscapeUI;
+        return;
     }
     #endregion
 

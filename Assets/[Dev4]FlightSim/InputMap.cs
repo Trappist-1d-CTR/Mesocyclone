@@ -409,6 +409,34 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             ]
         },
         {
+            ""name"": ""UIControls"",
+            ""id"": ""e4758a46-db03-4044-8776-2972b5e0b140"",
+            ""actions"": [
+                {
+                    ""name"": ""Esc"",
+                    ""type"": ""Button"",
+                    ""id"": ""002d82b7-a537-4b29-a902-b0242c2247e4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""7372beb3-0c12-4470-a1d7-848f0208d680"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Dev"",
             ""id"": ""8648cdd1-ffcd-4ef2-8c64-d423a395a3ab"",
             ""actions"": [
@@ -495,6 +523,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_ControlSurfaces_RollCounterClock = m_ControlSurfaces.FindAction("RollCounterClock", throwIfNotFound: true);
         m_ControlSurfaces_YawRight = m_ControlSurfaces.FindAction("YawRight", throwIfNotFound: true);
         m_ControlSurfaces_YawLeft = m_ControlSurfaces.FindAction("YawLeft", throwIfNotFound: true);
+        // UIControls
+        m_UIControls = asset.FindActionMap("UIControls", throwIfNotFound: true);
+        m_UIControls_Esc = m_UIControls.FindAction("Esc", throwIfNotFound: true);
         // Dev
         m_Dev = asset.FindActionMap("Dev", throwIfNotFound: true);
         m_Dev_ResetDrone = m_Dev.FindAction("ResetDrone", throwIfNotFound: true);
@@ -504,6 +535,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     {
         UnityEngine.Debug.Assert(!m_FlightControls.enabled, "This will cause a leak and performance issues, InputMap.FlightControls.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_ControlSurfaces.enabled, "This will cause a leak and performance issues, InputMap.ControlSurfaces.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UIControls.enabled, "This will cause a leak and performance issues, InputMap.UIControls.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Dev.enabled, "This will cause a leak and performance issues, InputMap.Dev.Disable() has not been called.");
     }
 
@@ -890,6 +922,102 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     /// </summary>
     public ControlSurfacesActions @ControlSurfaces => new ControlSurfacesActions(this);
 
+    // UIControls
+    private readonly InputActionMap m_UIControls;
+    private List<IUIControlsActions> m_UIControlsActionsCallbackInterfaces = new List<IUIControlsActions>();
+    private readonly InputAction m_UIControls_Esc;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UIControls".
+    /// </summary>
+    public struct UIControlsActions
+    {
+        private @InputMap m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UIControlsActions(@InputMap wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UIControls/Esc".
+        /// </summary>
+        public InputAction @Esc => m_Wrapper.m_UIControls_Esc;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UIControls; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UIControlsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UIControlsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UIControlsActions" />
+        public void AddCallbacks(IUIControlsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIControlsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIControlsActionsCallbackInterfaces.Add(instance);
+            @Esc.started += instance.OnEsc;
+            @Esc.performed += instance.OnEsc;
+            @Esc.canceled += instance.OnEsc;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UIControlsActions" />
+        private void UnregisterCallbacks(IUIControlsActions instance)
+        {
+            @Esc.started -= instance.OnEsc;
+            @Esc.performed -= instance.OnEsc;
+            @Esc.canceled -= instance.OnEsc;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UIControlsActions.UnregisterCallbacks(IUIControlsActions)" />.
+        /// </summary>
+        /// <seealso cref="UIControlsActions.UnregisterCallbacks(IUIControlsActions)" />
+        public void RemoveCallbacks(IUIControlsActions instance)
+        {
+            if (m_Wrapper.m_UIControlsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UIControlsActions.AddCallbacks(IUIControlsActions)" />
+        /// <seealso cref="UIControlsActions.RemoveCallbacks(IUIControlsActions)" />
+        /// <seealso cref="UIControlsActions.UnregisterCallbacks(IUIControlsActions)" />
+        public void SetCallbacks(IUIControlsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIControlsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIControlsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UIControlsActions" /> instance referencing this action map.
+    /// </summary>
+    public UIControlsActions @UIControls => new UIControlsActions(this);
+
     // Dev
     private readonly InputActionMap m_Dev;
     private List<IDevActions> m_DevActionsCallbackInterfaces = new List<IDevActions>();
@@ -1104,6 +1232,21 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnYawLeft(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UIControls" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UIControlsActions.AddCallbacks(IUIControlsActions)" />
+    /// <seealso cref="UIControlsActions.RemoveCallbacks(IUIControlsActions)" />
+    public interface IUIControlsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Esc" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEsc(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dev" which allows adding and removing callbacks.
