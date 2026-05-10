@@ -8,32 +8,53 @@ using System.Security.Cryptography.X509Certificates;
 
 public static class FeedbackSystem
 {
+    public enum Opinion
+    {
+        unassigned = 0,
+        Positive = 1,
+        LightlyPositive = 2,
+        LightlyNegative = 3,
+        Negative = 4
+    }
+
     public class FeedbackStruct
     {
-        public string Version;
-        public Vector3 Coordinates;
-        public int Assessment;
-        public string Message;
-        public string Time;
-        public Texture2D Screenshot;
+        public string Version = "v";
+        public Vector3 Coordinates = Vector3.zero;
+        public Opinion Assessment = Opinion.unassigned;
+        public bool IsBugReport = false;
+        public string Message = "";
+        public string Time = "00/00/0001";
+        public string ScreenshotFilePath;
     }
-    public static FeedbackStruct FeedbackVariable;
+    public static FeedbackStruct FeedbackVariable = new();
+
+    public static void SetFeedback(int assessment) => FeedbackVariable.Assessment = (Opinion)assessment;
+    public static void SetFeedback(string message) => FeedbackVariable.Message = message;
+    public static void SetFeedback(bool bugReport) => FeedbackVariable.IsBugReport = bugReport;
+    public static void SetFeedback(Vector3 position) => FeedbackVariable.Coordinates = position;
 
     private static string FormatMessage(FeedbackStruct f)
     {
-        return "Coordinates: " + f.Coordinates.ToString() + "\nAssessment: " + f.Assessment.ToString() + "\nMessage: " + f.Message + "\nTime: " + System.DateTime.Today.ToString();
+        return "Coordinates: " + f.Coordinates.ToString() + "\nIs a Bug Report: " + f.IsBugReport.ToString() + "\nAssessment: " + f.Assessment.ToString() + "\nMessage: " + f.Message + "\nTime: " + f.Time;
     }
 
-    public static void SendMail()
+    public static void SendMail(string path)
     {
-        string Address = ""; //put address here (NOT A PERSONAL ADDRESS)
-        string Password = ""; //put password here (if you're some random person on GitHub, please don't screw us over ;-;)
+        FeedbackVariable.Version = Application.version;
+        FeedbackVariable.Time = System.DateTime.Today.ToShortDateString();
+        FeedbackVariable.ScreenshotFilePath = path;
+
+        string Address = "feedback.unknownsimprograms@gmail.com"; //put address here (NOT A PERSONAL ADDRESS)
+        string Password = "zrmxbrfioqghfcrr"; //put password here (if you're some random person on GitHub, please don't screw us over ;-;)
         MailMessage mail = new(Address, Address);
         mail.Subject = "MESOCYCLONE FEEDBACK (" + FeedbackVariable.Version + ")";
         mail.Body = FormatMessage(FeedbackVariable);
+        if (FeedbackVariable.ScreenshotFilePath != null)
+            mail.Attachments.Add(new Attachment(FeedbackVariable.ScreenshotFilePath));
 
         SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
-        smtpServer.Port = 587;//GIVE CORRECT PORT HERE
+        smtpServer.Port = 587;//GIVE CORRECT PORT HERE (either 587 or 465)
         smtpServer.Credentials = new NetworkCredential(Address, Password) as ICredentialsByHost;
         smtpServer.EnableSsl = true;
         ServicePointManager.ServerCertificateValidationCallback =

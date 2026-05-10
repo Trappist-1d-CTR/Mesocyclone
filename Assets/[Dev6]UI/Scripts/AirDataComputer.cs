@@ -22,6 +22,8 @@ public class AirDataComputer : MonoBehaviour
     private Vector3 CameraVector;
     private float CameraScale;
     public float CamCollisionRadius;
+
+    public Canvas UICanvas;
     public ButtonEventSystem BackgrES;
 
     public float MinCamScale;
@@ -75,6 +77,8 @@ public class AirDataComputer : MonoBehaviour
     public GameObject PauseMenu;
     public GameObject SettingsMenu;
     public GameObject FeedbackMenu;
+    public GameObject FeedbackSent;
+    public TextMeshProUGUI OtherInfo;
     #endregion
 
     #region Performance
@@ -99,10 +103,7 @@ public class AirDataComputer : MonoBehaviour
         #endregion
 
         #region Disable Pause Menus
-        PausePanel.SetActive(false);
-        PauseMenu.SetActive(false);
-        SettingsMenu.SetActive(false);
-        FeedbackMenu.SetActive(false);
+        ToggleMenu(-1);
         #endregion
 
         CameraScale = 1;
@@ -266,37 +267,57 @@ public class AirDataComputer : MonoBehaviour
     #region Pause Menus Controls
     public void EscapeUI()
     {
-        if (PauseMenu.activeInHierarchy)
+        OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
+
+        if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
         {
-            PausePanel.SetActive(false);
-            PauseMenu.SetActive(false);
-            Time.timeScale = 1;
-        }
-        else if (FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
-        {
-            SettingsMenu.SetActive(false);
-            FeedbackMenu.SetActive(false);
+            ToggleMenu(-1);
             Time.timeScale = 1;
         }
         else
         {
-            PausePanel.SetActive(true);
-            PauseMenu.SetActive(true);
+            ToggleMenu(0);
             Time.timeScale = 0;
         }
     }
 
     public void ToggleMenu(int idx)
     {
-        PausePanel.SetActive(idx == 0);
-        PauseMenu.SetActive(idx == 0);
+        PausePanel.SetActive(idx is 0 or 4);
+        PauseMenu.SetActive(idx is 0 or 4);
         SettingsMenu.SetActive(idx == 1);
         FeedbackMenu.SetActive(idx == 2);
+        FeedbackSent.SetActive(idx == 4);
     }
 
     public void QuitToMenu()
     {
         SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+    #endregion
+
+    #region Feedback
+    public void FeedbackUpdate(int value) => FeedbackSystem.SetFeedback(value);
+    public void FeedbackUpdate(string value) => FeedbackSystem.SetFeedback(value);
+    public void FeedbackUpdate(bool value) => FeedbackSystem.SetFeedback(value);
+    public void ButtonSendFeedback() =>_ = StartCoroutine(SendFeedback());
+    private IEnumerator SendFeedback()
+    {
+        Debug.Log("B");
+        FeedbackSystem.SetFeedback(DroneBody.position);
+
+        UICanvas.enabled = false;
+        yield return new WaitForEndOfFrame();
+
+        string path = Application.streamingAssetsPath + "/Screenshots/FeedbackThumbnail.png";
+        System.IO.File.Delete(path);
+        ScreenCapture.CaptureScreenshot(path);
+        yield return new WaitForEndOfFrame();
+
+        UICanvas.enabled = true;
+
+        FeedbackSystem.SendMail(path);
+        ToggleMenu(4);
     }
     #endregion
 }
