@@ -109,6 +109,11 @@ public class MainMenuManager : MonoBehaviour
     }
     #endregion
 
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     IEnumerator LoadGameAsync()
     {
         AsyncOperation Operation = SceneManager.LoadSceneAsync("EnvironmentDevelopment", LoadSceneMode.Single);

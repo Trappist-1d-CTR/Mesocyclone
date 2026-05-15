@@ -196,6 +196,7 @@ public class DroneControls : MonoBehaviour
     private AGlobalValues C;
     public AirCellBehavior Air;
     private AirDataComputer DataComputer;
+    private UICamManager UICam;
     #endregion
 
     #region Center Of Mass Correction
@@ -279,6 +280,7 @@ public class DroneControls : MonoBehaviour
         DroneCollider = gameObject.GetComponent<BoxCollider>();
         C = GameObject.FindGameObjectWithTag("GameController").GetComponent<AGlobalValues>();
         DataComputer = gameObject.GetComponentInChildren<AirDataComputer>(false);
+        UICam = gameObject.GetComponentInChildren<UICamManager>(false);
 
         #endregion
 
@@ -1322,7 +1324,7 @@ public class DroneControls : MonoBehaviour
     #region Relay UI Controls
     private void SendEscapeUI(InputAction.CallbackContext obj)
     {
-        DataComputer.EscapeUI();
+        UICam.EscapeUI();
         InputControl.UIControls.Esc.performed -= SendEscapeUI;
         return;
     }

@@ -363,6 +363,7 @@ GameObject:
   - component: {fileID: 6477303998865135148}
   - component: {fileID: 3052678735363586156}
   - component: {fileID: 3111022834855121462}
+  - component: {fileID: 9206539070230068533}
   - component: {fileID: 5759906812268864115}
   m_Layer: 6
   m_Name: DroneComputer
@@ -457,12 +458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e5ead60197afb044a1f43c990d75591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cam: {fileID: 0}
-  CamCollisionRadius: 0.01
-  UICanvas: {fileID: 0}
-  BackgrES: {fileID: 0}
-  MinCamScale: 0.4
-  MaxCamScale: 10
   h: 0
   prev_h: Infinity
   delta_h: 0
@@ -477,31 +472,6 @@ MonoBehaviour:
   hm: 1
   sas: 1
   flipstate: 0
-  PostProcessing: {fileID: 0}
-  FOVFromSpeed:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 45
-      inSlope: -0.0375215
-      outSlope: 0.05
-      tangentMode: 1
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.2033275
-    - serializedVersion: 3
-      time: 600
-      value: 75
-      inSlope: 0.05
-      outSlope: 0.05
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   SAO:
   - {fileID: 0}
   - {fileID: 0}
@@ -517,6 +487,49 @@ MonoBehaviour:
   Performance:
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &9206539070230068533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6321071839004463482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8315d74edf13d4a97870781208c388, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UICamManager
+  Cam: {fileID: 0}
+  CamCollisionRadius: 0.01
+  UICanvas: {fileID: 0}
+  BackgrES: {fileID: 0}
+  MinCamScale: 0.4
+  MaxCamScale: 10
+  PostProcessing: {fileID: 0}
+  FOVFromSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 45
+      inSlope: 0.05
+      outSlope: 0.05
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 600
+      value: 75
+      inSlope: 0.05
+      outSlope: 0.05
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   PausePanel: {fileID: 0}
   PauseMenu: {fileID: 0}
   SettingsMenu: {fileID: 0}

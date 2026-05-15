@@ -61,6 +61,9 @@ public class NetLinking : MonoBehaviour
             AnimTimer[i] = -1;
         }
         #endregion
+
+        NotifierSystem.Send("Connect Structures to DroneNet to Proceed.", System.DateTime.Now.ToLongTimeString(), 2, 5);
+        NotifierSystem.Send("Structures connected: 0/10", System.DateTime.Now.ToLongTimeString(), 1);
     }
 
     private void Update()
@@ -248,7 +251,7 @@ public class NetLinking : MonoBehaviour
 
                     if (s.Linked)
                     {
-                        DroneNet.Add(s);
+                        AddStructureToNet(s);
                         if (AnimTimer[0] != 2) AnimTimer[0] = 2;
                     }
                 }
@@ -256,6 +259,12 @@ public class NetLinking : MonoBehaviour
             }
         }
         #endregion
+    }
+
+    public void AddStructureToNet(Structure s)
+    {
+        DroneNet.Add(s);
+        NotifierSystem.Send("Structures connected: " + DroneNet.Count + "/10", System.DateTime.Now.ToLongTimeString(), 1);
     }
 
     private RectTransform CreateRadarImage(bool knownPos,int size, int i, out Image image)
