@@ -470,6 +470,22 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8690386434499829912, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.108
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690386434499829912, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.108
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690386434499829912, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.108
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690386434499829912, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4280032284
+      objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -885,6 +901,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &554429032 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 468256315995265714, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &582669698 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1313683845186493912, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -915,6 +936,11 @@ MonoBehaviour:
 --- !u!224 &725916101 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 223130076635827279, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &775320062 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3469465142977148734, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
   m_PrefabInstance: {fileID: 288317654}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &835795864
@@ -1187,6 +1213,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1189007220 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2061502101579974102, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1189007221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2385197260872286531, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1189007222 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5202002496011430662, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1189007223 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8112950743133430752, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1189007224 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2279948096730611149, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &1189007225 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1818861329852215139, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &1189007226 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4736715336823022208, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &1214952506 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2462124593137898781, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1273771505 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5540937198856413810, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -2314,6 +2404,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1989198263 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7287037970895321473, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2004839365 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9189079691529602102, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2018913408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2900,6 +3000,54 @@ PrefabInstance:
       propertyPath: NotifThumbnail
       value: 
       objectReference: {fileID: 528566308}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1189007223}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1989198263}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1189007222}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2004839365}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1189007221}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[5]'
+      value: 
+      objectReference: {fileID: 554429032}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[6]'
+      value: 
+      objectReference: {fileID: 1189007220}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentTexts.Array.data[7]'
+      value: 
+      objectReference: {fileID: 775320062}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentButtons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1214952506}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentButtons.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1189007226}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentButtons.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1189007225}
+    - target: {fileID: 9206539070230068533, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'FeedbackAssessmentButtons.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1189007224}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -535,7 +535,24 @@ MonoBehaviour:
   SettingsMenu: {fileID: 0}
   FeedbackMenu: {fileID: 0}
   FeedbackSent: {fileID: 0}
+  FeedbackAssessmentButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  FeedbackAssessmentTexts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   OtherInfo: {fileID: 0}
+  NotifAnimTimer: 0
+  NotifTime: {fileID: 0}
+  NotifThumbnail: {fileID: 0}
 --- !u!114 &5759906812268864115
 MonoBehaviour:
   m_ObjectHideFlags: 0
