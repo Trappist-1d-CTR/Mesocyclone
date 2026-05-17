@@ -26,6 +26,20 @@ public static class FeedbackSystem
         public string Message = "";
         public string Time = "00/00/0001";
         public string ScreenshotFilePath;
+
+        /// <summary>
+        /// Utility Property to fix naming
+        /// </summary>
+        public string _Assessment // couldn't figure out a better naming convention
+        {
+            get
+            {
+                if (Assessment == Opinion.unassigned) return "Unassigned";
+                else if (Assessment == Opinion.LightlyNegative) return "Lightly Negative";
+                else if (Assessment == Opinion.LightlyPositive) return "Lightly Positive";
+                else return Assessment.ToString(); // naming is fine
+            }
+        }
     }
     public static FeedbackStruct FeedbackVariable = new();
 
@@ -36,7 +50,7 @@ public static class FeedbackSystem
 
     private static string FormatMessage(FeedbackStruct f)
     {
-        return "Coordinates: " + f.Coordinates.ToString() + "\nIs a Bug Report: " + f.IsBugReport.ToString() + "\nAssessment: " + f.Assessment.ToString() + "\nMessage: " + f.Message + "\nTime: " + f.Time;
+        return "Coordinates: " + f.Coordinates.ToString() + "\nIs a Bug Report: " + f.IsBugReport.ToString() + "\nAssessment: " + f._Assessment + "\nMessage: " + f.Message + "\nTime: " + f.Time;
     }
 
     public static void SendMail(string path)
