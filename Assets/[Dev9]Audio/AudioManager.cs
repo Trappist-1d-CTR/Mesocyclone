@@ -249,6 +249,7 @@ public sealed class AudioManager : MonoBehaviour
     {
         PauseAll();
         Play(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
+        Invoke("UnPauseAll", audioClip.length);
     }
 
     public void InterruptAllSourcesWithRepeating(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
