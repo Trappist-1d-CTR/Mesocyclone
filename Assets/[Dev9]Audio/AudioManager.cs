@@ -50,6 +50,10 @@ public sealed class AudioManager : MonoBehaviour
 
     List<Process> repeatingProcesses = new();
 
+    #nullable enable // in case this isn't disabled
+    Process? interruptProcess;
+    #nullable disable
+
     AudioListener listener;
 
     Dictionary<AudioSource, AudioLowPassFilter> filters = new();
@@ -255,13 +259,20 @@ public sealed class AudioManager : MonoBehaviour
     public void InterruptAllSourcesWithRepeating(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
-        PlayRepeating(audioClip, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
+        interruptProcess = PlayRepeating(audioClip, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
     }
 
     public void InterruptAllSourcesWithRepeating(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
-        PlayRepeating(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
+        interruptProcess = PlayRepeating(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
+    }
+
+    public void StopRepeatedInterrupt()
+    {
+        interruptProcess?.Stop();
+        interruptProcess = null;
+        UnPauseAll();
     }
 
     #endregion
