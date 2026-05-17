@@ -280,7 +280,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Play Repeating Routines
 
-    public IEnumerator PlayRepeatingRoutine(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         while (true)
         {
@@ -290,7 +290,7 @@ public sealed class AudioManager : MonoBehaviour
         }
     }
 
-    public IEnumerator PlayRepeatingRoutine(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         while (true)
         {
