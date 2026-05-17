@@ -39,11 +39,15 @@ public class UICamManager : MonoBehaviour
     public GameObject PauseMenu;
     public GameObject SettingsMenu;
     public GameObject FeedbackMenu;
+
     public GameObject FeedbackSent;
+    public Button[] FeedbackAssessmentButtons;
+    public GameObject[] FeedbackAssessmentTexts;
     public TextMeshProUGUI OtherInfo;
     #endregion
 
     #region Notifications
+    public float MET;
     public float NotifAnimTimer;
     public TextMeshProUGUI NotifTime;
     public TextMeshProUGUI NotifThumbnail;
@@ -67,7 +71,8 @@ public class UICamManager : MonoBehaviour
         #region Disable Pause Menus
         ToggleMenu(-1);
         #endregion
-        
+
+        MET = 0;
         CameraScale = 1;
         NotifAnimTimer = -1;
         Application.targetFrameRate = -1;
@@ -123,6 +128,8 @@ public class UICamManager : MonoBehaviour
         transform.localRotation = Quaternion.Euler(6 + CameraRotation.x + localCamRot.x, 90 + CameraRotation.y + localCamRot.y, 0);
         transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
         #endregion
+
+        MET += Time.fixedDeltaTime;
     }
 
     private void Update()
@@ -137,7 +144,10 @@ public class UICamManager : MonoBehaviour
         #endregion
 
         #region Handle Notifications
-        NotifTime.text = System.DateTime.Now.ToLongTimeString();
+        int hour = Mathf.FloorToInt(MET / 3600);
+        int minute = Mathf.FloorToInt((MET % 3600) / 60);
+        int second = Mathf.FloorToInt(MET % 60);
+        NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);
 
         if (NotifAnimTimer == -1)
         {
@@ -161,6 +171,13 @@ public class UICamManager : MonoBehaviour
             
             if (NotifAnimTimer != -1)
                 NotifAnimTimer += Time.deltaTime;
+        }
+        #endregion
+
+        #region Select Chosen Assessment Button
+        for (int i = 0; i < 4; i++)
+        {
+            FeedbackAssessmentButtons[i].interactable = (4 - i) != (int)FeedbackSystem.FeedbackVariable.Assessment;
         }
         #endregion
     }
@@ -213,11 +230,18 @@ public class UICamManager : MonoBehaviour
     #region Feedback
     public void FeedbackUpdate(int value) => FeedbackSystem.SetFeedback(value);
     public void FeedbackUpdate(string value) => FeedbackSystem.SetFeedback(value);
-    public void FeedbackUpdate(bool value) => FeedbackSystem.SetFeedback(value);
+    public void FeedbackUpdate(bool value)
+    {
+        FeedbackSystem.SetFeedback(value);
+
+        for (int i = 0; i < 8; i++)
+        {
+            FeedbackAssessmentTexts[i].SetActive(i % 2 == (value ? 1 : 0));
+        }
+    }
     public void ButtonSendFeedback() => _ = StartCoroutine(SendFeedback());
     private IEnumerator SendFeedback()
     {
-        Debug.Log("B");
         FeedbackSystem.SetFeedback(DroneBody.position);
 
         UICanvas.enabled = false;
