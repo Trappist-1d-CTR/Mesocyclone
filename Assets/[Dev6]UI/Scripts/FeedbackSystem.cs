@@ -24,24 +24,32 @@ public static class FeedbackSystem
         public Opinion Assessment = Opinion.unassigned;
         public bool IsBugReport = false;
         public string Message = "";
-        public string Time = "00/00/0001";
+        public string Date = "00/00/0001";
         public string ScreenshotFilePath;
 
-        /// <summary>
-        /// Utility Property to fix naming
-        /// </summary>
-        public string _Assessment // couldn't figure out a better naming convention
+        public string Opinion2Str()
         {
-            get
+            switch (Assessment)
             {
-                if (Assessment == Opinion.unassigned) return "Unassigned";
-                else if (Assessment == Opinion.LightlyNegative) return "Lightly Negative";
-                else if (Assessment == Opinion.LightlyPositive) return "Lightly Positive";
-                else return Assessment.ToString(); // naming is fine
+                case Opinion.Positive:
+                    return IsBugReport ? "Minor" : "Positive";
+
+                case Opinion.LightlyPositive:
+                    return IsBugReport ? "Annoying" : "Lightly Positive";
+
+                case Opinion.LightlyNegative:
+                    return IsBugReport ? "Severe" : "Lightly Negative";
+
+                case Opinion.Negative:
+                    return IsBugReport ? "Game Breaking" : "Negative";
+
+                default:
+                    return "Unassigned";
             }
         }
     }
     public static FeedbackStruct FeedbackVariable = new();
+
 
     public static void SetFeedback(int assessment) => FeedbackVariable.Assessment = (Opinion)assessment;
     public static void SetFeedback(string message) => FeedbackVariable.Message = message;
@@ -50,13 +58,13 @@ public static class FeedbackSystem
 
     private static string FormatMessage(FeedbackStruct f)
     {
-        return "Coordinates: " + f.Coordinates.ToString() + "\nIs a Bug Report: " + f.IsBugReport.ToString() + "\nAssessment: " + f._Assessment + "\nMessage: " + f.Message + "\nTime: " + f.Time;
+        return "Coordinates: " + f.Coordinates.ToString() + "\nType: " + (f.IsBugReport ? "Bug Report" + "\nSeverity: " : "Feedback" + "\nAssessment: ") + f.Opinion2Str() + "\nMessage: " + f.Message + "\nDate: " + f.Date;
     }
 
     public static void SendMail(string path)
     {
         FeedbackVariable.Version = Application.version;
-        FeedbackVariable.Time = System.DateTime.Today.ToShortDateString();
+        FeedbackVariable.Date = System.DateTime.Today.ToShortDateString();
         FeedbackVariable.ScreenshotFilePath = path;
 
         string Address = "feedback.unknownsimprograms@gmail.com"; //put address here (NOT A PERSONAL ADDRESS)
@@ -78,14 +86,11 @@ public static class FeedbackSystem
         try
         {
             smtpServer.Send(mail);
+            Debug.Log("Email sent successfully!");
         }
         catch (System.Exception e)
         {
             Debug.Log("Email error: " + e.ToString());
-        }
-        finally
-        {
-            Debug.Log("Email sent successfully!");
         }
     }
 }
