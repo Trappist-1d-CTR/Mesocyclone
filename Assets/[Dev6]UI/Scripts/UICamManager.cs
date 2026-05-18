@@ -22,8 +22,6 @@ public class UICamManager : MonoBehaviour
     private float CameraScale;
     public float CamCollisionRadius;
 
-    public AudioListener audioListener;
-
     public Canvas UICanvas;
     public ButtonEventSystem BackgrES;
 
@@ -55,6 +53,10 @@ public class UICamManager : MonoBehaviour
     public TextMeshProUGUI NotifThumbnail;
     #endregion
 
+    #region Audio
+    [SerializeField] AudioListener audioListener;
+    #endregion
+
     #endregion
 
     void Start()
@@ -77,11 +79,15 @@ public class UICamManager : MonoBehaviour
         MET = 0;
         CameraScale = 1;
         NotifAnimTimer = -1;
-        Application.targetFrameRate = -1; // what?
+        Application.targetFrameRate = -1;
 
-        if (gameObject.GetComponent<AudioListener>(); == null)
+        #region Initialize AudioListener
+
+        if (gameObject.GetComponent<AudioListener>() == null)
             audioListener = gameObject.AddComponent<AudioListener>();
-        else audioListener = GetComponent<AudioListener>();
+        else audioListener = gameObject.GetComponent<AudioListener>();
+
+        #endregion
     }
 
     private void FixedUpdate()
