@@ -22,6 +22,8 @@ public class UICamManager : MonoBehaviour
     private float CameraScale;
     public float CamCollisionRadius;
 
+    public AudioListener audioListener;
+
     public Canvas UICanvas;
     public ButtonEventSystem BackgrES;
 
@@ -75,7 +77,11 @@ public class UICamManager : MonoBehaviour
         MET = 0;
         CameraScale = 1;
         NotifAnimTimer = -1;
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = -1; // what?
+
+        if (gameObject.GetComponent<AudioListener>(); == null)
+            audioListener = gameObject.AddComponent<AudioListener>();
+        else audioListener = GetComponent<AudioListener>();
     }
 
     private void FixedUpdate()
