@@ -3112,9 +3112,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1157200803741835798, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480168492064903540, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4112522905129203211, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: m_Name
       value: Hangar
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677438253119854005, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

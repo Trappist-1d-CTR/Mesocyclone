@@ -84,7 +84,6 @@ public sealed class AudioManager : MonoBehaviour
         
         _instance = this;
         DontDestroyOnLoad(gameObject);
-        
         Listener = FindObjectOfType<AudioListener>();
         OcclusionMask = LayerMask.GetMask("Terrain");
     }

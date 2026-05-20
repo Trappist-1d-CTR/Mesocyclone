@@ -36,7 +36,7 @@ public class MainMenuManager : MonoBehaviour
     #endregion
 
     #endregion
-    
+
     void Start()
     {
         SimulationSettings.Load();
@@ -108,6 +108,12 @@ public class MainMenuManager : MonoBehaviour
         ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
     }
     #endregion
+
+    public void SoundClick()
+    {
+        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+        AudioManager.Instance.Play(audioclip, minPitch: 0.95f, maxPitch: 1.05f, volume: 0.7f);
+    }
 
     public void QuitGame()
     {
