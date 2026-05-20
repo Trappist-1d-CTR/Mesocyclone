@@ -35,7 +35,7 @@ public sealed class AudioManager : MonoBehaviour
         get => _poolSize;
         set
         {
-            _poolSize = Mathf.Clamp(value, 0, maxPoolSize);
+            _poolSize = (byte)Mathf.Clamp(value, 0, maxPoolSize);
             if (_poolSize > 32)
             {
                 Debug.LogWarning
@@ -86,7 +86,7 @@ public sealed class AudioManager : MonoBehaviour
             pool.Add(source);
         }
 
-        listener = FindObjectOfType<AudioListener>();
+        listener = FindFirstObjectByType<AudioListener>();
 
         occlusionMask = LayerMask.GetMask("Terrain");
     }
@@ -137,7 +137,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Play Functions
 
-    public void Play(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void Play(AudioClip audioClip, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         #nullable enable // in case this isn't disabled
         AudioSource? source = GetFreeSource();
@@ -159,7 +159,7 @@ public sealed class AudioManager : MonoBehaviour
         source.PlayOneShot(clip);
     }
 
-    public void Play(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void Play(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         #nullable enable // in case this isn't disabled
         AudioSource? source = GetFreeSource();
@@ -177,7 +177,7 @@ public sealed class AudioManager : MonoBehaviour
         source.maxDistance = maxDistance;
         source.rolloffMode = rolloffMode;
         source.volume = volume;
-        source.pitch = Random.Range(minPitch, maxPitch);
+        source.pitch = UnityEngine.Random.Range(minPitch, maxPitch);
 
         source.PlayOneShot(clip);
     }
@@ -186,7 +186,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Play Repeating Functions
 
-    public Process PlayRepeating(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public Process PlayRepeating(AudioClip audioClip, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         Process process = new(() => PlayRepeatingRoutine(audioClip, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed));
         repeatingProcesses.Add(process);
@@ -194,7 +194,7 @@ public sealed class AudioManager : MonoBehaviour
         return process;
     }
 
-    public Process PlayRepeating(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public Process PlayRepeating(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         Process process = new(() => PlayRepeatingRoutine(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed));
         repeatingProcesses.Add(process);
@@ -243,26 +243,26 @@ public sealed class AudioManager : MonoBehaviour
             process.Start();
     }
 
-    public void InterruptAllSources(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void InterruptAllSources(AudioClip audioClip, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
         Play(audioClip, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
     }
 
-    public void InterruptAllSources(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void InterruptAllSources(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
         Play(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
         Invoke("UnPauseAll", audioClip.length);
     }
 
-    public void InterruptAllSourcesWithRepeating(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void InterruptAllSourcesWithRepeating(AudioClip audioClip, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
         interruptProcess = PlayRepeating(audioClip, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
     }
 
-    public void InterruptAllSourcesWithRepeating(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    public void InterruptAllSourcesWithRepeating(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         PauseAll();
         interruptProcess = PlayRepeating(audioClip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode, reversed);
@@ -280,7 +280,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Play Repeating Routines
 
-    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         while (true)
         {
@@ -290,7 +290,7 @@ public sealed class AudioManager : MonoBehaviour
         }
     }
 
-    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = Vector3.zero, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
+    IEnumerator PlayRepeatingRoutine(AudioClip audioClip, float minPitch, float maxPitch, Vector3 position = default, bool is2D = true, float volume = 1f, float minDistance = 1f, float maxDistance = 5f, AudioRolloffMode rolloffMode = AudioRolloffMode.Linear, bool reversed = false)
     {
         while (true)
         {
