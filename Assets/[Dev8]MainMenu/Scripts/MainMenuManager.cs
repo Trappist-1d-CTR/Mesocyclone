@@ -112,7 +112,7 @@ public class MainMenuManager : MonoBehaviour
     public void SoundClick()
     {
         AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        AudioManager.Instance.Play(audioclip, MinPitch: 0.95f, MaxPitch: 1.05f, Volume: 0.7f);
+        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.6f);
     }
 
     public void QuitGame()

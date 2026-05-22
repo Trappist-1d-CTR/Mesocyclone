@@ -59,6 +59,8 @@ public class UICamManager : MonoBehaviour
 
     #endregion
 
+    public Process soundTest;
+
     void Start()
     {
         #region Get Components and Vectors
@@ -88,6 +90,8 @@ public class UICamManager : MonoBehaviour
         else audioListener = gameObject.GetComponent<AudioListener>();
 
         #endregion
+
+        SoundTest();
     }
 
     private void FixedUpdate()
@@ -208,8 +212,22 @@ public class UICamManager : MonoBehaviour
     }
 
     #region Pause Menus Controls
+
+    public void SoundTest()
+    {
+        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+        soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, Volume: 120f, Is2D: false, Position: 30 * Vector3.up);
+    }
+
+    public void SoundClick()
+    {
+        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.4f);
+    }
+
     public void EscapeUI()
     {
+        SoundClick();
         OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
 
         if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
