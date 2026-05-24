@@ -24,7 +24,7 @@ MonoBehaviour:
     m_Value: 3
   exposureRange:
     m_OverrideState: 1
-    m_Value: {x: -23, y: 10}
+    m_Value: {x: -23, y: 0}
   increaseSpeed:
     m_OverrideState: 1
     m_Value: 12

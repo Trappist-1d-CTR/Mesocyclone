@@ -216,13 +216,13 @@ public class UICamManager : MonoBehaviour
     public void SoundTest()
     {
         AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, Volume: 120f, Is2D: false, Position: 30 * Vector3.up);
+        soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
     }
 
     public void SoundClick()
     {
         AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.4f);
+        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
     }
 
     public void EscapeUI()

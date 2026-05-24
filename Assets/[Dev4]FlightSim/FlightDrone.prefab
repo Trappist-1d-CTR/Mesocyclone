@@ -500,7 +500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICamManager
   Cam: {fileID: 0}
-  CamCollisionRadius: 0.01
+  CamCollisionRadius: 0.02
   UICanvas: {fileID: 0}
   BackgrES: {fileID: 0}
   MinCamScale: 0.4
@@ -550,9 +550,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   OtherInfo: {fileID: 0}
+  MET: 0
   NotifAnimTimer: 0
   NotifTime: {fileID: 0}
   NotifThumbnail: {fileID: 0}
+  audioListener: {fileID: 0}
 --- !u!114 &5759906812268864115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1706,7 +1708,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: ae8e5174a20282f4b97ce0226a0668ff, type: 2}
+      objectReference: {fileID: 2100000, guid: e849290d63ecd77408565e17d71933bf, type: 2}
     - target: {fileID: 919132149155446097, guid: a188583c4234fa54ab96d54ae044e7c0, type: 3}
       propertyPath: m_Name
       value: Drone Fuselage
