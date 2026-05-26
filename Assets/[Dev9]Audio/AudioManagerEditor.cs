@@ -131,10 +131,9 @@ public class AudioManagerPlayWindow : EditorWindow
 
         if (amplify)
             volume = EditorGUILayout.FloatField("Volume", volume);
+            if (volume < 0) EditorGUILayout.HelpBox("STOP IT", MessageType.Error);
+            
         else volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
-
-        if (volume > 1f)
-            EditorGUILayout.HelpBox("Volume above 1 can cause distortion. Use with caution.", MessageType.Warning);
         
         GUILayout.Space(10);
 
@@ -282,10 +281,8 @@ public class AudioManagerInterruptWindow : EditorWindow
 
         if (amplify)
             volume = EditorGUILayout.FloatField("Volume", volume);
+            if (volume < 0) EditorGUIUtility.HelpBox("STOP IT", MessageType.Error);
         else volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
-
-        if (volume > 1f)
-            EditorGUILayout.HelpBox("Volume above 1 can cause distortion. Use with caution.", MessageType.Warning);
         
         GUILayout.Space(10);
 
