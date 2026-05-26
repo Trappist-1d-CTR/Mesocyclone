@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 #nullable enable
@@ -37,10 +39,15 @@ public sealed class AudioManager : MonoBehaviour
         public AudioLowPassFilter Filter;
     }
 
-    List<PoolEntry> Pool = new();
+    [Header("Pool Stuff")]
+    [Tooltip("Collection (List<>) of all the nested AudioSource Game Objects")]
+    [SerializeField] List<PoolEntry> Pool = new();
 
+    [Space(18)]
+    [Tooltip("Controls the max amount of AudioSource Game Objects that can exist in the Pool")]
+    [Range(0, 255)]
     [SerializeField] byte _poolSize = 32;
-    public byte PoolSize
+    byte PoolSize
     {
         get => _poolSize;
         set
@@ -56,14 +63,34 @@ public sealed class AudioManager : MonoBehaviour
         }
     }
 
+    [Space(10)]
+    [Tooltip("The limit PoolSize limit caps to")]
+    [Range(0, 255)]
     public byte MaxPoolSize = 32;
 
+    [Header("Process Stuff")]
+    [Tooltip("Collectiom (List<>) of Processes repeating clips")]
     [SerializeField] List<Process> RepeatingClips = new();
     
+    [Space(10)]
+    [Tooltip("Process that's currently interrupting all other sounds")]
     [SerializeField] Process? InterruptingRepeatingClip;
 
+    [Header("Audio Listener & Raycasting")]
+    [Tooltip("Reference to any objects with the Audio Listener component")]
     [SerializeField] AudioListener Listener;
+
+    [Tooltip("Current Layer the rays shoot out from and detect collision")]
     [SerializeField] LayerMask OcclusionMask;
+
+    [Tooltip("Controls how many walls the raycast has to go through before max muffling\nTweak this to whatever you feel is right")]
+    [Range(0, 255)]
+    [SerializeField] byte _maxWalls = 32; // controls how many "walls" the raycast has the go through before max muffling // tweak this to your liking
+    int MaxWalls
+    {
+        get => _maxWalls;
+        set => Mathf.Clamp(value, 0, 255);
+    }
 
     #endregion
 
@@ -397,12 +424,28 @@ public sealed class AudioManager : MonoBehaviour
 
     float GetOcclusion(AudioSource Source)
     {
-        Vector3 Direction = Listener.transform.position - Source.transform.position;
-        float Distance = Direction.magnitude;
+        Vector3 ListenerPosition = Listener.transform.position;
+        Vector3 RayOrigin = Source.transform.position;
+        Vector3 Direction = (ListenerPosition - RayOrigin).normalized;
+        float Remaining = Vector3.Distance(RayOrigin, ListenerPosition);
 
-        return Physics.Raycast(Source.transform.position, Direction.normalized, Distance, OcclusionMask)
-            ? 1f : 0f;
+        float StepPerWall = 1f / MaxWalls;
+        float Occlusion = 0f;
+
+        for (int i = 0; i < MaxWalls; i++)
+        {
+            if (!Physics.Raycast(RayOrigin, Direction, out RaycastHit Hit, Remaining, OcclusionMask))
+                break;
+
+            Occlusion += StepPerWall;
+            Remaining -= Hit.distance + 1E-2f; // aka 0.01
+            RayOrigin = Hit.point + Direction * 1E-2f; // aka 0.01
+
+            if (Remaining <= 0f) break;
     }
+
+    return Mathf.Clamp01(Occlusion); // clamp the value between 0 - 1 since this will be returned to be used for t in the Lerp function
+}
 
     #endregion
 
