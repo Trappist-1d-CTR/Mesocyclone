@@ -276,6 +276,10 @@ public class AudioManagerInterruptWindow : EditorWindow
 
         GUILayout.Space(10);
 
+        amplify = EditorGUILayout.Toggle("Amplify", amplify);
+
+        GUILayout.Space(5);
+
         if (amplify)
             volume = EditorGUILayout.FloatField("Volume", volume);
         else volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
