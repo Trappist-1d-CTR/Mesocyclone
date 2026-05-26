@@ -70,7 +70,7 @@ public sealed class AudioManager : MonoBehaviour
 
     [Header("Process Stuff")]
     [Tooltip("Collectiom (List<>) of Processes repeating clips")]
-    [SerializeField] List<Process> RepeatingClips = new();
+    public List<Process> RepeatingClips = new();
     
     [Space(10)]
     [Tooltip("Process that's currently interrupting all other sounds")]
@@ -180,8 +180,8 @@ public sealed class AudioManager : MonoBehaviour
                     Vector3 Position = default, // Position in space
                     bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
                     float Volume = 1f, // volume : 0 - 1
-                    float MinDistance = 1f, // range in which the volume is max
-                    float MaxDistance = 5f, // range in which you can no longer hear the source
+                    float MinDistance = 15f, // range in which the volume is max
+                    float MaxDistance = 100f, // range in which you can no longer hear the source
                     AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
                     )
     {
@@ -198,8 +198,8 @@ public sealed class AudioManager : MonoBehaviour
                     Vector3 Position = default, // Position in space
                     bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
                     float Volume = 1f, // volume : 0 - 1
-                    float MinDistance = 1f, // range in which the volume is max
-                    float MaxDistance = 5f, // range in which you can no longer hear the source
+                    float MinDistance = 15f, // range in which the volume is max
+                    float MaxDistance = 100f, // range in which you can no longer hear the source
                     AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
                     )
     {
