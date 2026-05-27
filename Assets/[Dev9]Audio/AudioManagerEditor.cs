@@ -151,7 +151,7 @@ public class AudioManagerPlayWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace(); // push right
 
-        EditorGUILayout.BeginDisabledGroup(clip == null);
+        EditorGUI.BeginDisabledGroup(clip == null);
 
         if (GUILayout.Button("Play"))
         {
@@ -172,7 +172,7 @@ public class AudioManagerPlayWindow : EditorWindow
             }
         }
 
-        EditorGUILayout.EndDisabledGroup();
+        EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
     }
 
@@ -281,7 +281,7 @@ public class AudioManagerInterruptWindow : EditorWindow
 
         if (amplify)
             volume = EditorGUILayout.FloatField("Volume", volume);
-            if (volume < 0) EditorGUIUtility.HelpBox("STOP IT", MessageType.Error);
+            if (volume < 0) EditorGUI.HelpBox(Rect.zero, "STOP IT", MessageType.Error);
         else volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
         
         GUILayout.Space(10);
@@ -300,7 +300,7 @@ public class AudioManagerInterruptWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace(); // push right 
 
-        EditorGUILayout.BeginDisabledGroup(clip == null);
+        EditorGUI.BeginDisabledGroup(clip == null);
 
         if (GUILayout.Button("Interrupt"))
         {
@@ -321,7 +321,7 @@ public class AudioManagerInterruptWindow : EditorWindow
             }
         }
 
-        EditorGUILayout.EndDisabledGroup();
+        EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
     }
 
