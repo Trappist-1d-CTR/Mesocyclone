@@ -44,7 +44,7 @@ Material:
     - _Sky_Color: {r: 0.753, g: 0.753, b: 0.753, a: 0.3137255}
     - _Star_Color: {r: 1, g: 0.8235294, b: 0.6313726, a: 1}
     - _Star_Direction: {r: 0, g: 0.15, b: -1, a: 0}
-    - _Terrain_Color: {r: 0.08829338, g: 0.084745415, b: 0.21698102, a: 1}
+    - _Terrain_Color: {r: 0.92, g: 0.92, b: 0.92, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5828442629716744299

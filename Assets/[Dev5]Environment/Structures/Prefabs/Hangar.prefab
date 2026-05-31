@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 946671935360170562}
   - component: {fileID: 2605405447185857171}
   - component: {fileID: 5307136226464410951}
+  - component: {fileID: 8685793417216249814}
   m_Layer: 0
   m_Name: Hangar
   m_TagString: Untagged
@@ -341,6 +342,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8685793417216249814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4112522905129203211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
+  Name: Hangar #433
+  Type: Shelter
+  t: {fileID: 946671935360170562}
+  Data2Link: 0
+  LinkedData: 0
+  Linked: 1
 --- !u!1 &5677438253119854005
 GameObject:
   m_ObjectHideFlags: 0

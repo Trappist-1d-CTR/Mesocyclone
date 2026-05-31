@@ -90,8 +90,6 @@ public class UICamManager : MonoBehaviour
         else audioListener = gameObject.GetComponent<AudioListener>();
 
         #endregion
-
-        SoundTest();
     }
 
     private void FixedUpdate()

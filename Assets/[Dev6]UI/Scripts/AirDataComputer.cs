@@ -94,8 +94,7 @@ public class AirDataComputer : MonoBehaviour
 
         p = DroneBody.rotation.eulerAngles.z;
         if (p > 180) p -= 360;
-        r = DroneBody.rotation.eulerAngles.x;
-        if (r > 180) r -= 360;
+        r = (DroneBody.rotation.eulerAngles.x > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.up, DroneBody.transform.right), Vector3.ProjectOnPlane(Vector3.up, DroneBody.transform.right));
         y = DroneBody.rotation.eulerAngles.y;
 
         mt = DroneScript.Thrust;
