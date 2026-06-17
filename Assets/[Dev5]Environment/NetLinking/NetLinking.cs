@@ -21,15 +21,16 @@ public class NetLinking : MonoBehaviour
 
     #region UI & Animations
     public TextMeshProUGUI StructureName;
-    public Image LinkingAnimation;
+    public Image SignalMask;
+    public Slider LinkingProgress;
     public RectTransform Radar;
     public int RadarRadius;
     public List<string> RadarList;
     public List<string> SignalList;
     public Sprite StructureSprite;
 
-    private float[] AnimTimer;
-    public AnimationCurve[] AnimCurve;
+    public float SignalAnimTimer;
+    public float SignalAnimSpeed;
     #endregion
 
     // Start is called before the first frame update
@@ -55,14 +56,11 @@ public class NetLinking : MonoBehaviour
         #region Setup Animations
 
         FocusStructure = 0;
-        AnimTimer = new float[AnimCurve.Length];
-        for (int i = 0; i < AnimTimer.Length; i++)
-        {
-            AnimTimer[i] = -1;
-        }
+        SignalAnimTimer = -1;
         #endregion
 
-        NotifierSystem.Send("Connect Structures to DroneNet to Proceed.", System.DateTime.Now.ToLongTimeString(), 2, 5);
+        NotifierSystem.Send("Link Structures to DroneNet to Proceed.", System.DateTime.Now.ToLongTimeString(), 2, 7);
+        NotifierSystem.Send("Fly close and above the structures to link.", System.DateTime.Now.ToLongTimeString(), 2, 7);
         NotifierSystem.Send("Structures connected: 0/10", System.DateTime.Now.ToLongTimeString(), 1);
     }
 
@@ -70,24 +68,27 @@ public class NetLinking : MonoBehaviour
     {
         #region Run Animation Timers
 
+        if (SignalAnimTimer != -1 && SignalAnimTimer != 2)
+        {
+            SignalAnimTimer += Time.deltaTime * SignalAnimSpeed;
+            if (SignalAnimTimer >= 1) SignalAnimTimer = 0;
+        }
+        #endregion
+
+        #region Linking UI
+
         if (StructureName.text != Structures[FocusStructure].Name)
         {
             StructureName.text = Structures[FocusStructure].Name;
         }
 
-        for (int i = 0; i < AnimTimer.Length; i++)
-        {
-            if (AnimTimer[i] != -1 && AnimTimer[i] != 2)
-            {
-                AnimTimer[i] += Time.deltaTime;
-                if (AnimTimer[i] >= 1) AnimTimer[i] = 0;
-            }
-        }
-        #endregion
+        float size = SignalAnimTimer == -1 ? 0 :
+            SignalAnimTimer < 0.25f ? 20 :
+            SignalAnimTimer < 0.5f ? 50 :
+            SignalAnimTimer < 0.75f ? 90 : 150;
+        SignalMask.rectTransform.sizeDelta = new Vector2(size, size);
 
-        #region Perform Animations
-
-        LinkingAnimation.fillAmount = AnimCurve[0].Evaluate(Mathf.Clamp01(AnimTimer[0]));
+        LinkingProgress.value = Structures[FocusStructure].LinkProgress();
         #endregion
 
         #region Structure Radar
@@ -144,7 +145,8 @@ public class NetLinking : MonoBehaviour
                     radarImage.color = Color.green;
                 }
 
-                Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+                Vector3 D = Quaternion.AngleAxis(Mathf.Sign(Vector3.ProjectOnPlane(transform.right, Vector3.up).z) * Vector3.Angle(Vector3.ProjectOnPlane(transform.right, Vector3.up), Vector3.right), Vector3.up) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+                //Debug.Log(Vector3.ProjectOnPlane(transform.right, Vector3.up) + " ; " + -Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, Vector3.up), Vector3.forward));
                 d = D.magnitude;
                 d = RadarRadius * Mathf.Pow(d / RadarRange, 0.5f);
 
@@ -205,7 +207,7 @@ public class NetLinking : MonoBehaviour
                         radarImage.color = Color.green;
                     }
 
-                    Vector3 D = Quaternion.Euler(0, -transform.eulerAngles.y, 0) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+                    Vector3 D = Quaternion.AngleAxis(Mathf.Sign(Vector3.ProjectOnPlane(transform.right, Vector3.up).z) * Vector3.Angle(Vector3.ProjectOnPlane(transform.right, Vector3.up), Vector3.right), Vector3.up) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
 
                     float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
                     radarRect.anchoredPosition = RadarRadius * new Vector3(Mathf.Cos(ang), Mathf.Sin(ang));
@@ -235,27 +237,29 @@ public class NetLinking : MonoBehaviour
             {
                 if (s.Attempt2Link(transform.position, DataTransferRate, NetLinkerRange))
                 {
-                    if (i != FocusStructure && AnimTimer[0] == 2)
+                    if (i != FocusStructure && SignalAnimTimer == -1)
                     {
-                        FocusStructure = i; AnimTimer[0] = 0;
+                        FocusStructure = i; SignalAnimTimer = 0;
                     }
 
                     if (i == FocusStructure)
                     {
-                        if (AnimTimer[0] == -1) AnimTimer[0] = 0;
+                        if (SignalAnimTimer == -1) SignalAnimTimer = 0;
                     }
-                    else if (AnimTimer[0] != -1)
+                    else if (SignalAnimTimer != -1)
                     {
-                        AnimTimer[0] = -1;
+                        SignalAnimTimer = -1;
                     }
 
                     if (s.Linked)
                     {
                         AddStructureToNet(s);
-                        if (AnimTimer[0] != 2) AnimTimer[0] = 2;
+                        if (SignalAnimTimer != -1) SignalAnimTimer = -1;
                     }
+
+                    break;
                 }
-                else if (i == FocusStructure && AnimTimer[0] != -1 && AnimTimer[0] != 2) AnimTimer[0] = -1;
+                else if (i == FocusStructure && SignalAnimTimer != -1) SignalAnimTimer = -1;
             }
         }
         #endregion

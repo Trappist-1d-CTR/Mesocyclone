@@ -51,6 +51,8 @@ public class UICamManager : MonoBehaviour
     public float NotifAnimTimer;
     public TextMeshProUGUI NotifTime;
     public TextMeshProUGUI NotifThumbnail;
+    public Image NotifOutline;
+    public Color NotifNewMsgColor;
     #endregion
 
     #region Audio
@@ -173,10 +175,18 @@ public class UICamManager : MonoBehaviour
         else
         {
             if (NotifAnimTimer == 0)
-                NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
-            else if (NotifAnimTimer < NotifierSystem.PiorityMessageList[0].duration) { }
-            else if (NotifierSystem.PiorityMessageList.Count != 0 || NotifAnimTimer >= NotifierSystem.PiorityMessageList[0].duration + 4)
             {
+                NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
+                NotifOutline.color = NotifNewMsgColor;
+            }
+            else if (NotifAnimTimer < NotifierSystem.PiorityMessageList[0].duration)
+            {
+
+            }
+            else
+            {
+                if (NotifOutline.color.a != 0) NotifOutline.color = new(0, 0, 0, 0);
+
                 NotifierSystem.PiorityMessageList.RemoveAt(0);
                 NotifAnimTimer = -1;
             }

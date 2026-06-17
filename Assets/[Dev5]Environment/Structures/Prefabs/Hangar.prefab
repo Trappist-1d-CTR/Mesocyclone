@@ -357,9 +357,11 @@ MonoBehaviour:
   Name: Hangar #433
   Type: Shelter
   t: {fileID: 946671935360170562}
-  Data2Link: 0
+  AntennaPos: {x: 3.5, y: 5, z: 3.5}
+  Data2Link: 20
   LinkedData: 0
-  Linked: 1
+  Linked: 0
+  Detectable: 1
 --- !u!1 &5677438253119854005
 GameObject:
   m_ObjectHideFlags: 0

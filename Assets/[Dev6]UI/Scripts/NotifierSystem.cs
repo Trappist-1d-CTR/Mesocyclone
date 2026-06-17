@@ -22,11 +22,11 @@ public static class NotifierSystem
 
         public Message(string text, string time, int type)
         {
-            msg = text; MET = time; t = (Type)type; duration = 2;
+            msg = text; MET = time; t = (Type)type; duration = 3;
         }
         public Message(string text, string time, int type, float duration)
         {
-            msg = text; MET = time; t = (Type)type; this.duration = 2;
+            msg = text; MET = time; t = (Type)type; this.duration = duration;
         }
     }
 
@@ -35,7 +35,7 @@ public static class NotifierSystem
 
     public static void Send(string text, string time, int type, float duration)
     {
-        Message mem = new(text, time, type);
+        Message mem = new(text, time, type, duration);
         MainMessageList.Add(mem);
 
         if (PiorityMessageList.Count == 0)
@@ -45,7 +45,7 @@ public static class NotifierSystem
         else
         {
             int i = 0;
-            while (i < PiorityMessageList.Count && (int)PiorityMessageList[i].t > type)
+            while (i < PiorityMessageList.Count && (int)PiorityMessageList[i].t >= type)
             {
                 i++;
             }
@@ -54,5 +54,5 @@ public static class NotifierSystem
         
     }
 
-    public static void Send(string text, string time, int type) => Send(text, time, type, 2);
+    public static void Send(string text, string time, int type) => Send(text, time, type, 3);
 }

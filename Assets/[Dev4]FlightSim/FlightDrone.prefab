@@ -234,41 +234,20 @@ MonoBehaviour:
   DroneNet: []
   Structures: []
   FocusStructure: 0
-  NetLinkerRange: 500
+  NetLinkerRange: 1000
   DataTransferRate: 15
-  RadarRange: 5000
+  RadarRange: 10000
   SignalRange: 15000
   StructureName: {fileID: 0}
-  LinkingAnimation: {fileID: 0}
+  SignalMask: {fileID: 0}
+  LinkingProgress: {fileID: 0}
   Radar: {fileID: 0}
-  RadarRadius: 100
+  RadarRadius: 102
   RadarList: []
   SignalList: []
   StructureSprite: {fileID: 21300000, guid: de931593127008f4bbdeb6b9a915556c, type: 3}
-  AnimCurve:
-  - serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
+  SignalAnimTimer: 0
+  SignalAnimSpeed: 1
 --- !u!114 &1164508857283671505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,7 +282,7 @@ MonoBehaviour:
   HoverTimer: 0
   HoverMaxAngle: 110
   HoverTargetSpeed:
-  - 5
+  - 1.5
   HoverInputErrorTimer: 0
   FLIPPerforming: 0
   FLIPCharge: 0
@@ -554,6 +533,8 @@ MonoBehaviour:
   NotifAnimTimer: 0
   NotifTime: {fileID: 0}
   NotifThumbnail: {fileID: 0}
+  NotifOutline: {fileID: 0}
+  NotifNewMsgColor: {r: 1, g: 0.51666665, b: 0, a: 1}
   audioListener: {fileID: 0}
 --- !u!114 &5759906812268864115
 MonoBehaviour:

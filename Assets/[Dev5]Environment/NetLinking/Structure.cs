@@ -9,10 +9,12 @@ public class Structure : MonoBehaviour
     public string Name;
     public string Type;
     public Transform t;
+    public Vector3 AntennaPos;
     private Transform DroneT;
-    public int Data2Link;
+    public float Data2Link;
     public float LinkedData;
     public bool Linked = false;
+    public bool Detectable = true;
 
     #endregion
 
@@ -48,21 +50,30 @@ public class Structure : MonoBehaviour
     {
         t = transform;
         DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
+        if (Data2Link == 0)
+        {
+            Data2Link = 1;
+            LinkedData = 1;
+            Linked = true;
+        }
     }
 
     public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
     {
         if (!Linked)
         {
+            Vector3 Antenna = t.position + AntennaPos;
+
             RaycastHit hit;
-            Vector3 direction = (t.position - AttemptPosition).normalized;
+            Vector3 direction = (Antenna - AttemptPosition).normalized;
             bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
             bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.06f; // only link to structures below??   A: Y E S
-            if (hasLineOfSight && isPointingDown && hit.transform == t)
+            if (hasLineOfSight && isPointingDown && hit.transform.IsChildOf(t))
             {
                 //Debug.Log("Visible: " + Name);
                 
-                float distance = Vector3.Distance(AttemptPosition, t.position);
+                float distance = Vector3.Distance(AttemptPosition, Antenna);
                 float effectiveRange = Mathf.Max(1e-3f, Range);
 
                 float Signal = 1f - Mathf.InverseLerp(0f, effectiveRange, distance);
@@ -87,4 +98,6 @@ public class Structure : MonoBehaviour
         }
         else return false;
     }
+
+    public float LinkProgress() => Mathf.Clamp01(LinkedData / Data2Link);
 }
