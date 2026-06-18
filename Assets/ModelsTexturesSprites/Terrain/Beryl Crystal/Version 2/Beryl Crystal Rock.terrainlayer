@@ -7,7 +7,7 @@ TerrainLayer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Beryl Crystal Rock
-  m_DiffuseTexture: {fileID: 2800000, guid: 112f78163fefd1c43acdaa8166a93bf5, type: 3}
+  m_DiffuseTexture: {fileID: 2800000, guid: 02acb26d366595945ae3d9402bb60a96, type: 3}
   m_NormalMapTexture: {fileID: 2800000, guid: 58de0f18f7c57304792100673558b4bc, type: 3}
   m_MaskMapTexture: {fileID: 0}
   m_TileSize: {x: 100, y: 100}

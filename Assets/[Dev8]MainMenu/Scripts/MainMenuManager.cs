@@ -122,7 +122,7 @@ public class MainMenuManager : MonoBehaviour
 
     IEnumerator LoadGameAsync()
     {
-        AsyncOperation Operation = SceneManager.LoadSceneAsync("EnvironmentDevelopment", LoadSceneMode.Single);
+        AsyncOperation Operation = SceneManager.LoadSceneAsync("DemoDevelopment", LoadSceneMode.Single);
 
         while (!Operation.isDone)
         {
