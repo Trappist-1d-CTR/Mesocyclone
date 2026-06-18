@@ -92,10 +92,9 @@ public class AirDataComputer : MonoBehaviour
 
         deltaPRY = DroneBody.angularVelocity * Mathf.Rad2Deg;
 
-        p = DroneBody.rotation.eulerAngles.z;
-        if (p > 180) p -= 360;
+        p = (DroneBody.rotation.eulerAngles.z > 180 ? -1 : 1) * Mathf.Rad2Deg * Mathf.Asin(Vector3.Project(DroneBody.transform.right, Vector3.up).magnitude);
         r = (DroneBody.rotation.eulerAngles.x > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.up, DroneBody.transform.right), Vector3.ProjectOnPlane(Vector3.up, DroneBody.transform.right));
-        y = DroneBody.rotation.eulerAngles.y;
+        y = (DroneBody.rotation.eulerAngles.y > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.right, Vector3.up), Vector3.right);
 
         mt = DroneScript.Thrust;
 
@@ -108,10 +107,10 @@ public class AirDataComputer : MonoBehaviour
         #endregion
 
         #region Display Data
-        SAO[0].text = h.ToString("n2");
-        SAO[1].text = delta_h.ToString("n2");
-        SAO[2].text = v.ToString("n2");
-        SAO[3].text = delta_v.ToString("n2");
+        SAO[0].text = h.ToString("n1");
+        SAO[1].text = delta_h.ToString("n1");
+        SAO[2].text = v.ToString("n1");
+        SAO[3].text = delta_v.ToString("n1");
         SAO[4].text = p.ToString("n1");
         SAO[5].text = r.ToString("n1");
         SAO[6].text = y.ToString("n1");
