@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Structure
-  Name: Hangar #433
+  Name: "Hangar 113001\xB7"
   Type: Shelter
   t: {fileID: 946671935360170562}
   AntennaPos: {x: 3.5, y: 5, z: 3.5}
