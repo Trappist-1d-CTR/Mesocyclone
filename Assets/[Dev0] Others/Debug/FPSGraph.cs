@@ -70,7 +70,7 @@ public sealed class FPSGraph : DebugGraph
         }
     }
 
-    protected override void OnRectTransformDimensionChange()
+    protected override void OnRectTransformDimensionsChange()
     {
         base.OnRectTransformDimensionsChange();
         SetVerticesDirty();
