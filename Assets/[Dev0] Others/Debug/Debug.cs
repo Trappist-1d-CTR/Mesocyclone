@@ -75,6 +75,8 @@ internal sealed class DebugRunner : MonoBehaviour
     GameObject fpsGraphObj;
     FPSGraph fpsGraph;
 
+    static GameObject eventSystem; // IDragHandler logic stuff
+
 
     [RuntimeInitializeOnLoadMethod] // screw you unity
     static void Init()
@@ -88,10 +90,17 @@ internal sealed class DebugRunner : MonoBehaviour
         DontDestroyOnLoad(go);
         go.AddComponent<DebugRunner>();
 
-        GameObject eventSystem = new("Event System");
-        eventSystem.AddComponent<EventSystem>();
-        eventSystem.AddComponent<StandaloneInputModule>();
-        DontDestroyOnLoad(eventSystem);
+        // make sure an Event System doesn't already exist in the scene
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            // Create the event system
+            eventSystem = new GameObject("Event System");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+            DontDestroyOnLoad(eventSystem);
+        }
+        else
+            eventSystem = FindObjectOfType<EventSystem>();
     }
 
     void Awake()
@@ -120,7 +129,17 @@ internal sealed class DebugRunner : MonoBehaviour
         fpsTextRect.sizeDelta = new Vector2(200, 50);
 
         // :sparkles: style :sparkles:
-        fpsText.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
+        var fpsFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
+        if (fpsFont == null)
+        {
+            Debug.LogWarning
+            (
+                $"XoloniumBold-xKZO.asset not been able to load @ DebugRunner.fpsText.font\nResource: 'Resources/Fonts & Materials/XoloniumBold-xKZO.asset'\n \nPlausable issue is that the font is located in 'Assets/TextMesh Pro/*Resources*/[...]'\nRather than simply 'Assets/*Resources*/'\nSince unity lookups any folder named 'Resources'"
+                // technically DebugRunner.fpsFont is referencing it, but just to make things clearer
+            );
+        }
+        else fpsText.font = fpsFont;
+
         fpsText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f); // 0 - 1
         fpsText.color = Color.white;
 
@@ -140,7 +159,17 @@ internal sealed class DebugRunner : MonoBehaviour
         devToolsTextRect.sizeDelta = new Vector2(200, 50);
 
         // :sparkles: style (sequel) :sparkles:
-        devToolsText.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
+        var devToolsFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
+        if (devToolsFont == null)
+        {
+            Debug.LogWarning
+            (
+                $"XoloniumBold-xKZO.asset not been able to load @ DebugRunner.devToolsText.font\nResource: 'Resources/Fonts & Materials/XoloniumBold-xKZO.asset'\n \nPlausable issue is that the font is located in 'Assets/TextMesh Pro/*Resources*/[...]'\nRather than simply 'Assets/*Resources*/'\nSince unity lookups any folder named 'Resources'"
+                // same situation here
+            );
+        }
+        else devToolsText.font = devToolsFont;
+
         devToolsText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f); // 0 - 1
         devToolsText.color = new Color(240f / 255f, 240f / 255f, 0f / 255f);
     }
@@ -178,7 +207,7 @@ internal sealed class DebugRunner : MonoBehaviour
         fpsGraphObj.transform.SetParent(debugCanvasObj.transform);
         fpsGraph = fpsGraphObj.AddComponent<FPSGraph>();
         _ = fpsGraphObj.AddComponent<CanvasRenderer>();
-        fpsGraph.color = new Color(0f, 240f / 255f, 0f); // green
+        fpsGraph.color = new Color(0f, 1f, 0f); // green
 
         fpsWindow = new DebugWindow(debugCanvasObj.transform, "FPS", fpsGraph);
     }
@@ -229,8 +258,8 @@ public sealed class DebugWindow
         this.graph = graph;
         this.minWidth = minWidth;
         this.minHeight = minHeight;
-        this.headerColor = headerColor ?? new Color(0.2f, 0.2f, 0.2f);
-        this.contentColor = contentColor ?? new Color(0.85f, 0.85f, 0.85f);
+        this.headerColor = headerColor ?? new Color(0.2f, 0.2f, 0.2f); // gray
+        this.contentColor = contentColor ?? new Color(0.085f, 0.085f, 0.085f); // darker gray
 
         // Root
         root = new GameObject($"{title}");
@@ -266,11 +295,11 @@ public sealed class DebugWindow
         titleRect.offsetMax = new Vector2(-60, 60);
 
         // minimize button
-        minimizeButton = CreateHeaderButton("─", new Vector2(-30, 0), root.transform); // TODO, implement mesh and texture integration
+        minimizeButton = CreateHeaderButton("─", new Vector2(-30, 0), header.transform); // TODO, implement mesh and texture integration
         minimizeButton.onClick.AddListener(ToggleMinimize);
 
         // Close button
-        closeButton = CreateHeaderButton("✕", new Vector2(-6, 0), root.transform);
+        closeButton = CreateHeaderButton("✕", new Vector2(-6, 0), header.transform);
         closeButton.onClick.AddListener(Close);
 
         // make window draggable
@@ -334,7 +363,7 @@ public sealed class DebugWindow
         labelObj.transform.SetParent(obj.transform);
         TextMeshProUGUI text = labelObj.AddComponent<TextMeshProUGUI>();
         text.text = label;
-        text.fontSize = 20f;
+        text.fontSize = 12f;
         text.alignment = TextAlignmentOptions.Center;
         RectTransform labelRect = labelObj.GetComponent<RectTransform>();
         labelRect.anchorMin = Vector2.zero;

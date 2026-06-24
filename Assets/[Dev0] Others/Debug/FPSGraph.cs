@@ -10,13 +10,34 @@ public sealed class FPSGraph : DebugGraph
     readonly int maxSamples = 100;
     float cap;
 
-    public void Awake() => cap = (float)Screen.currentResolution.refreshRateRatio.value;
+    // FPS text
+    GameObject fpsTextObj;
+    TextMeshProUGUI fpsText;
+
+    void Awake()
+    {
+        cap = (float)Screen.currentResolution.refreshRateRatio.value;
+
+        fpsTextObj = new GameObject("FPS Text");
+        fpsTextObj.transform.SetParent(transform); // parents to the graph
+
+        fpsText = fpsTextObj.AddComponent<TextMeshProUGUI>();
+
+        RectTransform rect = fpsTextObj.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = new Vector2(1, 0);
+        rect.pivot = new Vector2(0.5f, 0);
+        rect.anchoredPosition = new Vector2(0, 4);
+        rect.sizeDelta = new Vector2(0, 20);
+    }
 
     public void AddSample(float fps)
     {
         samples.Enqueue(fps);
         if (samples.Count > maxSamples) samples.Dequeue();
         SetVerticesDirty(); // tells unity to redraw
+
+        fpsText.text = $"{fps} FPS";
     }
 
     protected override void Draw(VertexHelper vh)
@@ -25,12 +46,16 @@ public sealed class FPSGraph : DebugGraph
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
 
+        // offsets to fix alignment issues
+        float offsetX = -width / 2f;
+        float offsetY = -height / 2f;
+
         for (int i = 0; i < array.Length - 1; i++)
         {
-            float x1 = (i / (float)maxSamples) * width;
-            float x2 = ((i + 1) / (float)maxSamples) * width;
-            float y1 = Mathf.Clamp01(array[i] / cap) * height;
-            float y2 = Mathf.Clamp01(array[i + 1] / cap) * height;
+            float x1 = (i / (float)maxSamples) * width + offsetX;
+            float x2 = ((i + 1) / (float)maxSamples) * width + offsetX;
+            float y1 = Mathf.Clamp01(array[i] / cap) * height + offsetY;
+            float y2 = Mathf.Clamp01(array[i + 1] / cap) * height + offsetY;
 
             vh.AddUIVertexQuad
             (
@@ -43,5 +68,11 @@ public sealed class FPSGraph : DebugGraph
                 }
             );
         }
+    }
+
+    protected override void OnRectTransformDimensionChange()
+    {
+        base.OnRectTransformDimensionsChange();
+        SetVerticesDirty();
     }
 }
