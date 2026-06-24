@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -8,7 +10,7 @@ public sealed class FPSGraph : DebugGraph
     readonly int maxSamples = 100;
     float cap;
 
-    void Awake() => cap = (float)Screen.currentResolution.refreshRateRatio.value;
+    public void Awake() => cap = (float)Screen.currentResolution.refreshRateRatio.value;
 
     public void AddSample(float fps)
     {

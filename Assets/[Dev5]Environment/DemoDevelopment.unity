@@ -310,6 +310,7 @@ MonoBehaviour:
   Type: Test
   t: {fileID: 27122709}
   AntennaPos: {x: 0, y: 0.5, z: 0}
+  DroneT: {fileID: 1453793527}
   Data2Link: 50
   LinkedData: 0
   Linked: 0
@@ -2039,6 +2040,10 @@ PrefabInstance:
       value: "Hangar 114021\xB7"
       objectReference: {fileID: 0}
     - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: DroneT
+      value: 
+      objectReference: {fileID: 1453793527}
+    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: Linked
       value: 0
       objectReference: {fileID: 0}
@@ -3583,6 +3588,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 831e86c5b5199e4418366eb10e5224b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1453793527 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7273163261194938501, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+  m_PrefabInstance: {fileID: 69790163125904065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1494493923 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2613340272844958178, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -5402,6 +5412,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hangar
       objectReference: {fileID: 0}
+    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: DroneT
+      value: 
+      objectReference: {fileID: 1453793527}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5415,6 +5429,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2083857064}
     m_Modifications:
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DroneT
+      value: 
+      objectReference: {fileID: 1453793527}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2840.2227

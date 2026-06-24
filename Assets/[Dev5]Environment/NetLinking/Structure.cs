@@ -10,7 +10,7 @@ public class Structure : MonoBehaviour
     public string Type;
     public Transform t;
     public Vector3 AntennaPos;
-    private Transform DroneT;
+    public Transform DroneT;
     public float Data2Link;
     public float LinkedData;
     public bool Linked = false;
@@ -49,7 +49,7 @@ public class Structure : MonoBehaviour
     private void Awake()
     {
         t = transform;
-        DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        //DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
         if (Data2Link == 0)
         {

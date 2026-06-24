@@ -36,7 +36,7 @@ public static partial class MCDebug // partial meaning u can just continue writi
     public static void Update()
     {
         // no way anyone actually accidentally hits this key
-        if (Input.GetKeyDown(KeyCode.RightAlt))
+        if (Input.GetKeyDown(KeyCode.B))
             devTools = !devTools;
     }
 
@@ -88,7 +88,7 @@ internal sealed class DebugRunner : MonoBehaviour
         DontDestroyOnLoad(go);
         go.AddComponent<DebugRunner>();
 
-        GameObject eventSystem = new("Even System");
+        GameObject eventSystem = new("Event System");
         eventSystem.AddComponent<EventSystem>();
         eventSystem.AddComponent<StandaloneInputModule>();
         DontDestroyOnLoad(eventSystem);
@@ -150,9 +150,11 @@ internal sealed class DebugRunner : MonoBehaviour
         fpsTextObj.SetActive(MCDebug.devTools);
         devToolsTextObj.SetActive(MCDebug.devTools);
 
+        MCDebug.Update();
+
         if (!MCDebug.devTools) return; // none of this matters if devtools is off
 
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             if (fpsWindow == null)
                 SpawnFPSWindow();
@@ -168,8 +170,6 @@ internal sealed class DebugRunner : MonoBehaviour
             devToolsText.text = $"DevTools Enabled";
             fpsGraph?.AddSample(fps);
         }
-
-        MCDebug.Update();
     }
 
     void SpawnFPSWindow()
@@ -177,6 +177,7 @@ internal sealed class DebugRunner : MonoBehaviour
         fpsGraphObj = new GameObject("FPS Graph");
         fpsGraphObj.transform.SetParent(debugCanvasObj.transform);
         fpsGraph = fpsGraphObj.AddComponent<FPSGraph>();
+        _ = fpsGraphObj.AddComponent<CanvasRenderer>();
         fpsGraph.color = new Color(0f, 240f / 255f, 0f); // green
 
         fpsWindow = new DebugWindow(debugCanvasObj.transform, "FPS", fpsGraph);
@@ -349,8 +350,11 @@ public sealed class DebugWindow
         content.SetActive(!isMinimized);
         resizeHandle.SetActive(!isMinimized);
     }
-    
-    void Close() => Object.Destroy(root);
+
+    void Close()
+    {
+        Object.Destroy(root);
+    }
 }
 
 // handles dragging the window
