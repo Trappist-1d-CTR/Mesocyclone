@@ -97,83 +97,23 @@ public class NetLinking : MonoBehaviour
         {
             Structure s = Structures[i];
 
-            //helpers
-            Transform radarChild = Radar.Find(s.Name);
-            float d = Vector3.Distance(s.transform.position, transform.position);
-            if (d < RadarRange)
+            if (s.Detectable)
             {
-                #region Delete direction-only
-                if (SignalList.Contains(s.Name))
+                //helpers
+                Transform radarChild = Radar.Find(s.Name);
+                float d = Vector3.Distance(s.transform.position, transform.position);
+                if (d < RadarRange)
                 {
-                    if (radarChild != null)
-                        Destroy(radarChild.gameObject);
-                    SignalList.Remove(s.Name);
-                }
-                #endregion
-
-                #region Structure direction + position
-
-                GameObject mem;
-
-                // helpers
-                Image radarImage;
-                RectTransform radarRect;
-
-                if (RadarList.Contains(s.Name))
-                {
-                    if (radarChild != null)
+                    #region Delete direction-only
+                    if (SignalList.Contains(s.Name))
                     {
-                        mem = radarChild.gameObject;
-                        radarImage = mem.GetComponent<Image>();
-                        radarRect = mem.GetComponent<RectTransform>();
+                        if (radarChild != null)
+                            Destroy(radarChild.gameObject);
+                        SignalList.Remove(s.Name);
                     }
-                    else
-                    {
-                        // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
-                        Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
-                        RadarList.Remove(s.Name);
+                    #endregion
 
-                        radarRect = CreateRadarImage(true, 7, i, out radarImage);
-                    }
-                }
-                else
-                {
-                    radarRect = CreateRadarImage(true, 7, i, out radarImage);
-                }
-                if (s.Linked && radarImage.color != Color.green)
-                {
-                    radarImage.color = Color.green;
-                }
-
-                Vector3 D = Quaternion.AngleAxis(Mathf.Sign(Vector3.ProjectOnPlane(transform.right, Vector3.up).z) * Vector3.Angle(Vector3.ProjectOnPlane(transform.right, Vector3.up), Vector3.right), Vector3.up) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
-                //Debug.Log(Vector3.ProjectOnPlane(transform.right, Vector3.up) + " ; " + -Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, Vector3.up), Vector3.forward));
-                d = D.magnitude;
-                d = RadarRadius * Mathf.Pow(d / RadarRange, 0.5f);
-
-                // division by zero fix #19907
-                if (d > 1e-3f)
-                {
-                    float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
-                    radarRect.anchoredPosition = new Vector3(d * Mathf.Cos(ang), d * Mathf.Sin(ang));
-                }
-                else
-                {
-                    radarRect.anchoredPosition = Vector3.zero;
-                }
-
-                #endregion
-            }
-            else if (RadarList.Contains(s.Name))
-            {
-                if (radarChild != null)
-                    Destroy(radarChild.gameObject);
-                RadarList.Remove(s.Name);
-            }
-            else
-            {
-                if (d < SignalRange)
-                {
-                    #region Structure direction-only
+                    #region Structure direction + position
 
                     GameObject mem;
 
@@ -181,7 +121,7 @@ public class NetLinking : MonoBehaviour
                     Image radarImage;
                     RectTransform radarRect;
 
-                    if (SignalList.Contains(s.Name))
+                    if (RadarList.Contains(s.Name))
                     {
                         if (radarChild != null)
                         {
@@ -193,14 +133,14 @@ public class NetLinking : MonoBehaviour
                         {
                             // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
                             Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
-                            SignalList.Remove(s.Name);
+                            RadarList.Remove(s.Name);
 
-                            radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                            radarRect = CreateRadarImage(true, 7, i, out radarImage);
                         }
                     }
                     else
                     {
-                        radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                        radarRect = CreateRadarImage(true, 7, i, out radarImage);
                     }
                     if (s.Linked && radarImage.color != Color.green)
                     {
@@ -208,17 +148,80 @@ public class NetLinking : MonoBehaviour
                     }
 
                     Vector3 D = Quaternion.AngleAxis(Mathf.Sign(Vector3.ProjectOnPlane(transform.right, Vector3.up).z) * Vector3.Angle(Vector3.ProjectOnPlane(transform.right, Vector3.up), Vector3.right), Vector3.up) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+                    //Debug.Log(Vector3.ProjectOnPlane(transform.right, Vector3.up) + " ; " + -Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, Vector3.up), Vector3.forward));
+                    d = D.magnitude;
+                    d = RadarRadius * Mathf.Pow(d / RadarRange, 0.5f);
 
-                    float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
-                    radarRect.anchoredPosition = RadarRadius * new Vector3(Mathf.Cos(ang), Mathf.Sin(ang));
+                    // division by zero fix #19907
+                    if (d > 1e-3f)
+                    {
+                        float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
+                        radarRect.anchoredPosition = new Vector3(d * Mathf.Cos(ang), d * Mathf.Sin(ang));
+                    }
+                    else
+                    {
+                        radarRect.anchoredPosition = Vector3.zero;
+                    }
 
                     #endregion
                 }
-                else if (SignalList.Contains(s.Name))
+                else if (RadarList.Contains(s.Name))
                 {
                     if (radarChild != null)
                         Destroy(radarChild.gameObject);
-                    SignalList.Remove(s.Name);
+                    RadarList.Remove(s.Name);
+                }
+                else
+                {
+                    if (d < SignalRange)
+                    {
+                        #region Structure direction-only
+
+                        GameObject mem;
+
+                        // helpers
+                        Image radarImage;
+                        RectTransform radarRect;
+
+                        if (SignalList.Contains(s.Name))
+                        {
+                            if (radarChild != null)
+                            {
+                                mem = radarChild.gameObject;
+                                radarImage = mem.GetComponent<Image>();
+                                radarRect = mem.GetComponent<RectTransform>();
+                            }
+                            else
+                            {
+                                // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
+                                Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
+                                SignalList.Remove(s.Name);
+
+                                radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                            }
+                        }
+                        else
+                        {
+                            radarRect = CreateRadarImage(false, 4, i, out radarImage);
+                        }
+                        if (s.Linked && radarImage.color != Color.green)
+                        {
+                            radarImage.color = Color.green;
+                        }
+
+                        Vector3 D = Quaternion.AngleAxis(Mathf.Sign(Vector3.ProjectOnPlane(transform.right, Vector3.up).z) * Vector3.Angle(Vector3.ProjectOnPlane(transform.right, Vector3.up), Vector3.right), Vector3.up) * Vector3.ProjectOnPlane(s.transform.position - transform.position, Vector3.up);
+
+                        float ang = Mathf.Acos(Mathf.Clamp(-D.normalized.z, -1f, 1f)) * Mathf.Sign(D.x);
+                        radarRect.anchoredPosition = RadarRadius * new Vector3(Mathf.Cos(ang), Mathf.Sin(ang));
+
+                        #endregion
+                    }
+                    else if (SignalList.Contains(s.Name))
+                    {
+                        if (radarChild != null)
+                            Destroy(radarChild.gameObject);
+                        SignalList.Remove(s.Name);
+                    }
                 }
             }
         }

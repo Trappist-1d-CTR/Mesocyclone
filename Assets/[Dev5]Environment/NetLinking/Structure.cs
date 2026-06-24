@@ -10,7 +10,7 @@ public class Structure : MonoBehaviour
     public string Type;
     public Transform t;
     public Vector3 AntennaPos;
-    public Transform DroneT;
+    private Transform DroneT;
     public float Data2Link;
     public float LinkedData;
     public bool Linked = false;
@@ -49,7 +49,7 @@ public class Structure : MonoBehaviour
     private void Awake()
     {
         t = transform;
-        //DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
         if (Data2Link == 0)
         {
@@ -61,6 +61,11 @@ public class Structure : MonoBehaviour
 
     public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
     {
+        while (DroneT != GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>())
+        {
+            DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        }
+
         if (!Linked)
         {
             Vector3 Antenna = t.position + AntennaPos;
@@ -72,6 +77,7 @@ public class Structure : MonoBehaviour
             if (hasLineOfSight && isPointingDown && hit.transform.IsChildOf(t))
             {
                 //Debug.Log("Visible: " + Name);
+                if (!Detectable) Detectable = true;
                 
                 float distance = Vector3.Distance(AttemptPosition, Antenna);
                 float effectiveRange = Mathf.Max(1e-3f, Range);
