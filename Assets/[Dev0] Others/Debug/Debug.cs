@@ -1,11 +1,14 @@
 // Mary by Alex G hits hard
 // script in which i discovered UnityEngine.Color(R, G, B, A) is measured from 0 - 1 rather than 0 - 255, i am utterly dissapointed. I'm moving over to MonoGame now...
 
-using System.Collections.Generic;
+// i'm realizing i could've just put everything in MCDebug
+
+using System.Diagnostics; // unity hates me so much
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Runtime.Serialization;
 
 /// <summary>
 /// Personal debugger for the game
@@ -24,7 +27,63 @@ public static partial class MCDebug // partial meaning u can just continue writi
     public static bool isRunning => _isRunning; 
 
     public static bool devTools { get; private set; } = false;
-    public static bool allowDevTools { get; private set; } = true; // relevant once modding API is established
+    public static bool allowDevTools { get; private set; } = true; // TODO: relevant once modding API is established
+
+
+    // all CPU usage and game process stuff
+    // because companies have such an unnecessary hatrid between one-another
+    // have to cover each platform
+    // fuck the world
+
+    //// WINDOWS ///////////////////////////////////////////////////////////////////////
+
+    public static PerformanceCounter w_cpuCounter { get; private set; } = new("Processor", "% Process Time", "_Total");
+    public static float w_usage { get; private set; }
+
+    // Process of the game
+    public static Process w_process { get; private set; } = Process.GetCurrentProcess();
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+
+
+    //// MAC //////////////////////////////////////////////////////////////////////////
+   
+    // TODO
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+    
+
+    //// LINUX ////////////////////////////////////////////////////////////////////////
+
+    // TODO
+
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: use preprocessor directives for checking the OS
+
+    /// <summary>
+    /// total elapsed time the game has been running in milliseconds, TODO: implement this in debug screen
+    /// </summary>
+    public static float totalElapsedGameTimeInMilliseconds { get; private set; }
+
+    /// <summary>
+    /// total elapsed time the game has been running in seconds, TODO: implement this in debug screen
+    /// </summary>
+    public static float totalElapsedGameTimeInSeconds { get; private set; }
+
+    /// <summary>
+    /// total elapsed time the game has been running in minutes, TODO: implement this in debug screen
+    /// </summary>
+    public static float totalElapsedGameTimeInMinutes { get; private set; }
+
+    /// <summary>
+    /// TODO: implement a warning message for this, duh. Like the hell you running the game for for more than 24 hours T-T
+    /// </summary>
+    public static float totalElapsedGameTimeInDays { get; private set; }
+
+    public static float totalElapsedGame { get; private set; }
 
     public static void Instantiate()
     {
@@ -38,9 +97,18 @@ public static partial class MCDebug // partial meaning u can just continue writi
         // no way anyone actually accidentally hits this key
         if (Input.GetKeyDown(KeyCode.B))
             devTools = !devTools;
+
+        totalElapsedGameTimeInMilliseconds = (float)w_process.TotalProcessorTime.TotalMilliseconds;
+        totalElapsedGameTimeInSeconds = (float)w_process.TotalProcessorTime.TotalSeconds;
+        totalElapsedGameTimeInMinutes = (float)w_process.TotalProcessorTime.TotalMinutes;
+        totalElapsedGameTimeInDays = (float)w_process.TotalProcessorTime.TotalDays;
     }
 
-    static void OnQuit() => _isRunning = false;
+    public static void UpdateCPUStats() =>
+        w_usage = w_cpuCounter.NextValue();
+
+    static void OnQuit() =>
+        _isRunning = false;
 }
 
 
@@ -54,9 +122,13 @@ internal sealed class DebugRunner : MonoBehaviour
 
     static bool initialized;
 
-    [SerializeField, Tooltip("Interval in which the FPS timer updates, modify this to your liking")]
-    float fpsUpdateInterval = 1.35f;
+    [SerializeField, Tooltip("Interval in which the FPS updates.\nmodify this to your liking")] // lie
+    float fpsUpdateInterval = 0.85f;
     float fpsTimer;
+
+    [SerializeField, Tooltip("Interval in which the CPU usage % is updated.\nmodify this to your liking")] // kindof true
+    float cpuUsageUpdateInterval = 0.85f;
+    float cpuUsageTimer;
 
     GameObject debugCanvasObj;
     Canvas debugCanvas;
@@ -70,10 +142,18 @@ internal sealed class DebugRunner : MonoBehaviour
     RectTransform devToolsTextRect;
 
     DebugWindow fpsWindow;
+    DebugWindow cpuUsageWindow;
+    DebugWindow cpuTempWindow;
 
     // Graphs
     GameObject fpsGraphObj;
     FPSGraph fpsGraph;
+
+    GameObject cpuUsageGraphObj;
+    CPUUsageGraph cpuUsageGraph;
+
+    GameObject cpuTempGraphObj;
+    CPUTempGraph cpuTempGraph;
 
     static GameObject eventSystem; // IDragHandler logic stuff
 
@@ -183,6 +263,8 @@ internal sealed class DebugRunner : MonoBehaviour
 
         if (!MCDebug.devTools) return; // none of this matters if devtools is off
 
+        devToolsText.text = $"DevTools Enabled"; // no clue why this was in the FPSGraph text update logic lol
+
         if (Input.GetKeyDown(KeyCode.N))
         {
             if (fpsWindow == null)
@@ -196,8 +278,24 @@ internal sealed class DebugRunner : MonoBehaviour
             fpsTimer = 0;
             int fps = Mathf.RoundToInt(1f / Time.smoothDeltaTime); // output reciprocal, since DeltaTime is just the interval between frames
             fpsText.text = $"{fps} FPS"; // TODO: eventually make this toggable in settings
-            devToolsText.text = $"DevTools Enabled";
+
             fpsGraph?.AddSample(fps);
+        }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            if (cpuUsageWindow == null)
+                SpawnCPUUsageWindow();
+        }
+
+        cpuUsageTimer += Time.deltaTime;
+
+        if (cpuUsageTimer >= cpuUsageUpdateInterval)
+        {
+            cpuUsageTimer = 0;
+            
+            MCDebug.UpdateCPUStats();
+            cpuUsageGraph.AddSample(MCDebug.w_usage);
         }
     }
 
@@ -207,9 +305,20 @@ internal sealed class DebugRunner : MonoBehaviour
         fpsGraphObj.transform.SetParent(debugCanvasObj.transform);
         fpsGraph = fpsGraphObj.AddComponent<FPSGraph>();
         _ = fpsGraphObj.AddComponent<CanvasRenderer>();
-        fpsGraph.color = new Color(0f, 1f, 0f); // green
+        fpsGraph.color = new Color(0f, 0.85f, 0f); // green
 
         fpsWindow = new DebugWindow(debugCanvasObj.transform, "FPS", fpsGraph);
+    }
+
+    void SpawnCPUUsageWindow()
+    {
+        cpuUsageGraphObj = new GameObject("CPU Usage Graph");
+        cpuUsageGraphObj.transform.SetParent(debugCanvasObj.transform);
+        cpuUsageGraph = cpuUsageGraphObj.AddComponent<CPUUsageGraph>();
+        _ = cpuUsageGraphObj.AddComponent<CanvasRenderer>();
+        cpuUsageGraph.color = new Color(0.85f, 0f, 0f);
+
+        cpuUsageWindow = new DebugWindow(debugCanvasObj.transform, "CPU Usage", cpuUsageGraph);
     }
 }
 
@@ -382,7 +491,7 @@ public sealed class DebugWindow
 
     void Close()
     {
-        Object.Destroy(root);
+        UnityEngine.Object.Destroy(root);
     }
 }
 
