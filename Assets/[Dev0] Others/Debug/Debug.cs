@@ -100,7 +100,7 @@ internal sealed class DebugRunner : MonoBehaviour
             DontDestroyOnLoad(eventSystem);
         }
         else
-            eventSystem = FindObjectOfType<EventSystem>();
+            eventSystem = FindAnyObjectByType<EventSystem>().gameObject;
     }
 
     void Awake()
