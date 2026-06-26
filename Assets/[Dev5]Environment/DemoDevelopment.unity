@@ -3430,6 +3430,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 79602859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1368348497 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+  m_PrefabInstance: {fileID: 247835681473857083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1399865964 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7359648786449856109, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -4918,6 +4923,7 @@ Transform:
   - {fileID: 561411988}
   - {fileID: 388906514}
   - {fileID: 1796982077}
+  - {fileID: 1368348497}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2102394925
@@ -5371,6 +5377,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8315d74edf13d4a97870781208c388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICamManager
+--- !u!1001 &247835681473857083
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2083857064}
+    m_Modifications:
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2834.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -402.3277
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_Name
+      value: Data Cell Server
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
 --- !u!1001 &901116831798793246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5441,6 +5504,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 2083857064}
     m_Modifications:
     - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Name
+      value: "WASta 1213121\xB7"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: DroneT
       value: 
       objectReference: {fileID: 1453793527}
@@ -5501,6 +5568,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2083857064}
     m_Modifications:
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: Name
+      value: "StrLightCllct 1320\xB7"
+      objectReference: {fileID: 0}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector
@@ -5601,6 +5672,10 @@ PrefabInstance:
     - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: m_Name
       value: Doppler Radar
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: Name
+      value: "DpplrRdr 10\xB7"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
