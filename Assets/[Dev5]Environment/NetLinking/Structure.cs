@@ -68,7 +68,7 @@ public class Structure : MonoBehaviour
 
         if (!Linked)
         {
-            Vector3 Antenna = t.position + AntennaPos;
+            Vector3 Antenna = t.position + (t.rotation * AntennaPos);
 
             RaycastHit hit;
             Vector3 direction = (Antenna - AttemptPosition).normalized;

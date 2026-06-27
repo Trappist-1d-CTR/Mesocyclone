@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Structure
-  Name: "WAS 1213121\xB7"
+  Name: "WASta 1213121\xB7"
   Type: Weather Auto Station
   t: {fileID: 5904771401238491615}
   AntennaPos: {x: 0, y: 2, z: -0.5}

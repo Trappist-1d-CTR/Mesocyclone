@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Structure
-  Name: "DPR 10\xB7"
+  Name: "DpplrRdr 10\xB7"
   Type: Doppler Radar
   t: {fileID: 77148196847552560}
   AntennaPos: {x: 0, y: 3, z: 0}

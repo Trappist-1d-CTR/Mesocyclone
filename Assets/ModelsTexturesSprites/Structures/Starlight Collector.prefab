@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Structure
-  Name: "SLC 1320\xB7"
+  Name: "StrLightCllct 1320\xB7"
   Type: Starlight Collector
   t: {fileID: 8807524524918526816}
   AntennaPos: {x: 0, y: 0, z: 0}
