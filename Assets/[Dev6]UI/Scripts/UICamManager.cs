@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using MCCustom; // System.Diagnostics.Process exists...
 
 public class UICamManager : MonoBehaviour
 {
@@ -61,7 +62,7 @@ public class UICamManager : MonoBehaviour
 
     #endregion
 
-    public Process soundTest;
+    public MCCustom.Process soundTest;
 
     void Start()
     {
