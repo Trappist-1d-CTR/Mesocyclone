@@ -1,78 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
-public sealed class FPSGraph : DebugGraph
+namespace MCCustom
 {
-    Queue<float> samples = new();
-    readonly int maxSamples = 100;
-    float cap;
-
-    // FPS text
-    GameObject fpsTextObj;
-    TextMeshProUGUI fpsText;
-
-    void Awake()
+    public sealed class FPSGraph : DebugGraph
     {
-        cap = (float)Screen.currentResolution.refreshRateRatio.value;
+        static Material lineMaterial;
 
-        fpsTextObj = new GameObject("FPS Text");
-        fpsTextObj.transform.SetParent(transform); // parents to the graph
+        readonly float[] samples = new float[120];
+        int head;
 
-        fpsText = fpsTextObj.AddComponent<TextMeshProUGUI>();
+        public FPSGraph() : base("FPS", new Rect(10, 10, 144, 64))
+        { }
 
-        RectTransform rect = fpsTextObj.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = new Vector2(1, 0);
-        rect.pivot = new Vector2(0.5f, 0);
-        rect.anchoredPosition = new Vector2(0, 4);
-        rect.sizeDelta = new Vector2(0, 20);
-    }
-
-    public void AddSample(float fps)
-    {
-        samples.Enqueue(fps);
-        if (samples.Count > maxSamples) samples.Dequeue();
-        SetVerticesDirty(); // tells unity to redraw
-
-        fpsText.text = $"{fps} FPS";
-    }
-
-    protected override void Draw(VertexHelper vh)
-    {
-        float[] array = samples.ToArray();
-        float width = rectTransform.rect.width;
-        float height = rectTransform.rect.height;
-
-        // offsets to fix alignment issues
-        float offsetX = -width / 2f;
-        float offsetY = -height / 2f;
-
-        for (int i = 0; i < array.Length - 1; i++)
+        // this is all just a 'that's what she said' joke
+        public void Sample(float deltaTime)
         {
-            float x1 = (i / (float)maxSamples) * width + offsetX;
-            float x2 = ((i + 1) / (float)maxSamples) * width + offsetX;
-            float y1 = Mathf.Clamp01(array[i] / cap) * height + offsetY;
-            float y2 = Mathf.Clamp01(array[i + 1] / cap) * height + offsetY;
-
-            vh.AddUIVertexQuad
-            (
-                new UIVertex[]
-                {
-                    new() { position = new Vector3(x1, y1 - 1), color = base.color },
-                    new() { position = new Vector3(x1, y1 + 1), color = base.color },
-                    new() { position = new Vector3(x2, y2 + 1), color = base.color },
-                    new() { position = new Vector3(x2, y2 - 1), color = base.color }     
-                }
-            );
+            // modulus breaks my brain
+            samples[head % samples.Length] = 1f / deltaTime;
+            head++;
         }
-    }
 
-    protected override void OnRectTransformDimensionsChange()
-    {
-        base.OnRectTransformDimensionsChange();
-        SetVerticesDirty();
+        // unity hates me even more
+        protected override void DrawGraph(Rect r)
+        {
+            if (lineMaterial == null)
+                lineMaterial = new Material(Shader.Find("Hidden/Internal-Colored"));
+
+            const float max = 120f;
+
+            lineMaterial.SetPass(0);
+            GL.PushMatrix();
+            GL.LoadPixelMatrix();
+            GL.Begin(GL.LINES);
+            GL.Color(new Color(0, 240f / 255f, 0)); // green
+
+            // REMINDER: guessing positions rn [insert fire emojis here]
+            // fix later
+            for (int i = 1; i < samples.Length; i++)
+            {
+                float x0 = r.x + r.width * (i - 1) / (samples.Length - 1);
+                float x1 = r.x + r.width * i / (samples.Length - 1);
+                float y0 = r.yMax - r.height * Mathf.Clamp01(samples[(head + i - 1) % samples.Length] / max);
+                float y1 = r.yMax - r.height * Mathf.Clamp01(samples[(head + i) % samples.Length] / max);
+
+                GL.Vertex3(x0, y0, 0);
+                GL.Vertex3(x1, y1, 0);
+            }
+
+            GL.End();
+            GL.PopMatrix();
+        }
     }
 }

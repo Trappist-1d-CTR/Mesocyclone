@@ -1,427 +1,226 @@
-// Mary by Alex G hits hard
-// script in which i discovered UnityEngine.Color(R, G, B, A) is measured from 0 - 1 rather than 0 - 255, i am utterly dissapointed. I'm moving over to MonoGame now...
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+    #define ONWINDOWS
+#endif
 
-using System.Collections.Generic;
+#if UNITY_STANDALONE_MAC || UNITY_EDITOR_MAC
+    #define ONMAC
+#endif
+
+#if UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+    #define ONLINUX
+#endif
+
+// Debugger & Profiler v0.2.0
+// the last versions v0.1.x had a shitty design because unity devs are too stubborn to stop deprecating
+// extremely useful API's and replace them with shittier ones
+// (looking at you UGUI -> UIToolkit and BIRP -> SRP)
+
+using System.Diagnostics; // Unity hates me so much
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using TMPro;
 
-/// <summary>
-/// Personal debugger for the game
-/// more accurately named Debug, but Unity already took that name sooooo
-/// 
-/// <para>Class is partial, so you can update it for all your modding needs</para>
-/// </summary>
-public static partial class MCDebug // partial meaning u can just continue writing MCDebug from anywhere. Underrated asf feature. Thank me later modders
+// UNITY JUST UPDATE TO C# 10+ ALREADY
+// WE DONT WANT TO HAVE TO ADD "-langVersion: 10" IN THE RUNTIME ATTRIBUTES OR INSTALL UNITY ROSLYN UPDATER
+// FOR EVERY PROJECT
+// KILL MYSELF
+namespace MCCustom
 {
-    // volatile makes it so threads don't cache it
-    static volatile bool _isRunning = false;
+    /// <summary>
+    /// Used for debugging and profiling aspects of the game
+    /// <para>Class is partial, so you can update it for all your modding needs. Thank me later modders</para>
+    /// </summary>
+    public static partial class MCDebug
+    {
+        // volatile makes it so threads don't cache it
+        // *why tf can't i have volatile properties*
+        static volatile bool _isRunning = false;
+
+        /// <summary>
+        /// returns true if the game is running.
+        /// returns false if not
+        /// <para>duh</para>
+        /// </summary>
+        public static bool isRunning => _isRunning;
+
+        public static bool devTools { get; private set; } 
+            = true;
+
+        static bool allowDevTools { get; private set; } 
+            = true; // TODO: redundant until Modding API comes out
+
+
+        // have to implement this for each OS because everyone hates each other
+        // like it wasn't already obvious by our mentally more or less intolerable disgust between one another
+        // that causes us to fabricate weapons  which manipulate steel and powder to explode people into a bajillion pieces
+        // and bombs of mass-destruction which split the very atoms that is matter
+        // just because one person had bad vibes
+        // #RANT
+
+        #if ONWINDOWS
+
+        public static PerformanceCounter w_cpuCounter { get; private set; } = new("Processor", "% Processor Time", "_Total");
+        public static float w_usage { get; private set; }
+
+        #endif
+
+
+        #if ONMAC
+
+        // TODO :
+
+        #endif
+
+
+        #if ONLINUX
+
+        // TODO :
+
+        #endif
+        
+
+        /// <summary>
+        /// Process of the game
+        /// </summary>
+        public static System.Diagnostics.Process process { get; private set; } 
+            = Process.GetCurrentProcess();
+        // already have a Process class in the games code, so have to be explicit
+        // unless i'm just fucking stupid
+
+
+        /// <summary>
+        /// total elapsed time the game has been running in frames
+        /// <para>not very useful information. You should just reference Time.frameCount</para>
+        /// </summary>
+        public static ulong totalElapsedGameTime { get; private set; }
+
+        /// <summary>
+        /// total elapsed time the game has been running in milliseconds
+        /// <para>TODO: implement this in debug screen</para>
+        /// </summary>
+        public static float totalElapsedGameTimeInMilliseconds { get; private set; }
+
+        /// <summary>
+        /// total elapsed time the game has been running in seconds
+        /// <para>TODO: implement this in debug screen</para>
+        /// </summary>
+        public static float totalElapsedGameTimeInSeconds { get; private set; }
+
+        /// <summary>
+        /// total elapsed time the game has been running in minutes
+        /// <para>TODO: implement this in debug screen</para>
+        /// </summary>
+        public static float totalElapsedGameTimeInMinutes { get; private set; }
+
+        /// <summary>
+        /// total elapsed time the game has been running in days
+        /// <para>TODO: implement this for a warning. I mean who's running the game for 24 hours T-T</para>
+        /// </summary>
+        public static float totalElapsedGameTimeInDays { get; private set; }
+
+
+        // graphs
+        public static FPSGraph fpsGraph { get; private set; }
+
+
+        public static void Init()
+        {
+            _isRunning = true;
+
+            Application.quitting += OnQuit;
+        }
+
+        public static void Update()
+        {
+            if (allowDevTools)
+            {
+                if (Input.GetKeyDown(KeyCode.B))
+                    devTools = !devTools;
+            }
+
+            if (devTools)
+            {
+                if (Input.GetKeyDown(KeyCode.N))
+                    fpsGraph = new FPSGraph();
+            }
+
+            totalElapsedGameTime = (ulong)Time.frameCount; // just reference Time.frameCount lol
+            totalElapsedGameTimeInMilliseconds = (float)process.TotalProcessorTime.TotalMilliseconds;
+            totalElapsedGameTimeInSeconds = (float)process.TotalProcessorTime.TotalSeconds;
+            totalElapsedGameTimeInMinutes = (float)process.TotalProcessorTime.TotalMinutes;
+            totalElapsedGameTimeInDays = (float)process.TotalProcessorTime.TotalDays;
+
+            fpsGraph?.Sample(Time.unscaledDeltaTime);
+        }
+
+        internal static void OnQuit() =>
+            _isRunning = false;
+
+        // seriously don't wanna bother with game objects and TMP
+        public static void OnGUI()
+        {
+            DebugGraphManager.OnGUI();
+
+            // to prevent multiple Debug.Log calls
+            bool checkDevToolsFont = true;
+
+            if (devTools)
+            {
+                GUIStyle style = new(GUI.skin.label)
+                {
+                    normal.textColor = new Color(240f / 255f, 240f / 255f, 0f / 255f), // yellow
+                    font = Resources.Load("Fonts & Materials/Xolonium-pn4D"),
+                    fontSize = 24,
+                    fontStyle = FontStyle.Bold // not even sure this works on a custom font : might actually be the issue if the font doesn't load
+                };
+
+                if (style.font != Resources.Load("Fonts & Materials/Xolonium-pn4D") && checkDevToolsFont)
+                {
+                    Debug.LogWarning
+                    (
+                        // REMINDER: Update ln during Debug.cs changes
+                        $"Font 'Xolonium-pn4D' unable to be loaded\n@: MCCustom.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"
+                    );
+
+                    checkDevToolsFont = false; // prevent this from re-calling
+                } 
+
+                GUI.Label(new Rect(10, 10, Screen.width - 10, Screen.height - 10), "DevTools Enabled");
+            }
+        }
+    }
+
 
     /// <summary>
-    /// True if the program (technically the Debugger) is running
+    /// Handles MCDebug and integrates it into the Unity player loop
     /// </summary>
-    public static bool isRunning => _isRunning; 
-
-    public static bool devTools { get; private set; } = false;
-    public static bool allowDevTools { get; private set; } = true; // relevant once modding API is established
-
-    public static void Instantiate()
+    internal sealed class MCDebugHandler : MonoBehaviour
     {
-        _isRunning = true;
+        static GameObject go;
 
-        Application.quitting += OnQuit;
-    }
-
-    public static void Update()
-    {
-        // no way anyone actually accidentally hits this key
-        if (Input.GetKeyDown(KeyCode.B))
-            devTools = !devTools;
-    }
-
-    static void OnQuit() => _isRunning = false;
-}
-
-
-/// <summary>
-/// Just runs the Debugger and integrated it into Unity's Player Loop, since it's a static class
-/// </summary>
-internal sealed class DebugRunner : MonoBehaviour
-{
-    // you do not have a permit sir
-    private DebugRunner() { }
-
-    static bool initialized;
-
-    [SerializeField, Tooltip("Interval in which the FPS timer updates, modify this to your liking")]
-    float fpsUpdateInterval = 1.35f;
-    float fpsTimer;
-
-    GameObject debugCanvasObj;
-    Canvas debugCanvas;
-
-    GameObject fpsTextObj;
-    TextMeshProUGUI fpsText;
-    RectTransform fpsTextRect;
-
-    GameObject devToolsTextObj;
-    TextMeshProUGUI devToolsText;
-    RectTransform devToolsTextRect;
-
-    DebugWindow fpsWindow;
-
-    // Graphs
-    GameObject fpsGraphObj;
-    FPSGraph fpsGraph;
-
-    static GameObject eventSystem; // IDragHandler logic stuff
-
-
-    [RuntimeInitializeOnLoadMethod] // screw you unity
-    static void Init()
-    {
-        if (initialized) return;
-        initialized = true;
-
-        MCDebug.Instantiate();
-
-        GameObject go = new("Debugger & Profiler");
-        DontDestroyOnLoad(go);
-        go.AddComponent<DebugRunner>();
-
-        // make sure an Event System doesn't already exist in the scene
-        if (FindObjectOfType<EventSystem>() == null)
+        [RuntimeInitializeOnLoadMethod] // screw you unity
+        static void Init()
         {
-            // Create the event system
-            eventSystem = new GameObject("Event System");
-            eventSystem.AddComponent<EventSystem>();
-            eventSystem.AddComponent<StandaloneInputModule>();
-            DontDestroyOnLoad(eventSystem);
-        }
-        else
-            eventSystem = FindAnyObjectByType<EventSystem>().gameObject;
-    }
+            MCDebug.Init();
 
-    void Awake()
-    {
-        // Debug Canvas
-        debugCanvasObj = new GameObject("Debug Canvas");
-        debugCanvasObj.transform.SetParent(transform);
-        debugCanvas = debugCanvasObj.AddComponent<Canvas>();
-        debugCanvas.renderMode = RenderMode.ScreenSpaceOverlay; // render ontop of everything
-        debugCanvasObj.AddComponent<CanvasScaler>();
-        debugCanvasObj.AddComponent<GraphicRaycaster>();
-
-        // FPS Text
-        fpsTextObj = new GameObject("FPS Counter");
-        fpsTextObj.transform.SetParent(debugCanvasObj.transform);
-        fpsText = fpsTextObj.AddComponent<TextMeshProUGUI>();
-        fpsText.fontSize = 24; // make sure to tweak this to your liking
-        fpsText.alignment = TextAlignmentOptions.TopLeft;
-
-        // position FPS Counter to the top left corner
-        fpsTextRect = fpsTextObj.GetComponent<RectTransform>();
-        fpsTextRect.anchorMin = new Vector2(0, 1);
-        fpsTextRect.anchorMax = new Vector2(0, 1);
-        fpsTextRect.pivot = new Vector2(0, 1);
-        fpsTextRect.anchoredPosition = new Vector2(10, -10);
-        fpsTextRect.sizeDelta = new Vector2(200, 50);
-
-        // :sparkles: style :sparkles:
-        var fpsFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
-        if (fpsFont == null)
-        {
-            Debug.LogWarning
-            (
-                $"XoloniumBold-xKZO.asset not been able to load @ DebugRunner.fpsText.font\nResource: 'Resources/Fonts & Materials/XoloniumBold-xKZO.asset'\n \nPlausable issue is that the font is located in 'Assets/TextMesh Pro/*Resources*/[...]'\nRather than simply 'Assets/*Resources*/'\nSince unity lookups any folder named 'Resources'"
-                // technically DebugRunner.fpsFont is referencing it, but just to make things clearer
-            );
-        }
-        else fpsText.font = fpsFont;
-
-        fpsText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f); // 0 - 1
-        fpsText.color = Color.white;
-
-        // DevTools text
-        devToolsTextObj = new GameObject("DevTools Txt");
-        devToolsTextObj.transform.SetParent(debugCanvasObj.transform);
-        devToolsText = devToolsTextObj.AddComponent<TextMeshProUGUI>();
-        devToolsText.fontSize = 24;
-        devToolsText.alignment = TextAlignmentOptions.Center;
-
-        // position DevTools text
-        devToolsTextRect = devToolsTextObj.GetComponent<RectTransform>();
-        devToolsTextRect.anchorMin = new Vector2(0.5f, 1);
-        devToolsTextRect.anchorMax = new Vector2(0.5f, 1);
-        devToolsTextRect.pivot = new Vector2(0.5f, 1);
-        devToolsTextRect.anchoredPosition = new Vector2(0, -10);
-        devToolsTextRect.sizeDelta = new Vector2(200, 50);
-
-        // :sparkles: style (sequel) :sparkles:
-        var devToolsFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
-        if (devToolsFont == null)
-        {
-            Debug.LogWarning
-            (
-                $"XoloniumBold-xKZO.asset not been able to load @ DebugRunner.devToolsText.font\nResource: 'Resources/Fonts & Materials/XoloniumBold-xKZO.asset'\n \nPlausable issue is that the font is located in 'Assets/TextMesh Pro/*Resources*/[...]'\nRather than simply 'Assets/*Resources*/'\nSince unity lookups any folder named 'Resources'"
-                // same situation here
-            );
-        }
-        else devToolsText.font = devToolsFont;
-
-        devToolsText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f); // 0 - 1
-        devToolsText.color = new Color(240f / 255f, 240f / 255f, 0f / 255f);
-    }
-
-    void Update()
-    {
-        fpsTextObj.SetActive(MCDebug.devTools);
-        devToolsTextObj.SetActive(MCDebug.devTools);
-
-        MCDebug.Update();
-
-        if (!MCDebug.devTools) return; // none of this matters if devtools is off
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            if (fpsWindow == null)
-                SpawnFPSWindow();
+            go = new GameObject("Debug Handler");
+            _ = go.AddComponent<MCDebugHandler>();
+            DontDestroyOnLoad(go);
         }
 
-        fpsTimer += Time.deltaTime;
-
-        if (fpsTimer >= fpsUpdateInterval)
+        void Awake() // nevermind
         {
-            fpsTimer = 0;
-            int fps = Mathf.RoundToInt(1f / Time.smoothDeltaTime); // output reciprocal, since DeltaTime is just the interval between frames
-            fpsText.text = $"{fps} FPS"; // TODO: eventually make this toggable in settings
-            devToolsText.text = $"DevTools Enabled";
-            fpsGraph?.AddSample(fps);
-        }
-    }
 
-    void SpawnFPSWindow()
-    {
-        fpsGraphObj = new GameObject("FPS Graph");
-        fpsGraphObj.transform.SetParent(debugCanvasObj.transform);
-        fpsGraph = fpsGraphObj.AddComponent<FPSGraph>();
-        _ = fpsGraphObj.AddComponent<CanvasRenderer>();
-        fpsGraph.color = new Color(0f, 1f, 0f); // green
-
-        fpsWindow = new DebugWindow(debugCanvasObj.transform, "FPS", fpsGraph);
-    }
-}
-
-public sealed class DebugWindow
-{
-    public string title;
-    public bool isMinimized { get; private set; }
-
-    GameObject root;
-    GameObject header;
-    GameObject content;
-    GameObject resizeHandle;
-
-    TextMeshProUGUI titleText;
-    Button minimizeButton;
-    Button closeButton;
-
-    RectTransform rootRect;
-    RectTransform contentRect;
-
-    DebugGraph graph;
-
-    const float headerHeight = 24f;
-    float minWidth;
-    float minHeight;
-    float maxWidth;
-    float maxHeight;
-
-    Color headerColor;
-    Color contentColor;
-
-    public DebugWindow
-    (
-        Transform canvasParent,
-        string title,
-        DebugGraph graph = null,
-        float minWidth = 200f,
-        float minHeight = 100f,
-        float maxWidth = 1200f,
-        float maxHeight = 600f,
-        Color? headerColor = null,
-        Color? contentColor = null
-    )
-    {
-        this.title = title;
-        this.graph = graph;
-        this.minWidth = minWidth;
-        this.minHeight = minHeight;
-        this.headerColor = headerColor ?? new Color(0.2f, 0.2f, 0.2f); // gray
-        this.contentColor = contentColor ?? new Color(0.085f, 0.085f, 0.085f); // darker gray
-
-        // Root
-        root = new GameObject($"{title}");
-        root.transform.SetParent(canvasParent);
-        rootRect = root.AddComponent<RectTransform>();
-        rootRect.sizeDelta = new Vector2(300, 200);
-        root.AddComponent<CanvasGroup>();
-
-        // header
-        header = new GameObject("Header");
-        header.transform.SetParent(root.transform);
-        Image headerBg = header.AddComponent<Image>();
-        headerBg.color = this.headerColor;
-        RectTransform headerRect = header.GetComponent<RectTransform>();
-        headerRect.anchorMin = new Vector2(0, 1);
-        headerRect.anchorMax = new Vector2(1, 1);
-        headerRect.pivot = new Vector2(0, 1);
-        headerRect.offsetMin = new Vector2(0, -headerHeight);
-        headerRect.offsetMax = Vector2.zero;
-
-        // Title
-        GameObject titleObj = new("Title");
-        titleObj.transform.SetParent(header.transform);
-        titleText = titleObj.AddComponent<TextMeshProUGUI>();
-        titleText.text = title;
-        titleText.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/XoloniumBold-xKZO");
-        titleText.fontSize = 20;
-        titleText.alignment = TextAlignmentOptions.MidlineLeft;
-        RectTransform titleRect = titleObj.GetComponent<RectTransform>();
-        titleRect.anchorMin = Vector2.zero;
-        titleRect.anchorMax = Vector2.one;
-        titleRect.offsetMin = new Vector2(6, 0);
-        titleRect.offsetMax = new Vector2(-60, 60);
-
-        // minimize button
-        minimizeButton = CreateHeaderButton("─", new Vector2(-30, 0), header.transform); // TODO, implement mesh and texture integration
-        minimizeButton.onClick.AddListener(ToggleMinimize);
-
-        // Close button
-        closeButton = CreateHeaderButton("✕", new Vector2(-6, 0), header.transform);
-        closeButton.onClick.AddListener(Close);
-
-        // make window draggable
-        DragHandler drag = header.AddComponent<DragHandler>();
-        drag.target = rootRect;
-
-        // content
-        content = new GameObject("Content");
-        content.transform.SetParent(root.transform);
-        Image contentBg = content.AddComponent<Image>();
-        contentBg.color = this.contentColor;
-        contentRect = content.GetComponent<RectTransform>();
-        contentRect.anchorMin = Vector2.zero;
-        contentRect.anchorMax = Vector2.one;
-        contentRect.offsetMin = new Vector2(0, 0);
-        contentRect.offsetMax = new Vector2(0, -headerHeight);
-
-        // graph
-        if (graph != null)
-        {
-            graph.transform.SetParent(content.transform);
-            RectTransform graphRect = graph.GetComponent<RectTransform>();
-            graphRect.anchorMin = Vector2.zero;
-            graphRect.anchorMax = Vector2.one;
-            graphRect.offsetMin = new Vector2(4, 4);
-            graphRect.offsetMax = new Vector2(-4, -4);
         }
 
-        // resize handle
-        resizeHandle = new GameObject("Resize Handle");
-        resizeHandle.transform.SetParent(root.transform);
-        RectTransform handleRect = resizeHandle.AddComponent<RectTransform>();
-        handleRect.anchorMin = Vector2.zero;
-        handleRect.anchorMax = Vector2.zero;
-        handleRect.pivot = Vector2.zero;
-        handleRect.sizeDelta = new Vector2(16, 16);
-        handleRect.anchoredPosition = Vector2.zero;
-        resizeHandle.AddComponent<Image>().color = new Color(1, 1, 1, 0.3f);
+        void Update() // runs every frame, obvi
+        {
+            MCDebug.Update();
+        }
 
-        ResizeHandler resize = resizeHandle.AddComponent<ResizeHandler>();
-        resize.target = rootRect;
-        resize.minSize = new Vector2(minWidth, minHeight);
-        resize.maxSize = new Vector2(maxWidth, maxHeight);
+        void OnGUI() => MCDebug.OnGUI();
+
+        void OnDestroy()
+        {
+            Application.quitting -= MCDebug.OnQuit;
+        }
     }
-
-    Button CreateHeaderButton(string label, Vector2 anchoredPos, Transform parent)
-    {
-        GameObject obj = new(label);
-        obj.transform.SetParent(parent);
-        Image bg = obj.AddComponent<Image>();
-        bg.color = Color.white;
-        Button button = obj.AddComponent<Button>();
-        RectTransform rect = obj.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(1, 1);
-        rect.anchorMax = new Vector2(1, 1);
-        rect.pivot = new Vector2(1, 1);
-        rect.sizeDelta = new Vector2(20, headerHeight);
-        rect.anchoredPosition = anchoredPos;
-
-        GameObject labelObj = new("Label");
-        labelObj.transform.SetParent(obj.transform);
-        TextMeshProUGUI text = labelObj.AddComponent<TextMeshProUGUI>();
-        text.text = label;
-        text.fontSize = 12f;
-        text.alignment = TextAlignmentOptions.Center;
-        RectTransform labelRect = labelObj.GetComponent<RectTransform>();
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
-
-        return button;
-    }
-
-    void ToggleMinimize()
-    {
-        isMinimized = !isMinimized;
-        content.SetActive(!isMinimized);
-        resizeHandle.SetActive(!isMinimized);
-    }
-
-    void Close()
-    {
-        Object.Destroy(root);
-    }
-}
-
-// handles dragging the window
-internal class DragHandler : MonoBehaviour, IDragHandler
-{
-    public RectTransform target;
-
-    public void OnDrag(PointerEventData e) =>
-        target.anchoredPosition += e.delta; 
-}
-
-// handles corner resizing
-internal class ResizeHandler : MonoBehaviour, IDragHandler
-{
-    public RectTransform target;
-    public Vector2 minSize;
-    public Vector2 maxSize;
-
-    public void OnDrag(PointerEventData e)
-    {
-        Vector2 delta = new(e.delta.x, -e.delta.y);
-        Vector2 newSize = target.sizeDelta + delta;
-        target.sizeDelta = new Vector2
-        (
-            Mathf.Clamp(newSize.x, minSize.x, maxSize.x),
-            Mathf.Clamp(newSize.y, minSize.y, maxSize.y)
-        );
-    }
-} 
-
-// actual graph with content and elements in the Debug Window
-public abstract class DebugGraph : Graphic
-{
-    protected sealed override void OnPopulateMesh(VertexHelper vh)
-    {
-        vh.Clear();
-        Draw(vh);
-    }
-
-    protected abstract void Draw(VertexHelper vh);
 }
