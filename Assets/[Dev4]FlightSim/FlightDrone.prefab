@@ -236,7 +236,7 @@ MonoBehaviour:
   FocusStructure: 0
   NetLinkerRange: 1000
   DataTransferRate: 15
-  RadarRange: 10000
+  RadarRange: 5000
   SignalRange: 15000
   StructureName: {fileID: 0}
   SignalMask: {fileID: 0}
@@ -397,7 +397,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.02
+  near clip plane: 0.09
   far clip plane: 10000
   field of view: 45
   orthographic: 0
@@ -479,7 +479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICamManager
   Cam: {fileID: 0}
-  CamCollisionRadius: 0.02
+  CamCollisionRadius: 0.1
   UICanvas: {fileID: 0}
   BackgrES: {fileID: 0}
   MinCamScale: 0.4

@@ -16,6 +16,8 @@ public class Structure : MonoBehaviour
     public bool Linked = false;
     public bool Detectable = true;
 
+    public List<Structure> DetectableAfterLinked;
+
     #endregion
 
     #region Constructors
@@ -91,7 +93,14 @@ public class Structure : MonoBehaviour
 
                 if (LinkedData >= Data2Link)
                 {
-                    LinkedData = Data2Link; Linked = true; Debug.Log("Linked: " + Name);
+                    LinkedData = Data2Link;
+                    Linked = true;
+                    Debug.Log("Linked: " + Name);
+
+                    foreach (Structure structur in DetectableAfterLinked)
+                    {
+                        structur.Detectable = true;
+                    }
                 }
 
                 return true;

@@ -314,6 +314,7 @@ MonoBehaviour:
   LinkedData: 0
   Linked: 0
   Detectable: 1
+  DetectableAfterLinked: []
 --- !u!1 &79602858
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,6 +435,18 @@ PrefabInstance:
       propertyPath: Name
       value: "DpplrRdr 1\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1891813594}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -444,6 +457,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 77148196847552560, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
   m_PrefabInstance: {fileID: 122340425}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &122340427 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+  m_PrefabInstance: {fileID: 122340425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &134136194
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,6 +879,14 @@ PrefabInstance:
       propertyPath: Name
       value: "StrLightCllct 4120\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 320637839}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #106
@@ -909,6 +941,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 135221887}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &135221889 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 135221887}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &141826099
 GameObject:
   m_ObjectHideFlags: 0
@@ -1212,6 +1255,10 @@ PrefabInstance:
     - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: Name
       value: "Str11000\xB7DataCells"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: Detectable
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1631,6 +1678,26 @@ PrefabInstance:
       propertyPath: Name
       value: "Str10000\xB7DataCells"
       objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 135221889}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1583713614}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[2]'
+      value: 
+      objectReference: {fileID: 994585669}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1641,6 +1708,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
   m_PrefabInstance: {fileID: 320637837}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &320637839 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+  m_PrefabInstance: {fileID: 320637837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &343491232
 GameObject:
   m_ObjectHideFlags: 0
@@ -2386,6 +2464,10 @@ PrefabInstance:
       value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: AntennaPos.x
       value: 3.5
       objectReference: {fileID: 0}
@@ -2407,6 +2489,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 946671935360170562, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
   m_PrefabInstance: {fileID: 497178224}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &497178226 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+  m_PrefabInstance: {fileID: 497178224}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &510819573
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,6 +2728,18 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 1213311\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1870788668}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3172.2456
@@ -2689,6 +2794,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 601590017}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &601590019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 601590017}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &603011701
 GameObject:
   m_ObjectHideFlags: 0
@@ -2807,6 +2923,22 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 2002021\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1010346489}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2038499712}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5259.588
@@ -2872,6 +3004,10 @@ PrefabInstance:
     - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: Name
       value: "WASta 2210200\xB7"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3411,6 +3547,22 @@ PrefabInstance:
       propertyPath: Name
       value: "Str1111\xB7DataCells"
       objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 497178226}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 994585669}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3421,6 +3573,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
   m_PrefabInstance: {fileID: 901998442}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &901998444 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+  m_PrefabInstance: {fileID: 901998442}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!114 &960195715 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5127929665325153846, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -3455,6 +3618,18 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 3010300\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 320637839}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4473.6504
@@ -3509,6 +3684,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 994585667}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &994585669 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 994585667}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1001 &1010346487
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3565,6 +3751,22 @@ PrefabInstance:
       propertyPath: Name
       value: "DpplrRdr 21\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1104980887}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1842938167}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3575,6 +3777,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 77148196847552560, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
   m_PrefabInstance: {fileID: 1010346487}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1010346489 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+  m_PrefabInstance: {fileID: 1010346487}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1001 &1015519922
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3587,6 +3800,18 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 2013321\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1891813594}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9369.153
@@ -3641,6 +3866,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 1015519922}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1015519924 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 1015519922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!4 &1041211390 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 946671935360170562, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
@@ -3689,6 +3925,18 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 1014300\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1494695476}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3509.16
@@ -3743,6 +3991,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 1104980885}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1104980887 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 1104980885}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &1133035715
 GameObject:
   m_ObjectHideFlags: 0
@@ -4006,6 +4265,10 @@ PrefabInstance:
     - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: Name
       value: "DpplrRdr 20\xB7"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: Detectable
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4433,6 +4696,18 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 1202100\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1015519924}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7967.8506
@@ -4487,6 +4762,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 1371638202}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1371638204 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 1371638202}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!114 &1399865964 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7359648786449856109, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -4671,6 +4957,14 @@ PrefabInstance:
       propertyPath: Name
       value: "StrLightCllct 3220\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2065355435}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #88
@@ -4725,6 +5019,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 1494695474}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1494695476 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 1494695474}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!114 &1504142733 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4954119172555526694, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
@@ -4872,6 +5177,18 @@ PrefabInstance:
       propertyPath: Name
       value: "StrLightCllct 2301\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 320637839}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 609039071172266574}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #67
@@ -4926,6 +5243,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 1583713612}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1583713614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 1583713612}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &1587124212
 GameObject:
   m_ObjectHideFlags: 0
@@ -5325,6 +5653,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 79602859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1726393037 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 617083634}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &1741641582
 GameObject:
   m_ObjectHideFlags: 0
@@ -5606,6 +5945,10 @@ PrefabInstance:
       propertyPath: Name
       value: "WASta 2214210\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_LocalPosition.x
       value: -324.99927
@@ -5660,6 +6003,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
   m_PrefabInstance: {fileID: 1842938165}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1842938167 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947054094854429183, guid: 048d14491edec894fb04fd271408c907, type: 3}
+  m_PrefabInstance: {fileID: 1842938165}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1001 &1870788666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5672,6 +6026,14 @@ PrefabInstance:
       propertyPath: Name
       value: "StrLightCllct 2021\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1726393037}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #53
@@ -5726,6 +6088,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 1870788666}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1870788668 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 1870788666}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &1878619558
 GameObject:
   m_ObjectHideFlags: 0
@@ -5769,6 +6142,14 @@ PrefabInstance:
       propertyPath: Name
       value: "StrLightCllct 1221\xB7"
       objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 901998444}
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #41
@@ -5823,6 +6204,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 1891813592}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1891813594 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 1891813592}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &1901281955
 GameObject:
   m_ObjectHideFlags: 0
@@ -6372,6 +6764,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
   m_PrefabInstance: {fileID: 2038499710}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2038499712 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7162938846854491997, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+  m_PrefabInstance: {fileID: 2038499710}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1001 &2065355433
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6428,6 +6831,22 @@ PrefabInstance:
       propertyPath: Name
       value: "Str210\xB7DataCells"
       objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: Detectable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1371638204}
+    - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[1]'
+      value: 
+      objectReference: {fileID: 122340427}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6438,6 +6857,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 164862412535346146, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
   m_PrefabInstance: {fileID: 2065355433}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2065355435 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+  m_PrefabInstance: {fileID: 2065355433}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1 &2083857063
 GameObject:
   m_ObjectHideFlags: 0
@@ -7060,6 +7490,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc8643542443d0b47885bb6c6c3580de, type: 3}
+--- !u!114 &609039071172266574 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8827874481591399830, guid: bc8643542443d0b47885bb6c6c3580de, type: 3}
+  m_PrefabInstance: {fileID: 609039071172266573}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f765a115a54de4ea13a7c692a1b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Structure
 --- !u!1001 &901116831798793246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7116,6 +7557,14 @@ PrefabInstance:
       propertyPath: DroneT
       value: 
       objectReference: {fileID: 1453793527}
+    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: DetectableAfterLinked.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: 'DetectableAfterLinked.Array.data[0]'
+      value: 
+      objectReference: {fileID: 601590019}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
