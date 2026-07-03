@@ -1,7 +1,10 @@
+// 
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MCCustom; // System.Diagnostics.Process exists...
 
 #nullable enable
 
@@ -68,11 +71,11 @@ public sealed class AudioManager : MonoBehaviour
 
     [Header("Process Stuff")]
     [Tooltip("Collectiom (List<>) of Processes repeating clips")]
-    public List<Process> RepeatingClips = new();
+    public List<MCCustom.Process> RepeatingClips = new();
     
     [Space(10)]
     [Tooltip("Process that's currently interrupting all other sounds")]
-    [SerializeField] Process? InterruptingRepeatingClip;
+    [SerializeField] MCCustom.Process? InterruptingRepeatingClip;
 
     [Header("Audio Listener & Raycasting")]
     [Tooltip("Reference to any objects with the Audio Listener component")]
@@ -225,7 +228,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Play Repeating Functions
 
-    public Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+    public MCCustom.Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
                     Vector3 Position = default, // Position in space
                     bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
                     float Volume = 1f, // volume : 0 - 1
@@ -234,13 +237,13 @@ public sealed class AudioManager : MonoBehaviour
                     AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
                     )
     {
-        Process _Process = new(() => PlayRepeatingRoutine(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
+        MCCustom.Process _Process = new(() => PlayRepeatingRoutine(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
         RepeatingClips.Add(_Process); 
         _Process.Start();
         return _Process;
     }
 
-    public Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+    public MCCustom.Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
                     float MinPitch,
                     float MaxPitch,
                     Vector3 Position = default, // Position in space
@@ -251,7 +254,7 @@ public sealed class AudioManager : MonoBehaviour
                     AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
                     )
     {
-        Process _Process = new(() => PlayRepeatingRoutine(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
+        MCCustom.Process _Process = new(() => PlayRepeatingRoutine(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
         RepeatingClips.Add(_Process); 
         _Process.Start();
         return _Process;
@@ -262,7 +265,7 @@ public sealed class AudioManager : MonoBehaviour
 
     #region Stop Repeating
 
-    public void StopRepeating(Process process) // sry 4 the out of place naming, don't wanna encounter naming conflicts ;-;
+    public void StopRepeating(MCCustom.Process process) // sry 4 the out of place naming, don't wanna encounter naming conflicts ;-;
     {
         process.Stop();
         RepeatingClips.Remove(process);

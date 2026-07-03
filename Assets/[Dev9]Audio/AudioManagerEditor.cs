@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using MCCustom; // System.Diagnostics.Process exists...
 
 #if UNITY_EDITOR
 
@@ -165,7 +166,7 @@ public class AudioManagerPlayWindow : EditorWindow
 
             else
             {
-                Process process = AudioManager.Instance.PlayRepeating
+                MCCustom.Process process = AudioManager.Instance.PlayRepeating
                 (
                     clip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode
                 );
