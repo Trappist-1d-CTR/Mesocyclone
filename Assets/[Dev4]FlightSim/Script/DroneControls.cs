@@ -407,7 +407,8 @@ public class DroneControls : MonoBehaviour
         #region Physics Setup
 
         PhysicsVelocity = DronePhysics.linearVelocity;
-        InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position;
+        PhysicsPosition = DronePhysics.position;
+        InverseDistanceWeighting.DronePos(PhysicsPosition);
         if (Air != null) Air.DronePosition = PhysicsPosition;
         PhysicsAcceleration = TotWeight = ((float)C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * (float)C.GaleAtmD * Vector3.up / DronePhysics.mass);
         //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
@@ -1300,7 +1301,7 @@ public class DroneControls : MonoBehaviour
     private void EmitMainEngineTrail(/*bool b*/)
     {
         ParticleSystem.MainModule particles = EngineTrails.transform.GetChild(2).GetComponent<ParticleSystem>().main;
-        particles.startSize = 0.02f * Thrust;
+        particles.startSize = ImpulseActive ? 0.05f : 0.02f * Thrust;
 
         /* OLD CODE: INTENDED FOR LINE RENDERERS
         TrailRenderer trail = EngineTrails.transform.GetChild(2).GetComponent<TrailRenderer>();

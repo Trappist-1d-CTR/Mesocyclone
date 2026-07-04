@@ -52,6 +52,8 @@ public class UICamManager : MonoBehaviour
     public float NotifAnimTimer;
     public TextMeshProUGUI NotifTime;
     public TextMeshProUGUI NotifThumbnail;
+    public int NotifSelectedMessage;
+    public TextMeshProUGUI NotifMessageIndex;
     public Image NotifOutline;
     public Color NotifNewMsgColor;
     #endregion
@@ -83,6 +85,7 @@ public class UICamManager : MonoBehaviour
 
         MET = 0;
         CameraScale = 1;
+        NotifSelectedMessage = 1;
         NotifAnimTimer = -1;
         Application.targetFrameRate = -1;
 
@@ -161,10 +164,25 @@ public class UICamManager : MonoBehaviour
         #endregion
 
         #region Handle Notifications
-        int hour = Mathf.FloorToInt(MET / 3600);
+
+        #region MET
+        /*int hour = Mathf.FloorToInt(MET / 3600);
         int minute = Mathf.FloorToInt((MET % 3600) / 60);
         int second = Mathf.FloorToInt(MET % 60);
-        NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);
+        NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);*/
+
+        NotifTime.text = "·";
+        int METInt = Mathf.FloorToInt(MET);
+        int index = 0;
+        while (METInt != 0)
+        {
+            NotifTime.text = (METInt % ((index % 4) + 2)).ToString() + NotifTime.text;
+            METInt = Mathf.FloorToInt(METInt / ((index % 4) + 2));
+            index++;
+        }
+        #endregion
+
+        NotifMessageIndex.text = NotifSelectedMessage.ToString() + "/" + NotifierSystem.MainMessageList.Count.ToString();
 
         if (NotifAnimTimer == -1)
         {
@@ -172,9 +190,14 @@ public class UICamManager : MonoBehaviour
             {
                 NotifAnimTimer = 0;
             }
+
+            if (NotifierSystem.MainMessageList.Count >= 1)
+                NotifThumbnail.text = NotifierSystem.MainMessageList[NotifSelectedMessage - 1].msg;
         }
         else
         {
+            NotifSelectedMessage = NotifierSystem.MainMessageList.Count - NotifierSystem.PiorityMessageList.Count + 1;
+
             if (NotifAnimTimer == 0)
             {
                 NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
@@ -217,6 +240,29 @@ public class UICamManager : MonoBehaviour
         else
         {
             return Vector;
+        }
+    }
+
+    public void NotifChangeSelectedMessage(string type)
+    {
+        if (NotifAnimTimer == -1)
+        {
+            switch (type)
+            {
+                case "prev":
+                    NotifSelectedMessage--;
+                    break;
+
+                case "next":
+                    NotifSelectedMessage++;
+                    break;
+
+                case "last":
+                    NotifSelectedMessage = NotifierSystem.MainMessageList.Count;
+                    break;
+            }
+
+            NotifSelectedMessage = Mathf.Clamp(NotifSelectedMessage, 1, NotifierSystem.MainMessageList.Count);
         }
     }
 

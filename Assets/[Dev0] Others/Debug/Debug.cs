@@ -42,9 +42,9 @@ namespace MCCustom
         public static bool isRunning => _isRunning;
 
         public static bool devTools { get; private set; } 
-            = true;
+            = false;
 
-        static bool allowDevTools { get; private set; } 
+        static bool allowDevTools { get; set; } 
             = true; // TODO: redundant until Modding API comes out
 
 
@@ -81,7 +81,7 @@ namespace MCCustom
         /// Process of the game
         /// </summary>
         public static System.Diagnostics.Process process { get; private set; } 
-            = Process.GetCurrentProcess();
+            = System.Diagnostics.Process.GetCurrentProcess();
         // already have a Process class in the games code, so have to be explicit
         // unless i'm just fucking stupid
 
@@ -164,17 +164,20 @@ namespace MCCustom
 
             if (devTools)
             {
+                GUIStyleState norm = new();
+                norm.textColor = Color.yellow;
+
                 GUIStyle style = new(GUI.skin.label)
                 {
-                    normal.textColor = new Color(240f / 255f, 240f / 255f, 0f / 255f), // yellow
-                    font = Resources.Load("Fonts & Materials/Xolonium-pn4D"),
+                    normal = norm,
+                    font = Resources.Load("Fonts & Materials/Xolonium-pn4D") as Font,
                     fontSize = 24,
                     fontStyle = FontStyle.Bold // not even sure this works on a custom font : might actually be the issue if the font doesn't load
                 };
 
                 if (style.font != Resources.Load("Fonts & Materials/Xolonium-pn4D") && checkDevToolsFont)
                 {
-                    Debug.LogWarning
+                    UnityEngine.Debug.LogWarning
                     (
                         // REMINDER: Update ln during Debug.cs changes
                         $"Font 'Xolonium-pn4D' unable to be loaded\n@: MCCustom.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"

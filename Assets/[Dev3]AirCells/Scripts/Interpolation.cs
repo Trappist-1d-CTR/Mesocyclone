@@ -4,15 +4,22 @@ using UnityEngine;
 
 public static class InverseDistanceWeighting
 {
-    public static float R = 1000;
+    public static float R = 700;
     public static Vector3 Query;
     public static List<int> Indexes = new();
 
     public static double[] SUM_wu;
     public static double SUM_w;
 
+    public static bool FollowDrone;
+
     public static float[] Values { get; private set; }
     private static bool LockValues;
+
+    public static void DronePos(Vector3 pos)
+    {
+        Query = FollowDrone ? new Vector3(0, pos.y, 0) : pos;
+    }
 
     public static void Add(int Index)
     {
@@ -59,7 +66,7 @@ public static class InverseDistanceWeighting
         return;
     }
 
-    public static void BroadcastInterp()
+    public static void BroadcastInterp(bool TerrainAlreadyInterpolated)
     {
         if (SUM_w == 0) throw new System.Exception("Interpolation Broadcast attempt with null weight");
 
@@ -71,6 +78,13 @@ public static class InverseDistanceWeighting
             {
                 Values[i] = (float)(SUM_wu[i] / SUM_w);
             }
+        }
+
+        if (TerrainAlreadyInterpolated && Query.y < 10)
+        {
+            Values[0] *= Query.y / 10;
+            Values[1] *= Query.y / 10;
+            Values[2] *= Query.y / 10;
         }
     }
 }

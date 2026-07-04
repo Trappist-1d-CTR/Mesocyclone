@@ -50,7 +50,7 @@ namespace MCCustom
             {
                 GUIStyle style = new(GUI.skin.label)
                 {
-                    font = Resources.Load("Fonts & Materials/Xolonium-pn4D"),
+                    font = Resources.Load("Fonts & Materials/Xolonium-pn4D") as Font,
                     fontSize = 24,
                     fontStyle = FontStyle.Bold,
                 };

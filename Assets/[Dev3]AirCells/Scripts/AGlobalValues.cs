@@ -127,10 +127,14 @@ public class AGlobalValues : MonoBehaviour
 
     #endregion
 
+    public bool SetupComplete = false;
+
     #endregion
 
     private void Awake()
     {
+        SetupComplete = false;
+
         #region Setup Universal Constants
         //Molar Gas Constant
         R = 8.31432; // Nm/molK
@@ -240,6 +244,8 @@ public class AGlobalValues : MonoBehaviour
         Atmosphere.SetFloat("_Karman", (float)GaleKarman);
         Atmosphere.SetVector("_PlanetPos", new Vector3(0, -(float)GaleR, 0));
         #endregion
+
+        SetupComplete = true;
     }
 
     public double CalculateOrbit(double T)

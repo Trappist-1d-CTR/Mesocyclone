@@ -476,7 +476,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""binding"",
                     ""id"": ""819abb0c-27da-485a-ade1-d36f411af54a"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/p"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
