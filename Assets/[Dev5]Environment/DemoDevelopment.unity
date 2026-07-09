@@ -3696,7 +3696,7 @@ MonoBehaviour:
   AverageLocalWind: {x: 0, y: 0, z: 0}
   CellGroupNumber: 40
   DronePosition: {x: 0, y: 0, z: 0}
-  CdTest: 0
+  CdTest: 1
   DistanceScale: 1
   GravityScale: 1
   LocalLatitude: 0
@@ -3708,7 +3708,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  CellsInstantiated: 0
+  CellsInstantiated: 1
 --- !u!1001 &994585667
 PrefabInstance:
   m_ObjectHideFlags: 0
