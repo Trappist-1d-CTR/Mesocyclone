@@ -21,13 +21,13 @@ public class AirCellBehavior : MonoBehaviour
     public GameObject CubeObject;
     #endregion
 
-    #region Default Test Values
+    #region Default Values
     public Vector3 CenterTest;
     public Vector2 AirCellsBounds;
+    public List<Vector3> AirCellStartingGrid;
     public double MoleTest;
     public double TempTest;
     public Vector3 VelTest;
-    //public float CdTest;
     public double AverageLocalTemp;
     public Vector3 AverageLocalWind;
     public int CellGroupNumber;
@@ -103,16 +103,24 @@ public class AirCellBehavior : MonoBehaviour
                 MoleTest = C.GaleAtm * 1000000f * h / (C.R * C.GaleAvgTemp * CellGroupNumber);
                 for (int i = 0; i < CellGroupNumber; i++)
                 {
-                    Vector3 InstantiateLocation;
+                    Vector3 InstantiateLocation = Vector3.zero;
 
-                    if (i < Mathf.Pow(l, 3))
+                    InstantiateLocation.x = (5 * b / 12) * ((i % 3) - 1);
+                    InstantiateLocation.y = ((2 * h / 7) * ((int)i / (int)9)) + (3 * b / 14);
+                    InstantiateLocation.z = (5 * b / 12) * ((((int)i / (int)3) % 3) - 1);
+
+                    //InstantiateLocation.x = ((b / 4) * (i % 4)) - (3 * b / 8);
+                    //InstantiateLocation.y = ((b / 4) * ((int)i / (int)16)) + (b / 8);
+                    //InstantiateLocation.z = ((b / 4) * (((int)i / (int)4) % 4)) - (3 * b / 8);
+
+                    /*if (i < Mathf.Pow(l, 3))
                     {
                         InstantiateLocation = CenterTest + new Vector3(-(b / 2) + (b / (l * 2)) + (b * (i % l) / l), 200 + ((float)(h - 400) * (Mathf.Floor(i / (l * l)) / l)), (-b / 2) + (b / (l * 2)) + (b * Mathf.Floor((i % (l * l)) / l) / l));
                     }
                     else
                     {
-                        InstantiateLocation = CenterTest + new Vector3(Random.Range(-((b / 2) - 1), (b / 2) - 1), b - 1, Random.Range(-((b / 2) - 1), (b / 2) - 1));
-                    }
+                        InstantiateLocation = CenterTest + new Vector3(Random.Range(-((b / 2) + 50), (b / 2) - 50), b - 50, Random.Range(-((b / 2) + 50), (b / 2) - 50));
+                    }*/
 
                     if (AirCellObjects) CellObjectGroup.Add(Instantiate(CubeObject, Vector3.zero, new Quaternion(), gameObject.transform));
                     AirCellGroup.Add(new(InstantiateLocation, MoleTest, TempTest + Random.Range(-25f, 25f), VelTest + new Vector3(Random.Range(-10f, 10f), Random.Range(-10f, 10f), Random.Range(-10f, 10f)), C.StiffK));
@@ -311,9 +319,9 @@ public class AirCellBehavior : MonoBehaviour
             }
             #endregion
 
-            #region Inter-Cell Repulsion (unused in demo)
+            #region Inter-Cell Repulsion
             CellsRepulsionSOM.Clear();
-            /*float d, r1, r2, d1, d2, A, h;
+            float d, r1, r2, d1, d2, A, h;
 
             for (int i = 0; i < CellGroupNumber; i++)
             {
@@ -322,7 +330,7 @@ public class AirCellBehavior : MonoBehaviour
                     #region Check For and Calculate Overlaps
                     d = Vector2.Distance(new Vector2(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.z),
                                          new Vector2(AirCellGroup[i2].CellCenter.x, AirCellGroup[i2].CellCenter.z));
-                    d = SafeDistance(d); // prevent division by zero
+                    d = SafeValue(d); // prevent division by zero
 
                     if ((h = System.Math.Abs(AirCellGroup[i].CellCenter.y - AirCellGroup[i2].CellCenter.y)) < ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2)
                         && d < (AirCellGroup[i].CellRadius + AirCellGroup[i2].CellRadius))
@@ -366,7 +374,7 @@ public class AirCellBehavior : MonoBehaviour
                     }
                     #endregion
                 }
-            }*/
+            }
 
             #region Repulsion Physics
             for (int i = 0; i < CellsRepulsionSOM.Count; i++)
@@ -386,7 +394,7 @@ public class AirCellBehavior : MonoBehaviour
                 {
                     float maxD = Mathf.Sqrt(Mathf.Pow((float)AirCellGroup[i].CellRadius, 2) + Mathf.Pow((float)AirCellGroup[i].CellHeight / 2, 2));
                     RaycastHit hit;
-                    if (Physics.SphereCast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), (float)AirCellGroup[i].CellRadius, Vector3.down, out hit, maxD, 1 << 3))
+                    if (Physics.Raycast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), Vector3.down, out hit, maxD, 1 << 3))
                     {
                         float d3 = Mathf.Abs(hit.barycentricCoordinate.y - AirCellGroup[i].CellCenter.y);
                         if (d3 < AirCellGroup[i].CellHeight / 2)
@@ -406,6 +414,7 @@ public class AirCellBehavior : MonoBehaviour
                 DebugEverything(i);
 
                 #region Dynamic Abiatic Temperature Change
+                DynVolumeSOM[i] = SafeValue(DynVolumeSOM[i]);
                 if (prevDynVolumeSOM[i] == 0) prevDynVolumeSOM[i] = DynVolumeSOM[i];
                 AirCellGroup[i].Temperature *= System.Math.Pow(prevDynVolumeSOM[i] / DynVolumeSOM[i], C.R / C.MolarHeatCapacity);
                 prevDynVolumeSOM[i] = DynVolumeSOM[i];
@@ -484,6 +493,9 @@ public class AirCellBehavior : MonoBehaviour
 
     public void DebugEverything(int i)
     {
+        if (!float.IsFinite(AirCellGroup[i].Velocity.magnitude))
+            Debug.LogError("NaN Cell Velocity ; i = " + i);
+
         if (!float.IsFinite((float)AirCellGroup[i].CellStaticVolume))
             Debug.LogError("NaN Cell Volume ; i = " + i);
 
@@ -500,9 +512,13 @@ public class AirCellBehavior : MonoBehaviour
             Debug.LogError("NaN Position ; i = " + i);
     }
 
-    float SafeDistance(float distance)
+    float SafeValue(float value)
     {
-        return Mathf.Max(distance, (float)1e-2);
+        return Mathf.Max(value, (float)1e-2);
+    }
+    double SafeValue(double value)
+    {
+        return System.Math.Max(value, 1e-2);
     }
 }
 

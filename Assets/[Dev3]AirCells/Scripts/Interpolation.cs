@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class InverseDistanceWeighting
 {
-    public static float R = 700;
+    public static float R = 1000;
     public static Vector3 Query;
     public static List<int> Indexes = new();
 
@@ -53,7 +53,7 @@ public static class InverseDistanceWeighting
 
                 LockValues = true;
             }
-            double w = System.Math.Pow((R - d) / (R * d), 2);
+            double w = System.Math.Pow(System.Math.Max(R - d, 0) / (R * d), 2);
 
             SUM_w += w;
 
@@ -68,7 +68,7 @@ public static class InverseDistanceWeighting
 
     public static void BroadcastInterp(bool TerrainAlreadyInterpolated)
     {
-        if (SUM_w == 0) throw new System.Exception("Interpolation Broadcast attempt with null weight");
+        if (SUM_w == 0) throw new System.Exception("Interpolation attempt with null weight");
 
         if (!LockValues)
         {
@@ -80,7 +80,9 @@ public static class InverseDistanceWeighting
             }
         }
 
-        if (TerrainAlreadyInterpolated && Query.y < 10)
+        //Debug.Log(Values[0] + " ; " + Values[1] + " ; " + Values[2]);
+
+        if (!TerrainAlreadyInterpolated && Query.y < 10)
         {
             Values[0] *= Query.y / 10;
             Values[1] *= Query.y / 10;
