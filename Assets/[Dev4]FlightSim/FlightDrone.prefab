@@ -296,7 +296,7 @@ MonoBehaviour:
   - 1.4
   - 1.6
   - 4
-  TorqueStabilizationJerk: 5000
+  TorqueStabilizationJerk: 1000000
   ControlSurfaceMaxAngles:
   - 26
   - 10
