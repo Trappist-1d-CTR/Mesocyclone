@@ -3683,9 +3683,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FollowDrone: 1
-  AirCellObjects: 0
-  TerrainAtSeaLevel: 1
-  InterpolationWithTerrain: 0
+  AirCellObjects: 1
+  TerrainAtSeaLevel: 0
+  InterpolationWithTerrain: 1
   CubeObject: {fileID: 8828998887846330892, guid: 9c68b50ddcd40bc429423ee4109a0633, type: 3}
   CenterTest: {x: 0, y: 0, z: 0}
   AirCellsBounds: {x: 1000, y: 1000}
@@ -3708,6 +3708,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  AirCellsThreadCycleStarted: 0
   CellsInstantiated: 1
 --- !u!1001 &994585667
 PrefabInstance:

@@ -81,21 +81,21 @@ public class AirCell
     #region Public Functions
 
     #region Physics
-    /*public void PerformVelocity()
+    public void PerformVelocity()
     {
         CellCenter += Velocity * Time.fixedDeltaTime;
-    }*/
+    }
 
     public void PerformVelocity(float deltaTime)
     {
         CellCenter += Velocity * deltaTime;
     }
 
-    /*public void PerformAcceleration(Vector3 Acc)
+    public void PerformAcceleration(Vector3 Acc)
     {
         Acceleration = Acc;
         Velocity += Acceleration * Time.fixedDeltaTime;
-    }*/
+    }
     
     public void PerformAcceleration(Vector3 Acc, float deltaTime)
     {
@@ -103,14 +103,14 @@ public class AirCell
         Velocity += Acceleration * deltaTime;
     }
 
-    /*public void AccAlongVelocity(float Acc)
+    public void AccAlongVelocity(float Acc)
     {
         if (Velocity.sqrMagnitude > 1e-10)
         {  
             Acceleration = Velocity.normalized * Acc;
             Velocity += Acceleration * Time.fixedDeltaTime;   
         }
-    }*/
+    }
 
     public void AccAlongVelocity(float Acc, float deltaTime)
     {

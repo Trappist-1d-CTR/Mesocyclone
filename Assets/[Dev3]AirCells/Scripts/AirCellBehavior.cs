@@ -130,7 +130,7 @@ public class AirCellBehavior : MonoBehaviour
                     }
                     else
                     {
-                        InstantiateLocation = CenterTest + new Vector3(UnityEngine.Random.Range(-((b / 2) - 1), (b / 2) - 1), b - 1, UnityEngine.Random.Range(-((b / 2) - 1), (b / 2) - 1));
+                        InstantiateLocation = CenterTest + new Vector3(UnityEngine.Random.Range(-((b / 2) + 100), (b / 2) - 100), b - 100, UnityEngine.Random.Range(-((b / 2) + 100), (b / 2) - 100));
                     }
 
                     if (AirCellObjects) CellObjectGroup.Add(Instantiate(CubeObject, Vector3.zero, new Quaternion(), gameObject.transform));
@@ -163,13 +163,14 @@ public class AirCellBehavior : MonoBehaviour
         }
         else
         {
-            if (!AirCellsThreadCycleStarted)
+            /*if (!AirCellsThreadCycleStarted)
             {
                 _ = WaitAirCellsPhysics.Set();
                 AirCellsThreadCycleStarted = true;
             }
 
-            _ = WaitMain.WaitOne();
+            _ = WaitMain.WaitOne();*/
+
             _ = WaitMain.Reset();
 
             #region Breakpoints (for Debug)
@@ -182,7 +183,109 @@ public class AirCellBehavior : MonoBehaviour
             */
             #endregion
 
-            _ = WaitAirCellsPhysics.Set();
+            _ = WaitHandle.SignalAndWait(WaitAirCellsPhysics, WaitMain);
+
+            #region Cell-Terrain Repulsion
+
+            if (!TerrainAtSeaLevel)
+            {
+                for (int i = 0; i < CellGroupNumber; i++)
+                {
+                    float maxD = Mathf.Sqrt(Mathf.Pow((float)AirCellGroup[i].CellRadius, 2) + Mathf.Pow((float)AirCellGroup[i].CellHeight / 2, 2));
+                    RaycastHit hit;
+                    if (Physics.SphereCast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), (float)AirCellGroup[i].CellRadius, Vector3.down, out hit, maxD, 1 << 3))
+                    {
+                        float d3 = Mathf.Abs(hit.barycentricCoordinate.y - AirCellGroup[i].CellCenter.y);
+                        if (d3 < AirCellGroup[i].CellHeight / 2)
+                        {
+                            DynVolumeSOM[i] *= 0.5 + (d3 / AirCellGroup[i].CellHeight);
+                            AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Perform Physics
+            for (int i = 0; i < CellGroupNumber; i++)
+            {
+                DebugEverything(i);
+
+                #region Dynamic Abiatic Temperature Change
+                if (prevDynVolumeSOM[i] == 0) prevDynVolumeSOM[i] = DynVolumeSOM[i];
+                AirCellGroup[i].Temperature *= System.Math.Pow(prevDynVolumeSOM[i] / DynVolumeSOM[i], C.R / C.MolarHeatCapacity);
+                prevDynVolumeSOM[i] = DynVolumeSOM[i];
+                #endregion
+
+                AirCellGroup[i].PerformVelocity();
+
+                DebugEverything(i);
+
+                //To visualize the Cells
+                if (AirCellObjects) CellObjectGroup[i].transform.position = AirCellGroup[i].CellCenter;
+
+                //For interpolation
+                if (InverseDistanceWeighting.Indexes.Contains(i))
+                {
+                    if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) > InverseDistanceWeighting.R)
+                    {
+                        InverseDistanceWeighting.Remove(i);
+                    }
+                }
+                else if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) <= InverseDistanceWeighting.R)
+                {
+                    InverseDistanceWeighting.Add(i);
+                }
+
+                /*
+                if (i == 0)
+                {
+                    Debug.Log("");
+                    Debug.Log("Velocity: " + AirCellGroup[i].Velocity);
+                    Debug.Log("Acceleration: " + AirCellGroup[i].Acceleration);
+                }
+                */
+
+                DebugEverything(i);
+            }
+            #endregion
+
+            #region Interpolation
+
+            InverseDistanceWeighting.BeginInterp();
+
+            if (InterpolationWithTerrain)
+            {
+                InverseDistanceWeighting.InterpolationStep(FollowDrone ? Vector3.zero : new Vector3(InverseDistanceWeighting.Query.x, 0, InverseDistanceWeighting.Query.z),
+                new float[6] { 0, 0, 0, (float)MoleTest, (float)AverageLocalTemp, 0 });
+            }
+
+            foreach (int i in InverseDistanceWeighting.Indexes)
+            {
+                InverseDistanceWeighting.InterpolationStep(AirCellGroup[i].CellCenter,
+                    new float[6] { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, (float)AirCellGroup[i].Moles,
+                    (float)AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
+            }
+
+            InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain);
+
+            #region Natural Neighbour Interpolation Attempt
+            /* 
+            Vertex3[] CellVertexes = new Vertex3[CellGroupNumber];
+            //Interpolation Values
+            if (CellGroupNumber > 4)
+            {
+                CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new double[6]
+                    { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
+            }
+            InterpolatedValues = InterpolateAirCells.GetValues(CellVertexes, new(DronePosition.x, DronePosition.y, DronePosition.z, 0));
+            //   Debug.Log(InterpolatedValues.Length);
+               Debug.Log("Interpolated values at Drone Position: \n   Velocity = { " + InterpolatedValues[0] + ", " + InterpolatedValues[1] + ", " + InterpolatedValues[2] + " }\n   " +
+                   "Moles = " + InterpolatedValues[3] + "\n   Temperature = " + InterpolatedValues[4] + "\n   Dynamic Volume = " + InterpolatedValues[5]);
+            */
+            #endregion
+            #endregion
         }
     }
 
@@ -418,108 +521,6 @@ public class AirCellBehavior : MonoBehaviour
             }
             #endregion
 
-            #endregion
-
-            #region Cell-Terrain Repulsion
-
-            if (!TerrainAtSeaLevel)
-            {
-                for (int i = 0; i < CellGroupNumber; i++)
-                {
-                    float maxD = Mathf.Sqrt(Mathf.Pow((float)AirCellGroup[i].CellRadius, 2) + Mathf.Pow((float)AirCellGroup[i].CellHeight / 2, 2));
-                    RaycastHit hit;
-                    if (Physics.SphereCast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), (float)AirCellGroup[i].CellRadius, Vector3.down, out hit, maxD, 1 << 3))
-                    {
-                        float d3 = Mathf.Abs(hit.barycentricCoordinate.y - AirCellGroup[i].CellCenter.y);
-                        if (d3 < AirCellGroup[i].CellHeight / 2)
-                        {
-                            DynVolumeSOM[i] *= 0.5 + (d3 / AirCellGroup[i].CellHeight);
-                            AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up, FixedDeltaTime);
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Perform Physics
-            for (int i = 0; i < CellGroupNumber; i++)
-            {
-                DebugEverything(i);
-
-                #region Dynamic Abiatic Temperature Change
-                if (prevDynVolumeSOM[i] == 0) prevDynVolumeSOM[i] = DynVolumeSOM[i];
-                AirCellGroup[i].Temperature *= System.Math.Pow(prevDynVolumeSOM[i] / DynVolumeSOM[i], C.R / C.MolarHeatCapacity);
-                prevDynVolumeSOM[i] = DynVolumeSOM[i];
-                #endregion
-
-                AirCellGroup[i].PerformVelocity(FixedDeltaTime);
-
-                DebugEverything(i);
-
-                //To visualize the Cells
-                if (AirCellObjects) CellObjectGroup[i].transform.position = AirCellGroup[i].CellCenter;
-
-                //For interpolation
-                if (InverseDistanceWeighting.Indexes.Contains(i))
-                {
-                    if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) > InverseDistanceWeighting.R)
-                    {
-                        InverseDistanceWeighting.Remove(i);
-                    }
-                }
-                else if (Vector3.Distance(InverseDistanceWeighting.Query, AirCellGroup[i].CellCenter) <= InverseDistanceWeighting.R)
-                {
-                    InverseDistanceWeighting.Add(i);
-                }
-
-                /*
-                if (i == 0)
-                {
-                    Debug.Log("");
-                    Debug.Log("Velocity: " + AirCellGroup[i].Velocity);
-                    Debug.Log("Acceleration: " + AirCellGroup[i].Acceleration);
-                }
-                */
-
-                DebugEverything(i);
-            }
-            #endregion
-
-            #region Interpolation
-
-            InverseDistanceWeighting.BeginInterp();
-
-            if (InterpolationWithTerrain)
-            {
-                InverseDistanceWeighting.InterpolationStep(FollowDrone ? Vector3.zero : new Vector3(InverseDistanceWeighting.Query.x, 0, InverseDistanceWeighting.Query.z),
-                new float[6] { 0, 0, 0, (float)MoleTest, (float)AverageLocalTemp, 0 });
-            }
-
-            foreach (int i in InverseDistanceWeighting.Indexes)
-            {
-                InverseDistanceWeighting.InterpolationStep(AirCellGroup[i].CellCenter,
-                    new float[6] { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, (float)AirCellGroup[i].Moles,
-                    (float)AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
-            }
-
-            InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain);
-
-            #region Natural Neighbour Interpolation Attempt
-            /* 
-            Vertex3[] CellVertexes = new Vertex3[CellGroupNumber];
-            //Interpolation Values
-            if (CellGroupNumber > 4)
-            {
-                CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new double[6]
-                    { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
-            }
-            InterpolatedValues = InterpolateAirCells.GetValues(CellVertexes, new(DronePosition.x, DronePosition.y, DronePosition.z, 0));
-            //   Debug.Log(InterpolatedValues.Length);
-               Debug.Log("Interpolated values at Drone Position: \n   Velocity = { " + InterpolatedValues[0] + ", " + InterpolatedValues[1] + ", " + InterpolatedValues[2] + " }\n   " +
-                   "Moles = " + InterpolatedValues[3] + "\n   Temperature = " + InterpolatedValues[4] + "\n   Dynamic Volume = " + InterpolatedValues[5]);
-            */
-            #endregion
             #endregion
 
             _ = WaitHandle.SignalAndWait(WaitMain, WaitAirCellsPhysics);
