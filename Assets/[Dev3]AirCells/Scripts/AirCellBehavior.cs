@@ -1,8 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
-public class AirCellBehavior : MonoBehaviour
+// same here
+public sealed class AirCellBehavior : MonoBehaviour
 {
     #region Variables
 
@@ -25,16 +26,16 @@ public class AirCellBehavior : MonoBehaviour
     public Vector3 CenterTest;
     public Vector2 AirCellsBounds;
     public List<Vector3> AirCellStartingGrid;
-    public double MoleTest;
-    public double TempTest;
+    public float MoleTest;
+    public float TempTest;
     public Vector3 VelTest;
-    public double AverageLocalTemp;
+    public float AverageLocalTemp;
     public Vector3 AverageLocalWind;
     public int CellGroupNumber;
     #endregion
 
     #region Simulation Testing
-    //public double[] InterpolatedValues = new double[6];
+    //public float[] InterpolatedValues = new float[6];
     public Vector3 DronePosition;
     public float CdTest;
     public float DistanceScale;
@@ -42,9 +43,9 @@ public class AirCellBehavior : MonoBehaviour
     #endregion
 
     #region Locational Info
-    public double LocalLatitude;
+    public float LocalLatitude;
     public int iLocal;
-    public double AmbientHeat;
+    public float AmbientHeat;
     public AnimationCurve AmbientalHeat;
     #endregion
 
@@ -53,11 +54,11 @@ public class AirCellBehavior : MonoBehaviour
     #endregion
 
     #region Script Optimization Memory
-    private double[] StaticPressureSOM;
-    private double[] TempSOM;
-    private double[] prevStatVolumeSOM;
-    private double[] DynVolumeSOM;
-    private double[] prevDynVolumeSOM;
+    private float[] StaticPressureSOM;
+    private float[] TempSOM;
+    private float[] prevStatVolumeSOM;
+    private float[] DynVolumeSOM;
+    private float[] prevDynVolumeSOM;
     private List<Vector3> CellsRepulsionSOM;
     #endregion
 
@@ -92,12 +93,13 @@ public class AirCellBehavior : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {if (!CellsInstantiated)
+    {
+        if (!CellsInstantiated)
         {
             if (C.SetupComplete)
             {
                 #region Instantiate Air Cells
-                float l = Mathf.Floor(Mathf.Pow(CellGroupNumber, (float)(1f / 3f)));
+                float l = Mathf.Floor(Mathf.Pow(CellGroupNumber, (1f / 3f)));
                 float b = AirCellsBounds.x;
                 float h = AirCellsBounds.y;
                 MoleTest = C.GaleAtm * 1000000f * h / (C.R * C.GaleAvgTemp * CellGroupNumber);
@@ -115,7 +117,7 @@ public class AirCellBehavior : MonoBehaviour
 
                     /*if (i < Mathf.Pow(l, 3))
                     {
-                        InstantiateLocation = CenterTest + new Vector3(-(b / 2) + (b / (l * 2)) + (b * (i % l) / l), 200 + ((float)(h - 400) * (Mathf.Floor(i / (l * l)) / l)), (-b / 2) + (b / (l * 2)) + (b * Mathf.Floor((i % (l * l)) / l) / l));
+                        InstantiateLocation = CenterTest + new Vector3(-(b / 2f) + (b / (l * 2f)) + (b * (i % l) / l), 200f + ((h - 400f) * (Mathf.Floor(i / (l * l)) / l)), (-b / 2f) + (b / (l * 2f)) + (b * Mathf.Floor((i % (l * l)) / l) / l));
                     }
                     else
                     {
@@ -129,12 +131,12 @@ public class AirCellBehavior : MonoBehaviour
                 #endregion
 
                 #region SOMs Setup
-                prevStatVolumeSOM = new double[CellGroupNumber];
-                DynVolumeSOM = new double[CellGroupNumber];
-                prevDynVolumeSOM = new double[CellGroupNumber];
+                prevStatVolumeSOM = new float[CellGroupNumber];
+                DynVolumeSOM = new float[CellGroupNumber];
+                prevDynVolumeSOM = new float[CellGroupNumber];
 
-                StaticPressureSOM = new double[CellGroupNumber];
-                TempSOM = new double[CellGroupNumber];
+                StaticPressureSOM = new float[CellGroupNumber];
+                TempSOM = new float[CellGroupNumber];
 
                 for (int i = 0; i < CellGroupNumber; i++)
                 {
@@ -143,7 +145,7 @@ public class AirCellBehavior : MonoBehaviour
                 #endregion
 
                 #region iLocal Calculation
-                iLocal = (int)System.Math.Round((double)((LocalLatitude / (180 / C.EOS_N)) - (90 / C.EOS_N)));
+                iLocal = (int)System.MathF.Round(((LocalLatitude / (180 / C.EOS_N)) - (90 / C.EOS_N)));
                 iLocal = (iLocal >= 0) ? ((iLocal < C.EOS_N) ? iLocal : C.EOS_N) : 0;
                 #endregion
 
@@ -194,11 +196,12 @@ public class AirCellBehavior : MonoBehaviour
 
                 DebugEverything(i);
 
-                double mem;
+                // double mem; // ...he glazes afar into the distance, as he realizes he is amongst the only double left...
+                float mem; // nevermind
 
                 #region Insolation
                 AirCellGroup[i].Temperature = TempSOM[i];
-                AirCellGroup[i].Temperature += mem = C.GlobalInsolation.Evaluate((float)LocalLatitude) * C.ClearSkyTransparency.Evaluate((float)AirCellGroup[i].CellCenter.y) * AirCellGroup[i].CellCircleArea / (C.GaleAtmCp * C.GaleAtmMM * AirCellGroup[i].Moles) * Time.fixedDeltaTime;
+                AirCellGroup[i].Temperature += mem = C.GlobalInsolation.Evaluate(LocalLatitude) * C.ClearSkyTransparency.Evaluate(AirCellGroup[i].CellCenter.y) * AirCellGroup[i].CellCircleArea / (C.GaleAtmCp * C.GaleAtmMM * AirCellGroup[i].Moles) * Time.fixedDeltaTime;
                 #endregion
                 //if (i == 0) Debug.Log("Insolation: " + mem);
 
@@ -212,7 +215,7 @@ public class AirCellBehavior : MonoBehaviour
                 DebugEverything(i);
 
                 #region Radiative Heating/Cooling
-                mem = C.GreekS * C.AtmSpecificEmissivity * ((2 * AirCellGroup[i].CellCircleArea) + (2 * System.Math.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.Math.Pow(AirCellGroup[i].Temperature, 4) * Time.fixedDeltaTime;
+                mem = (C.GreekS * C.AtmSpecificEmissivity * ((2f * AirCellGroup[i].CellCircleArea) + (2f * UnityEngine.Mathf.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.MathF.Pow(AirCellGroup[i].Temperature, 4f) * Time.fixedDeltaTime);
                 //if (i == 0)   Debug.Log("Radiative Cooling: " + (mem / (AirCellGroup[i].Moles * C.GaleAtmMM * C.EOS_AtmC)));
                 AirCellGroup[i].Temperature -= mem / (AirCellGroup[i].Moles * C.GaleAtmMM * C.EOS_AtmC);
                 #endregion
@@ -242,7 +245,7 @@ public class AirCellBehavior : MonoBehaviour
                 #endregion
 
                 #region Static Adiabatic Temperature Changes
-                AirCellGroup[i].Temperature *= System.Math.Pow(prevStatVolumeSOM[i] / AirCellGroup[i].CellStaticVolume, C.R / C.MolarHeatCapacity);
+                AirCellGroup[i].Temperature *= System.MathF.Pow(prevStatVolumeSOM[i] / AirCellGroup[i].CellStaticVolume, C.R / C.MolarHeatCapacity);
                 prevStatVolumeSOM[i] = AirCellGroup[i].CellStaticVolume;
 
                 if (TempSOM[i] - AirCellGroup[i].Temperature > 10)
@@ -258,36 +261,36 @@ public class AirCellBehavior : MonoBehaviour
                 #region Air Cell Terrain Repulsion
                 if (TerrainAtSeaLevel && AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
                 {
-                    DynVolumeSOM[i] *= 0.5 + (AirCellGroup[i].CellCenter.y / AirCellGroup[i].CellHeight);
-                    AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
+                    DynVolumeSOM[i] *= 0.5f + (AirCellGroup[i].CellCenter.y / AirCellGroup[i].CellHeight);
+                    AirCellGroup[i].PerformAcceleration((StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.MathF.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
 
                     //if (TempSOM[i] - AirCellGroup[i].Temperature > 1) Debug.Log("Heavy Terrain Rep. Temperature Change [" + i + "] ; SOM = " + TempSOM[i] + " ; Temp = " + AirCellGroup[i].Temperature);
                     //TempSOM[i] = AirCellGroup[i].Temperature;
-                    //   Debug.Log((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellVolume / prevVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)));
+                    //   Debug.Log((StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.MathF.Pow(AirCellGroup[i].CellVolume / prevVolumeSOM[i], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[i].Moles * C.GaleAtmMM)));
                 }
                 #endregion
 
                 DebugEverything(i);
 
                 #region Perform Gravity and Buoyancy
-                AirCellGroup[i].PerformAcceleration((float)(C.GaleG * ((AirCellGroup[i].Temperature / AverageLocalTemp) - 1.0)) * Vector3.up);
+                AirCellGroup[i].PerformAcceleration((C.GaleG * ((AirCellGroup[i].Temperature / AverageLocalTemp) - 1f)) * Vector3.up);
                 #endregion
 
                 DebugEverything(i);
 
                 #region Perform Air Cell Drag
                 
-                AirCellGroup[i].PerformAcceleration(CdTest * Mathf.Pow(AirCellGroup[i].Velocity.y - AverageLocalWind.y, 2) / (2 * (float)AirCellGroup[i].CellHeight) * -Vector3.Project(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
-                AirCellGroup[i].PerformAcceleration(CdTest * Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).sqrMagnitude / (4 * (float)AirCellGroup[i].CellRadius) * -Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
+                AirCellGroup[i].PerformAcceleration(CdTest * Mathf.Pow(AirCellGroup[i].Velocity.y - AverageLocalWind.y, 2f) / (2f * AirCellGroup[i].CellHeight) * -Vector3.Project(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
+                AirCellGroup[i].PerformAcceleration(CdTest * Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).sqrMagnitude / (4f * AirCellGroup[i].CellRadius) * -Vector3.ProjectOnPlane(AirCellGroup[i].Velocity - AverageLocalWind, Vector3.up).normalized);
                 
                 #endregion
 
                 DebugEverything(i);
 
                 #region Check for Terrain Collision - to do: improve with bouncing
-                if (AirCellGroup[i].CellCenter.y <= (-AirCellGroup[i].CellHeight / 2))
+                if (AirCellGroup[i].CellCenter.y <= (-AirCellGroup[i].CellHeight / 2f))
                 {
-                    AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, (float)-AirCellGroup[i].CellHeight / 2 + 0.2f, AirCellGroup[i].CellCenter.z);
+                    AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, -AirCellGroup[i].CellHeight / 2f + 0.2f, AirCellGroup[i].CellCenter.z);
                 }
                 #endregion
 
@@ -297,20 +300,20 @@ public class AirCellBehavior : MonoBehaviour
 
                 if (Mathf.Abs(AirCellGroup[i].CellCenter.x) >= (AirCellsBounds.x / 2) + 0.1f)
                 {
-                    AirCellGroup[i].Velocity += new Vector3(Mathf.Sign(AirCellGroup[i].CellCenter.x) * -50 * Time.fixedDeltaTime, 0, 0); //Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(-0.1f, 1, 1));
-                                                                                                                                         //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x > 0 ? 500 : -500, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z);
+                    AirCellGroup[i].Velocity += new Vector3(Mathf.Sign(AirCellGroup[i].CellCenter.x) * -50f * Time.fixedDeltaTime, 0f, 0f); //Vector3.Scale(AirCellGroup[i].Velocity, new Vector3(-0.1f, 1f, 1f));
+                                                                                                                                         //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x > 0 ? 500f : -500f, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z);
                 }
 
                 if (Mathf.Abs(AirCellGroup[i].CellCenter.z) >= (AirCellsBounds.x / 2))
                 {
-                    AirCellGroup[i].Velocity += new Vector3(0, 0, Mathf.Sign(AirCellGroup[i].CellCenter.z) * -50 * Time.fixedDeltaTime);
-                    //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z > 0 ? 500 : -500);
+                    AirCellGroup[i].Velocity += new Vector3(0, 0, Mathf.Sign(AirCellGroup[i].CellCenter.z) * -50f * Time.fixedDeltaTime);
+                    //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z > 0 ? 500f : -500f);
                 }
 
                 if (AirCellGroup[i].CellCenter.y >= AirCellsBounds.y + 0.1)
                 {
                     AirCellGroup[i].Velocity += new Vector3(0, Mathf.Sign(AirCellGroup[i].CellCenter.y) * -50 * Time.fixedDeltaTime, 0);
-                    //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, (float)C.SimulationHeight, AirCellGroup[i].CellCenter.z);
+                    //AirCellGroup[i].CellCenter = new Vector3(AirCellGroup[i].CellCenter.x, C.SimulationHeight, AirCellGroup[i].CellCenter.z);
                 }
 
                 #endregion
@@ -332,35 +335,35 @@ public class AirCellBehavior : MonoBehaviour
                                          new Vector2(AirCellGroup[i2].CellCenter.x, AirCellGroup[i2].CellCenter.z));
                     d = SafeValue(d); // prevent division by zero
 
-                    if ((h = System.Math.Abs(AirCellGroup[i].CellCenter.y - AirCellGroup[i2].CellCenter.y)) < ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2)
+                    if ((h = System.MathF.Abs(AirCellGroup[i].CellCenter.y - AirCellGroup[i2].CellCenter.y)) < ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2f)
                         && d < (AirCellGroup[i].CellRadius + AirCellGroup[i2].CellRadius))
                     {
                         #region Cell Overlap Calculations
 
                         if (AirCellGroup[i].CellRadius >= AirCellGroup[i2].CellRadius)
                         {
-                            r1 = (float)AirCellGroup[i].CellRadius;
-                            r2 = (float)AirCellGroup[i2].CellRadius;
+                            r1 = AirCellGroup[i].CellRadius;
+                            r2 = AirCellGroup[i2].CellRadius;
                         }
                         else
                         {
-                            r1 = (float)AirCellGroup[i2].CellRadius;
-                            r2 = (float)AirCellGroup[i].CellRadius;
+                            r1 = AirCellGroup[i2].CellRadius;
+                            r2 = AirCellGroup[i].CellRadius;
                         }
 
-                        h = (float)System.Math.Abs(h - ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2));
+                        h = System.MathF.Abs(h - ((AirCellGroup[i].CellHeight + AirCellGroup[i2].CellHeight) / 2f));
 
                         d1 = (Mathf.Pow(r1, 2) - Mathf.Pow(r2, 2) + Mathf.Pow(d, 2)) / (2 * d);
                         d2 = d - d1;
 
-                        A = (Mathf.Pow(r1, 2) * Mathf.Acos(d1 / r1)) - (d1 * Mathf.Sqrt(Mathf.Pow(r1, 2) - Mathf.Pow(d1, 2))) + (Mathf.Pow(r2, 2) * Mathf.Acos(d2 / r2)) - (d2 * Mathf.Sqrt(Mathf.Pow(r2, 2) - Mathf.Pow(d2, 2)));
+                        A = (Mathf.Pow(r1, 2f) * Mathf.Acos(d1 / r1)) - (d1 * Mathf.Sqrt(Mathf.Pow(r1, 2) - Mathf.Pow(d1, 2f))) + (Mathf.Pow(r2, 2f) * Mathf.Acos(d2 / r2)) - (d2 * Mathf.Sqrt(Mathf.Pow(r2, 2f) - Mathf.Pow(d2, 2f)));
 
                         #endregion
 
                         if (h * A > 0 && DynVolumeSOM[i] > 0 && DynVolumeSOM[i2] > 0)
                         {
-                            DynVolumeSOM[i] = System.Math.Max(0, DynVolumeSOM[i] - A * h / 2);
-                            DynVolumeSOM[i2] = System.Math.Max(0, DynVolumeSOM[i2] - A * h / 2);
+                            DynVolumeSOM[i] = System.MathF.Max(0, DynVolumeSOM[i] - A * h / 2f);
+                            DynVolumeSOM[i2] = System.MathF.Max(0, DynVolumeSOM[i2] - A * h / 2f);
 
                             CellsRepulsionSOM.Add(new Vector3(i, i2, A * h));
                         }
@@ -377,10 +380,13 @@ public class AirCellBehavior : MonoBehaviour
             }
 
             #region Repulsion Physics
+
+            // GODDAMN ASTRAA, LINE SKIP YOUR CODE I CANT READ TS T-T
             for (int i = 0; i < CellsRepulsionSOM.Count; i++)
-            {
-                AirCellGroup[(int)CellsRepulsionSOM[i].x].PerformAcceleration((float)(StaticPressureSOM[(int)CellsRepulsionSOM[i].x] * System.Math.Pow(CellsRepulsionSOM[i].z, (double)((double)2.0 / (double)3.0)) * (System.Math.Pow(AirCellGroup[(int)CellsRepulsionSOM[i].x].CellStaticVolume / DynVolumeSOM[(int)CellsRepulsionSOM[i].x], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[(int)CellsRepulsionSOM[i].x].Moles * C.GaleAtmMM)) * (AirCellGroup[(int)CellsRepulsionSOM[i].x].CellCenter - AirCellGroup[(int)CellsRepulsionSOM[i].y].CellCenter).normalized);
-                AirCellGroup[(int)CellsRepulsionSOM[i].y].PerformAcceleration((float)(StaticPressureSOM[(int)CellsRepulsionSOM[i].y] * System.Math.Pow(CellsRepulsionSOM[i].z, (double)((double)2.0 / (double)3.0)) * (System.Math.Pow(AirCellGroup[(int)CellsRepulsionSOM[i].y].CellStaticVolume / DynVolumeSOM[(int)CellsRepulsionSOM[i].y], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[(int)CellsRepulsionSOM[i].y].Moles * C.GaleAtmMM)) * (AirCellGroup[(int)CellsRepulsionSOM[i].y].CellCenter - AirCellGroup[(int)CellsRepulsionSOM[i].x].CellCenter).normalized);
+            {  
+                AirCellGroup[(int)CellsRepulsionSOM[i].x].PerformAcceleration((StaticPressureSOM[(int)CellsRepulsionSOM[i].x] * System.MathF.Pow(CellsRepulsionSOM[i].z, (2f / 3f)) * (System.MathF.Pow(AirCellGroup[(int)CellsRepulsionSOM[i].x].CellStaticVolume / DynVolumeSOM[(int)CellsRepulsionSOM[i].x], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[(int)CellsRepulsionSOM[i].x].Moles * C.GaleAtmMM)) * (AirCellGroup[(int)CellsRepulsionSOM[i].x].CellCenter - AirCellGroup[(int)CellsRepulsionSOM[i].y].CellCenter).normalized);
+                
+                AirCellGroup[(int)CellsRepulsionSOM[i].y].PerformAcceleration((StaticPressureSOM[(int)CellsRepulsionSOM[i].y] * System.MathF.Pow(CellsRepulsionSOM[i].z, (2f / 3f)) * (System.MathF.Pow(AirCellGroup[(int)CellsRepulsionSOM[i].y].CellStaticVolume / DynVolumeSOM[(int)CellsRepulsionSOM[i].y], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[(int)CellsRepulsionSOM[i].y].Moles * C.GaleAtmMM)) * (AirCellGroup[(int)CellsRepulsionSOM[i].y].CellCenter - AirCellGroup[(int)CellsRepulsionSOM[i].x].CellCenter).normalized);
             }
             #endregion
 
@@ -392,15 +398,15 @@ public class AirCellBehavior : MonoBehaviour
             {
                 for (int i = 0; i < CellGroupNumber; i++)
                 {
-                    float maxD = Mathf.Sqrt(Mathf.Pow((float)AirCellGroup[i].CellRadius, 2) + Mathf.Pow((float)AirCellGroup[i].CellHeight / 2, 2));
+                    float maxD = Mathf.Sqrt(Mathf.Pow(AirCellGroup[i].CellRadius, 2) + Mathf.Pow(AirCellGroup[i].CellHeight / 2f, 2f));
                     RaycastHit hit;
-                    if (Physics.Raycast(AirCellGroup[i].CellCenter + (Vector3.up * (float)AirCellGroup[i].CellHeight / 2), Vector3.down, out hit, maxD, 1 << 3))
+                    if (Physics.Raycast(AirCellGroup[i].CellCenter + (Vector3.up * AirCellGroup[i].CellHeight / 2), Vector3.down, out hit, maxD, 1 << 3))
                     {
                         float d3 = Mathf.Abs(hit.barycentricCoordinate.y - AirCellGroup[i].CellCenter.y);
-                        if (d3 < AirCellGroup[i].CellHeight / 2)
+                        if (d3 < AirCellGroup[i].CellHeight / 2f)
                         {
-                            DynVolumeSOM[i] *= 0.5 + (d3 / AirCellGroup[i].CellHeight);
-                            AirCellGroup[i].PerformAcceleration((float)(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.Math.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (double)((double)1.0 + (C.MolarHeatCapacity / C.R))) - 1) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
+                            DynVolumeSOM[i] *= 0.5f + (d3 / AirCellGroup[i].CellHeight);
+                            AirCellGroup[i].PerformAcceleration((StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.MathF.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
                         }
                     }
                 }
@@ -416,7 +422,7 @@ public class AirCellBehavior : MonoBehaviour
                 #region Dynamic Abiatic Temperature Change
                 DynVolumeSOM[i] = SafeValue(DynVolumeSOM[i]);
                 if (prevDynVolumeSOM[i] == 0) prevDynVolumeSOM[i] = DynVolumeSOM[i];
-                AirCellGroup[i].Temperature *= System.Math.Pow(prevDynVolumeSOM[i] / DynVolumeSOM[i], C.R / C.MolarHeatCapacity);
+                AirCellGroup[i].Temperature *= System.MathF.Pow(prevDynVolumeSOM[i] / DynVolumeSOM[i], C.R / C.MolarHeatCapacity);
                 prevDynVolumeSOM[i] = DynVolumeSOM[i];
                 #endregion
 
@@ -460,14 +466,17 @@ public class AirCellBehavior : MonoBehaviour
             if (InterpolationWithTerrain)
             {
                 InverseDistanceWeighting.InterpolationStep(FollowDrone ? Vector3.zero : new Vector3(InverseDistanceWeighting.Query.x, 0, InverseDistanceWeighting.Query.z),
-                new float[6] { 0, 0, 0, (float)MoleTest, (float)AverageLocalTemp, 0 });
+                new float[6]
+                {
+                    0f, 0f, 0f, MoleTest, AverageLocalTemp, 0f
+                });
             }
             
             foreach (int i in InverseDistanceWeighting.Indexes)
             {
                 InverseDistanceWeighting.InterpolationStep(AirCellGroup[i].CellCenter,
-                    new float[6] { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, (float)AirCellGroup[i].Moles,
-                    (float)AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
+                    new float[6] { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles,
+                    AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
             }
 
             InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain);
@@ -478,7 +487,7 @@ public class AirCellBehavior : MonoBehaviour
             //Interpolation Values
             if (CellGroupNumber > 4)
             {
-                CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new double[6]
+                CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new float[6]
                     { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
             }
             InterpolatedValues = InterpolateAirCells.GetValues(CellVertexes, new(DronePosition.x, DronePosition.y, DronePosition.z, 0));
@@ -491,15 +500,20 @@ public class AirCellBehavior : MonoBehaviour
         }
     }
 
+    // conditional makes it so every call for this function is skipped, so i dont have to spam preprocessors
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
     public void DebugEverything(int i)
     {
-        if (!float.IsFinite(AirCellGroup[i].Velocity.magnitude))
+        Vector3 vel = AirCellGroup[i].Velocity;
+
+        // Just checks the X Y or Z values to see if the cell velocity is NaN. Much cheaper than full square root calculations via magnitude checking
+        if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
             Debug.LogError("NaN Cell Velocity ; i = " + i);
 
-        if (!float.IsFinite((float)AirCellGroup[i].CellStaticVolume))
+        if (!float.IsFinite(AirCellGroup[i].CellStaticVolume))
             Debug.LogError("NaN Cell Volume ; i = " + i);
 
-        if (!float.IsFinite((float)AirCellGroup[i].Temperature))
+        if (!float.IsFinite(AirCellGroup[i].Temperature))
             Debug.LogError("NaN Temperature ; i = " + i);
 
         if (prevStatVolumeSOM[i] <= 0 && AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
@@ -514,12 +528,8 @@ public class AirCellBehavior : MonoBehaviour
 
     float SafeValue(float value)
     {
-        return Mathf.Max(value, (float)1e-2);
-    }
-    double SafeValue(double value)
-    {
-        return System.Math.Max(value, 1e-2);
-    }
+        return Mathf.Max(value, 1e-2f);
+    } 
 }
 
 
@@ -528,27 +538,27 @@ public class AirCellBehavior : MonoBehaviour
  * for (int i = 0; i < 1; i++)
 {
 //Force from Other Cells
-AirCellGroup[i].PerformAcceleration((float)(C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i].CellCenter - AirCellGroup[i + 1].CellCenter).normalized * DistanceScale);
-AirCellGroup[i + 1].PerformAcceleration((float)(C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i + 1].CellCenter - AirCellGroup[i].CellCenter).normalized * DistanceScale);
+AirCellGroup[i].PerformAcceleration((C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i].CellCenter - AirCellGroup[i + 1].CellCenter).normalized * DistanceScale);
+AirCellGroup[i + 1].PerformAcceleration((C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i + 1].CellCenter - AirCellGroup[i].CellCenter).normalized * DistanceScale);
 }
 
 #region Cell Behavior Simulation
 //Force from Terrain (y = 0)
-//(float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale));
-//double P1 = AirCellGroup[i].Moles * C.R * AirCellGroup[i].Temperature / (AirCellGroup[i].CellCenter.y / DistanceScale);
-//double P2 = C.CalculateStaticPressure(AirCellGroup[i].CellCenter.y);
-AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale)) * DistanceScale * Vector3.up);
+//(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale));
+//float P1 = AirCellGroup[i].Moles * C.R * AirCellGroup[i].Temperature / (AirCellGroup[i].CellCenter.y / DistanceScale);
+//float P2 = C.CalculateStaticPressure(AirCellGroup[i].CellCenter.y);
+AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale)) * DistanceScale * Vector3.up);
 
 //Gravity
-AirCellGroup[i].PerformAcceleration((float)C.GaleG * DistanceScale * GravityScale * Vector3.down);
+AirCellGroup[i].PerformAcceleration(C.GaleG * DistanceScale * GravityScale * Vector3.down);
 #endregion
 #region Simulation Testing (non realistic)
 //Force from Ceiling (y = 1000)
-//AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - AirCellGroup[i].CellCenter.y) / DistanceScale))) * DistanceScale * Vector3.down);
+//AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - AirCellGroup[i].CellCenter.y) / DistanceScale))) * DistanceScale * Vector3.down);
 
 //Force from walls (x = ± 1000, y = ± 1000)
-AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.x)) / DistanceScale))) * (AirCellGroup[i].CellCenter.x > 0 ? 1 : -1) * DistanceScale * Vector3.left);
-AirCellGroup[i].PerformAcceleration((float)(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.z)) / DistanceScale))) * (AirCellGroup[i].CellCenter.z > 0 ? 1 : -1) * DistanceScale * Vector3.back);
+AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.x)) / DistanceScale))) * (AirCellGroup[i].CellCenter.x > 0 ? 1 : -1) * DistanceScale * Vector3.left);
+AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.z)) / DistanceScale))) * (AirCellGroup[i].CellCenter.z > 0 ? 1 : -1) * DistanceScale * Vector3.back);
 
 //Background Friction
 AirCellGroup[i].AccAlongVelocity(-0.2f * AirCellGroup[i].Velocity.magnitude * DistanceScale);

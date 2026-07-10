@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AirCell
+// I don't imagine anything inheriting AirCell
+public sealed class AirCell
 {
     /*  Definitions
             dynamic: different for every cell and for every moment in time
@@ -13,61 +13,33 @@ public class AirCell
 
     #region Cell Values
     public Vector3 CellCenter;      //Center of the air cell, dynamic
-    public double Moles;            //Number of particles, static
-    public double Temperature;      //Temperature of the center, dynamic
+    public float Moles;            //Number of particles, static
+    public float Temperature;      //Temperature of the center, dynamic
 
     public Vector3 Velocity;        //Velocity of the air cell, dynamic
     public Vector3 Acceleration;    //Resulting due to forces, dynamic
 
-    public double CellStaticVolume;
-    // public double CellDynamicVolume; // never initialized or referenced : what value?
-    public double CellCircleArea;
-    public double CellRadius;
-    public double CellHeight;
+    public float CellStaticVolume;
+    // public float CellDynamicVolume; // never initialized or referenced : what value?
+    public float CellCircleArea;
+    public float CellRadius;
+    public float CellHeight;
 
-    public double StiffnessConstant;
+    public float StiffnessConstant;
     #endregion
 
     #endregion
 
-    #region Constructors
+    #region Constructor
 
-    public AirCell()
-    {
-        CellCenter = Velocity = Vector3.zero;
-        Moles = 1000;
-        Temperature = 300;
-        StiffnessConstant = 0.5;
-    }
-
-    public AirCell(Vector3 CenterPoint, double nMoles)
-    {
-        CellCenter = CenterPoint;
-        Moles = nMoles;
-        Temperature = 300;
-        Velocity = Vector3.zero;
-        StiffnessConstant = 0.5;
-    }
-
-    public AirCell(Vector3 CenterPoint, double nMoles, double TempK)
-    {
-        CellCenter = CenterPoint;
-        Moles = nMoles;
-        Temperature = TempK;
-        Velocity = Vector3.zero;
-        StiffnessConstant = 0.5;
-    }
-
-    public AirCell(Vector3 CenterPoint, double nMoles, double TempK, Vector3 CellVelocity)
-    {
-        CellCenter = CenterPoint;
-        Moles = nMoles;
-        Temperature = TempK;
-        Velocity = CellVelocity;
-        StiffnessConstant = 0.5;
-    }
-
-    public AirCell(Vector3 CenterPoint, double nMoles, double TempK, Vector3 CellVelocity, double Stiffness)
+    public AirCell
+    (
+        Vector3 CenterPoint = default,
+        float nMoles = 1000,
+        float TempK = 300,
+        Vector3 CellVelocity = default,
+        float Stiffness = 0.5f
+    )
     {
         CellCenter = CenterPoint;
         Moles = nMoles;
@@ -105,7 +77,7 @@ public class AirCell
 
     public void AccAlongVelocity(float Acc)
     {
-        if (Velocity.sqrMagnitude > 1e-10)
+        if (Velocity.sqrMagnitude > 1e-10f)
         {  
             Acceleration = Velocity.normalized * Acc;
             Velocity += Acceleration * Time.fixedDeltaTime;   
@@ -114,33 +86,37 @@ public class AirCell
 
     public void AccAlongVelocity(float Acc, float deltaTime)
     {
-        Acceleration = Velocity.normalized * Acc;
-        Velocity += Acceleration * deltaTime;
+        // no idea why there wasn't a guard here
+        if (Velocity.sqrMagnitude > 1e-10f)
+        {
+            Acceleration = Velocity.normalized * Acc;
+            Velocity += Acceleration * deltaTime;
+        }
     }
     #endregion
 
     #region Volume
-    public void SetSizeV(double V)
+    public void SetSizeV(float V)
     {
         CellStaticVolume = V;
-        CellHeight = System.Math.Pow(V, 1.0 / 3.0);
+        CellHeight = System.MathF.Pow(V, 1.0f / 3.0f);
         CellCircleArea = V / CellHeight;
-        CellRadius = System.Math.Sqrt(CellCircleArea / System.Math.PI);
+        CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
     }
 
-    public void SetSizeVL(double V, double L)
+    public void SetSizeVL(float V, float L)
     {
         CellStaticVolume = V;
         CellHeight = L;
         CellCircleArea = V / L;
-        CellRadius = System.Math.Sqrt(CellCircleArea / System.Math.PI);
+        CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
     }
 
-    public void SetSizeRL(double R, double L)
+    public void SetSizeRL(float R, float L)
     {
         CellRadius = R;
         CellHeight = L;
-        CellCircleArea = R * R * System.Math.PI;
+        CellCircleArea = R * R * System.MathF.PI;
         CellStaticVolume = CellCircleArea * L;
     }
     #endregion
