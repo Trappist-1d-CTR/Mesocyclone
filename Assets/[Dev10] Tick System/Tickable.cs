@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+// thank you IntelliSense for automating all these strings! <3
+
 /// <summary>
 /// Base class for a tickable MonoBehaviour
 /// <para>Made for dynamic tick rates, instead of a global Time.fixedDeltaTime</para>
@@ -23,7 +25,10 @@ public abstract class Tickable : MonoBehaviour
         }
     }
 
+    [ReadOnly, SerializeField, Tooltip("The accumulated time since the last tick, used to determine when to call Tick()")]
     public float Accumulator { get; set; }
+
+    [ReadOnly, SerializeField, Tooltip("The accumulated time since the last fixed tick, used to determine when to call FixedTick()")]
     public float FixedAccumulator { get; set; }
 
     bool isRegistered = false;

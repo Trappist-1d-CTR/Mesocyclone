@@ -12,8 +12,11 @@ public sealed class AirCell
     #region Variables
 
     #region Tick Stuff
-    public float Accumulator { get; set; }
-    public float TickRate { get; set; } = Tickable.DefaultTickRate; // set this to what's best
+    [SerializeField, ReadOnly, Tooltip("The accumulated time since the last tick, used to determine when to call Tick()")]
+    public float Accumulator;
+
+    [SerializeField, ReadOnly, Tooltip("The tick rate for this air cell")]
+    public float TickRate = Tickable.DefaultTickRate;
     #endregion
 
     #region Cell Values
