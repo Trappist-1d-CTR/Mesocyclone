@@ -11,7 +11,7 @@ public abstract class Tickable : MonoBehaviour
     public static readonly float DefaultTickRate = 50f; // default tick rate for all tickables, can be changed in the future if needed
 
     [SerializeField, Tooltip($"The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
-    float tickRate = 50f; // set this to what's best
+    float tickRate = DefaultTickRate; // set this to what's best
     public float TickRate
     {
         get => tickRate;
@@ -72,6 +72,7 @@ public abstract class Tickable : MonoBehaviour
     public virtual void FixedTick()
     {
         if (TickRate <= 0f) return;
+
         // always make sure to call base.FixedTick() before any other logic in derived classes to ensure proper fixed tick handling
     }
 
