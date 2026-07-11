@@ -61,15 +61,15 @@ dotnet_diagnostic.IDE0002.severity = silent
 dotnet_diagnostic.IDE0003.severity = silent
 dotnet_diagnostic.IDE0009.severity = silent
 
-# prefer to use var for built-in types (int, string, etc.)
-csharp_style_var_for_built_in_types = false:silent
-
 # prefer to use block bodies rather than single-line expressions
 csharp_prefer_braces = false:silent
 
 ####################
 
 ### - NONE - ###
+
+# prefer to use var for built-in types (int, string, etc.)
+csharp_style_var_for_built_in_types = false:none
 
 dotnet_diagnostic.IDE0011.severity = none
 
