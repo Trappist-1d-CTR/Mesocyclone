@@ -13,7 +13,7 @@ public sealed class AirCell
 
     #region Tick Stuff
     public float Accumulator { get; set; }
-    public float TickRate { get; set; } = 50f; // set this to what's best
+    public float TickRate { get; set; } = Tickable.DefaultTickRate; // set this to what's best
     #endregion
 
     #region Cell Values

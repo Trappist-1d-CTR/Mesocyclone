@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public abstract class Tickable : MonoBehaviour
 {
-    [HideInInspector]
+    [Tooltip("Global default tick rate for all tickables, can be changed if needed")]
     public static readonly float DefaultTickRate = 50f; // default tick rate for all tickables, can be changed in the future if needed
 
     [SerializeField, Tooltip($"The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
