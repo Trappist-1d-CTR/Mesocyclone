@@ -37,7 +37,7 @@ public abstract class Tickable : MonoBehaviour
     {
         if (!isRegistered)
         {
-            TickSystem.Instance.RegisterTickable(this);
+            TickSystem.Instance.Register(this);
             isRegistered = true;
         }
     }
@@ -46,7 +46,7 @@ public abstract class Tickable : MonoBehaviour
     {
         if (!isRegistered)
         {
-            TickSystem.Instance.RegisterTickable(this);
+            TickSystem.Instance.Register(this);
             isRegistered = true;
         }
     }
@@ -55,7 +55,7 @@ public abstract class Tickable : MonoBehaviour
     {
         if (isRegistered)
         {
-            TickSystem.Instance.UnregisterTickable(this);
+            TickSystem.Instance.Unregister(this);
             isRegistered = false;
         }
     }
