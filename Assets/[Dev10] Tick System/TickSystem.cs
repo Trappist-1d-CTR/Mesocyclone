@@ -6,31 +6,31 @@ public sealed class TickSystem : MonoBehaviour
 {
     public static TickSystem Instance { get; private set; }
 
-    List<Tickable> _tickables = new();
-    public IReadOnlyList<Tickable> Tickables => _tickables;
+    List<Tickable> _Tickables = new();
+    public IReadOnlyList<Tickable> Tickables => _Tickables;
 
 
-    public void Register(Tickable tickable)
+    public void Register(Tickable Tickable)
     {
-        if (!_tickables.Contains(tickable))
-            _tickables.Add(tickable);
+        if (!_Tickables.Contains(Tickable))
+            _Tickables.Add(Tickable);
     }
 
-    public void Unregister(Tickable tickable)
+    public void Unregister(Tickable Tickable)
     {
-        if (_tickables.Contains(tickable))
-            _tickables.Remove(tickable);
+        if (_Tickables.Contains(Tickable))
+            _Tickables.Remove(Tickable);
     }
 
     public void Unregister(UInt16 index) // unsigned short. Values between 0 and 65,535 . Should be enough for most cases, and saves memory over int
     {
-        if (_tickables[(Int32)index] != null)
-            _tickables.RemoveAt(index);
+        if (_Tickables[(Int32)index] != null)
+            _Tickables.RemoveAt(index);
     }
 
     public void UnregisterAll()
     {
-        _tickables.Clear();
+        _Tickables.Clear();
     }
 
 
@@ -65,23 +65,24 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var tickable in _tickables)
+            foreach (var Tickable in _Tickables)
             {
-                tickable.Accumulator += Time.deltaTime;
-                float interval = 1f / tickable.TickRate;
+                Tickable.Accumulator += Time.deltaTime;
+                float interval = 1f / (Tickable.TickRate * Time.timeScale);
 
                 // using while makes it so multiple due ticks catch up - i think so... 
                 // and even if it does, not sure how well it does performance wise
-                while (tickable.Accumulator >= interval)
+                while (Tickable.Accumulator >= interval)
                 {
-                    tickable.Tick();
-                    tickable.Accumulator -= interval;
+                    Tickable.Tick();
+                    Tickable.Accumulator -= interval;
                 }
             }
         }
+        // definitely not an MSC reference
         catch
         {
-            // totally not an MSC reference
+            // your sins will not go unnoticed
             throw new Joar();
         }
         finally
@@ -94,21 +95,20 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var tickable in _tickables)
+            foreach (var TickableBehaviour in _Tickables)
             {
-                tickable.FixedAccumulator += Time.fixedDeltaTime;
-                float interval = 1f / tickable.TickRate;
+                Tickable.FixedAccumulator += Time.fixedDeltaTime;
+                float interval = 1f / (Tickable.TickRate * Time.timeScale);
 
-                while (tickable.FixedAccumulator >= interval)
+                while (Tickable.FixedAccumulator >= interval)
                 {
-                    tickable.FixedTick();
-                    tickable.FixedAccumulator -= interval;
+                    Tickable.FixedTick();
+                    Tickable.FixedAccumulator -= interval;
                 }
             }
         }
         catch
         {
-            // your sins will not go unnoticed
             throw new Joar();
         }
     }

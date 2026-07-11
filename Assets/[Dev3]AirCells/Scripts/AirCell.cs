@@ -11,6 +11,11 @@ public sealed class AirCell
 
     #region Variables
 
+    #region Tick Stuff
+    public float Accumulator { get; set; }
+    public float TickRate { get; set; } = 50f; // set this to what's best
+    #endregion
+
     #region Cell Values
     public Vector3 CellCenter;      //Center of the air cell, dynamic
     public float Moles;            //Number of particles, static
