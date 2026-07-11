@@ -1,0 +1,76 @@
+root = true
+
+[*.cs]
+
+# tweak these to however you like
+# Do note, these are the different tiers: none, silent, suggestion, warning, error
+
+
+#### - WARNINGS - ###
+
+# unecessary using directives
+dotnet_diagnostic.IDE0005.severity = warning
+
+#####################
+
+
+### - SUGGESTIONS - ###
+
+# stlying reccommends
+dotnet_analyzer_diagnostic.category-Style.severity = suggestion
+
+# unused/unread private fields
+dotnet_diagnostic.IDE0051.severity = suggestion
+dotnet_diagnostic.IDE0052.severity = suggestion
+
+# unnecessary local variable assignment (the "computed but overwritten/unused" pattern)
+dotnet_diagnostic.IDE0059.severity = suggestion
+
+# redundant/unnecessary casts
+dotnet_diagnostic.IDE0004.severity = suggestion
+
+# simplify boolean expressions
+dotnet_diagnostic.IDE0075.severity = suggestion
+
+#######################
+
+
+### - SILENCES - ###
+
+# naming reccommends
+dotnet_analyzer_diagnostic.category-Naming.severity = silent
+
+# "add missing switch cases"
+dotnet_diagnostic.IDE0072.severity = silent
+
+# flags for var and type inconsistencies
+dotnet_diagnostic.IDE0007.severity = silent
+dotnet_diagnostic.IDE0008.severity = silent
+
+# flags for shortening methods/properties/etc. to use lambda rather than block bodies
+dotnet_diagnostic.IDE0022.severity = silent
+dotnet_diagnostic.IDE0023.severity = silent
+dotnet_diagnostic.IDE0025.severity = silent
+dotnet_diagnostic.IDE0027.severity = silent
+
+# prefer unqualified names even when a using directive is there
+dotnet_diagnostic.IDE0001.severity = silent
+dotnet_diagnostic.IDE0002.severity = silent
+
+# "Name can be simplified"
+dotnet_diagnostic.IDE0003.severity = silent
+dotnet_diagnostic.IDE0009.severity = silent
+
+# prefer to use var for built-in types (int, string, etc.)
+csharp_style_var_for_built_in_types = false:silent
+
+# prefer to use block bodies rather than single-line expressions
+csharp_prefer_braces = false:silent
+
+####################
+
+### - NONE - ###
+
+dotnet_diagnostic.IDE0011.severity = none
+
+################

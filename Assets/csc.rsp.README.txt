@@ -1,0 +1,18 @@
+this is a README for Mesosyclone/Assets/csc.rsp
+
+The reason i created this was for me to be able to write certain C# syntax stuff not available in C# 9.0
+Since as i write this Unity does not support the CoreCLR runtime and is still based off of Mono
+And i doubt porting Mesosyclone over to Unity 6.8 will not break anything and is even worth it
+
+But csc.rsp also serves as to literally change the severity of CS codes, which are for messages, warnings, and errors
+In which warnings such as CS0169 which are called when a variable is declared but never used, can instead just be turned into a message
+which is super useful since the compiler will *mostly* shut up when you set a field in the inspector
+
+You get it
+
+
+`langversion:latest` - Used to change the C# version to the newest one installed in the .NET SDK
+                       Might look at Unity's, but if you have .NET SDK 10.x, it might default to 14.0
+
+`-warnaserror:CS0665` - turns these CS warning codes into errors
+    - CS0665 : Typo where you put "=" instead of "=="
