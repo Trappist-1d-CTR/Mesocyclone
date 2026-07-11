@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 8377308466521923247}
   - component: {fileID: 4894839120983380234}
   - component: {fileID: 7208294289010763200}
-  - component: {fileID: 2854753887583828496}
+  - component: {fileID: 5131608378388609828}
+  - component: {fileID: 5346704867127221834}
   - component: {fileID: 8827874481591399830}
   m_Layer: 0
   m_Name: Planetary Cooling Tower
@@ -92,8 +93,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2854753887583828496
-MeshCollider:
+--- !u!65 &5131608378388609828
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -110,10 +111,30 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3184929057982837426, guid: 727e1380c22bd4c4780dab9fa0c58fa9, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 80.5, y: 98, z: 49}
+  m_Center: {x: 0, y: 47.25, z: 15.75}
+--- !u!65 &5346704867127221834
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9154125923079488533}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 80.5, y: 14, z: 23.5}
+  m_Center: {x: 0, y: 5.25, z: -20.5}
 --- !u!114 &8827874481591399830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,3 +155,4 @@ MonoBehaviour:
   LinkedData: 0
   Linked: 0
   Detectable: 0
+  DetectableAfterLinked: []

@@ -712,6 +712,7 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Android: 0
+    Standalone: 1
   il2cppCompilerConfiguration: {}
   il2cppCodeGeneration: {}
   il2cppStacktraceInformation: {}
@@ -821,7 +822,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 3
   captureStartupLogs: {}
-  activeInputHandler: 2
+  activeInputHandler: 1
   windowsGamepadBackendHint: 0
   cloudProjectId: 52dbc836-3f3f-49cc-bcda-12766d84364b
   framebufferDepthMemorylessMode: 0

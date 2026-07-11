@@ -134,3 +134,4 @@ MonoBehaviour:
   LinkedData: 0
   Linked: 0
   Detectable: 0
+  DetectableAfterLinked: []

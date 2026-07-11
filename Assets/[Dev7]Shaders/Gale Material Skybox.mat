@@ -56,7 +56,7 @@ Material:
     - _BUILTIN_QueueOffset: 0
     - _G: 22.055157
     - _Karman: 204210
-    - _MM: 0.034277923
+    - _MM: 0.03427792
     - _Mount_Height_Range: 0.03
     - _Mount_Width_Ratio: 1
     - _QueueControl: 0

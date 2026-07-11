@@ -1038,7 +1038,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3176837777185194752}
   m_Layer: 0
-  m_Name: Box Shelter
+  m_Name: Box Shelter (old)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
