@@ -431,7 +431,7 @@ public sealed class AGlobalValues : MonoBehaviour
             ? GreekS * System.MathF.Pow(StarR / GaleSemiMajor, 2) * System.MathF.Pow(StarT, 4)
             : GreekS * System.MathF.Pow(SunR / AU, 2) * System.MathF.Pow(SunT, 4);
 
-        return MeanInsolation * System.MathF.Cos(0.01745329f * ((i + 0.5) * (180 / N))) * (1 + (EOS_AtmA / (1 - EOS_AtmA)));
+        return MeanInsolation * System.MathF.Cos(0.01745329f * ((i + 0.5f) * (180f / N))) * (1 + (EOS_AtmA / (1 - EOS_AtmA)));
     }
 
     public float CalculateD(int N, int i)

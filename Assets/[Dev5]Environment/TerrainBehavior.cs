@@ -7,16 +7,16 @@ public class TerrainBehavior : MonoBehaviour
     #region Variables
 
     #region Terrain Properties
-    public double Area;
-    public double Temperature;
-    public double Moles;
-    public double MolarWeight = 0.0401;
-    public double MassPerSquareMeter;
-    public double Albedo;
-    public double Emissivity;
-    public double HeatCapacity;
-    public double HeatInertia;
-    public double LocalLatitude;
+    public float Area;
+    public float Temperature;
+    public float Moles;
+    public float MolarWeight = 0.0401f;
+    public float MassPerSquareMeter;
+    public float Albedo;
+    public float Emissivity;
+    public float HeatCapacity;
+    public float HeatInertia;
+    public float LocalLatitude;
     #endregion
 
     #region Reference Scripts

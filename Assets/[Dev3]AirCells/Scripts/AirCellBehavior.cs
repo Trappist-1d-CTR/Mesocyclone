@@ -74,7 +74,7 @@ public sealed class AirCellBehavior : MonoBehaviour
         GameObject controller = GameObject.FindGameObjectWithTag("GameController");
         if (controller == null)
         {
-            Debug.LogError("No GameObject with tag GameController");
+            UnityEngine.Debug.LogError("No GameObject with tag GameController");
             return;
         }
 
@@ -82,7 +82,7 @@ public sealed class AirCellBehavior : MonoBehaviour
         C = controller.GetComponent<AGlobalValues>();
         if (C == null)
         {
-            Debug.LogError("No 'AGlobalValues' Component attached to controller object");
+            UnityEngine.Debug.LogError("No 'AGlobalValues' Component attached to controller object");
             return;
         }
 
@@ -247,11 +247,11 @@ public sealed class AirCellBehavior : MonoBehaviour
                 #region Static Adiabatic Temperature Changes
                 AirCellGroup[i].Temperature *= System.MathF.Pow(prevStatVolumeSOM[i] / AirCellGroup[i].CellStaticVolume, C.R / C.MolarHeatCapacity);
                 prevStatVolumeSOM[i] = AirCellGroup[i].CellStaticVolume;
-
+                /*
                 if (TempSOM[i] - AirCellGroup[i].Temperature > 10)
                 {
-                    Debug.Log("Heavy Abiatic Temperature Change [" + i + "] ; SOM = " + TempSOM[i] + " ; Temp = " + AirCellGroup[i].Temperature);
-                }
+                    UnityEngine.Debug.Log("Heavy Abiatic Temperature Change [" + i + "] ; SOM = " + TempSOM[i] + " ; Temp = " + AirCellGroup[i].Temperature);
+                }*/
 
                 TempSOM[i] = AirCellGroup[i].Temperature;
                 #endregion
@@ -508,22 +508,22 @@ public sealed class AirCellBehavior : MonoBehaviour
 
         // Just checks the X Y or Z values to see if the cell velocity is NaN. Much cheaper than full square root calculations via magnitude checking
         if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
-            Debug.LogError("NaN Cell Velocity ; i = " + i);
+            UnityEngine.Debug.LogError("NaN Cell Velocity ; i = " + i);
 
         if (!float.IsFinite(AirCellGroup[i].CellStaticVolume))
-            Debug.LogError("NaN Cell Volume ; i = " + i);
+            UnityEngine.Debug.LogError("NaN Cell Volume ; i = " + i);
 
         if (!float.IsFinite(AirCellGroup[i].Temperature))
-            Debug.LogError("NaN Temperature ; i = " + i);
+            UnityEngine.Debug.LogError("NaN Temperature ; i = " + i);
 
         if (prevStatVolumeSOM[i] <= 0 && AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
-            Debug.LogError("Negative/Null prevVolumeSOM ; i = " + i);
+            UnityEngine.Debug.LogError("Negative/Null prevVolumeSOM ; i = " + i);
 
         if (AirCellGroup[i].CellCenter.y <= -AirCellGroup[i].CellHeight / 2)
-            Debug.LogError("ACDDC - Air Cell Digging Down to China ; i = " + i);
+            UnityEngine.Debug.LogError("ACDDC - Air Cell Digging Down to China ; i = " + i);
 
         if (!float.IsFinite(AirCellGroup[i].CellCenter.x) || !float.IsFinite(AirCellGroup[i].CellCenter.y) || !float.IsFinite(AirCellGroup[i].CellCenter.z))
-            Debug.LogError("NaN Position ; i = " + i);
+            UnityEngine.Debug.LogError("NaN Position ; i = " + i);
     }
 
     float SafeValue(float value)
