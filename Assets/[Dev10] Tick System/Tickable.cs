@@ -26,10 +26,10 @@ public abstract class Tickable : MonoBehaviour
     }
 
     [ReadOnly, SerializeField, Tooltip("The accumulated time since the last tick, used to determine when to call Tick()")]
-    public float Accumulator { get; set; }
+    public float Accumulator;
 
     [ReadOnly, SerializeField, Tooltip("The accumulated time since the last fixed tick, used to determine when to call FixedTick()")]
-    public float FixedAccumulator { get; set; }
+    public float FixedAccumulator;
 
     bool isRegistered = false;
 

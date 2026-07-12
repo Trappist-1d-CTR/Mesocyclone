@@ -1,6 +1,6 @@
 # Mesocyclone
 Mesocyclone is a planned 3D game that combines Climate and Weather Simulations with Flight Physics and Exoplanetary Models.
-I'm currently developing it solo, system by system, through the months. My goal is to hopefully create a good demo to present to the outside world and prove its potential.
+I'm currently developing it with half bread (started solo), system by system, through the months. Our goal is to hopefully create a good demo to present to the outside world and prove its potential.
 
 But I don't want to focus nearly much on the gameplay or hook aspect.
 
@@ -25,7 +25,9 @@ Everything was made in Unity, Blender, Visual Studio, and C#
 - [Dev7] are a collection of shaders I have, still unsuccessfully, attempted to use.
 - [Dev8] is the Main Menu. Yes, I am making Dev#s for anything now-
 - [Dev9] Is the audio engine, which, well, serves as a framework to play audio clips
-- [Dev0] is not my code. It's a code I got from someone else to get fullscreen during testing without having to make 1000 builds.
+- [Dev10] This is specifically for the game's custom tick system, so we can support dynamic tick rates for performance
+- [Dev0] is not my code. It's code I got from someone else to get fullscreen during testing without having to make 1000 builds.
+    - Includes sub-folders for various different miscellaneous things, such as the debugger (formerly debugger & profiler), custom editor windows & GUI's & Utils, and custom Exceptions (don't look at that)
 
 ## Gale - The Exoplanet
 More information on it here (props to Artifexian for the original WorldSmith template which I slightly modified for my own needs):
@@ -39,7 +41,7 @@ If you got any questions regarding the code (I make little to no comments-) and/
 Major Software Requirements:
 - Unity Hub
 - Unity
-- Code editor (Visual Studio, etc.)
+- IDE / Code editor (Visual Studio, VSCode, Rider, etc.)
 Steps:
 - Download the repository: Go to Mesocyclone's main page, Click on the green "Code" button, Select the option to download zip, Extract the zip file to wherever you want (but keep in mind where).
 - Open with Unity Hub: Open Unity Hub, Click on "Add" and select "Add from disk", Click on the project when it appears.
@@ -54,3 +56,14 @@ Flight Drone Test: On the right side of the repository's home page, click on "1 
 # Copyright
 Technically: Look up MIT copyright license.
 Practically: Feel free to browse around the project in general and to download and/or copy any of the files, both in the project's entirety and in parts of it, as long as it's done either non-commercially or (in the case of a YouTube video) within the criteria of fair use. Moreover, while you can take parts of it (code snippets/files and unity scenes) and implement them into your own projects (with or without attribution), you cannot take the whole project and use it commercially (like selling). And whatever you end up doing with it, don't pretend to be the one to have made what you took from someone else (in general, not just regarding this project).
+
+# The Team
+Currently, Astraλ and half bread are the main part of the team.
+
+* Astraλ - Lead Developer, Founder, Primary Programmer, Gameplay Design, Creative, 3D Modeling, Graphics, Lore & Worldbuilding, Astronomy & Science, Marketing & Business side of things
+* hald bread - Secondary Programmer & Code Reviewer, SFX & Music, LSD
+
+And ofc a special thanks to several others such as:
+
+* Random - guidance on UI and UX
+* Playtesters - the bread, Random, (Astraλ, fill out the rest plz ;-;)

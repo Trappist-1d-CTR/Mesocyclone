@@ -6,31 +6,31 @@ public sealed class TickSystem : MonoBehaviour
 {
     public static TickSystem Instance { get; private set; }
 
-    List<Tickable> _Tickables = new();
-    public IReadOnlyList<Tickable> Tickables => _Tickables;
+    List<Tickable> _tickables = new();
+    public IReadOnlyList<Tickable> Tickables => _tickables;
 
 
     public void Register(Tickable Tickable)
     {
-        if (!_Tickables.Contains(Tickable))
-            _Tickables.Add(Tickable);
+        if (!_tickables.Contains(Tickable))
+            _tickables.Add(Tickable);
     }
 
     public void Unregister(Tickable Tickable)
     {
-        if (_Tickables.Contains(Tickable))
-            _Tickables.Remove(Tickable);
+        if (_tickables.Contains(Tickable))
+            _tickables.Remove(Tickable);
     }
 
     public void Unregister(UInt16 index) // unsigned short. Values between 0 and 65,535 . Should be enough for most cases, and saves memory over int
     {
-        if (_Tickables[(Int32)index] != null)
-            _Tickables.RemoveAt(index);
+        if (_tickables[(Int32)index] != null)
+            _tickables.RemoveAt(index);
     }
 
     public void UnregisterAll()
     {
-        _Tickables.Clear();
+        _tickables.Clear();
     }
 
 
@@ -65,7 +65,7 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var Tickable in _Tickables)
+            foreach (var Tickable in _tickables)
             {
                 Tickable.Accumulator += Time.deltaTime;
                 float interval = 1f / (Tickable.TickRate * Time.timeScale);
@@ -95,7 +95,7 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var TickableBehaviour in _Tickables)
+            foreach (var TickableBehaviour in _tickables)
             {
                 Tickable.FixedAccumulator += Time.fixedDeltaTime;
                 float interval = 1f / (Tickable.TickRate * Time.timeScale);

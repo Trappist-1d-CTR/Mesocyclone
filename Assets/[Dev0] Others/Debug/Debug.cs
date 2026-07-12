@@ -10,23 +10,14 @@
     #define ONLINUX
 #endif
 
-// Debugger & Profiler v0.2.0
-// the last versions v0.1.x had a shitty design because unity devs are too stubborn to stop deprecating
-// extremely useful API's and replace them with shittier ones
-// (looking at you UGUI -> UIToolkit and BIRP -> SRP)
-
-using System.Diagnostics; // Unity hates me so much
+using System.Diagnostics;
 using UnityEngine;
 
-// UNITY JUST UPDATE TO C# 10+ ALREADY
-// WE DONT WANT TO HAVE TO ADD "-langVersion: 10" IN THE RUNTIME ATTRIBUTES OR INSTALL UNITY ROSLYN UPDATER
-// FOR EVERY PROJECT
-// KILL MYSELF
+
 namespace MCCustom
 {
     /// <summary>
     /// Used for debugging and profiling aspects of the game
-    /// <para>Class is partial, so you can update it for all your modding needs. Thank me later modders</para>
     /// </summary>
     public static partial class MCDebug
     {
@@ -45,7 +36,7 @@ namespace MCCustom
             = false;
 
         static bool allowDevTools { get; set; } 
-            = true; // TODO: redundant until Modding API comes out
+            = false; // TODO: redundant until Modding API comes out
 
 
         // have to implement this for each OS because everyone hates each other
@@ -117,10 +108,6 @@ namespace MCCustom
         public static float totalElapsedGameTimeInDays { get; private set; }
 
 
-        // graphs
-        public static FPSGraph fpsGraph { get; private set; }
-
-
         public static void Init()
         {
             _isRunning = true;
@@ -136,29 +123,21 @@ namespace MCCustom
                     devTools = !devTools;
             }
 
-            if (devTools)
-            {
-                if (Input.GetKeyDown(KeyCode.N))
-                    fpsGraph = new FPSGraph();
-            }
-
             totalElapsedGameTime = (ulong)Time.frameCount; // just reference Time.frameCount lol
             totalElapsedGameTimeInMilliseconds = (float)process.TotalProcessorTime.TotalMilliseconds;
             totalElapsedGameTimeInSeconds = (float)process.TotalProcessorTime.TotalSeconds;
             totalElapsedGameTimeInMinutes = (float)process.TotalProcessorTime.TotalMinutes;
             totalElapsedGameTimeInDays = (float)process.TotalProcessorTime.TotalDays;
-
-            fpsGraph?.Sample(Time.unscaledDeltaTime);
         }
 
-        internal static void OnQuit() =>
+        internal static void OnQuit()
+        {
             _isRunning = false;
+        }
 
         // seriously don't wanna bother with game objects and TMP
         public static void OnGUI()
         {
-            DebugGraphManager.OnGUI();
-
             // to prevent multiple Debug.Log calls
             bool checkDevToolsFont = true;
 
