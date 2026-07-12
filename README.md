@@ -67,3 +67,8 @@ And ofc a special thanks to several others such as:
 
 * Random - guidance on UI and UX
 * Playtesters - the bread, Random, (Astraλ, fill out the rest plz ;-;)
+* fnuecke - for his fullscreen script
+* Code Monkey - for their various C# libs
+* Lepsima - for their auto-exposure package
+* Bro Code - for saving me (half bread) by teaching Astraλ C# fundamentals (*/jk*)
+* And to everyone tuned in on TIG :D
