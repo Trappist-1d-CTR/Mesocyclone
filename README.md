@@ -10,6 +10,22 @@ As I develop the exoplanet, Gale, its environment, with sheer passive hostility 
 You can take a look at the game's development through my TigSource topic: https://forums.tigsource.com/index.php?topic=76539.0
 It contains lots of physics, explanations, and nerdy af jokes (all of which will certainly contain some mistakes in grammar/spelling/reasoning/factuality). Enjoy! :D
 
+## The Team
+Currently, **Astraλ** and **half bread** are the main part of the team.
+
+* **Astraλ -** Lead Developer, Founder, Primary Programmer, Gameplay Design, Creative, 3D Modeling, Graphics, Lore & Worldbuilding, Astronomy & Science, Marketing & Business side of things
+* **hald bread -** Secondary Programmer & Code Reviewer, SFX & Music, LSD
+
+And ofc a _**special thanks**_ to several others such as:
+
+* **Random -** guidance on UI and UX
+* **Playtesters -** the bread, Random, (Astraλ, fill out the rest plz ;-;)
+* **fnuecke -** for their fullscreen script
+* **Code Monkey -** for their various C# libs
+* **Lepsima -** for their auto-exposure package
+* **Bro Code -** for saving me (half bread) by teaching Astraλ C# fundamentals (*/jk*)
+* And to everyone tuned in on TIG :D
+
 ## The Code
 The codeitself is full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
 You can find the ones I coded myself, though, by peeking into the Assets Folder and locating all the ones marked with the following [Dev#] (# being a number) and then opening the folder named "Script(s)".
@@ -56,19 +72,3 @@ Flight Drone Test: On the right side of the repository's home page, click on "1 
 # Copyright
 Technically: Look up MIT copyright license.
 Practically: Feel free to browse around the project in general and to download and/or copy any of the files, both in the project's entirety and in parts of it, as long as it's done either non-commercially or (in the case of a YouTube video) within the criteria of fair use. Moreover, while you can take parts of it (code snippets/files and unity scenes) and implement them into your own projects (with or without attribution), you cannot take the whole project and use it commercially (like selling). And whatever you end up doing with it, don't pretend to be the one to have made what you took from someone else (in general, not just regarding this project).
-
-# The Team
-Currently, **Astraλ** and **half bread** are the main part of the team.
-
-* **Astraλ -** Lead Developer, Founder, Primary Programmer, Gameplay Design, Creative, 3D Modeling, Graphics, Lore & Worldbuilding, Astronomy & Science, Marketing & Business side of things
-* **hald bread -** Secondary Programmer & Code Reviewer, SFX & Music, LSD
-
-And ofc a _**special thanks**_ to several others such as:
-
-* **Random -** guidance on UI and UX
-* **Playtesters -** the bread, Random, (Astraλ, fill out the rest plz ;-;)
-* **fnuecke -** for his fullscreen script
-* **Code Monkey -** for their various C# libs
-* **Lepsima -** for their auto-exposure package
-* **Bro Code -** for saving me (half bread) by teaching Astraλ C# fundamentals (*/jk*)
-* And to everyone tuned in on TIG :D
