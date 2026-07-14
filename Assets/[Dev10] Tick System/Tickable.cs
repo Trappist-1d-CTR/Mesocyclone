@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using UnityEngine;
 
 // thank you IntelliSense for automating all these strings! <3
@@ -12,7 +13,7 @@ public abstract class Tickable : MonoBehaviour
     [Tooltip("Global default tick rate for all tickables, can be changed if needed")]
     public static readonly float DefaultTickRate = 50f; // default tick rate for all tickables, can be changed in the future if needed
 
-    [SerializeField, Tooltip($"The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
+    [SerializeField, Tooltip("The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
     float tickRate = DefaultTickRate; // set this to what's best
     public float TickRate
     {

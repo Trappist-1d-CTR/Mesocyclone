@@ -95,15 +95,15 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var TickableBehaviour in _tickables)
+            foreach (var tickable in _tickables)
             {
-                Tickable.FixedAccumulator += Time.fixedDeltaTime;
-                float interval = 1f / (Tickable.TickRate * Time.timeScale);
+                tickable.FixedAccumulator += Time.fixedDeltaTime;
+                float interval = 1f / (tickable.TickRate * Time.timeScale);
 
-                while (Tickable.FixedAccumulator >= interval)
+                while (tickable.FixedAccumulator >= interval)
                 {
-                    Tickable.FixedTick();
-                    Tickable.FixedAccumulator -= interval;
+                    tickable.FixedTick();
+                    tickable.FixedAccumulator -= interval;
                 }
             }
         }
