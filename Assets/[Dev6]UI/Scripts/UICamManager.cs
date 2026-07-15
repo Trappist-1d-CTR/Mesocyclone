@@ -13,7 +13,7 @@ public class UICamManager : MonoBehaviour
 {
     #region Variables
 
-    private Rigidbody DroneBody;
+    public Rigidbody DroneBody;
 
     #region Camera & UI
     public Camera Cam;
@@ -64,9 +64,9 @@ public class UICamManager : MonoBehaviour
 
     #endregion
 
-    public MCCustom.Process soundTest;
+    public Process soundTest;
 
-    void Start()
+    void Awake()
     {
         #region Get Components and Vectors
 
@@ -77,6 +77,10 @@ public class UICamManager : MonoBehaviour
         CameraRotation = Vector3.zero;
         CameraVector = transform.localPosition;
 
+        #endregion
+
+        #region Check and Set Time Scale
+        if (Time.timeScale != 1) Time.timeScale = 1;
         #endregion
 
         #region Disable Pause Menus
@@ -283,6 +287,8 @@ public class UICamManager : MonoBehaviour
     public void EscapeUI()
     {
         SoundClick();
+        if (DroneBody == null)
+            DroneBody = transform.GetComponentInParent<Rigidbody>();
         OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
 
         if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)

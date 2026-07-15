@@ -15,7 +15,7 @@ public sealed class AudioManager : MonoBehaviour
 {
     #region Variables
 
-    static AudioManager _instance;
+    public static AudioManager? _instance;
     public static AudioManager Instance
     {
         get
@@ -35,9 +35,9 @@ public sealed class AudioManager : MonoBehaviour
     [Serializable]
     class PoolEntry
     {
-        public GameObject GO;
-        public AudioSource Source;
-        public AudioLowPassFilter Filter;
+        public GameObject? GO;
+        public AudioSource? Source;
+        public AudioLowPassFilter? Filter;
     }
 
     [Header("Pool Stuff")]
@@ -112,7 +112,7 @@ public sealed class AudioManager : MonoBehaviour
         
         _instance = this;
         DontDestroyOnLoad(gameObject);
-        Listener = FindObjectOfType<AudioListener>();
+        Listener = FindFirstObjectByType<AudioListener>();
         OcclusionMask = LayerMask.GetMask("Terrain");
     }
 

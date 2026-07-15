@@ -296,7 +296,7 @@ MonoBehaviour:
   - 1.4
   - 1.6
   - 4
-  TorqueStabilizationJerk: 1000000
+  TorqueStabilizationJerk: 50000
   ControlSurfaceMaxAngles:
   - 26
   - 10
@@ -478,6 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8315d74edf13d4a97870781208c388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICamManager
+  DroneBody: {fileID: 0}
   Cam: {fileID: 0}
   CamCollisionRadius: 0.02
   UICanvas: {fileID: 0}

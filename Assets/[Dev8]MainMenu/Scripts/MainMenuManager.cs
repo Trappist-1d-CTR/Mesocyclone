@@ -37,7 +37,7 @@ public class MainMenuManager : MonoBehaviour
 
     #endregion
 
-    void Start()
+    void Awake()
     {
         SimulationSettings.Load();
 

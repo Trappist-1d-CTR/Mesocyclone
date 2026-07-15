@@ -62,39 +62,26 @@ public sealed class AirCell
     #region Public Functions
 
     #region Physics
-    public void PerformVelocity()
-    {
-        CellCenter += Velocity * Time.fixedDeltaTime;
-    }
 
-    public void PerformVelocity(float deltaTime)
+    public void PerformVelocity(float deltaTime = -1)
     {
+        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+
         CellCenter += Velocity * deltaTime;
     }
 
-    public void PerformAcceleration(Vector3 Acc)
+    public void PerformAcceleration(Vector3 Acc, float deltaTime = -1)
     {
-        Acceleration = Acc;
-        Velocity += Acceleration * Time.fixedDeltaTime;
-    }
+        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
 
-    public void PerformAcceleration(Vector3 Acc, float deltaTime)
-    {
         Acceleration = Acc;
         Velocity += Acceleration * deltaTime;
     }
 
-    public void AccAlongVelocity(float Acc)
+    public void AccAlongVelocity(float Acc, float deltaTime = -1)
     {
-        if (Velocity.sqrMagnitude > 1e-10f)
-        {  
-            Acceleration = Velocity.normalized * Acc;
-            Velocity += Acceleration * Time.fixedDeltaTime;   
-        }
-    }
+        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
 
-    public void AccAlongVelocity(float Acc, float deltaTime)
-    {
         // no idea why there wasn't a guard here
         if (Velocity.sqrMagnitude > 1e-10f)
         {
