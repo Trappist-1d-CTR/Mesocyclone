@@ -352,10 +352,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e5ead60197afb044a1f43c990d75591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cam: {fileID: 0}
-  CameraRotation: {x: 0, y: 0}
-  CameraVector: {x: 0, y: 0, z: 0}
-  BackgrES: {fileID: 1674678792}
   h: 0
   prev_h: Infinity
   delta_h: 0
@@ -370,31 +366,6 @@ MonoBehaviour:
   hm: 1
   sas: 1
   flipstate: 0
-  PostProcessing: {fileID: 490953856}
-  FOVFromSpeed:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 45
-      inSlope: -0.0375215
-      outSlope: 0.05
-      tangentMode: 1
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.2033275
-    - serializedVersion: 3
-      time: 600
-      value: 75
-      inSlope: 0.05
-      outSlope: 0.05
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   SAO:
   - {fileID: 1991267078}
   - {fileID: 842495819}
@@ -1228,7 +1199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Area: 1600
   Temperature: 1300
-  Moles: 401122.19451371575
+  Moles: 401122.2
   MolarWeight: 0.0401
   MassPerSquareMeter: 3217
   Albedo: 0.28
@@ -1346,17 +1317,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1674678792 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5717290762145121952, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
-  m_PrefabInstance: {fileID: 8966088915275858557}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78ce6b5e4c6247e4e944aaf6de634efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1767187470
@@ -1656,6 +1616,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2066358658}
   - component: {fileID: 2066358659}
+  - component: {fileID: 2066358660}
   m_Layer: 0
   m_Name: GlobalValues
   m_TagString: GameController
@@ -1692,16 +1653,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   R: 8.31432
-  GreekS: 0.00000005670374384538464
+  GreekS: 0.000000056703744
   NA: 0
   kb: 0
   Omega: 0
   G: 0
-  SunM: 1.9884160299206226e+30
-  SunR: 6.957000104685223e+30
+  SunM: 1.9884161e+30
+  SunR: 6.957e+30
   SunT: 5800
   EarthAtm: 101325
-  EarthM: 5.976000082758205e+24
+  EarthM: 5.9760003e+24
   EarthR: 0
   EarthG: 9.80665
   EarthAtmMM: 0.0289644
@@ -1709,7 +1670,7 @@ MonoBehaviour:
   EarthAtmCp: 1000
   EarthAvgTemp: 288
   EarthKarman: 100000
-  AU: 149598000000
+  AU: 1.49598e+11
   EarthInsolation: 0
   EarthAlbedo: 0
   EarthTw: 0
@@ -1797,6 +1758,28 @@ MonoBehaviour:
   FrameCount: 0
   TimeStepMultiplier: 100
   OrbitStepMultiplier: 5000
+  SetupComplete: 0
+--- !u!114 &2066358660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066358657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aafe42ed194d25444bcb4c1b2e40108e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GaleOS_0D
+  A: 0.916
+  Greenhouse: 0.220614
+  C: 800
+  t: 0
+  tMultiplier: 604800
+  S: 0
+  Ei: 0
+  Ee: 0
+  T: 1039
 --- !u!1001 &2080940399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1895,7 +1878,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2112915243
 Transform:
   m_ObjectHideFlags: 0
@@ -1923,9 +1906,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61b938b99d4a0fc4e8e737156d66acfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TerrainAtSeaLevel: 1
+  FollowDrone: 0
+  AirCellObjects: 0
+  TerrainAtSeaLevel: 0
+  InterpolationWithTerrain: 0
   CubeObject: {fileID: 8828998887846330892, guid: 9c68b50ddcd40bc429423ee4109a0633, type: 3}
   CenterTest: {x: 0, y: 0, z: 0}
+  AirCellsBounds: {x: 0, y: 0}
+  AirCellStartingGrid: []
   MoleTest: 100000
   TempTest: 1300
   VelTest: {x: 0, y: 0, z: 0}
@@ -1936,6 +1924,7 @@ MonoBehaviour:
   CdTest: 1
   DistanceScale: 1
   GravityScale: 1
+  SetTimeScale: 0
   LocalLatitude: 0
   iLocal: 0
   AmbientHeat: 0
@@ -1945,6 +1934,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  CellsInstantiated: 0
 --- !u!1001 &2143650351
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2061,7 +2051,7 @@ GameObject:
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1711813856083670304
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2217,6 +2207,7 @@ MonoBehaviour:
   WindParticlesEnabled: 0
   WindParticles: {fileID: 0}
   ParticlesOriginDistance: 0
+  EngineTrails: {fileID: 0}
   DataTimeRate: 10
   DataGatherStage: 0
   OutputData:
@@ -2231,15 +2222,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2392695868217095951, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2927943660247835630, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8592090197389616602, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8966088916130560977, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
       propertyPath: m_Pivot.x
@@ -2329,6 +2320,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CanvasUI
       objectReference: {fileID: 0}
+    - target: {fileID: 8966088916130560981, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2406,8 +2401,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 97443589}
   - {fileID: 490953857}
-  - {fileID: 543450652671118927}
   - {fileID: 2066358658}
   - {fileID: 1639228965}
   - {fileID: 1177891296}
+  - {fileID: 543450652671118927}
   - {fileID: 8966088915275858557}

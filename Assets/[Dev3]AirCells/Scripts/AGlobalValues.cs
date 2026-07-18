@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class AGlobalValues : MonoBehaviour
-{   
+{
     #region Rant
     // Astraa, wh- why...
     // Like seriously-
@@ -17,7 +17,7 @@ public sealed class AGlobalValues : MonoBehaviour
     // thing is if you assign at decleration, you have to worry about fucking when the assignments are listed
     // like i can't reference a value that is assigned below the wall of fields (if that makes any sense)
     // like, WHAT DO I DO!?!?!???!?!?
-    
+
     // for anyone reading this, PLEASE DO NOT CHANGE THESE VALUES
     // JUST TRUST ME
     // *tho tbh this does open up some super weird math-manipulating mods lol*
@@ -82,7 +82,11 @@ public sealed class AGlobalValues : MonoBehaviour
 
     public List<float> GaleAtmosphericComposition = new(5)
     {
-        0.0002f, 0.134f, 0.417f, 0.3628f, 0.086f 
+        0.0002f,
+        0.134f,
+        0.417f,
+        0.3628f,
+        0.086f
     };
 
     public float GaleAtmCp;
@@ -119,7 +123,7 @@ public sealed class AGlobalValues : MonoBehaviour
     public Material Atmosphere;
     #endregion
 
-    #region EOS-ESTM
+    #region Old EOS-ESTM Attempt
 
     public AnimationCurve GlobalInsolation;
     public AnimationCurve ClearSkyTransparency;
@@ -470,6 +474,8 @@ public sealed class AGlobalValues : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(CalculateStaticInsolation(GaleSemiMajor));
+
         #region List Setups
         EOS_Temperature = new float[EOS_N];
         EOS_Diffusion = new float[EOS_N];
@@ -539,17 +545,17 @@ public sealed class AGlobalValues : MonoBehaviour
             for (int i = 0; i < EOS_N; i++)
             {
                 EOS_Temperature[i] += EOS_Insolation[i] * (1 - EOS_A) * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
-                
+
                 for (int i2 = i + 1; i2 < EOS_N; i2++)
                 {
                     int index = (i * EOS_N) - (i * (i + 1) / 2) + i2 - i - 1;
-                    
-                    float mem = (EOS_D[0] * ((EOS_Temperature[i2] - EOS_Temperature[i]) * 
+
+                    float mem = (EOS_D[0] * ((EOS_Temperature[i2] - EOS_Temperature[i]) *
                                  System.MathF.Pow(EOS_X[index], 2))) / 2;
-                    
+
                     EOS_Diffusion[i] += mem * Time.fixedDeltaTime;
                     EOS_Diffusion[i2] -= mem * Time.fixedDeltaTime;
-                    
+
                     EOS_Temperature[i] += mem * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
                     EOS_Temperature[i2] -= mem * (Time.fixedDeltaTime * TimeStepMultiplier * UpdateFrame) / EOS_C;
                 }
