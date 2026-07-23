@@ -103,7 +103,12 @@ public abstract class Tickable : MonoBehaviour
             }
             else if (distance < maxDistance)
             {
-                TickRate = Mathf.Lerp(0f, 50f, 1f - (distance - minDistance) / (maxDistance - minDistance)); // Lower tick rate based on distance
+                // Lower / higher tick rate based on distance
+                TickRate = Mathf.Lerp
+                (
+                    0f, 50f,
+                    1f - (distance - minDistance) / (maxDistance - minDistance)
+                );
             }
             else
             {

@@ -65,17 +65,17 @@ public sealed class TickSystem : MonoBehaviour
     {
         try
         {
-            foreach (var Tickable in _tickables)
+            foreach (var tickable in _tickables)
             {
-                Tickable.Accumulator += Time.deltaTime;
-                float interval = 1f / (Tickable.TickRate * Time.timeScale);
+                tickable.Accumulator += Time.deltaTime;
+                float interval = 1f / (tickable.TickRate * Time.timeScale);
 
                 // using while makes it so multiple due ticks catch up - i think so... 
                 // and even if it does, not sure how well it does performance wise
-                while (Tickable.Accumulator >= interval)
+                while (tickable.Accumulator >= interval)
                 {
-                    Tickable.Tick();
-                    Tickable.Accumulator -= interval;
+                    tickable.Tick();
+                    tickable.Accumulator -= interval;
                 }
             }
         }
@@ -84,10 +84,6 @@ public sealed class TickSystem : MonoBehaviour
         {
             // your sins will not go unnoticed
             throw new Joar();
-        }
-        finally
-        {
-            // this should never happen
         }
     }
 

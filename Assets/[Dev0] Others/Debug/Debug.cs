@@ -10,9 +10,12 @@
     #define ONLINUX
 #endif
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    #define DEV
+#endif
+
 using System.Diagnostics;
 using UnityEngine;
-
 
 namespace MCCustom
 {
@@ -31,12 +34,19 @@ namespace MCCustom
         /// <para>duh</para>
         /// </summary>
         public static bool isRunning => _isRunning;
+        // no idea if this actually trasmits, since the property itself isn't volatile *shrug*
+
 
         public static bool devTools { get; private set; } 
-            = false;
-
-        static bool allowDevTools { get; set; } 
-            = false; // TODO: redundant until Modding API comes out
+        
+        // TODO: change this upon modding API
+        #if DEV
+            static bool allowDevTools { get; set; } 
+                = true;
+        #else
+            static bool allowDevTools { get; set; }
+                = false;
+        #endif
 
 
         // have to implement this for each OS because everyone hates each other

@@ -1,4 +1,4 @@
-#define SHOW_PROCESS_INFO
+#undef SHOW_PROCESS_INFO
 
 // this is fucking useless
 
