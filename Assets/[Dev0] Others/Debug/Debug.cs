@@ -17,7 +17,7 @@
 using System.Diagnostics;
 using UnityEngine;
 
-namespace MCCustom
+namespace Mesocyclone.Debug
 {
     /// <summary>
     /// Used for debugging and profiling aspects of the game
@@ -169,7 +169,7 @@ namespace MCCustom
                     UnityEngine.Debug.LogWarning
                     (
                         // REMINDER: Update ln during Debug.cs changes
-                        $"Font 'Xolonium-pn4D' unable to be loaded\n@: MCCustom.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"
+                        $"Font 'Xolonium-pn4D' unable to be loaded\n@: Mesocyclone.Debug.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"
                     );
 
                     checkDevToolsFont = false; // prevent this from re-calling

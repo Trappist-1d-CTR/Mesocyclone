@@ -1,14 +1,106 @@
+// yknow what, im not adding a namespace to this, >/Format Document can suck my ass
+
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using MCCustom; // System.Diagnostics.Process exists...
-
-#if UNITY_EDITOR
+using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 
 using UnityEditor;
 
 #nullable enable // in case this isn't disabled
 
+#region Editor Utility
+
+[CustomEditor(typeof(AudioManager))]
+public class AudioManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.DrawDefaultInspector();
+
+        AudioManager audioManager = (AudioManager)base.target;
+
+        if (GUILayout.Button("Play"))
+            AudioManagerPlayWindow.Open(false);
+
+        if (GUILayout.Button("Play Repeating"))
+            AudioManagerPlayWindow.Open(true);
+
+        if (GUILayout.Button("Stop Repeating"))
+            AudioManagerStopRepeatingWindow.Open();
+
+        if (GUILayout.Button("Stop All Repeating"))
+            audioManager.StopAllRepeating();
+
+        if (GUILayout.Button("Pause All"))
+            audioManager.PauseAll();
+
+        if (GUILayout.Button("UnPause All"))
+            audioManager.UnPauseAll();
+
+        if (GUILayout.Button("Interrupt"))
+            AudioManagerInterruptWindow.Open(false);
+        
+        if (GUILayout.Button("Repeating Interrupt"))
+            AudioManagerInterruptWindow.Open(true);
+
+        if (GUILayout.Button("Stop Repeating Interrupt"))
+            AudioManager.Instance.StopRepeatingInterrupt();
+
+        if (GUILayout.Button("Set Pool Size"))
+            AudioManagerSetPoolSizeWindow.Open();
+    }
+}
+
+#endregion
+
+
+#region Play Options Window
+
+public class AudioManagerPlayWindow : EditorWindow
+{
+    #region Variables
+
+    bool isRepeating;
+
+    AudioClip clip = null!; // `null!` is a keyword that's equivalent to `null` but doesn't make the compiler complain
+    float minPitch = 0.9f;
+    float maxPitch = 1.1f;
+    Vector3 position = default; // Vector3.zero
+    bool is2D = true;
+    float volume = 1f;
+    float minDistance = 15f;
+    float maxDistance = 100f;
+    AudioRolloffMode rolloffMode = AudioRolloffMode.Linear;
+
+    bool pitchBypass = false;
+    bool amplify = false;
+
+    #endregion
+
+
+    #region Funcions
+
+    public static void Open(bool isRepeating)
+    {
+        var window = GetWindow<AudioManagerPlayWindow>();
+        window.isRepeating = isRepeating;
+        window.titleContent = new GUIContent
+        (
+            isRepeating ? "Audio Manager : PlayRepeating()" : "Audio Manager : Play()",
+            EditorGUIUtility.IconContent("AudioSource Icon").image
+        );
+    }
+
+    void OnGUI()
+    {
+        clip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", clip, typeof(AudioClip), false);
+
+        GUILayout.Space(10);
+
+        pitchBypass = EditorGUILayout.Toggle("Pitch Bypass", pitchBypass);
 #region Editor Utility
 
 [CustomEditor(typeof(AudioManager))]
@@ -166,7 +258,7 @@ public class AudioManagerPlayWindow : EditorWindow
 
             else
             {
-                MCCustom.Process process = AudioManager.Instance.PlayRepeating
+                Mesocyclone.Debug.Process process = AudioManager.Instance.PlayRepeating
                 (
                     clip, minPitch, maxPitch, position, is2D, volume, minDistance, maxDistance, rolloffMode
                 );
@@ -357,6 +449,10 @@ public class AudioManagerSetPoolSizeWindow : EditorWindow
             AudioManager.Instance.SetPoolSize(maxPoolSize);
     }
 }
+
+#endregion
+
+#endregion
 
 #endregion
 

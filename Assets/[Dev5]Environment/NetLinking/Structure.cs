@@ -2,117 +2,120 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Structure : MonoBehaviour
+namespace Mesocyclone
 {
-    #region Variables
-
-    public string Name;
-    public string Type;
-    public Transform t;
-    public Vector3 AntennaPos;
-    private Transform DroneT;
-    public float Data2Link;
-    public float LinkedData;
-    public bool Linked = false;
-    public bool Detectable = true;
-
-    public List<Structure> DetectableAfterLinked;
-
-    #endregion
-
-    #region Constructors
-
-    public void SetStructure()
+    public class Structure : MonoBehaviour
     {
-        Name = "Structure";
-        Type = "Unknown";
-        LinkedData = 0;
-        Data2Link = 10;
-    }
+        #region Variables
 
-    public void SetStructure(string Name, string Type)
-    {
-        this.Name = Name;
-        this.Type = Type;
-        LinkedData = 0;
-        Data2Link = 10;
-    }
+        public string Name;
+        public string Type;
+        public Transform t;
+        public Vector3 AntennaPos;
+        private Transform DroneT;
+        public float Data2Link;
+        public float LinkedData;
+        public bool Linked = false;
+        public bool Detectable = true;
 
-    public void SetStructure(string Name, string Type, int DataRequiredToLink)
-    {
-        this.Name = Name;
-        this.Type = Type;
-        LinkedData = 0;
-        Data2Link = DataRequiredToLink;
-    }
+        public List<Structure> DetectableAfterLinked;
 
-    #endregion
+        #endregion
 
-    private void Awake()
-    {
-        t = transform;
-        DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        #region Constructors
 
-        if (Data2Link == 0)
+        public void SetStructure()
         {
-            Data2Link = 1;
-            LinkedData = 1;
-            Linked = true;
+            Name = "Structure";
+            Type = "Unknown";
+            LinkedData = 0;
+            Data2Link = 10;
         }
-    }
 
-    public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
-    {
-        while (DroneT != GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>())
+        public void SetStructure(string Name, string Type)
         {
+            this.Name = Name;
+            this.Type = Type;
+            LinkedData = 0;
+            Data2Link = 10;
+        }
+
+        public void SetStructure(string Name, string Type, int DataRequiredToLink)
+        {
+            this.Name = Name;
+            this.Type = Type;
+            LinkedData = 0;
+            Data2Link = DataRequiredToLink;
+        }
+
+        #endregion
+
+        private void Awake()
+        {
+            t = transform;
             DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
+            if (Data2Link == 0)
+            {
+                Data2Link = 1;
+                LinkedData = 1;
+                Linked = true;
+            }
         }
 
-        if (!Linked)
+        public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
         {
-            Vector3 Antenna = t.position + (t.rotation * AntennaPos);
-
-            RaycastHit hit;
-            Vector3 direction = (Antenna - AttemptPosition).normalized;
-            bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
-            bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.06f; // only link to structures below??   A: Y E S
-            if (hasLineOfSight && isPointingDown && hit.transform.IsChildOf(t))
+            while (DroneT != GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>())
             {
-                //Debug.Log("Visible: " + Name);
-                if (!Detectable) Detectable = true;
-                
-                float distance = Vector3.Distance(AttemptPosition, Antenna);
-                float effectiveRange = Mathf.Max(1e-3f, Range);
+                DroneT = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+            }
 
-                float Signal = 1f - Mathf.InverseLerp(0f, effectiveRange, distance);
+            if (!Linked)
+            {
+                Vector3 Antenna = t.position + (t.rotation * AntennaPos);
 
-                if (Signal > Random.Range(0, Random.Range(3, 7)))
+                RaycastHit hit;
+                Vector3 direction = (Antenna - AttemptPosition).normalized;
+                bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
+                bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.06f; // only link to structures below??   A: Y E S
+                if (hasLineOfSight && isPointingDown && hit.transform.IsChildOf(t))
                 {
-                    LinkedData += Mathf.FloorToInt(TransferRate * Signal) * Time.fixedDeltaTime;
-                }
+                    //Debug.Log("Visible: " + Name);
+                    if (!Detectable) Detectable = true;
 
-                if (LinkedData >= Data2Link)
-                {
-                    LinkedData = Data2Link;
-                    Linked = true;
-                    Debug.Log("Linked: " + Name);
+                    float distance = Vector3.Distance(AttemptPosition, Antenna);
+                    float effectiveRange = Mathf.Max(1e-3f, Range);
 
-                    foreach (Structure structur in DetectableAfterLinked)
+                    float Signal = 1f - Mathf.InverseLerp(0f, effectiveRange, distance);
+
+                    if (Signal > Random.Range(0, Random.Range(3, 7)))
                     {
-                        structur.Detectable = true;
+                        LinkedData += Mathf.FloorToInt(TransferRate * Signal) * Time.fixedDeltaTime;
                     }
+
+                    if (LinkedData >= Data2Link)
+                    {
+                        LinkedData = Data2Link;
+                        Linked = true;
+                        Debug.Log("Linked: " + Name);
+
+                        foreach (Structure structur in DetectableAfterLinked)
+                        {
+                            structur.Detectable = true;
+                        }
+                    }
+
+                    return true;
                 }
-
-                return true;
+                else
+                {
+                    /*Debug.Log("Blocked: " + Name);*/
+                    return false;
+                }
             }
-            else
-            {
-                /*Debug.Log("Blocked: " + Name);*/
-                return false;
-            }
+            else return false;
         }
-        else return false;
-    }
 
-    public float LinkProgress() => Mathf.Clamp01(LinkedData / Data2Link);
+        public float LinkProgress() => Mathf.Clamp01(LinkedData / Data2Link);
+    }
 }

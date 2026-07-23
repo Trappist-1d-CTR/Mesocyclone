@@ -3,13 +3,16 @@ using UnityEngine;
 
 // base class for all performance overloads
 
-/// <summary>
-/// last resort for humanity
-/// </summary>
-public class PerformanceOverloadException : Exception
+namespace Mesocyclone
 {
-    public PerformanceOverloadException() : base("Game has overwhelmed all device resources, crash staged")
+    /// <summary>
+    /// last resort for humanity
+    /// </summary>
+    public class PerformanceOverloadException : Exception
     {
-        Debug.LogError(base.Message);
+        public PerformanceOverloadException() : base("Game has overwhelmed all device resources, crash staged")
+        {
+            Debug.LogError(base.Message);
+        }
     }
 }

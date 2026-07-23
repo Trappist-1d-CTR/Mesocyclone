@@ -7,346 +7,350 @@ using TMPro;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
-using MCCustom; // System.Diagnostics.Process exists...
+using Mesocyclone.Debug; // System.Diagnostics.Process exists...
+using Mesocyclone;
 
-public class UICamManager : MonoBehaviour
+namespace Mesocyclone.UI
 {
-    #region Variables
-
-    public Rigidbody DroneBody;
-
-    #region Camera & UI
-    public Camera Cam;
-    private Vector2 CameraRotation;
-    private Vector3 localCamRot;
-    private Vector3 CameraVector;
-    private float CameraScale;
-    public float CamCollisionRadius;
-
-    public Canvas UICanvas;
-    public ButtonEventSystem BackgrES;
-
-    public float MinCamScale;
-    public float MaxCamScale;
-    #endregion
-
-    #region Camera Effects
-    public Volume PostProcessing;
-    public AnimationCurve FOVFromSpeed;
-    #endregion
-
-    #region Pause Menus
-    public GameObject PausePanel;
-    public GameObject PauseMenu;
-    public GameObject SettingsMenu;
-    public GameObject FeedbackMenu;
-
-    public GameObject FeedbackSent;
-    public Button[] FeedbackAssessmentButtons;
-    public GameObject[] FeedbackAssessmentTexts;
-    public TextMeshProUGUI OtherInfo;
-    #endregion
-
-    #region Notifications
-    public float MET;
-    public float NotifAnimTimer;
-    public TextMeshProUGUI NotifTime;
-    public TextMeshProUGUI NotifThumbnail;
-    public int NotifSelectedMessage;
-    public TextMeshProUGUI NotifMessageIndex;
-    public Image NotifOutline;
-    public Color NotifNewMsgColor;
-    #endregion
-
-    #region Audio
-    [SerializeField] AudioListener audioListener;
-    #endregion
-
-    #endregion
-
-    public Process soundTest;
-
-    void Awake()
+    public class UICamManager : MonoBehaviour
     {
-        #region Get Components and Vectors
+        #region Variables
 
-        DroneBody = transform.GetComponentInParent<Rigidbody>();
+        public Rigidbody DroneBody;
 
-        Cam = gameObject.GetComponent<Camera>();
-        localCamRot = Vector3.zero;
-        CameraRotation = Vector3.zero;
-        CameraVector = transform.localPosition;
+        #region Camera & UI
+        public Camera Cam;
+        private Vector2 CameraRotation;
+        private Vector3 localCamRot;
+        private Vector3 CameraVector;
+        private float CameraScale;
+        public float CamCollisionRadius;
+
+        public Canvas UICanvas;
+        public ButtonEventSystem BackgrES;
+
+        public float MinCamScale;
+        public float MaxCamScale;
+        #endregion
+
+        #region Camera Effects
+        public Volume PostProcessing;
+        public AnimationCurve FOVFromSpeed;
+        #endregion
+
+        #region Pause Menus
+        public GameObject PausePanel;
+        public GameObject PauseMenu;
+        public GameObject SettingsMenu;
+        public GameObject FeedbackMenu;
+
+        public GameObject FeedbackSent;
+        public Button[] FeedbackAssessmentButtons;
+        public GameObject[] FeedbackAssessmentTexts;
+        public TextMeshProUGUI OtherInfo;
+        #endregion
+
+        #region Notifications
+        public float MET;
+        public float NotifAnimTimer;
+        public TextMeshProUGUI NotifTime;
+        public TextMeshProUGUI NotifThumbnail;
+        public int NotifSelectedMessage;
+        public TextMeshProUGUI NotifMessageIndex;
+        public Image NotifOutline;
+        public Color NotifNewMsgColor;
+        #endregion
+
+        #region Audio
+        [SerializeField] AudioListener audioListener;
+        #endregion
 
         #endregion
 
-        #region Check and Set Time Scale
-        if (Time.timeScale != 1) Time.timeScale = 1;
-        #endregion
+        public Process soundTest;
 
-        #region Disable Pause Menus
-        ToggleMenu(-1);
-        #endregion
-
-        MET = 0;
-        CameraScale = 1;
-        NotifSelectedMessage = 1;
-        NotifAnimTimer = -1;
-        Application.targetFrameRate = -1;
-
-        #region Initialize AudioListener
-
-        if (gameObject.GetComponent<AudioListener>() == null)
-            audioListener = gameObject.AddComponent<AudioListener>();
-        else audioListener = gameObject.GetComponent<AudioListener>();
-
-        #endregion
-    }
-
-    private void FixedUpdate()
-    {
-        #region Camera Controls
-        Vector3 ScaledCamVector = CameraVector * CameraScale;
-
-        if (BackgrES.PointerOverElement)
+        void Awake()
         {
-            if (ButtonEventSystem.PointerDown(1))
-            {
-                // Up/down rotation                                                 // Rotation around normal
-                CameraRotation = new(CameraRotation.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+            #region Get Components and Vectors
 
-                if (Mathf.Abs(CameraRotation.x) > 180)
-                {
-                    CameraRotation.x = Mathf.Sign(CameraRotation.x) * (Mathf.Abs(CameraRotation.x) - 360);
-                }
-                if (Mathf.Abs(CameraRotation.y) >= 360)
-                {
-                    CameraRotation.y -= Mathf.Sign(CameraRotation.y) * 360;
-                }
-            }
-            else if (ButtonEventSystem.PointerDown(0, 1))
-            {
-                // Camera scaling
-                CameraScale += -0.0008f * ButtonEventSystem.PointerDeltaPos.y;
-                CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
-            }
-            else if (ButtonEventSystem.PointerDown(2))
-            {
-                // Camera local rotation
-                localCamRot = new(localCamRot.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), localCamRot.y + ((Mathf.Abs(localCamRot.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+            DroneBody = transform.GetComponentInParent<Rigidbody>();
 
-                if (Mathf.Abs(localCamRot.x) > 180)
-                {
-                    localCamRot.x = Mathf.Sign(localCamRot.x) * (Mathf.Abs(localCamRot.x) - 360);
-                }
-                if (Mathf.Abs(localCamRot.y) >= 360)
-                {
-                    localCamRot.y -= Mathf.Sign(localCamRot.y) * 360;
-                }
-            }
-            else if (ButtonEventSystem.PointerDown(1, 2))
-            {
-                localCamRot = Vector3.zero;
-            }
+            Cam = gameObject.GetComponent<Camera>();
+            localCamRot = Vector3.zero;
+            CameraRotation = Vector3.zero;
+            CameraVector = transform.localPosition;
+
+            #endregion
+
+            #region Check and Set Time Scale
+            if (Time.timeScale != 1) Time.timeScale = 1;
+            #endregion
+
+            #region Disable Pause Menus
+            ToggleMenu(-1);
+            #endregion
+
+            MET = 0;
+            CameraScale = 1;
+            NotifSelectedMessage = 1;
+            NotifAnimTimer = -1;
+            Application.targetFrameRate = -1;
+
+            #region Initialize AudioListener
+
+            if (gameObject.GetComponent<AudioListener>() == null)
+                audioListener = gameObject.AddComponent<AudioListener>();
+            else audioListener = gameObject.GetComponent<AudioListener>();
+
+            #endregion
         }
 
-        transform.localRotation = Quaternion.Euler(6 + CameraRotation.x + localCamRot.x, 90 + CameraRotation.y + localCamRot.y, 0);
-        transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
-        #endregion
-
-        MET += Time.fixedDeltaTime;
-    }
-
-    private void Update()
-    {
-        #region FOV from Speed
-
-        if (FOVFromSpeed.keys.Length != 0)
+        private void FixedUpdate()
         {
-            Cam.fieldOfView = FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude);
-        }
+            #region Camera Controls
+            Vector3 ScaledCamVector = CameraVector * CameraScale;
 
-        #endregion
-
-        #region Handle Notifications
-
-        #region MET
-        /*int hour = Mathf.FloorToInt(MET / 3600);
-        int minute = Mathf.FloorToInt((MET % 3600) / 60);
-        int second = Mathf.FloorToInt(MET % 60);
-        NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);*/
-
-        NotifTime.text = "·";
-        int METInt = Mathf.FloorToInt(MET);
-        int index = 0;
-        while (METInt != 0)
-        {
-            NotifTime.text = (METInt % ((index % 4) + 2)).ToString() + NotifTime.text;
-            METInt = Mathf.FloorToInt(METInt / ((index % 4) + 2));
-            index++;
-        }
-        #endregion
-
-        NotifMessageIndex.text = NotifSelectedMessage.ToString() + "/" + NotifierSystem.MainMessageList.Count.ToString();
-
-        if (NotifAnimTimer == -1)
-        {
-            if (NotifierSystem.PiorityMessageList.Count != 0)
+            if (BackgrES.PointerOverElement)
             {
-                NotifAnimTimer = 0;
+                if (ButtonEventSystem.PointerDown(1))
+                {
+                    // Up/down rotation                                                 // Rotation around normal
+                    CameraRotation = new(CameraRotation.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+
+                    if (Mathf.Abs(CameraRotation.x) > 180)
+                    {
+                        CameraRotation.x = Mathf.Sign(CameraRotation.x) * (Mathf.Abs(CameraRotation.x) - 360);
+                    }
+                    if (Mathf.Abs(CameraRotation.y) >= 360)
+                    {
+                        CameraRotation.y -= Mathf.Sign(CameraRotation.y) * 360;
+                    }
+                }
+                else if (ButtonEventSystem.PointerDown(0, 1))
+                {
+                    // Camera scaling
+                    CameraScale += -0.0008f * ButtonEventSystem.PointerDeltaPos.y;
+                    CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
+                }
+                else if (ButtonEventSystem.PointerDown(2))
+                {
+                    // Camera local rotation
+                    localCamRot = new(localCamRot.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), localCamRot.y + ((Mathf.Abs(localCamRot.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+
+                    if (Mathf.Abs(localCamRot.x) > 180)
+                    {
+                        localCamRot.x = Mathf.Sign(localCamRot.x) * (Mathf.Abs(localCamRot.x) - 360);
+                    }
+                    if (Mathf.Abs(localCamRot.y) >= 360)
+                    {
+                        localCamRot.y -= Mathf.Sign(localCamRot.y) * 360;
+                    }
+                }
+                else if (ButtonEventSystem.PointerDown(1, 2))
+                {
+                    localCamRot = Vector3.zero;
+                }
             }
 
-            if (NotifierSystem.MainMessageList.Count >= 1)
-                NotifThumbnail.text = NotifierSystem.MainMessageList[NotifSelectedMessage - 1].msg;
+            transform.localRotation = Quaternion.Euler(6 + CameraRotation.x + localCamRot.x, 90 + CameraRotation.y + localCamRot.y, 0);
+            transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
+            #endregion
+
+            MET += Time.fixedDeltaTime;
         }
-        else
+
+        private void Update()
         {
-            NotifSelectedMessage = NotifierSystem.MainMessageList.Count - NotifierSystem.PiorityMessageList.Count + 1;
+            #region FOV from Speed
 
-            if (NotifAnimTimer == 0)
+            if (FOVFromSpeed.keys.Length != 0)
             {
-                NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
-                NotifOutline.color = NotifNewMsgColor;
+                Cam.fieldOfView = FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude);
             }
-            else if (NotifAnimTimer < NotifierSystem.PiorityMessageList[0].duration)
-            {
 
+            #endregion
+
+            #region Handle Notifications
+
+            #region MET
+            /*int hour = Mathf.FloorToInt(MET / 3600);
+            int minute = Mathf.FloorToInt((MET % 3600) / 60);
+            int second = Mathf.FloorToInt(MET % 60);
+            NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);*/
+
+            NotifTime.text = "ï¿½";
+            int METInt = Mathf.FloorToInt(MET);
+            int index = 0;
+            while (METInt != 0)
+            {
+                NotifTime.text = (METInt % ((index % 4) + 2)).ToString() + NotifTime.text;
+                METInt = Mathf.FloorToInt(METInt / ((index % 4) + 2));
+                index++;
+            }
+            #endregion
+
+            NotifMessageIndex.text = NotifSelectedMessage.ToString() + "/" + NotifierSystem.MainMessageList.Count.ToString();
+
+            if (NotifAnimTimer == -1)
+            {
+                if (NotifierSystem.PiorityMessageList.Count != 0)
+                {
+                    NotifAnimTimer = 0;
+                }
+
+                if (NotifierSystem.MainMessageList.Count >= 1)
+                    NotifThumbnail.text = NotifierSystem.MainMessageList[NotifSelectedMessage - 1].msg;
             }
             else
             {
-                if (NotifOutline.color.a != 0) NotifOutline.color = new(0, 0, 0, 0);
+                NotifSelectedMessage = NotifierSystem.MainMessageList.Count - NotifierSystem.PiorityMessageList.Count + 1;
 
-                NotifierSystem.PiorityMessageList.RemoveAt(0);
-                NotifAnimTimer = -1;
+                if (NotifAnimTimer == 0)
+                {
+                    NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
+                    NotifOutline.color = NotifNewMsgColor;
+                }
+                else if (NotifAnimTimer < NotifierSystem.PiorityMessageList[0].duration)
+                {
+
+                }
+                else
+                {
+                    if (NotifOutline.color.a != 0) NotifOutline.color = new(0, 0, 0, 0);
+
+                    NotifierSystem.PiorityMessageList.RemoveAt(0);
+                    NotifAnimTimer = -1;
+                }
+
+                //Debug.Log(NotifierSystem.PiorityMessageList.Count + " ; " + NotifAnimTimer);
+
+                if (NotifAnimTimer != -1)
+                    NotifAnimTimer += Time.deltaTime;
             }
+            #endregion
 
-            //Debug.Log(NotifierSystem.PiorityMessageList.Count + " ; " + NotifAnimTimer);
-            
-            if (NotifAnimTimer != -1)
-                NotifAnimTimer += Time.deltaTime;
-        }
-        #endregion
-
-        #region Select Chosen Assessment Button
-        for (int i = 0; i < 4; i++)
-        {
-            FeedbackAssessmentButtons[i].interactable = (4 - i) != (int)FeedbackSystem.FeedbackVariable.Assessment;
-        }
-        #endregion
-    }
-
-    private Vector3 CamDistance(Vector3 Vector)
-    {
-        RaycastHit HitInfo;
-        if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, transform.parent.rotation * Vector, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
-        {
-            return Vector.normalized * HitInfo.distance;
-        }
-        else
-        {
-            return Vector;
-        }
-    }
-
-    public void NotifChangeSelectedMessage(string type)
-    {
-        if (NotifAnimTimer == -1)
-        {
-            switch (type)
+            #region Select Chosen Assessment Button
+            for (int i = 0; i < 4; i++)
             {
-                case "prev":
-                    NotifSelectedMessage--;
-                    break;
-
-                case "next":
-                    NotifSelectedMessage++;
-                    break;
-
-                case "last":
-                    NotifSelectedMessage = NotifierSystem.MainMessageList.Count;
-                    break;
+                FeedbackAssessmentButtons[i].interactable = (4 - i) != (int)FeedbackSystem.FeedbackVariable.Assessment;
             }
-
-            NotifSelectedMessage = Mathf.Clamp(NotifSelectedMessage, 1, NotifierSystem.MainMessageList.Count);
+            #endregion
         }
-    }
 
-    #region Pause Menus Controls
-
-    public void SoundTest()
-    {
-        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
-    }
-
-    public void SoundClick()
-    {
-        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
-    }
-
-    public void EscapeUI()
-    {
-        SoundClick();
-        if (DroneBody == null)
-            DroneBody = transform.GetComponentInParent<Rigidbody>();
-        OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
-
-        if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
+        private Vector3 CamDistance(Vector3 Vector)
         {
-            ToggleMenu(-1);
-            Time.timeScale = 1;
+            RaycastHit HitInfo;
+            if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, transform.parent.rotation * Vector, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
+            {
+                return Vector.normalized * HitInfo.distance;
+            }
+            else
+            {
+                return Vector;
+            }
         }
-        else
+
+        public void NotifChangeSelectedMessage(string type)
         {
-            ToggleMenu(0);
-            Time.timeScale = 0;
+            if (NotifAnimTimer == -1)
+            {
+                switch (type)
+                {
+                    case "prev":
+                        NotifSelectedMessage--;
+                        break;
+
+                    case "next":
+                        NotifSelectedMessage++;
+                        break;
+
+                    case "last":
+                        NotifSelectedMessage = NotifierSystem.MainMessageList.Count;
+                        break;
+                }
+
+                NotifSelectedMessage = Mathf.Clamp(NotifSelectedMessage, 1, NotifierSystem.MainMessageList.Count);
+            }
         }
-    }
 
-    public void ToggleMenu(int idx)
-    {
-        PausePanel.SetActive(idx is 0 or 4);
-        PauseMenu.SetActive(idx is 0 or 4);
-        SettingsMenu.SetActive(idx == 1);
-        FeedbackMenu.SetActive(idx == 2);
-        FeedbackSent.SetActive(idx == 4);
-    }
+        #region Pause Menus Controls
 
-    public void QuitToMenu()
-    {
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
-    }
-    #endregion
-
-    #region Feedback
-    public void FeedbackUpdate(int value) => FeedbackSystem.SetFeedback(value);
-    public void FeedbackUpdate(string value) => FeedbackSystem.SetFeedback(value);
-    public void FeedbackUpdate(bool value)
-    {
-        FeedbackSystem.SetFeedback(value);
-
-        for (int i = 0; i < 8; i++)
+        public void SoundTest()
         {
-            FeedbackAssessmentTexts[i].SetActive(i % 2 == (value ? 1 : 0));
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
         }
+
+        public void SoundClick()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
+        }
+
+        public void EscapeUI()
+        {
+            SoundClick();
+            if (DroneBody == null)
+                DroneBody = transform.GetComponentInParent<Rigidbody>();
+            OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
+
+            if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
+            {
+                ToggleMenu(-1);
+                Time.timeScale = 1;
+            }
+            else
+            {
+                ToggleMenu(0);
+                Time.timeScale = 0;
+            }
+        }
+
+        public void ToggleMenu(int idx)
+        {
+            PausePanel.SetActive(idx is 0 or 4);
+            PauseMenu.SetActive(idx is 0 or 4);
+            SettingsMenu.SetActive(idx == 1);
+            FeedbackMenu.SetActive(idx == 2);
+            FeedbackSent.SetActive(idx == 4);
+        }
+
+        public void QuitToMenu()
+        {
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
+        }
+        #endregion
+
+        #region Feedback
+        public void FeedbackUpdate(int value) => FeedbackSystem.SetFeedback(value);
+        public void FeedbackUpdate(string value) => FeedbackSystem.SetFeedback(value);
+        public void FeedbackUpdate(bool value)
+        {
+            FeedbackSystem.SetFeedback(value);
+
+            for (int i = 0; i < 8; i++)
+            {
+                FeedbackAssessmentTexts[i].SetActive(i % 2 == (value ? 1 : 0));
+            }
+        }
+        public void ButtonSendFeedback() => _ = StartCoroutine(SendFeedback());
+        private IEnumerator SendFeedback()
+        {
+            FeedbackSystem.SetFeedback(DroneBody.position);
+
+            UICanvas.enabled = false;
+            yield return new WaitForEndOfFrame();
+
+            string path = Application.streamingAssetsPath + "/Screenshots/FeedbackThumbnail.png";
+            System.IO.File.Delete(path);
+            ScreenCapture.CaptureScreenshot(path);
+            yield return new WaitForEndOfFrame();
+
+            UICanvas.enabled = true;
+
+            FeedbackSystem.SendMail(path);
+            ToggleMenu(4);
+        }
+        #endregion
     }
-    public void ButtonSendFeedback() => _ = StartCoroutine(SendFeedback());
-    private IEnumerator SendFeedback()
-    {
-        FeedbackSystem.SetFeedback(DroneBody.position);
-
-        UICanvas.enabled = false;
-        yield return new WaitForEndOfFrame();
-
-        string path = Application.streamingAssetsPath + "/Screenshots/FeedbackThumbnail.png";
-        System.IO.File.Delete(path);
-        ScreenCapture.CaptureScreenshot(path);
-        yield return new WaitForEndOfFrame();
-
-        UICanvas.enabled = true;
-
-        FeedbackSystem.SendMail(path);
-        ToggleMenu(4);
-    }
-    #endregion
 }

@@ -3,146 +3,150 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mesocyclone;
 
-public class AirDataComputer : MonoBehaviour
+namespace Mesocyclone.UI
 {
-    #region Variables
-
-    private Rigidbody DroneBody;
-    private DroneControls DroneScript;
-
-    #region Data
-    public float h = 0; //Height
-    public float prev_h = Mathf.Infinity;
-    public float delta_h;
-
-    public float v = 0; //Speed / Velocity
-    public float prev_v = Mathf.Infinity;
-    public float delta_v;
-
-    public float p = 0; //Pitch
-    public float r = 0; //Roll
-    public float y = 0; //Yaw
-
-    public Vector3 deltaPRY;
-
-    public float mt = 0; //Main Thrust
-    public int hm = 1; //Hover Mode
-    public int sas = 1; //SAS Mode
-
-    public enum Status
+    public class AirDataComputer : MonoBehaviour
     {
-        Performing,
-        Ready,
-        Unavailable
-    }
-    public Status flipstate;
-    #endregion
+        #region Variables
 
-    #region Displays
-    public TextMeshProUGUI[] SAO;
-    public Slider MainThrust;
-    public Slider HoverMode;
-    public TextMeshProUGUI SASMode;
-    public Image FLIPStatus;
-    public TextMeshProUGUI[] Performance;
-    #endregion
+        private Rigidbody DroneBody;
+        private DroneControls DroneScript;
 
-    #region Performance
-    int FPS, PhFPS;
-    float t = 0;
-    #endregion
+        #region Data
+        public float h = 0; //Height
+        public float prev_h = Mathf.Infinity;
+        public float delta_h;
 
-    #endregion
+        public float v = 0; //Speed / Velocity
+        public float prev_v = Mathf.Infinity;
+        public float delta_v;
 
-    void Start()
-    {
-        #region Get Components and Vectors
+        public float p = 0; //Pitch
+        public float r = 0; //Roll
+        public float y = 0; //Yaw
 
-        DroneBody = transform.GetComponentInParent<Rigidbody>();
-        DroneScript = transform.GetComponentInParent<DroneControls>();
+        public Vector3 deltaPRY;
 
-        #endregion
-    }
+        public float mt = 0; //Main Thrust
+        public int hm = 1; //Hover Mode
+        public int sas = 1; //SAS Mode
 
-    private void FixedUpdate()
-    {
-        #region Calculate Data
-        if (prev_h == Mathf.Infinity)
+        public enum Status
         {
-            prev_h = h = DroneBody.position.y;
+            Performing,
+            Ready,
+            Unavailable
         }
-        else
-        {
-            h = DroneBody.position.y;
-            delta_h = (h - prev_h) / Time.fixedDeltaTime;
-            prev_h = h;
-        }
-
-        if (prev_v == Mathf.Infinity)
-        {
-            prev_v = v = DroneBody.linearVelocity.magnitude;
-        }
-        else
-        {
-            v = DroneBody.linearVelocity.magnitude;
-            delta_v = (v - prev_v) / Time.fixedDeltaTime;
-            prev_v = v;
-        }
-
-        deltaPRY = DroneBody.angularVelocity * Mathf.Rad2Deg;
-
-        p = (DroneBody.rotation.eulerAngles.z > 180 ? -1 : 1) * Mathf.Rad2Deg * Mathf.Asin(Vector3.Project(DroneBody.transform.right, Vector3.up).magnitude);
-        r = (DroneBody.rotation.eulerAngles.x > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.up, DroneBody.transform.right), Vector3.ProjectOnPlane(Vector3.up, DroneBody.transform.right));
-        y = (DroneBody.rotation.eulerAngles.y > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.right, Vector3.up), Vector3.right);
-
-        mt = DroneScript.Thrust;
-
-        hm = (int)DroneScript.HoverMode;
-
-        sas = (int)DroneScript.SASMode;
-
-        flipstate = DroneScript.FLIPPerforming ? Status.Performing :
-            DroneScript.FLIPCharge == DroneScript.NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge ? Status.Ready : Status.Unavailable;
+        public Status flipstate;
         #endregion
 
-        #region Display Data
-        SAO[0].text = h.ToString("n1");
-        SAO[1].text = delta_h.ToString("n1");
-        SAO[2].text = v.ToString("n1");
-        SAO[3].text = delta_v.ToString("n1");
-        SAO[4].text = p.ToString("n1");
-        SAO[5].text = r.ToString("n1");
-        SAO[6].text = y.ToString("n1");
-        MainThrust.value = mt;
-        SASMode.text = sas switch { 1 => "Heli", 2 => "Plane", _ => "None" };
-        HoverMode.value = 1 - ((hm - 1) / 4f);
-        FLIPStatus.color = flipstate switch { Status.Performing => Color.red, Status.Ready => Color.green, _ => Color.gray5 };
+        #region Displays
+        public TextMeshProUGUI[] SAO;
+        public Slider MainThrust;
+        public Slider HoverMode;
+        public TextMeshProUGUI SASMode;
+        public Image FLIPStatus;
+        public TextMeshProUGUI[] Performance;
         #endregion
-    }
 
-    private void Update()
-    {
-        #region Performance Stats
-
-        t += Time.unscaledDeltaTime;
-        if (t - Mathf.Floor(t) >= 0.1f)
-        {
-            t += 0.9f;
-
-            FPS += Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
-            PhFPS += Mathf.RoundToInt(1f / Time.fixedUnscaledDeltaTime);
-        }
-        if (t >= 10)
-        {
-            t -= 10;
-            FPS /= 10;
-            PhFPS /= 10;
-
-            Performance[0].text = "FPS: " + FPS.ToString("n0");
-            Performance[1].text = "PhFPS: " + PhFPS.ToString("n0");
-        }
+        #region Performance
+        int FPS, PhFPS;
+        float t = 0;
+        #endregion
 
         #endregion
+
+        void Start()
+        {
+            #region Get Components and Vectors
+
+            DroneBody = transform.GetComponentInParent<Rigidbody>();
+            DroneScript = transform.GetComponentInParent<DroneControls>();
+
+            #endregion
+        }
+
+        private void FixedUpdate()
+        {
+            #region Calculate Data
+            if (prev_h == Mathf.Infinity)
+            {
+                prev_h = h = DroneBody.position.y;
+            }
+            else
+            {
+                h = DroneBody.position.y;
+                delta_h = (h - prev_h) / Time.fixedDeltaTime;
+                prev_h = h;
+            }
+
+            if (prev_v == Mathf.Infinity)
+            {
+                prev_v = v = DroneBody.linearVelocity.magnitude;
+            }
+            else
+            {
+                v = DroneBody.linearVelocity.magnitude;
+                delta_v = (v - prev_v) / Time.fixedDeltaTime;
+                prev_v = v;
+            }
+
+            deltaPRY = DroneBody.angularVelocity * Mathf.Rad2Deg;
+
+            p = (DroneBody.rotation.eulerAngles.z > 180 ? -1 : 1) * Mathf.Rad2Deg * Mathf.Asin(Vector3.Project(DroneBody.transform.right, Vector3.up).magnitude);
+            r = (DroneBody.rotation.eulerAngles.x > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.up, DroneBody.transform.right), Vector3.ProjectOnPlane(Vector3.up, DroneBody.transform.right));
+            y = (DroneBody.rotation.eulerAngles.y > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.right, Vector3.up), Vector3.right);
+
+            mt = DroneScript.Thrust;
+
+            hm = (int)DroneScript.HoverMode;
+
+            sas = (int)DroneScript.SASMode;
+
+            flipstate = DroneScript.FLIPPerforming ? Status.Performing :
+                DroneScript.FLIPCharge == DroneScript.NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge ? Status.Ready : Status.Unavailable;
+            #endregion
+
+            #region Display Data
+            SAO[0].text = h.ToString("n1");
+            SAO[1].text = delta_h.ToString("n1");
+            SAO[2].text = v.ToString("n1");
+            SAO[3].text = delta_v.ToString("n1");
+            SAO[4].text = p.ToString("n1");
+            SAO[5].text = r.ToString("n1");
+            SAO[6].text = y.ToString("n1");
+            MainThrust.value = mt;
+            SASMode.text = sas switch { 1 => "Heli", 2 => "Plane", _ => "None" };
+            HoverMode.value = 1 - ((hm - 1) / 4f);
+            FLIPStatus.color = flipstate switch { Status.Performing => Color.red, Status.Ready => Color.green, _ => Color.gray5 };
+            #endregion
+        }
+
+        private void Update()
+        {
+            #region Performance Stats
+
+            t += Time.unscaledDeltaTime;
+            if (t - Mathf.Floor(t) >= 0.1f)
+            {
+                t += 0.9f;
+
+                FPS += Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
+                PhFPS += Mathf.RoundToInt(1f / Time.fixedUnscaledDeltaTime);
+            }
+            if (t >= 10)
+            {
+                t -= 10;
+                FPS /= 10;
+                PhFPS /= 10;
+
+                Performance[0].text = "FPS: " + FPS.ToString("n0");
+                Performance[1].text = "PhFPS: " + PhFPS.ToString("n0");
+            }
+
+            #endregion
+        }
     }
 }

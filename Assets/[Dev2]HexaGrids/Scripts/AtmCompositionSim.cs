@@ -2,125 +2,122 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AtmCompositionSim : MonoBehaviour
+namespace Mesocyclone.Unused
 {
-    #region Variables
-
-    #region Grid Fundamentals
-    private List<HexaGrid> TerrainCompMap = new();
-    private List<List<HexaGrid>> AirCompMap = new();
-    private List<double[,]> NextTerrainCompMap;
-    private List<List<double[,]>> NextAirCompMap = new();
-    public Vector3 GridCenter;
-    public int Radius; //InnRadius and OutRadius are always the same ; From center to corner and from center to edge are always the same
-    #endregion
-
-    #region Reference Scripts
-    private GlobalValues C; //Constants List
-    #endregion
-
-    #region Substitutes
-    //Empty
-    public int LayerNumber = 10;
-    public int MoleculesNumber;
-    #endregion
-
-    #region Cell Lists
-    public List<Vector2Int> ExcludeCells;
-    private Vector2Int[] CellNeighbours;
-    #endregion
-
-    #region Atmospheric Data Memory
-    public List<double> GaleAtmosphericComposition;
-
-    public double AtmosphericMolarMass;
-    #endregion
-
-    public bool StaticCompositionsSet = false;
-
-    #endregion
-
-    // Start is called before the first frame update
-    private void Start()
+    public class AtmCompositionSim : MonoBehaviour
     {
-        C = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalValues>();
+        #region Variables
 
-        Radius = C.GridMapSize;
-        MoleculesNumber = GaleAtmosphericComposition.Count;
+        #region Grid Fundamentals
+        private List<HexaGrid> TerrainCompMap = new();
+        private List<List<HexaGrid>> AirCompMap = new();
+        private List<double[,]> NextTerrainCompMap;
+        private List<List<double[,]>> NextAirCompMap = new();
+        public Vector3 GridCenter;
+        public int Radius; //InnRadius and OutRadius are always the same ; From center to corner and from center to edge are always the same
+        #endregion
 
-        #region Terrain Compositions Map Setup
+        #region Reference Scripts
+        private GlobalValues C; //Constants List
+        #endregion
 
-        NextTerrainCompMap = new List<double[,]>();
+        #region Substitutes
+        //Empty
+        public int LayerNumber = 10;
+        public int MoleculesNumber;
+        #endregion
 
-        for (int i = 0; i < LayerNumber; i++)
-        {
-            HexaGrid memory;
+        #region Cell Lists
+        public List<Vector2Int> ExcludeCells;
+        private Vector2Int[] CellNeighbours;
+        #endregion
 
-            TerrainCompMap.Add(new());
-            TerrainCompMap[i].SetupHexagonalHexaGrid(Radius, out memory, out _);
-            TerrainCompMap[i] = memory;
+        #region Atmospheric Data Memory
+        public List<double> GaleAtmosphericComposition;
 
-            //Where the FU- is the null reference exception!?!??!?!??!?
-            NextTerrainCompMap.Add(new double[TerrainCompMap[i].xLength, TerrainCompMap[i].yLength]);
+        public double AtmosphericMolarMass;
+        #endregion
 
-            NextTerrainCompMap[i] = TerrainCompMap[i].valArray;
-        }
+        public bool StaticCompositionsSet = false;
 
         #endregion
 
-        #region Air Compositions Map Setup
-
-        for (int i = 0; i < LayerNumber; i++)
+        // Start is called before the first frame update
+        private void Start()
         {
-            for (int k = 0; k < MoleculesNumber; k++)
+            C = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalValues>();
+
+            Radius = C.GridMapSize;
+            MoleculesNumber = GaleAtmosphericComposition.Count;
+
+            #region Terrain Compositions Map Setup
+
+            NextTerrainCompMap = new List<double[,]>();
+
+            for (int i = 0; i < LayerNumber; i++)
             {
-                HexaGrid memory = new();
+                HexaGrid memory;
 
-                AirCompMap.Add(new());
-                memory.SetupHexagonalHexaGrid(Radius, out memory, out _);
-                AirCompMap[k].Add(memory);
+                TerrainCompMap.Add(new());
+                TerrainCompMap[i].SetupHexagonalHexaGrid(Radius, out memory, out _);
+                TerrainCompMap[i] = memory;
 
-                AirCompMap[k][i].zHeight = i + 1;
+                //Where the FU- is the null reference exception!?!??!?!??!?
+                NextTerrainCompMap.Add(new double[TerrainCompMap[i].xLength, TerrainCompMap[i].yLength]);
 
-                NextAirCompMap.Add(new());
-                NextAirCompMap[k].Add(new double[AirCompMap[k][i].xLength, AirCompMap[k][i].yLength]);
-
-                NextAirCompMap[k][i] = AirCompMap[k][i].valArray;
+                NextTerrainCompMap[i] = TerrainCompMap[i].valArray;
             }
-        }
 
-        #endregion
+            #endregion
 
-        #region Static Atmospheric Composition Setup
-        
-        for (int x = 0; x < TerrainCompMap[0].xLength; x++)
-            for (int y = 0; y < TerrainCompMap[0].yLength; y++)
+            #region Air Compositions Map Setup
+
+            for (int i = 0; i < LayerNumber; i++)
             {
-                if (!ExcludeCells.Contains(new Vector2Int(x, y)))
+                for (int k = 0; k < MoleculesNumber; k++)
                 {
-                    for (int k = 0; k < 5; k++)
-                    {
-                        TerrainCompMap[k].valArray[x, y] = GaleAtmosphericComposition[k];
+                    HexaGrid memory = new();
 
-                        for (int i = 0; i < LayerNumber; i++)
+                    AirCompMap.Add(new());
+                    memory.SetupHexagonalHexaGrid(Radius, out memory, out _);
+                    AirCompMap[k].Add(memory);
+
+                    AirCompMap[k][i].zHeight = i + 1;
+
+                    NextAirCompMap.Add(new());
+                    NextAirCompMap[k].Add(new double[AirCompMap[k][i].xLength, AirCompMap[k][i].yLength]);
+
+                    NextAirCompMap[k][i] = AirCompMap[k][i].valArray;
+                }
+            }
+
+            #endregion
+
+            #region Static Atmospheric Composition Setup
+
+            for (int x = 0; x < TerrainCompMap[0].xLength; x++)
+                for (int y = 0; y < TerrainCompMap[0].yLength; y++)
+                {
+                    if (!ExcludeCells.Contains(new Vector2Int(x, y)))
+                    {
+                        for (int k = 0; k < 5; k++)
                         {
-                            AirCompMap[k][i].valArray[x, y] = GaleAtmosphericComposition[k];
+                            TerrainCompMap[k].valArray[x, y] = GaleAtmosphericComposition[k];
+
+                            for (int i = 0; i < LayerNumber; i++)
+                            {
+                                AirCompMap[k][i].valArray[x, y] = GaleAtmosphericComposition[k];
+                            }
                         }
                     }
                 }
-            }
-        
-        //                       Oxygen (O2)                            Carbon Dioxide (CO2)                       Argon (Ar)                                Nitrogen (N2)                             Water (H2O)
-        
 
-        StaticCompositionsSet = true;
+            //                       Oxygen (O2)                            Carbon Dioxide (CO2)                       Argon (Ar)                                Nitrogen (N2)                             Water (H2O)
 
-        #endregion
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+            StaticCompositionsSet = true;
 
+            #endregion
+        }
     }
 }
