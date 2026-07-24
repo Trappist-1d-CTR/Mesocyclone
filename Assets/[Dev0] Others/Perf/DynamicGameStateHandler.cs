@@ -29,7 +29,7 @@ namespace Mesocyclone
             // i think this syntax works, don't @ me
             SerializeField,
             Tooltip("Represents how much resources the game is using\nIf it's ~0 then awesome!\nIf it's between 0.0000001 and 1.9999999, fine ig, negligible\nIf it's more than 2, RUN, I AM COMING FOR YOU"),
-            ReadOnly
+            Mesocyclone.ReadOnly
         ]
         static float _performanceBudget = 0f;
         public static float performanceBudget
