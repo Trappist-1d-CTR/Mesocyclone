@@ -4,13 +4,16 @@ using UnityEngine;
 // fallback to this whenever you're unsure on what exception to use
 // or are just too lazy
 
-/// <summary>
-/// summon him to die instantly
-/// </summary>
-public class Joar : Exception
+namespace Mesocyclone
 {
-    public Joar() : base("fuck you")
+    /// <summary>
+    /// summon him to die instantly
+    /// </summary>
+    public class Joar : Exception
     {
-        Debug.LogError(base.Message);
+        public Joar() : base("fuck you")
+        {
+            Debug.LogError(base.Message);
+        }
     }
 }

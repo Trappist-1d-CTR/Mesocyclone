@@ -10,11 +10,14 @@
     #define ONLINUX
 #endif
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    #define DEV
+#endif
+
 using System.Diagnostics;
 using UnityEngine;
 
-
-namespace MCCustom
+namespace Mesocyclone.Debug
 {
     /// <summary>
     /// Used for debugging and profiling aspects of the game
@@ -31,12 +34,19 @@ namespace MCCustom
         /// <para>duh</para>
         /// </summary>
         public static bool isRunning => _isRunning;
+        // no idea if this actually trasmits, since the property itself isn't volatile *shrug*
+
 
         public static bool devTools { get; private set; } 
-            = false;
-
-        static bool allowDevTools { get; set; } 
-            = false; // TODO: redundant until Modding API comes out
+        
+        // TODO: change this upon modding API
+        #if DEV
+            static bool allowDevTools { get; set; } 
+                = true;
+        #else
+            static bool allowDevTools { get; set; }
+                = false;
+        #endif
 
 
         // have to implement this for each OS because everyone hates each other
@@ -159,7 +169,7 @@ namespace MCCustom
                     UnityEngine.Debug.LogWarning
                     (
                         // REMINDER: Update ln during Debug.cs changes
-                        $"Font 'Xolonium-pn4D' unable to be loaded\n@: MCCustom.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"
+                        $"Font 'Xolonium-pn4D' unable to be loaded\n@: Mesocyclone.Debug.MCDebug.OnGUI().style.font (Debug.cs : ln 163)\nDirectory: Assets/TextMesh Pro/Resources/Fonts & Materials/Xolonium-pn4D.asset\n \nCause may be because Unity looks at all folders named 'Resources'\nwhich could trip it up"
                     );
 
                     checkDevToolsFont = false; // prevent this from re-calling

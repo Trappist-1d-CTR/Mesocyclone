@@ -1,4 +1,4 @@
-#define SHOW_PROCESS_INFO
+#undef SHOW_PROCESS_INFO
 
 // this is fucking useless
 
@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MCCustom
+namespace Mesocyclone.Debug
 {
     /// <summary>
     /// Re-Format / Wrapper of Unity's Coroutine system for my (half bread) personal liking :]

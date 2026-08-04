@@ -2,120 +2,123 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-// I don't imagine anything inheriting AirCell
-public sealed class AirCell
+namespace Mesocyclone
 {
-    /*  Definitions
-            dynamic: different for every cell and for every moment in time
-            static: same for all air cells
-    */
-
-    #region Variables
-
-    #region Tick Stuff
-    [SerializeField, ReadOnly, Tooltip("The accumulated time since the last tick, used to determine when to call Tick()")]
-    public float Accumulator;
-
-    [SerializeField, ReadOnly, Tooltip("The tick rate for this air cell")]
-    public float TickRate = Tickable.DefaultTickRate;
-    #endregion
-
-    #region Cell Values
-    public Vector3 CellCenter;      //Center of the air cell, dynamic
-    public float Moles;            //Number of particles, static
-    public float Temperature;      //Temperature of the center, dynamic
-
-    public Vector3 Velocity;        //Velocity of the air cell, dynamic
-    public Vector3 Acceleration;    //Resulting due to forces, dynamic
-
-    public float CellStaticVolume;
-    // public float CellDynamicVolume; // never initialized or referenced : what value?
-    public float CellCircleArea;
-    public float CellRadius;
-    public float CellHeight;
-
-    public float StiffnessConstant;
-    #endregion
-
-    #endregion
-
-    #region Constructor
-
-    public AirCell
-    (
-        Vector3 CenterPoint = default,
-        float nMoles = 1000,
-        float TempK = 300,
-        Vector3 CellVelocity = default,
-        float Stiffness = 0.5f
-    )
+    // I don't imagine anything inheriting AirCell
+    public sealed class AirCell
     {
-        CellCenter = CenterPoint;
-        Moles = nMoles;
-        Temperature = TempK;
-        Velocity = CellVelocity;
-        StiffnessConstant = Stiffness;
-    }
+        /*  Definitions
+                dynamic: different for every cell and for every moment in time
+                static: same for all air cells
+        */
 
-    #endregion
+        #region Variables
 
-    #region Public Functions
+        #region Tick Stuff
+        [SerializeField, ReadOnly, Tooltip("The accumulated time since the last tick, used to determine when to call Tick()")]
+        public float Accumulator;
 
-    #region Physics
+        [SerializeField, ReadOnly, Tooltip("The tick rate for this air cell")]
+        public float TickRate = Tickable.DefaultTickRate;
+        #endregion
 
-    public void PerformVelocity(float deltaTime = -1)
-    {
-        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+        #region Cell Values
+        public Vector3 CellCenter;      //Center of the air cell, dynamic
+        public float Moles;            //Number of particles, static
+        public float Temperature;      //Temperature of the center, dynamic
 
-        CellCenter += Velocity * deltaTime;
-    }
+        public Vector3 Velocity;        //Velocity of the air cell, dynamic
+        public Vector3 Acceleration;    //Resulting due to forces, dynamic
 
-    public void PerformAcceleration(Vector3 Acc, float deltaTime = -1)
-    {
-        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+        public float CellStaticVolume;
+        // public float CellDynamicVolume; // never initialized or referenced : what value?
+        public float CellCircleArea;
+        public float CellRadius;
+        public float CellHeight;
 
-        Acceleration = Acc;
-        Velocity += Acceleration * deltaTime;
-    }
+        public float StiffnessConstant;
+        #endregion
 
-    public void AccAlongVelocity(float Acc, float deltaTime = -1)
-    {
-        if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+        #endregion
 
-        // no idea why there wasn't a guard here
-        if (Velocity.sqrMagnitude > 1e-10f)
+        #region Constructor
+
+        public AirCell
+        (
+            Vector3 CenterPoint = default,
+            float nMoles = 1000,
+            float TempK = 300,
+            Vector3 CellVelocity = default,
+            float Stiffness = 0.5f
+        )
         {
-            Acceleration = Velocity.normalized * Acc;
+            CellCenter = CenterPoint;
+            Moles = nMoles;
+            Temperature = TempK;
+            Velocity = CellVelocity;
+            StiffnessConstant = Stiffness;
+        }
+
+        #endregion
+
+        #region Public Functions
+
+        #region Physics
+
+        public void PerformVelocity(float deltaTime = -1)
+        {
+            if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+
+            CellCenter += Velocity * deltaTime;
+        }
+
+        public void PerformAcceleration(Vector3 Acc, float deltaTime = -1)
+        {
+            if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
+
+            Acceleration = Acc;
             Velocity += Acceleration * deltaTime;
         }
-    }
-    #endregion
 
-    #region Volume
-    public void SetSizeV(float V)
-    {
-        CellStaticVolume = V;
-        CellHeight = System.MathF.Pow(V, 1.0f / 3.0f);
-        CellCircleArea = V / CellHeight;
-        CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
-    }
+        public void AccAlongVelocity(float Acc, float deltaTime = -1)
+        {
+            if (deltaTime == -1) deltaTime = Time.fixedDeltaTime * AirCellBehavior.TimeScale;
 
-    public void SetSizeVL(float V, float L)
-    {
-        CellStaticVolume = V;
-        CellHeight = L;
-        CellCircleArea = V / L;
-        CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
-    }
+            // no idea why there wasn't a guard here
+            if (Velocity.sqrMagnitude > 1e-10f)
+            {
+                Acceleration = Velocity.normalized * Acc;
+                Velocity += Acceleration * deltaTime;
+            }
+        }
+        #endregion
 
-    public void SetSizeRL(float R, float L)
-    {
-        CellRadius = R;
-        CellHeight = L;
-        CellCircleArea = R * R * System.MathF.PI;
-        CellStaticVolume = CellCircleArea * L;
-    }
-    #endregion
+        #region Volume
+        public void SetSizeV(float V)
+        {
+            CellStaticVolume = V;
+            CellHeight = System.MathF.Pow(V, 1.0f / 3.0f);
+            CellCircleArea = V / CellHeight;
+            CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
+        }
 
-    #endregion
+        public void SetSizeVL(float V, float L)
+        {
+            CellStaticVolume = V;
+            CellHeight = L;
+            CellCircleArea = V / L;
+            CellRadius = System.MathF.Sqrt(CellCircleArea / System.MathF.PI);
+        }
+
+        public void SetSizeRL(float R, float L)
+        {
+            CellRadius = R;
+            CellHeight = L;
+            CellCircleArea = R * R * System.MathF.PI;
+            CellStaticVolume = CellCircleArea * L;
+        }
+        #endregion
+
+        #endregion
+    }
 }

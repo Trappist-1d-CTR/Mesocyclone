@@ -7,130 +7,133 @@ using TMPro;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class MainMenuManager : MonoBehaviour
+namespace Mesocyclone
 {
-    #region Variables
-
-    #region Menu Navigation Values
-    public int MenuPosition;
-    #endregion
-
-    #region Panels
-    public List<GameObject> MenuPanels;
-    #endregion
-
-    #region Loading Objects
-    public float ImageRotationSpeed;
-    public TextMeshProUGUI LoadingText;
-    public Image LoadingImage;
-    public Image LoadingBar;
-    #endregion
-
-    #region Settings
-    public Volume VolumeSettings;
-
-    public Slider BrightnessSlider;
-    public TextMeshProUGUI BrightnessValue;
-    public Slider ContrastSlider;
-    public TextMeshProUGUI ContrastValue;
-    #endregion
-
-    #endregion
-
-    void Awake()
+    public class MainMenuManager : MonoBehaviour
     {
-        SimulationSettings.Load();
+        #region Variables
 
-        #region Initialize Settings
-        BrightnessSlider.value = SimulationSettings.Brightness;
-        BrightnessValue.text = (Mathf.Round(SimulationSettings.Brightness * 20f) / 20f).ToString();
-        ContrastSlider.value = SimulationSettings.Contrast;
-        ContrastValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
+        #region Menu Navigation Values
+        public int MenuPosition;
         #endregion
 
-        SelectPanel(0);
-    }
+        #region Panels
+        public List<GameObject> MenuPanels;
+        #endregion
 
-    #region Panels Functions
-    public void ResetPanels()
-    {
-        for (int i = 0; i < MenuPanels.Count; i++)
+        #region Loading Objects
+        public float ImageRotationSpeed;
+        public TextMeshProUGUI LoadingText;
+        public Image LoadingImage;
+        public Image LoadingBar;
+        #endregion
+
+        #region Settings
+        public Volume VolumeSettings;
+
+        public Slider BrightnessSlider;
+        public TextMeshProUGUI BrightnessValue;
+        public Slider ContrastSlider;
+        public TextMeshProUGUI ContrastValue;
+        #endregion
+
+        #endregion
+
+        void Awake()
         {
-            MenuPanels[i].SetActive(false);
+            SimulationSettings.Load();
+
+            #region Initialize Settings
+            BrightnessSlider.value = SimulationSettings.Brightness;
+            BrightnessValue.text = (Mathf.Round(SimulationSettings.Brightness * 20f) / 20f).ToString();
+            ContrastSlider.value = SimulationSettings.Contrast;
+            ContrastValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
+            #endregion
+
+            SelectPanel(0);
         }
-    }
 
-    public void Panel()
-    {
-        ResetPanels();
-        if (!MenuPanels[MenuPosition].activeSelf)
+        #region Panels Functions
+        public void ResetPanels()
         {
-            MenuPanels[MenuPosition].SetActive(true);
-
-            if (MenuPosition == 1)
+            for (int i = 0; i < MenuPanels.Count; i++)
             {
-                _ = StartCoroutine(LoadGameAsync());
+                MenuPanels[i].SetActive(false);
             }
         }
-    }
 
-    public void SelectPanel(int ID)
-    {
-        MenuPosition = ID;
-        Panel();
-    }
-    #endregion
-
-    #region Settings Functions
-    public void SetBrightness(float Value)
-    {
-        ColorAdjustments ColorAdj;
-
-        SimulationSettings.Brightness = Value;
-        SimulationSettings.Save();
-        if (VolumeSettings.profile.TryGet(out ColorAdj))
+        public void Panel()
         {
-            ColorAdj.postExposure.value = SimulationSettings.Brightness;
+            ResetPanels();
+            if (!MenuPanels[MenuPosition].activeSelf)
+            {
+                MenuPanels[MenuPosition].SetActive(true);
+
+                if (MenuPosition == 1)
+                {
+                    _ = StartCoroutine(LoadGameAsync());
+                }
+            }
         }
-        BrightnessValue.text = (Mathf.Round(Value * 20f) / 20f).ToString();
-    }
 
-    public void SetContrast(float Value)
-    {
-        ColorAdjustments ColorAdj;
-
-        SimulationSettings.Contrast = Value;
-        SimulationSettings.Save();
-        if (VolumeSettings.profile.TryGet(out ColorAdj))
+        public void SelectPanel(int ID)
         {
-            ColorAdj.contrast.value = SimulationSettings.Contrast;
+            MenuPosition = ID;
+            Panel();
         }
-        ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
-    }
-    #endregion
+        #endregion
 
-    public void SoundClick()
-    {
-        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
-        AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.6f);
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-
-    IEnumerator LoadGameAsync()
-    {
-        AsyncOperation Operation = SceneManager.LoadSceneAsync("DemoDevelopment", LoadSceneMode.Single);
-
-        while (!Operation.isDone)
+        #region Settings Functions
+        public void SetBrightness(float Value)
         {
-            LoadingText.text = "Loading... (" + (Mathf.Round(Operation.progress / 0.0009f) / 10f) + "%)";
-            LoadingImage.rectTransform.rotation = Quaternion.Euler(0, 0, Time.time * ImageRotationSpeed);
-            LoadingBar.fillAmount = Mathf.Clamp01(Operation.progress / 0.9f);
+            ColorAdjustments ColorAdj;
 
-            yield return null;
+            SimulationSettings.Brightness = Value;
+            SimulationSettings.Save();
+            if (VolumeSettings.profile.TryGet(out ColorAdj))
+            {
+                ColorAdj.postExposure.value = SimulationSettings.Brightness;
+            }
+            BrightnessValue.text = (Mathf.Round(Value * 20f) / 20f).ToString();
+        }
+
+        public void SetContrast(float Value)
+        {
+            ColorAdjustments ColorAdj;
+
+            SimulationSettings.Contrast = Value;
+            SimulationSettings.Save();
+            if (VolumeSettings.profile.TryGet(out ColorAdj))
+            {
+                ColorAdj.contrast.value = SimulationSettings.Contrast;
+            }
+            ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
+        }
+        #endregion
+
+        public void SoundClick()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.6f);
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        IEnumerator LoadGameAsync()
+        {
+            AsyncOperation Operation = SceneManager.LoadSceneAsync("DemoDevelopment", LoadSceneMode.Single);
+
+            while (!Operation.isDone)
+            {
+                LoadingText.text = "Loading... (" + (Mathf.Round(Operation.progress / 0.0009f) / 10f) + "%)";
+                LoadingImage.rectTransform.rotation = Quaternion.Euler(0, 0, Time.time * ImageRotationSpeed);
+                LoadingBar.fillAmount = Mathf.Clamp01(Operation.progress / 0.9f);
+
+                yield return null;
+            }
         }
     }
 }

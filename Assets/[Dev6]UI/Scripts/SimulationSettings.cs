@@ -1,42 +1,45 @@
 using UnityEngine;
 
-public static class SimulationSettings
+namespace Mesocyclone
 {
-    #region Values
-    public static float Brightness;
-    public static float Contrast;
-    #endregion
-
-    #region Save/Load Settings
-    public static void Default()
+    public static class SimulationSettings
     {
-        Brightness = -0.1f;
-        Contrast = 0;
-    }
+        #region Values
+        public static float Brightness;
+        public static float Contrast;
+        #endregion
 
-    public static void Load()
-    {
-        if (PlayerPrefs.HasKey("Brightness"))
+        #region Save/Load Settings
+        public static void Default()
         {
-            Brightness = PlayerPrefs.GetFloat("Brightness");
-            Contrast = PlayerPrefs.GetFloat("Contrast");
+            Brightness = -0.1f;
+            Contrast = 0;
         }
-        else
+
+        public static void Load()
         {
-            Default();
+            if (PlayerPrefs.HasKey("Brightness"))
+            {
+                Brightness = PlayerPrefs.GetFloat("Brightness");
+                Contrast = PlayerPrefs.GetFloat("Contrast");
+            }
+            else
+            {
+                Default();
+            }
         }
+
+        public static void Save()
+        {
+            PlayerPrefs.SetFloat("Brightness", Brightness);
+            PlayerPrefs.SetFloat("Contrast", Contrast);
+
+            PlayerPrefs.Save();
+        }
+        #endregion
+
+        #region Apply Settings
+
+        #endregion
     }
-
-    public static void Save()
-    {
-        PlayerPrefs.SetFloat("Brightness", Brightness);
-        PlayerPrefs.SetFloat("Contrast", Contrast);
-
-        PlayerPrefs.Save();
-    }
-    #endregion
-
-    #region Apply Settings
-
-    #endregion
 }

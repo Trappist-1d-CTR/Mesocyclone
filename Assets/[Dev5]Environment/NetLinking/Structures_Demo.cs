@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Structures_Demo : MonoBehaviour
-{
-    
+// uhhhhhh, is this supposed to be something exactly?
 
-    // Start is called before the first frame update
-    void Start()
+namespace Mesocyclone.Unused // change to just "Mesocyclone" if this is in fact going to be used
+{
+    public class Structures_Demo : MonoBehaviour
     {
-        
+        // Start is called before the first frame update
+        private void Start()
+        {
+
+        }
     }
 }
