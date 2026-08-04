@@ -62,8 +62,8 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _R: 8.31432
-    - _Star_Angular_Size: 35.154
-    - _Star_Brightness: 5
+    - _Star_Angular_Size: 18.749
+    - _Star_Brightness: 5.87
     - _SurfaceP: 1509742.5
     - _Transparency: 1
     m_Colors:
