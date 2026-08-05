@@ -1,4 +1,4 @@
-using GameState = DynamicGameStateHandler.GameState; // alias this piece of shit
+using GameState = Mesocyclone.DynamicGameStateHandler.GameState; // alias this piece of shit
 
 using System;
 using System.Collections;
@@ -21,7 +21,7 @@ namespace Mesocyclone
 
         [SerializeField] // wished Unity's serializer could serialize tuples & properties :(
         [Tooltip("The different resolution scales the game goes through depending on the current DynamicGameStateHandler.gameState(*)\nModify these to your liking.\nNOTE: These go through in order from GameState.Standard to GameState.Aggressive")]
-        private float[] resolutionScales = new float[]
+        private static float[] resolutionScales = new float[]
         {
             1.0f,
             0.85f,

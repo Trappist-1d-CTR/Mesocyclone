@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mesocyclone.UI;
 
 namespace Mesocyclone
 {
@@ -134,7 +135,7 @@ namespace Mesocyclone
                             else
                             {
                                 // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
-                                Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
+                                UnityEngine.Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
                                 RadarList.Remove(s.Name);
 
                                 radarRect = CreateRadarImage(true, 7, i, out radarImage);
@@ -196,7 +197,7 @@ namespace Mesocyclone
                                 else
                                 {
                                     // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
-                                    Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
+                                    UnityEngine.Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
                                     SignalList.Remove(s.Name);
 
                                     radarRect = CreateRadarImage(false, 4, i, out radarImage);

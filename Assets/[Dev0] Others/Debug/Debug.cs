@@ -16,6 +16,8 @@
 
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 namespace Mesocyclone.Debug
 {
@@ -117,27 +119,31 @@ namespace Mesocyclone.Debug
         /// </summary>
         public static float totalElapsedGameTimeInDays { get; private set; }
 
+        private static InputMap DebugControls;
 
         public static void Init()
         {
             _isRunning = true;
 
             Application.quitting += OnQuit;
+
+            DebugControls = new();
+            DebugControls.Enable();
+            DebugControls.Dev.ToggleDevTools.performed += ToggleDevTools;
         }
 
         public static void Update()
         {
-            if (allowDevTools)
-            {
-                if (Input.GetKeyDown(KeyCode.B))
-                    devTools = !devTools;
-            }
-
             totalElapsedGameTime = (ulong)Time.frameCount; // just reference Time.frameCount lol
             totalElapsedGameTimeInMilliseconds = (float)process.TotalProcessorTime.TotalMilliseconds;
             totalElapsedGameTimeInSeconds = (float)process.TotalProcessorTime.TotalSeconds;
             totalElapsedGameTimeInMinutes = (float)process.TotalProcessorTime.TotalMinutes;
             totalElapsedGameTimeInDays = (float)process.TotalProcessorTime.TotalDays;
+        }
+
+        private static void ToggleDevTools(InputAction.CallbackContext obj)
+        {
+            if (allowDevTools) devTools = !devTools;
         }
 
         internal static void OnQuit()

@@ -502,7 +502,12 @@ namespace Mesocyclone
                     AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
                 }
 
-                InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain);
+                if (!InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain))
+                {
+                    int i = InverseDistanceWeighting.LastIndex;
+                    InverseDistanceWeighting.GetClosestCell(new float[6] { AirCellGroup[i].Velocity.x * TimeScale, AirCellGroup[i].Velocity.y * TimeScale, AirCellGroup[i].Velocity.z * TimeScale,
+                        AirCellGroup[i].Moles, AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
+                }
 
                 #region Natural Neighbour Interpolation Attempt
                 /* 

@@ -114,7 +114,7 @@ namespace Mesocyclone.Unused
         {
             for (int x = 0; x < xLength; x++)
                 for (int y = 0; y < yLength; y++)
-                    Debug.Log("TestGrid[" + x + ", " + y + "] has value of " + valArray[x, y]);
+                    UnityEngine.Debug.Log("TestGrid[" + x + ", " + y + "] has value of " + valArray[x, y]);
         }
 
         public Vector3 GetWorldPosition(int xID, int yID)

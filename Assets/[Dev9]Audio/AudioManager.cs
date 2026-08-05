@@ -56,7 +56,7 @@ namespace Mesocyclone
                 _poolSize = (byte)Mathf.Clamp(value, 0, MaxPoolSize);
                 if (_poolSize > 32)
                 {
-                    Debug.LogWarning
+                    UnityEngine.Debug.LogWarning
                     (
                         $"Audio Pool size ({_poolSize}) exceeds Unity's default voice limit of 32!!"
                     );
@@ -168,7 +168,7 @@ namespace Mesocyclone
 
 #endif
 
-            Debug.LogWarning("Audio Pool is full!! No new sources will play until one is free");
+            UnityEngine.Debug.LogWarning("Audio Pool is full!! No new sources will play until one is free");
             return null;
         }
 
@@ -455,7 +455,7 @@ namespace Mesocyclone
 
         public void SetPoolSize(byte NewSize) => PoolSize = NewSize;
 
-        void OnDestroy() => Instance = null;
+        void OnDestroy() => Instance = null!;
 
         #endregion
 

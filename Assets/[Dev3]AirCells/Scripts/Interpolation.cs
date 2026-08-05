@@ -8,6 +8,7 @@ namespace Mesocyclone
         public static float R = 1000;
         public static Vector3 Query;
         public static List<int> Indexes = new();
+        public static int LastIndex;
 
         public static double[] SUM_wu;
         public static double SUM_w;
@@ -30,6 +31,10 @@ namespace Mesocyclone
 
         public static void Remove(int Index)
         {
+            if (Indexes.Count == 1)
+            {
+                LastIndex = Index;
+            }
             Indexes.Remove(Index);
         }
 
@@ -53,6 +58,8 @@ namespace Mesocyclone
                     Values = u;
 
                     LockValues = true;
+
+                    return;
                 }
                 double w = System.Math.Pow(System.Math.Max(R - d, 0) / (R * d), 2);
 
@@ -67,9 +74,10 @@ namespace Mesocyclone
             return;
         }
 
-        public static void BroadcastInterp(bool TerrainAlreadyInterpolated)
+        public static bool BroadcastInterp(bool TerrainAlreadyInterpolated)
         {
-            if (SUM_w == 0) throw new System.Exception("Interpolation attempt with null weight");
+            if (SUM_w == 0) return false; //throw new System.Exception("Interpolation attempt with null weight");
+
 
             if (!LockValues)
             {
@@ -79,15 +87,25 @@ namespace Mesocyclone
                 {
                     Values[i] = (float)(SUM_wu[i] / SUM_w);
                 }
+
+                if (!TerrainAlreadyInterpolated && Query.y < 10)
+                {
+                    Values[0] *= Query.y / 10;
+                    Values[1] *= Query.y / 10;
+                    Values[2] *= Query.y / 10;
+                }
             }
 
             //Debug.Log(Values[0] + " ; " + Values[1] + " ; " + Values[2]);
 
-            if (!TerrainAlreadyInterpolated && Query.y < 10)
+            return true;
+        }
+
+        public static void GetClosestCell(float[] u)
+        {
+            if (!LockValues)
             {
-                Values[0] *= Query.y / 10;
-                Values[1] *= Query.y / 10;
-                Values[2] *= Query.y / 10;
+                Values = u;
             }
         }
     }

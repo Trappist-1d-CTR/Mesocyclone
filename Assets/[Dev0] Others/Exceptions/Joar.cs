@@ -13,7 +13,7 @@ namespace Mesocyclone
     {
         public Joar() : base("fuck you")
         {
-            Debug.LogError(base.Message);
+            UnityEngine.Debug.LogError(base.Message);
         }
     }
 }

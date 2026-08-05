@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Unity.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 // TODO: Implement CPU/GPU usage checks
 // TODO: Implement more than just resolution changes
@@ -29,7 +32,7 @@ namespace Mesocyclone
             // i think this syntax works, don't @ me
             SerializeField,
             Tooltip("Represents how much resources the game is using\nIf it's ~0 then awesome!\nIf it's between 0.0000001 and 1.9999999, fine ig, negligible\nIf it's more than 2, RUN, I AM COMING FOR YOU"),
-            Mesocyclone.ReadOnly
+            ReadOnly
         ]
         static float _performanceBudget = 0f;
         public static float performanceBudget
@@ -47,7 +50,7 @@ namespace Mesocyclone
                     // but this also acts as an excuse to call Joar()
                     try
                     {
-                        Debug.LogError("Don't");
+                        UnityEngine.Debug.LogError("Don't");
                         throw new InvalidOperationException("I SAID DONT");
                     }
                     catch
@@ -61,7 +64,7 @@ namespace Mesocyclone
 
                 if (_performanceBudget > 5)
                 {
-                    Debug.Log("WHAT THE FUCK IS HAPPENING YOUR PC IS GOING TO EMPLODE");
+                    UnityEngine.Debug.Log("WHAT THE FUCK IS HAPPENING YOUR PC IS GOING TO EMPLODE");
                     return;
                 }
             }
@@ -140,7 +143,7 @@ namespace Mesocyclone
         (1.95f, GameState.Restricted),
         (1.05f, GameState.Tuned),
         (0f, GameState.Standard)
-    };
+        };
 
 
         private float emaFrameTimeMs;
@@ -224,11 +227,6 @@ namespace Mesocyclone
                 // DIE
                 throw new Joar();
             }
-            catch (PerformanceOverloadException)
-            {
-                // just to give extra warning to the user that their PC is suffering
-                Console.Beep();
-            }
             finally
             {
                 // MUHAHAHAHAHAHHAHHA
@@ -237,6 +235,16 @@ namespace Mesocyclone
                 #if DEV
                     Console.Beep();
                 #endif
+            }
+
+            try
+            {
+
+            }
+            catch (PerformanceOverloadException)
+            {
+                // just to give extra warning to the user that their PC is suffering
+                Console.Beep();
             }
         }
 
@@ -291,12 +299,12 @@ namespace Mesocyclone
         (1f, GameState.Restricted),
         (0.5f, GameState.Tuned),
         (0f, GameState.Standard)
-    };
+        };
 
         private void _Update()
         {
-            if (Input.anyKeyDown)
-                stopwatch.Restart();
+            InputSystem.onAnyButtonPress.Call(currentAction => stopwatch.Restart());
+                
 
             double minutesIdle = stopwatch.Elapsed.TotalMinutes;
 
@@ -321,16 +329,16 @@ namespace Mesocyclone
 
         #region Actual Handling Now
 
-        public RenderScaleController RSC;
+        public ResolutionScaleController RSC;
 
         private void __Awake()
         {
             OnGameStateChanged += ((GameState oldState, GameState newState) =>
             {
-                Debug.Log($"Game State is being changed from {oldState} to {newState}");
+                UnityEngine.Debug.Log($"Game State is being changed from {oldState} to {newState}");
             });
 
-            RSC = Camera.main.AddComponent<ResolutionScaleController>();
+            RSC = FindFirstObjectByType<Camera>().gameObject.AddComponent<ResolutionScaleController>();
         }
 
         #endregion

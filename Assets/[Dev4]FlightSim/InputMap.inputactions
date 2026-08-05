@@ -362,6 +362,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleDevTools",
+                    "type": "Button",
+                    "id": "a10880dd-d888-4ce5-b886-7bd9449f1321",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -397,6 +406,17 @@
                     "action": "ResetDrone",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "42b5473d-bc1e-4196-80f9-c14ce199eb52",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "ToggleDevTools",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

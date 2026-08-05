@@ -30,13 +30,13 @@ namespace Mesocyclone
         {
             if (GameViewType == null)
             {
-                Debug.LogError("GameView type not found.");
+                UnityEngine.Debug.LogError("GameView type not found.");
                 return;
             }
 
             if (ShowToolbarProperty == null)
             {
-                Debug.LogWarning("GameView.showToolbar property not found.");
+                UnityEngine.Debug.LogWarning("GameView.showToolbar property not found.");
             }
 
             if (instance != null)

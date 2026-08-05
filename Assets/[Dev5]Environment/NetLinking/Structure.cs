@@ -97,7 +97,7 @@ namespace Mesocyclone
                     {
                         LinkedData = Data2Link;
                         Linked = true;
-                        Debug.Log("Linked: " + Name);
+                        UnityEngine.Debug.Log("Linked: " + Name);
 
                         foreach (Structure structur in DetectableAfterLinked)
                         {

@@ -89,11 +89,11 @@ namespace Mesocyclone.UI.Feedbacking
             try
             {
                 smtpServer.Send(mail);
-                Debug.Log("Email sent successfully!");
+                UnityEngine.Debug.Log("Email sent successfully!");
             }
             catch (System.Exception e)
             {
-                Debug.Log("Email error: " + e.ToString());
+                UnityEngine.Debug.Log("Email error: " + e.ToString());
             }
         }
     }

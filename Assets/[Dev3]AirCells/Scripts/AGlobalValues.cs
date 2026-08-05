@@ -476,7 +476,7 @@ namespace Mesocyclone
 
         private void Start()
         {
-            Debug.Log(CalculateStaticInsolation(GaleSemiMajor));
+            UnityEngine.Debug.Log(CalculateStaticInsolation(GaleSemiMajor));
 
             #region List Setups
             EOS_Temperature = new float[EOS_N];
