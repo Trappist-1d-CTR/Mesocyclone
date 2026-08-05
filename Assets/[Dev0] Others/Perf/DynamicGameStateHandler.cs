@@ -44,7 +44,8 @@ namespace Mesocyclone
             get => _performanceBudget;
             private set
             {
-                if (value > 5)
+                UnityEngine.Debug.Log("Performance value: " + value);
+                if (value > 100)
                 {
                     // reason i exception check this is bcz i'm not sure if logging an error actually throws an exception or not, or, just, wtv it does
                     // but this also acts as an excuse to call Joar()
@@ -62,7 +63,7 @@ namespace Mesocyclone
 
                 _performanceBudget = Mathf.Max(value, 0);
 
-                if (_performanceBudget > 5)
+                if (_performanceBudget > 100)
                 {
                     UnityEngine.Debug.Log("WHAT THE FUCK IS HAPPENING YOUR PC IS GOING TO EMPLODE");
                     return;
@@ -136,12 +137,12 @@ namespace Mesocyclone
         // this is just a container of thresholds and states
         private static readonly (float ratioThreshold, GameState state)[] thresholds = new[]
         {
-        (4f, GameState.Crash),
-        (3.5f, GameState.Frozen),
-        (3f, GameState.Aggressive),
-        (2.5f, GameState.Limited),
-        (1.95f, GameState.Restricted),
-        (1.05f, GameState.Tuned),
+        (200f, GameState.Crash),
+        (150f, GameState.Frozen),
+        (100f, GameState.Aggressive),
+        (60f, GameState.Limited),
+        (30f, GameState.Restricted),
+        (10f, GameState.Tuned),
         (0f, GameState.Standard)
         };
 
@@ -153,6 +154,7 @@ namespace Mesocyclone
 
         public static event Action<GameState, GameState> OnGameStateChanged;
 
+        private static InputMap DebugControls;
 
         // create GO and attach after the game scene has finished loading
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -163,18 +165,66 @@ namespace Mesocyclone
             _ = dgsh.AddComponent<DynamicGameStateHandler>();
         }
 
+        
         private void Awake()
         {
             __Awake();
 
             emaFrameTimeMs = targetFrameTimeMs;
             pendingState = gameState;
+
+            DebugControls = new();
+            DebugControls.Enable();
+            DebugControls.Dev.AssignGameState.performed += GameStateReassign;
         }
+
+        private void OnDestroy()
+        {
+            DebugControls.Dev.AssignGameState.performed -= GameStateReassign;
+        }
+
+        #region Dev Utils
+
+        private void GameStateReassign(InputAction.CallbackContext obj)
+        {
+            UnityEngine.Debug.Log(obj.ReadValue<float>());
+
+            switch (obj.ReadValue<float>())
+            {
+                case 1f:
+                    SetGameState(GameState.Standard);
+                    break;
+
+                case 2f:
+                    SetGameState(GameState.Tuned);
+                    break;
+
+                case 3f:
+                    SetGameState(GameState.Restricted);
+                    break;
+
+                case 4f:
+                    SetGameState(GameState.Limited);
+                    break;
+
+                case 5f:
+                    SetGameState(GameState.Aggressive);
+                    break;
+
+                case 6f:
+                    SetGameState(GameState.Frozen);
+                    break;
+
+                case 7f:
+                    SetGameState(GameState.Crash);
+                    break;
+            }
+        }
+        #endregion
 
         private void Update()
         {
             _Update();
-            ImmediateGameStateReassignCheck();
 
             float dtMs = Time.unscaledDeltaTime * 1000f;
             const float emaAlpha = 0.1f;
@@ -348,24 +398,7 @@ namespace Mesocyclone
 
         #region Dev Utils
 
-        [Conditional("DEV")]
-        private void ImmediateGameStateReassignCheck()
-        {
-            if (Input.GetKey(KeyCode.I))
-                SetGameState(GameState.Standard);
-            else if (Input.GetKey(KeyCode.J))
-                SetGameState(GameState.Tuned);
-            else if (Input.GetKey(KeyCode.K))
-                SetGameState(GameState.Restricted);
-            else if (Input.GetKey(KeyCode.L))
-                SetGameState(GameState.Limited);
-            else if (Input.GetKey(KeyCode.Semicolon))
-                SetGameState(GameState.Aggressive);
-            else if (Input.GetKey(KeyCode.Quote) || Input.GetKey(KeyCode.BackQuote))
-                SetGameState(GameState.Frozen);
-            else if (Input.GetKey(KeyCode.Backslash))
-                SetGameState(GameState.Crash);
-        }
+        
 
         #endregion
     }

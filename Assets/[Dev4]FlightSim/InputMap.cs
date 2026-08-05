@@ -150,7 +150,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""name"": ""MouseClick"",
                     ""type"": ""Button"",
                     ""id"": ""54bbe36d-2fb5-4cb7-b08e-401b31a88706"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -457,6 +457,15 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AssignGameState"",
+                    ""type"": ""Value"",
+                    ""id"": ""50242938-59a5-45b4-b5f3-176c8359ec2a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -501,6 +510,83 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";PC - KeyMouse (Standard)"",
                     ""action"": ""ToggleDevTools"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae608cc9-f578-4d14-bfe8-7c1f08db7a16"",
+                    ""path"": ""<Keyboard>/numpad1"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fb116606-0954-48d8-b0b9-20aa3c4d7501"",
+                    ""path"": ""<Keyboard>/numpad2"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=2)"",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f0d26ef-cd2c-4c71-8196-ce5e1e7114b4"",
+                    ""path"": ""<Keyboard>/numpad3"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1bd50f39-614d-438a-9b31-7496aeb46110"",
+                    ""path"": ""<Keyboard>/numpad4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7e12699b-9785-4811-bb05-4094474023d5"",
+                    ""path"": ""<Keyboard>/numpad5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b234a3a-3d24-455e-90e0-01de308a5443"",
+                    ""path"": ""<Keyboard>/numpad6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d43725a-7273-442a-86c9-acf09872d56b"",
+                    ""path"": ""<Keyboard>/numpad7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""AssignGameState"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -550,6 +636,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_Dev = asset.FindActionMap("Dev", throwIfNotFound: true);
         m_Dev_ResetDrone = m_Dev.FindAction("ResetDrone", throwIfNotFound: true);
         m_Dev_ToggleDevTools = m_Dev.FindAction("ToggleDevTools", throwIfNotFound: true);
+        m_Dev_AssignGameState = m_Dev.FindAction("AssignGameState", throwIfNotFound: true);
     }
 
     ~@InputMap()
@@ -1044,6 +1131,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     private List<IDevActions> m_DevActionsCallbackInterfaces = new List<IDevActions>();
     private readonly InputAction m_Dev_ResetDrone;
     private readonly InputAction m_Dev_ToggleDevTools;
+    private readonly InputAction m_Dev_AssignGameState;
     /// <summary>
     /// Provides access to input actions defined in input action map "Dev".
     /// </summary>
@@ -1063,6 +1151,10 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Dev/ToggleDevTools".
         /// </summary>
         public InputAction @ToggleDevTools => m_Wrapper.m_Dev_ToggleDevTools;
+        /// <summary>
+        /// Provides access to the underlying input action "Dev/AssignGameState".
+        /// </summary>
+        public InputAction @AssignGameState => m_Wrapper.m_Dev_AssignGameState;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1095,6 +1187,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @ToggleDevTools.started += instance.OnToggleDevTools;
             @ToggleDevTools.performed += instance.OnToggleDevTools;
             @ToggleDevTools.canceled += instance.OnToggleDevTools;
+            @AssignGameState.started += instance.OnAssignGameState;
+            @AssignGameState.performed += instance.OnAssignGameState;
+            @AssignGameState.canceled += instance.OnAssignGameState;
         }
 
         /// <summary>
@@ -1112,6 +1207,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @ToggleDevTools.started -= instance.OnToggleDevTools;
             @ToggleDevTools.performed -= instance.OnToggleDevTools;
             @ToggleDevTools.canceled -= instance.OnToggleDevTools;
+            @AssignGameState.started -= instance.OnAssignGameState;
+            @AssignGameState.performed -= instance.OnAssignGameState;
+            @AssignGameState.canceled -= instance.OnAssignGameState;
         }
 
         /// <summary>
@@ -1301,5 +1399,12 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleDevTools(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AssignGameState" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAssignGameState(InputAction.CallbackContext context);
     }
 }

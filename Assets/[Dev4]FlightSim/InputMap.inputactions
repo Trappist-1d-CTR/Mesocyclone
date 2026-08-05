@@ -64,7 +64,7 @@
                     "name": "MouseClick",
                     "type": "Button",
                     "id": "54bbe36d-2fb5-4cb7-b08e-401b31a88706",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -371,6 +371,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AssignGameState",
+                    "type": "Value",
+                    "id": "50242938-59a5-45b4-b5f3-176c8359ec2a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -415,6 +424,83 @@
                     "processors": "",
                     "groups": ";PC - KeyMouse (Standard)",
                     "action": "ToggleDevTools",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ae608cc9-f578-4d14-bfe8-7c1f08db7a16",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "Scale",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fb116606-0954-48d8-b0b9-20aa3c4d7501",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "Scale(factor=2)",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f0d26ef-cd2c-4c71-8196-ce5e1e7114b4",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "Scale",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1bd50f39-614d-438a-9b31-7496aeb46110",
+                    "path": "<Keyboard>/numpad4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7e12699b-9785-4811-bb05-4094474023d5",
+                    "path": "<Keyboard>/numpad5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b234a3a-3d24-455e-90e0-01de308a5443",
+                    "path": "<Keyboard>/numpad6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d43725a-7273-442a-86c9-acf09872d56b",
+                    "path": "<Keyboard>/numpad7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC - KeyMouse (Standard)",
+                    "action": "AssignGameState",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
