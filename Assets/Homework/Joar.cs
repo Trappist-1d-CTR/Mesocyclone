@@ -1,9 +1,6 @@
 using System;
 using UnityEngine;
 
-// fallback to this whenever you're unsure on what exception to use
-// or are just too lazy
-
 namespace Mesocyclone
 {
     /// <summary>
@@ -11,7 +8,7 @@ namespace Mesocyclone
     /// </summary>
     public class Joar : Exception
     {
-        public Joar() : base("fuck you")
+        public Joar() : base("fuck you.")
         {
             UnityEngine.Debug.LogError(base.Message);
         }

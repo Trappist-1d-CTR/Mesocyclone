@@ -34,14 +34,14 @@ namespace Mesocyclone
             Tooltip("Represents how much resources the game is using\nIf it's ~0 then awesome!\nIf it's between 0.0000001 and 1.9999999, fine ig, negligible\nIf it's more than 2, RUN, I AM COMING FOR YOU"),
             ReadOnly
         ]
-        static float _performanceBudget = 0f;
+        private static float _performanceBudget = 0f;
         public static float performanceBudget
         {
             // no one loves you
 
             // *the acts performed are purely for entertainment purposes and should not be re-inacted at home, between family members (that of, parents, siblings, and/or cousins), or partners of mileaging parties*
             // *to further reinstate this, the getter method is highly used between programmers, and this stunt is purely for shock value, rather than to be compared with realistic sources*
-            get => _performanceBudget;
+            get { return _performanceBudget; }
             private set
             {
                 UnityEngine.Debug.Log("Performance value: " + value);
@@ -78,18 +78,46 @@ namespace Mesocyclone
         public enum GameState : byte // can only include 256 definitions, way more than enough
         {
             // ignore how shitty these names are
-            Standard, // regular gameplay
-            Tuned, // makes minor adjustments
-            Restricted, // makes more major adjustments
-            Limited, // Area where graphics gets shitty
-            Aggressive, // Area where gameplay gets shitty
-            Frozen, // Just freeze everything, mostly used for idle states
-            Crash // drives the game to crash so your PC doesn't emplode with it
+
+            /// <summary>
+            /// Regular gameplay
+            /// </summary>
+            Standard,
+
+            /// <summary>
+            /// Makes minor adjustments
+            /// </summary>/
+            Tuned,
+
+            /// <summary>
+            /// Makes more, major adjustments
+            /// </summary>
+            Restricted,
+
+            /// <summary>
+            /// Area where graphics gets shitty
+            /// </summary>
+            Limited,
+
+            /// <summary>
+            /// Area where gameplay gets shitty
+            /// </summary>
+            Aggressive,
+
+            /// <summary>
+            /// Just freeze everthing, moslty used for idle states
+            /// </summary>
+            Frozen,
+
+            /// <summary>
+            /// Drives the game to crash so your PC doesn't emplode with it
+            /// </summary>
+            Crash
         }
-        private static GameState _gameState;
+        private static GameState _gameState; // gotta use a backing field since this is C# 9 :/
         public static GameState gameState
         {
-            get => _gameState;
+            get { return _gameState; }
             internal set
             {
                 _gameState = value;
@@ -109,7 +137,7 @@ namespace Mesocyclone
                     case GameState.Frozen:
                         break;
                     case GameState.Crash:
-                        throw new PerformanceOverloadException(); // drive the game to crash with an exception
+                        throw new PerformanceOverloadException(); // drive the game to crash with an exception ; exceptions don't usually cause a crash for some reason, so the exception just simply quits the program
                 }
             }
         }
@@ -124,28 +152,26 @@ namespace Mesocyclone
         private float checkInterval
         {
             // another victim
-            get => _checkInterval;
-            set => _checkInterval = Mathf.Max(value, 1E-2f);
+            get { return _checkInterval; }
+            set { _checkInterval = Mathf.Max(value, 1E-2f); }
         }
 
         [SerializeField, Tooltip("Me neither.")]
         private uint consecutiveChecksToConfirm = 3;
         // guys, hear me out, but unsigned integers are so fucking underrated. Like first of all it uses no more memory, since it just replace all the negative values with more positive values, and also like there are SO MANY times where we don't want an integer to go negative, so unsigned solves that aswell, adding less boilerplate since you don't have to make a fucking property every single time
 
-
         // i love tuples
         // this is just a container of thresholds and states
         private static readonly (float ratioThreshold, GameState state)[] thresholds = new[]
         {
-        (200f, GameState.Crash),
-        (150f, GameState.Frozen),
-        (100f, GameState.Aggressive),
-        (60f, GameState.Limited),
-        (30f, GameState.Restricted),
-        (10f, GameState.Tuned),
-        (0f, GameState.Standard)
+            (200f, GameState.Crash),
+            (150f, GameState.Frozen),
+            (100f, GameState.Aggressive),
+            (60f, GameState.Limited),
+            (30f, GameState.Restricted),
+            (10f, GameState.Tuned),
+            (0f, GameState.Standard)
         };
-
 
         private float emaFrameTimeMs;
         private float timer;
@@ -155,6 +181,12 @@ namespace Mesocyclone
         public static event Action<GameState, GameState> OnGameStateChanged;
 
         private static InputMap DebugControls;
+
+        [field: SerializeField]
+        public bool shouldEvaluate { get; private set; } = true;
+
+        [field: SerializeField]
+        public bool manualOverrideActive { get; private set; } = false;
 
         // create GO and attach after the game scene has finished loading
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -176,11 +208,14 @@ namespace Mesocyclone
             DebugControls = new();
             DebugControls.Enable();
             DebugControls.Dev.AssignGameState.performed += GameStateReassign;
+
+            //shouldEvaluate = false; // change this
         }
 
         private void OnDestroy()
         {
             DebugControls.Dev.AssignGameState.performed -= GameStateReassign;
+            DebugControls.Disable();
         }
 
         #region Dev Utils
@@ -189,6 +224,7 @@ namespace Mesocyclone
         {
             UnityEngine.Debug.Log(obj.ReadValue<float>());
 
+            manualOverrideActive = true;
             switch (obj.ReadValue<float>())
             {
                 case 1f:
@@ -224,7 +260,7 @@ namespace Mesocyclone
 
         private void Update()
         {
-            _Update();
+            if (shouldEvaluate) _Update();
 
             float dtMs = Time.unscaledDeltaTime * 1000f;
             const float emaAlpha = 0.1f;
@@ -234,7 +270,7 @@ namespace Mesocyclone
             if (timer < checkInterval) return;
             timer = 0f;
 
-            Evaluate();
+            if (shouldEvaluate) Evaluate();
         }
 
 
@@ -267,7 +303,7 @@ namespace Mesocyclone
                     pendStreak = 1;
                 }
 
-                if (pendStreak >= consecutiveChecksToConfirm && candidate != gameState)
+                if (!manualOverrideActive && pendStreak >= consecutiveChecksToConfirm && candidate != gameState)
                 {
                     SetGameState(candidate);
                 }
@@ -343,18 +379,17 @@ namespace Mesocyclone
 
         private static readonly (float minutes, GameState state)[] idleThresholds = new[]
         {
-        (4.5f, GameState.Frozen),
-        (3.2f, GameState.Aggressive),
-        (2f, GameState.Limited),
-        (1f, GameState.Restricted),
-        (0.5f, GameState.Tuned),
-        (0f, GameState.Standard)
+            (4.5f, GameState.Frozen),
+            (3.2f, GameState.Aggressive),
+            (2f, GameState.Limited),
+            (1f, GameState.Restricted),
+            (0.5f, GameState.Tuned),
+            (0f, GameState.Standard)
         };
 
         private void _Update()
         {
             InputSystem.onAnyButtonPress.Call(currentAction => stopwatch.Restart());
-                
 
             double minutesIdle = stopwatch.Elapsed.TotalMinutes;
 
@@ -390,15 +425,6 @@ namespace Mesocyclone
 
             RSC = FindFirstObjectByType<Camera>().gameObject.AddComponent<ResolutionScaleController>();
         }
-
-        #endregion
-
-
-
-
-        #region Dev Utils
-
-        
 
         #endregion
     }

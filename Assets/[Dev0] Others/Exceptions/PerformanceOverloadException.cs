@@ -13,6 +13,7 @@ namespace Mesocyclone
         public PerformanceOverloadException() : base("Game has overwhelmed all device resources, crash staged")
         {
             UnityEngine.Debug.LogError(base.Message);
+            UnityEngine.Application.Quit();
         }
     }
 }

@@ -58,7 +58,6 @@ namespace Mesocyclone
             Instance = this;
         }
 
-        // TODO: figure out how to make this parallelized, or at least more efficient
         // can't use regular threading because Unity API calls must be made on the main thread
         // and Jobs requires NativeArray, which uses structs, and Tickable is a class
         // why am i a programmer

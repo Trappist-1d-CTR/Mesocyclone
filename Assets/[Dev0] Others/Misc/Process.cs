@@ -1,4 +1,4 @@
-#undef SHOW_PROCESS_INFO
+#define SHOW_PROCESS_INFO
 
 // this is fucking useless
 
@@ -16,12 +16,10 @@ namespace Mesocyclone.Debug
     {
         #region Variables
 
-#nullable enable // in case this isn't disabled
-
+        #nullable enable // in case this isn't disabled
         /// <summary>The Coroutine masked as the Process that runs the Routine</summary>
         Coroutine? coroutine;
-
-#nullable disable
+        #nullable disable
 
         /// <summary>The IEnumerator Routine with all the logic that should be ran</summary>
         Func<IEnumerator> routine;
@@ -43,18 +41,18 @@ namespace Mesocyclone.Debug
         {
             if (coroutine != null)
             {
-#if SHOW_PROCESS_INFO
-                if (!silent) Debug.Log($"Attempting to start process (=> {routine}) that's already running : EXITING...");
-#endif
+                #if SHOW_PROCESS_INFO
+                    if (!silent) Debug.Log($"Attempting to start process (=> {routine}) that's already running : EXITING...");
+                #endif
 
                 return;
             }
 
             coroutine = AudioManager.Instance.StartCoroutine(routine()); // didn't have any other singleton :/
 
-#if SHOW_PROCESS_INFO
-            if (!silent) Debug.Log($"Starting Process {coroutine} => {routine}");
-#endif
+            #if SHOW_PROCESS_INFO
+                if (!silent) Debug.Log($"Starting Process {coroutine} => {routine}");
+            #endif
         }
 
         #endregion
@@ -67,16 +65,16 @@ namespace Mesocyclone.Debug
         {
             if (coroutine == null)
             {
-#if SHOW_PROCESS_INFO
-                if (!silent) Debug.Log($"Attempting to stop a process (=> {routine}) that's already null : EXITING...");
-#endif
+                #if SHOW_PROCESS_INFO
+                    if (!silent) Debug.Log($"Attempting to stop a process (=> {routine}) that's already null : EXITING...");
+                #endif
 
                 return;
             }
 
-#if SHOW_PROCESS_INFO
-            if (!silent) Debug.Log($"Stopping Process => {routine}");
-#endif
+            #if SHOW_PROCESS_INFO
+                if (!silent) Debug.Log($"Stopping Process => {routine}");
+            #endif
 
             AudioManager.Instance.StopCoroutine(coroutine);
             coroutine = null;
@@ -87,9 +85,9 @@ namespace Mesocyclone.Debug
         {
             if (coroutine == null)
             {
-#if SHOW_PROCESS_INFO
-                Debug.Log($"Attempting to restart a process (=> {routine}) that's null : RUNNING '{coroutine}.Start()'...");
-#endif
+                #if SHOW_PROCESS_INFO
+                    Debug.Log($"Attempting to restart a process (=> {routine}) that's null : RUNNING '{coroutine}.Start()'...");
+                #endif
 
                 Start(true);
                 return;
@@ -99,9 +97,9 @@ namespace Mesocyclone.Debug
             Stop(true); // silent
             Start(true); // silent
 
-#if SHOW_PROCESS_INFO
-            Debug.Log($"Restarting Process => {routine}");
-#endif
+            #if SHOW_PROCESS_INFO
+                Debug.Log($"Restarting Process => {routine}");
+            #endif
         }
 
         #endregion
