@@ -42,7 +42,7 @@ namespace Mesocyclone.Debug
             if (coroutine != null)
             {
                 #if SHOW_PROCESS_INFO
-                    if (!silent) Debug.Log($"Attempting to start process (=> {routine}) that's already running : EXITING...");
+                    if (!silent) UnityEngine.Debug.Log($"Attempting to start process (=> {routine}) that's already running : EXITING...");
                 #endif
 
                 return;
@@ -51,7 +51,7 @@ namespace Mesocyclone.Debug
             coroutine = AudioManager.Instance.StartCoroutine(routine()); // didn't have any other singleton :/
 
             #if SHOW_PROCESS_INFO
-                if (!silent) Debug.Log($"Starting Process {coroutine} => {routine}");
+                if (!silent) UnityEngine.Debug.Log($"Starting Process {coroutine} => {routine}");
             #endif
         }
 
@@ -66,14 +66,14 @@ namespace Mesocyclone.Debug
             if (coroutine == null)
             {
                 #if SHOW_PROCESS_INFO
-                    if (!silent) Debug.Log($"Attempting to stop a process (=> {routine}) that's already null : EXITING...");
+                    if (!silent) UnityEngine.Debug.Log($"Attempting to stop a process (=> {routine}) that's already null : EXITING...");
                 #endif
 
                 return;
             }
 
             #if SHOW_PROCESS_INFO
-                if (!silent) Debug.Log($"Stopping Process => {routine}");
+                if (!silent) UnityEngine.Debug.Log($"Stopping Process => {routine}");
             #endif
 
             AudioManager.Instance.StopCoroutine(coroutine);
@@ -86,7 +86,7 @@ namespace Mesocyclone.Debug
             if (coroutine == null)
             {
                 #if SHOW_PROCESS_INFO
-                    Debug.Log($"Attempting to restart a process (=> {routine}) that's null : RUNNING '{coroutine}.Start()'...");
+                UnityEngine.Debug.Log($"Attempting to restart a process (=> {routine}) that's null : RUNNING '{coroutine}.Start()'...");
                 #endif
 
                 Start(true);
@@ -98,7 +98,7 @@ namespace Mesocyclone.Debug
             Start(true); // silent
 
             #if SHOW_PROCESS_INFO
-                Debug.Log($"Restarting Process => {routine}");
+            UnityEngine.Debug.Log($"Restarting Process => {routine}");
             #endif
         }
 

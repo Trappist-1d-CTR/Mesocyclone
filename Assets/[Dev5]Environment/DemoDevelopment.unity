@@ -1301,6 +1301,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 79602859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &286054067 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9043147494543880445, guid: a84568eaf57050145894af2e3117c2d1, type: 3}
+  m_PrefabInstance: {fileID: 288317654}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &288317654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7191,6 +7202,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 288317659}
     - target: {fileID: 3111022834855121462, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: Performance.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3111022834855121462, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
       propertyPath: 'Performance.Array.data[0]'
       value: 
       objectReference: {fileID: 523630085}
@@ -7198,6 +7213,10 @@ PrefabInstance:
       propertyPath: 'Performance.Array.data[1]'
       value: 
       objectReference: {fileID: 711700568}
+    - target: {fileID: 3111022834855121462, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
+      propertyPath: 'Performance.Array.data[2]'
+      value: 
+      objectReference: {fileID: 286054067}
     - target: {fileID: 6199649961033442415, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
       propertyPath: m_Name
       value: FlightDrone
@@ -7208,7 +7227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7273163261194938501, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.262
+      value: 1.495
       objectReference: {fileID: 0}
     - target: {fileID: 7273163261194938501, guid: 181b7d528aeb0fc4e94cff1562f28580, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7530,14 +7549,6 @@ PrefabInstance:
     - target: {fileID: 4112522905129203211, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: m_Name
       value: Hangar
-      objectReference: {fileID: 0}
-    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
-      propertyPath: DroneT
-      value: 
-      objectReference: {fileID: 1453793527}
-    - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
-      propertyPath: DetectableAfterLinked.Array.size
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: 'DetectableAfterLinked.Array.data[0]'

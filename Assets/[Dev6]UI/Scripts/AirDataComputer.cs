@@ -144,6 +144,7 @@ namespace Mesocyclone.UI
 
                 Performance[0].text = "FPS: " + FPS.ToString("n0");
                 Performance[1].text = "PhFPS: " + PhFPS.ToString("n0");
+                Performance[2].text = "PerfB: " + DynamicGameStateHandler.performanceBudget.ToString("G3");
             }
 
             #endregion

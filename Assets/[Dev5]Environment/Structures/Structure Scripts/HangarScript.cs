@@ -33,6 +33,9 @@ public class HangarScript : MonoBehaviour
     {
         PlatformShelteredPos = new(0, 0.5f, 0);
         AnimationTimer = -1;
+
+        if (HangarState == HangarSituations.Sheltered)
+            GameObject.FindGameObjectWithTag("Player").SendMessage("InHangar", gameObject);
     }
 
     void FixedUpdate()
@@ -74,8 +77,16 @@ public class HangarScript : MonoBehaviour
                 break;
         }
 
-        Cover.AddRelativeTorque((HangarState == HangarSituations.Launching || HangarState == HangarSituations.Standby ? 1 : -1) * 
-            CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
+        if (HangarState is HangarSituations.Closing or HangarSituations.Sheltered)
+        {
+            if (Cover.rotation.eulerAngles.z <= 90)
+                Cover.AddRelativeTorque(-CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
+        }
+        else if (Cover.rotation.eulerAngles.z >= 90)
+        {
+            Cover.AddRelativeTorque(CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
+        }
+
 
         if (AnimationTimer != -1)
         {

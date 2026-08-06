@@ -209,7 +209,7 @@ namespace Mesocyclone
         #region LiftDragTorque Coefficients
         private float[] AspectRatio;
         private AnimationCurve[] LiftAoA;
-        private AnimationCurve[] InducedDragAoA;
+        public AnimationCurve[] InducedDragAoA;
         private AnimationCurve[] TorqueAoA;
         #endregion
 
@@ -1131,21 +1131,21 @@ namespace Mesocyclone
             //Forward Drag
             PhysicsAcceleration += Check = 0.5f * C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
-            //   Debug.Log("Wind: " + AirSpeed + "; Forward Drag: " + Check);
+            //   UnityEngine.Debug.Log("Wind: " + AirSpeed + "; Forward Drag: " + Check);
 
             Memory = transform.up;
 
             //Vertical Drag
             PhysicsAcceleration += Check = 0.5f * C.GaleAtmD * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
-            //   Debug.Log("Vertical Drag: " + Check);
+            //   UnityEngine.Debug.Log("Vertical Drag: " + Check);
 
             Memory = transform.forward;
 
             //Side Drag
             PhysicsAcceleration += Check = 0.5f * C.GaleAtmD * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
-            //   Debug.Log("Side Drag: " + Check);
+            //   UnityEngine.Debug.Log("Side Drag: " + Check);
 
             #endregion
 

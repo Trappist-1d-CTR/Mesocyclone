@@ -504,26 +504,20 @@ namespace Mesocyclone
 
                 if (!InverseDistanceWeighting.BroadcastInterp(InterpolationWithTerrain))
                 {
-                    int i = InverseDistanceWeighting.LastIndex;
-                    InverseDistanceWeighting.GetClosestCell(new float[6] { AirCellGroup[i].Velocity.x * TimeScale, AirCellGroup[i].Velocity.y * TimeScale, AirCellGroup[i].Velocity.z * TimeScale,
-                        AirCellGroup[i].Moles, AirCellGroup[i].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
-                }
+                    int minI = 0;
+                    float minD = Vector3.Distance(AirCellGroup[0].CellCenter, InverseDistanceWeighting.Query);
+                    for (int i = 1; i < AirCellGroup.Count; i++)
+                    {
+                        if (minD > Vector3.Distance(AirCellGroup[i].CellCenter, InverseDistanceWeighting.Query))
+                        {
+                            minD = Vector3.Distance(AirCellGroup[i].CellCenter, InverseDistanceWeighting.Query);
+                            minI = i;
+                        }
+                    }
 
-                #region Natural Neighbour Interpolation Attempt
-                /* 
-                Vertex3[] CellVertexes = new Vertex3[CellGroupNumber];
-                //Interpolation Values
-                if (CellGroupNumber > 4)
-                {
-                    CellVertexes[i] = new(AirCellGroup[i].CellCenter.x, AirCellGroup[i].CellCenter.y, AirCellGroup[i].CellCenter.z, new float[6]
-                        { AirCellGroup[i].Velocity.x, AirCellGroup[i].Velocity.y, AirCellGroup[i].Velocity.z, AirCellGroup[i].Moles, AirCellGroup[i].Temperature, AirCellGroup[i].CellDynamicVolume });
+                    InverseDistanceWeighting.GetClosestCell(new float[6] { AirCellGroup[minI].Velocity.x * TimeScale, AirCellGroup[minI].Velocity.y * TimeScale, AirCellGroup[minI].Velocity.z * TimeScale,
+                        AirCellGroup[minI].Moles, AirCellGroup[minI].Temperature, 0 /* Dynamic Volume Should Supposedly Go Here */ });
                 }
-                InterpolatedValues = InterpolateAirCells.GetValues(CellVertexes, new(DronePosition.x, DronePosition.y, DronePosition.z, 0));
-                //   Debug.Log(InterpolatedValues.Length);
-                   Debug.Log("Interpolated values at Drone Position: \n   Velocity = { " + InterpolatedValues[0] + ", " + InterpolatedValues[1] + ", " + InterpolatedValues[2] + " }\n   " +
-                       "Moles = " + InterpolatedValues[3] + "\n   Temperature = " + InterpolatedValues[4] + "\n   Dynamic Volume = " + InterpolatedValues[5]);
-                */
-                #endregion
                 #endregion
             }
         }
@@ -559,38 +553,4 @@ namespace Mesocyclone
             return Mathf.Max(value, 1e-2f);
         }
     }
-
-
-    #region Discarded
-    /*
-     * for (int i = 0; i < 1; i++)
-    {
-    //Force from Other Cells
-    AirCellGroup[i].PerformAcceleration((C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i].CellCenter - AirCellGroup[i + 1].CellCenter).normalized * DistanceScale);
-    AirCellGroup[i + 1].PerformAcceleration((C.R * ((AirCellGroup[i].Temperature + AirCellGroup[i + 1].Temperature) / 2) / (C.GaleAtmMM * (AirCellGroup[i].CellCenter.y / DistanceScale))) * (AirCellGroup[i + 1].CellCenter - AirCellGroup[i].CellCenter).normalized * DistanceScale);
-    }
-
-    #region Cell Behavior Simulation
-    //Force from Terrain (y = 0)
-    //(C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale));
-    //float P1 = AirCellGroup[i].Moles * C.R * AirCellGroup[i].Temperature / (AirCellGroup[i].CellCenter.y / DistanceScale);
-    //float P2 = C.CalculateStaticPressure(AirCellGroup[i].CellCenter.y);
-    AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * AirCellGroup[i].CellCenter.y / DistanceScale)) * DistanceScale * Vector3.up);
-
-    //Gravity
-    AirCellGroup[i].PerformAcceleration(C.GaleG * DistanceScale * GravityScale * Vector3.down);
-    #endregion
-    #region Simulation Testing (non realistic)
-    //Force from Ceiling (y = 1000)
-    //AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - AirCellGroup[i].CellCenter.y) / DistanceScale))) * DistanceScale * Vector3.down);
-
-    //Force from walls (x = ± 1000, y = ± 1000)
-    AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.x)) / DistanceScale))) * (AirCellGroup[i].CellCenter.x > 0 ? 1 : -1) * DistanceScale * Vector3.left);
-    AirCellGroup[i].PerformAcceleration((C.R * AirCellGroup[i].Temperature / (C.GaleAtmMM * ((1000 - Mathf.Abs(AirCellGroup[i].CellCenter.z)) / DistanceScale))) * (AirCellGroup[i].CellCenter.z > 0 ? 1 : -1) * DistanceScale * Vector3.back);
-
-    //Background Friction
-    AirCellGroup[i].AccAlongVelocity(-0.2f * AirCellGroup[i].Velocity.magnitude * DistanceScale);
-    #endregion
-    */
-    #endregion
 }

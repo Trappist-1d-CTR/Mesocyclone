@@ -44,28 +44,29 @@ namespace Mesocyclone
             get { return _performanceBudget; }
             private set
             {
-                UnityEngine.Debug.Log("Performance value: " + value);
-                if (value > 100)
+                //UnityEngine.Debug.Log("Performance value: " + value);
+                /*if (value > 100)
                 {
                     // reason i exception check this is bcz i'm not sure if logging an error actually throws an exception or not, or, just, wtv it does
                     // but this also acts as an excuse to call Joar()
                     try
                     {
-                        UnityEngine.Debug.LogError("Don't");
-                        throw new InvalidOperationException("I SAID DONT");
+                        UnityEngine.Debug.LogWarning("Don't");
+                        //throw new InvalidOperationException("I SAID DONT");
                     }
                     catch
                     {
                         // you will suffer
                         throw new Joar();
                     }
-                }
+                }*/
 
                 _performanceBudget = Mathf.Max(value, 0);
 
                 if (_performanceBudget > 100)
                 {
-                    UnityEngine.Debug.Log("WHAT THE FUCK IS HAPPENING YOUR PC IS GOING TO EMPLODE");
+                    UnityEngine.Debug.LogWarning("Warning: performance budget (resources used by PC) VERY high");
+                    //UnityEngine.Debug.Log("WHAT THE FUCK IS HAPPENING YOUR PC IS GOING TO EMPLODE");
                     return;
                 }
             }
@@ -227,32 +228,36 @@ namespace Mesocyclone
             manualOverrideActive = true;
             switch (obj.ReadValue<float>())
             {
-                case 1f:
+                case 0.1f:
                     SetGameState(GameState.Standard);
                     break;
 
-                case 2f:
+                case 0.2f:
                     SetGameState(GameState.Tuned);
                     break;
 
-                case 3f:
+                case 0.3f:
                     SetGameState(GameState.Restricted);
                     break;
 
-                case 4f:
+                case 0.4f:
                     SetGameState(GameState.Limited);
                     break;
 
-                case 5f:
+                case 0.5f:
                     SetGameState(GameState.Aggressive);
                     break;
 
-                case 6f:
+                case 0.6f:
                     SetGameState(GameState.Frozen);
                     break;
 
-                case 7f:
+                case 0.7f:
                     SetGameState(GameState.Crash);
+                    break;
+
+                default:
+                    manualOverrideActive = false;
                     break;
             }
         }
@@ -379,11 +384,11 @@ namespace Mesocyclone
 
         private static readonly (float minutes, GameState state)[] idleThresholds = new[]
         {
-            (4.5f, GameState.Frozen),
-            (3.2f, GameState.Aggressive),
-            (2f, GameState.Limited),
-            (1f, GameState.Restricted),
-            (0.5f, GameState.Tuned),
+            (150f, GameState.Frozen),
+            (100f, GameState.Aggressive),
+            (60f, GameState.Limited),
+            (40f, GameState.Restricted),
+            (20f, GameState.Tuned),
             (0f, GameState.Standard)
         };
 
@@ -398,7 +403,7 @@ namespace Mesocyclone
                 if (minutesIdle >= minutes)
                 {
                     // check if the value is not the same so that we don't unecessarily spam gameState reassigns
-                    if (state != gameState)
+                    if (!manualOverrideActive && state != gameState)
                     {
                         SetGameState(state);
                     }

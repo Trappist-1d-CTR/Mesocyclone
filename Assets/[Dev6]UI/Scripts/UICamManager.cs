@@ -179,7 +179,7 @@ namespace Mesocyclone.UI
             int second = Mathf.FloorToInt(MET % 60);
             NotifTime.text = ((hour > 9 ? "" : "0") + hour) + ":" + ((minute > 9 ? "" : "0") + minute) + ":" + ((second > 9 ? "" : "0") + second);*/
 
-            NotifTime.text = "�";
+            NotifTime.text = "•";
             int METInt = Mathf.FloorToInt(MET);
             int index = 0;
             while (METInt != 0)
