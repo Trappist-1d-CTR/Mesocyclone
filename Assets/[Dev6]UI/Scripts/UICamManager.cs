@@ -13,7 +13,7 @@ using Mesocyclone.UI.Feedbacking;
 
 namespace Mesocyclone.UI
 {
-    public class UICamManager : MonoBehaviour
+    public class UICamManager : Tickable
     {
         #region Variables
 
@@ -70,7 +70,7 @@ namespace Mesocyclone.UI
 
         public Process soundTest;
 
-        void Awake()
+        void Start()
         {
             #region Get Components and Vectors
 
@@ -106,7 +106,7 @@ namespace Mesocyclone.UI
             #endregion
         }
 
-        private void FixedUpdate()
+        public override void FixedTick()
         {
             #region Camera Controls
             Vector3 ScaledCamVector = CameraVector * CameraScale;
@@ -160,7 +160,7 @@ namespace Mesocyclone.UI
             MET += Time.fixedDeltaTime;
         }
 
-        private void Update()
+        public override void Tick()
         {
             #region FOV from Speed
 
@@ -278,19 +278,39 @@ namespace Mesocyclone.UI
 
         public void SoundTest()
         {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
             soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
         }
 
-        public void SoundClick()
+        #region Play UI Sounds
+        public static void SFX_Click()
         {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
             AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
         }
 
+        public static void SFX_Notification()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/UI Special");
+            AudioManager.Instance.Play(audioclip, MinPitch: 0.95f, MaxPitch: 1.05f, Volume: 2f);
+        }
+
+        public static void SFX_Linking()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Linking/Signal Alt");
+            AudioManager.Instance.Play(audioclip, MinPitch: 0.95f, MaxPitch: 1.05f, Volume: 2f);
+        }
+
+        public static void SFX_Linked()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Linking/UI Special 2");
+            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
+        }
+        #endregion
+
         public void EscapeUI()
         {
-            SoundClick();
+            SFX_Click();
             if (DroneBody == null)
                 DroneBody = transform.GetComponentInParent<Rigidbody>();
             OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();

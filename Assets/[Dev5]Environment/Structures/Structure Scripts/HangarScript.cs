@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mesocyclone;
 
-public class HangarScript : MonoBehaviour
+public class HangarScript : Tickable
 {
     #region Variables
 
@@ -38,7 +39,7 @@ public class HangarScript : MonoBehaviour
             GameObject.FindGameObjectWithTag("Player").SendMessage("InHangar", gameObject);
     }
 
-    void FixedUpdate()
+    public override void FixedTick()
     {
         #region Platform and Cover animations
 
@@ -95,6 +96,8 @@ public class HangarScript : MonoBehaviour
 
         #endregion
     }
+
+    public override void Tick() { return; }
 
     public void ShelterHangar()
     {

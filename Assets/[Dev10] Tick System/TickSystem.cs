@@ -95,7 +95,7 @@ namespace Mesocyclone
                 foreach (var tickable in _tickables)
                 {
                     tickable.FixedAccumulator += Time.fixedDeltaTime;
-                    float interval = 1f / (tickable.TickRate * Time.timeScale);
+                    float interval = 1f / (tickable.FixedTickRate * Time.timeScale);
 
                     while (tickable.FixedAccumulator >= interval)
                     {

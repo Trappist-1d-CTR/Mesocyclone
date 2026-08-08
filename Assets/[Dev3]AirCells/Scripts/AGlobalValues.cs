@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Mesocyclone
 {
-    public sealed class AGlobalValues : MonoBehaviour
+    public sealed class AGlobalValues : Tickable
     {
         #region Rant
         // Astraa, wh- why...
@@ -160,7 +160,7 @@ namespace Mesocyclone
 
         #endregion
 
-        private void Awake()
+        private void Start()
         {
             SetupComplete = false;
 
@@ -275,6 +275,45 @@ namespace Mesocyclone
             #endregion
 
             SetupComplete = true;
+
+            #region Extra Setups
+
+            UnityEngine.Debug.Log(CalculateStaticInsolation(GaleSemiMajor));
+
+            #region List Setups
+            EOS_Temperature = new float[EOS_N];
+            EOS_Diffusion = new float[EOS_N];
+            EOS_Insolation = new float[EOS_N];
+            EOS_X = new float[Mathf.RoundToInt(EOS_N * (EOS_N - 1) / 2)]; // fun fact: this code originally used doubles, and Mathf uses floats. just think about that
+            EOS_D = new float[1];
+
+            D_SOM = new float[2];
+            #endregion
+
+            #region Variable Setups
+            if (UpdateFrame <= EOS_N) UpdateFrame = EOS_N + 1;
+
+            i3 = 0;
+            #endregion
+
+            #region Calculate Global Curves
+            GlobalInsolation = new AnimationCurve();
+            ClearSkyTransparency = new AnimationCurve();
+
+            GlobalInsolationCurve(OrbitTime);
+            ClearSkyTransparencyCurve();
+            #endregion
+
+            #region Starting Heat
+            for (int i = 0; i < EOS_N; i++)
+            {
+                EOS_Insolation = LatitudesMeanInsolation(EOS_N);
+
+                EOS_Temperature[i] = EOS_Insolation[i] * (1 - EOS_A) * 100 / EOS_C;
+            }
+            #endregion
+
+            #endregion
         }
 
         public float CalculateOrbit(float T)
@@ -474,45 +513,7 @@ namespace Mesocyclone
             return Result;
         }
 
-        private void Start()
-        {
-            UnityEngine.Debug.Log(CalculateStaticInsolation(GaleSemiMajor));
-
-            #region List Setups
-            EOS_Temperature = new float[EOS_N];
-            EOS_Diffusion = new float[EOS_N];
-            EOS_Insolation = new float[EOS_N];
-            EOS_X = new float[Mathf.RoundToInt(EOS_N * (EOS_N - 1) / 2)]; // fun fact: this code originally used doubles, and Mathf uses floats. just think about that
-            EOS_D = new float[1];
-
-            D_SOM = new float[2];
-            #endregion
-
-            #region Variable Setups
-            if (UpdateFrame <= EOS_N) UpdateFrame = EOS_N + 1;
-
-            i3 = 0;
-            #endregion
-
-            #region Calculate Global Curves
-            GlobalInsolation = new AnimationCurve();
-            ClearSkyTransparency = new AnimationCurve();
-
-            GlobalInsolationCurve(OrbitTime);
-            ClearSkyTransparencyCurve();
-            #endregion
-
-            #region Starting Heat
-            for (int i = 0; i < EOS_N; i++)
-            {
-                EOS_Insolation = LatitudesMeanInsolation(EOS_N);
-
-                EOS_Temperature[i] = EOS_Insolation[i] * (1 - EOS_A) * 100 / EOS_C;
-            }
-            #endregion
-        }
-
-        private void FixedUpdate()
+        public override void FixedTick()
         {
             if (FrameCount < EOS_N)
             {
@@ -568,6 +569,8 @@ namespace Mesocyclone
 
             FrameCount++;
         }
+
+        public override void Tick() { return; }
 
         #endregion
     }

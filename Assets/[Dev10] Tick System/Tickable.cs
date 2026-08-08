@@ -15,7 +15,10 @@ namespace Mesocyclone
     public abstract class Tickable : MonoBehaviour
     {
         [Tooltip("Global default tick rate for all tickables, can be changed if needed")]
-        public static readonly float DefaultTickRate = 50f; // default tick rate for all tickables, can be changed in the future if needed
+        public static readonly float DefaultTickRate = 60f; // default tick rate for all tickables, can be changed in the future if needed
+
+        [Tooltip("Global default tick rate for all tickables, can be changed if needed")]
+        public static readonly float DefaultFixedTickRate = 100f; // default tick rate for all fixed tickables, can be changed in the future if needed
 
         [SerializeField, Tooltip("The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
         float tickRate = DefaultTickRate; // set this to what's best
@@ -27,6 +30,19 @@ namespace Mesocyclone
                 if (value < 0f)
                     throw new ArgumentOutOfRangeException(nameof(value), "TickRate cannot be negative.");
                 tickRate = value;
+            }
+        }
+
+        [SerializeField, Tooltip("The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
+        float fixedTickRate = DefaultFixedTickRate; // set this to what's best
+        public float FixedTickRate
+        {
+            get => fixedTickRate;
+            set
+            {
+                if (value < 0f)
+                    throw new ArgumentOutOfRangeException(nameof(value), "FixedTickRate cannot be negative.");
+                fixedTickRate = value;
             }
         }
 
@@ -68,23 +84,13 @@ namespace Mesocyclone
         /// <summary>
         /// Tick method called every tick, based on the TickRate and Accumulator
         /// </summary>
-        public virtual void Tick()
-        {
-            if (TickRate <= 0f) return;
-
-            // always make sure to call base.Tick() before any other logic in derived classes to ensure proper tick handling
-        }
+        public abstract void Tick();
 
         /// <summary>
         /// FixedTick method called every fixed tick, based on the TickRate and FixedAccumulator
         /// <para>Useful for physics based tickables</para>
         /// </summary>
-        public virtual void FixedTick()
-        {
-            if (TickRate <= 0f) return;
-
-            // always make sure to call base.FixedTick() before any other logic in derived classes to ensure proper fixed tick handling
-        }
+        public abstract void FixedTick();
 
         /// <summary>
         /// Implement logic to adjust TickRate based on performance metrics or other criteria
@@ -93,7 +99,7 @@ namespace Mesocyclone
         /// <param name="maxDistance">The maximum distance at which the tick rate should be adjusted</param>
         /// <param name="target">The target GameObject to consider for distance, defaults to the main camera</param>
         /// </summary>
-        protected virtual void ImplementDynamicTickRateBasedOnDistance(float minDistance, float maxDistance, GameObject target = null)
+        /*protected virtual void ImplementDynamicTickRateBasedOnDistance(float minDistance, float maxDistance, GameObject target = null)
         {
             target ??= Camera.main?.gameObject;
 
@@ -123,6 +129,6 @@ namespace Mesocyclone
             {
                 TickRate = 50f; // Default tick rate if no object is hit
             }
-        }
+        }*/
     }
 }

@@ -7,7 +7,7 @@ using Mesocyclone;
 
 namespace Mesocyclone.UI
 {
-    public class AirDataComputer : MonoBehaviour
+    public class AirDataComputer : Tickable
     {
         #region Variables
 
@@ -68,7 +68,7 @@ namespace Mesocyclone.UI
             #endregion
         }
 
-        private void FixedUpdate()
+        public override void FixedTick()
         {
             #region Calculate Data
             if (prev_h == Mathf.Infinity)
@@ -124,7 +124,7 @@ namespace Mesocyclone.UI
             #endregion
         }
 
-        private void Update()
+        public override void Tick()
         {
             #region Performance Stats
 

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mesocyclone.Unused;
 
 namespace Mesocyclone
 {
@@ -44,11 +43,6 @@ namespace Mesocyclone
 
                 #endregion
             }
-        }
-
-        void Update()
-        {
-
         }
     }
 }

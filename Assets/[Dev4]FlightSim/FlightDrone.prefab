@@ -266,14 +266,16 @@ MonoBehaviour:
       DroneBodyStats: []
     Parts:
       DronePartStats: []
-  InputMargin: 0.3
+  InputMargin: 0.5
   Thrust: 0
+  ThrottleInput: 0
   ImpulseCharge: 0
   ImpulseActive: 0
   ImpulseTimer: 0
   LastImpulseBurn: 0
   ImpulseThreshold: 0
   ImpulseInputErrorTimer: 0
+  ImpulseInput: 0
   HoverMode: 1
   HoverThrust: 0
   HoverTarget: 0
@@ -284,6 +286,7 @@ MonoBehaviour:
   HoverTargetSpeed:
   - 1.5
   HoverInputErrorTimer: 0
+  HoverInput: 0
   FLIPPerforming: 0
   FLIPCharge: 0
   FLIPThrustPos: {x: -0.37, y: 0, z: -0.1}
@@ -314,6 +317,7 @@ MonoBehaviour:
   YawSpeed: 10
   Wind: {x: -50, y: 0, z: 0}
   AirSpeed: {x: -50, y: 0, z: 0}
+  InducedDragAoA: []
   Air: {fileID: 0}
   CenterOfLiftFound: 0
   CenterOfLift: {x: 0, y: 0, z: 0}
@@ -464,6 +468,7 @@ MonoBehaviour:
   SASMode: {fileID: 0}
   FLIPStatus: {fileID: 0}
   Performance:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
 --- !u!114 &9206539070230068533

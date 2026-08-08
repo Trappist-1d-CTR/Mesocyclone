@@ -10,7 +10,7 @@ namespace Mesocyclone
     /// <summary>
     /// Handles all the drone logic
     /// </summary>
-    public sealed partial class DroneControls : MonoBehaviour
+    public sealed partial class DroneControls : Tickable
     {
         #region Variables
 
@@ -110,12 +110,14 @@ namespace Mesocyclone
         #region Engines Control Data
         public float InputMargin; // i believe this is input buffering?
         public float Thrust;
+        public bool ThrottleInput;
         public float ImpulseCharge;
         public bool ImpulseActive;
         public float ImpulseTimer;
         public float LastImpulseBurn;
         public float ImpulseThreshold;
         public float ImpulseInputErrorTimer;
+        public bool ImpulseInput;
 
         public enum HoverModeType : int
         {
@@ -138,6 +140,7 @@ namespace Mesocyclone
         public int HoverMaxAngle;
         public float[] HoverTargetSpeed;
         public float HoverInputErrorTimer;
+        public bool HoverInput;
 
         public bool FLIPPerforming;
         public float FLIPCharge;
@@ -412,6 +415,16 @@ namespace Mesocyclone
 
             #region Enable Input System Events
 
+            //Throttle Controls
+            InputControl.FlightControls.Thrust.started += EnableThrottle;
+            InputControl.FlightControls.Thrust.canceled += DisableThrottle;
+            //Hover Controls
+            InputControl.FlightControls.Hovering.started += EnableHovering;
+            InputControl.FlightControls.Hovering.canceled += DisableHovering;
+            //Impulse Controls
+            InputControl.FlightControls.ImpulseThrust.started += EnableImpulse;
+            InputControl.FlightControls.ImpulseThrust.canceled += DisableImpulse;
+
             //Switch Hover Modes
             InputControl.FlightControls.ToggleHoverMode.performed += SwitchModes;
             //Toggle SAS Modes
@@ -428,6 +441,13 @@ namespace Mesocyclone
         {
             #region Disable Input System Events
 
+            InputControl.FlightControls.Thrust.started -= EnableThrottle;
+            InputControl.FlightControls.Thrust.performed -= DisableThrottle;
+            InputControl.FlightControls.Hovering.started -= EnableHovering;
+            InputControl.FlightControls.Hovering.performed -= DisableHovering;
+            InputControl.FlightControls.ImpulseThrust.started -= EnableImpulse;
+            InputControl.FlightControls.ImpulseThrust.performed -= DisableImpulse;
+
             InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
             InputControl.FlightControls.ToggleSASMode.performed -= ToggleSASModes;
             InputControl.UIControls.Esc.performed -= SendEscapeUI;
@@ -438,7 +458,7 @@ namespace Mesocyclone
             #endregion
         }
 
-        private void FixedUpdate()
+        public override void FixedTick()
         {
             if (!CenterOfLiftFound)
             {
@@ -487,7 +507,7 @@ namespace Mesocyclone
             Memory = transform.right;
 
             //Main Thrust
-            if (InputControl.FlightControls.Thrust.inProgress)
+            if (ThrottleInput)
             {
                 Thrust += InputControl.FlightControls.Thrust.ReadValue<float>() * Time.fixedDeltaTime / NetLinker.MainBody.DroneBodyStats[0].FullThrustTime;
                 Thrust = Mathf.Clamp01(Thrust);
@@ -499,7 +519,7 @@ namespace Mesocyclone
 
             #region Impulse Drive
 
-            if (InputControl.FlightControls.ImpulseThrust.inProgress)
+            if (ImpulseInput)
             {
                 if (ImpulseInputErrorTimer != 0) ImpulseInputErrorTimer = 0;
                 ImpulseTimer += Time.fixedDeltaTime;
@@ -567,7 +587,7 @@ namespace Mesocyclone
 
             #region Hover Controls
 
-            if (InputControl.FlightControls.Hovering.inProgress)
+            if (HoverInput)
             {
                 if (HoverInputErrorTimer != 0) HoverInputErrorTimer = 0;
 
@@ -839,17 +859,6 @@ namespace Mesocyclone
 
             CurrentAngles = new Vector3(DataComputer.p, DataComputer.r, DataComputer.y);
             DynamicPressure = C.DensityAtHeight(PhysicsPosition.y) * AirSpeed.sqrMagnitude;
-
-            #region Orientation Input
-
-            InputValues[0] = InputControl.ControlSurfaces.PitchUp.IsPressed();
-            InputValues[1] = InputControl.ControlSurfaces.PitchDown.IsPressed();
-            InputValues[2] = InputControl.ControlSurfaces.RollClock.IsPressed();
-            InputValues[3] = InputControl.ControlSurfaces.RollCounterClock.IsPressed();
-            InputValues[4] = InputControl.ControlSurfaces.YawRight.IsPressed();
-            InputValues[5] = InputControl.ControlSurfaces.YawLeft.IsPressed();
-
-            #endregion
 
             switch (SASMode)
             {
@@ -1185,9 +1194,19 @@ namespace Mesocyclone
             #endregion
         }
 
-        [System.Obsolete]
-        private void Update()
+        public override void Tick()
         {
+            #region Handle Orientation Input
+
+            Vector3 Input = InputControl.FlightControls.Orientation.ReadValue<Vector3>();
+            InputValues[0] = Input.y > 0; //Pitch Up
+            InputValues[1] = Input.y < 0; //Pitch Down
+            InputValues[2] = Input.z > 0; //Roll Clock
+            InputValues[3] = Input.z < 0; //Roll Counter
+            InputValues[4] = Input.x > 0; //Yaw Right
+            InputValues[5] = Input.x < 0; //Yaw Left
+            #endregion
+
             #region Physics Visualizer
             Vector3 CM = DronePhysics.worldCenterOfMass;
 
@@ -1225,25 +1244,38 @@ namespace Mesocyclone
 
             if (WindParticlesEnabled)
             {
+                ParticleSystem.EmissionModule WPemission = WindParticles.emission;
+
                 AirSpeed = PhysicsVelocity - Wind;
                 if (AirSpeed.magnitude >= 1f)
                 {
-                    if (!WindParticles.enableEmission) WindParticles.enableEmission = true;
+                    ParticleSystem.MainModule WPmain = WindParticles.main;
+
+                    if (!WPemission.enabled) WPemission.enabled = true;
 
                     WindParticles.transform.position = CM + (ParticlesOriginDistance * (AirSpeed.magnitude / 25f) * AirSpeed.normalized);
                     Vector3 forwardTarget = -Vector3.ProjectOnPlane((AirSpeed.normalized.y < 0.999f) ? Vector3.up : Vector3.forward, AirSpeed);
                     WindParticles.transform.rotation = Quaternion.LookRotation(forwardTarget, Quaternion.AngleAxis(90, AirSpeed) * forwardTarget);
-                    WindParticles.startLifetime = 5f;
+                    WPmain.startLifetime = 5f;
 
                     ParticleSystem.VelocityOverLifetimeModule ParticlesVel = WindParticles.velocityOverLifetime;
                     ParticlesVel.xMultiplier = AirSpeed.magnitude;
                 }
-                else if (WindParticles.enableEmission)
-                    WindParticles.enableEmission = false;
+                else if (WPemission.enabled)
+                    WPemission.enabled = false;
             }
 
             #endregion
         }
+
+        #region Handle Engines Input
+        private void EnableThrottle(InputAction.CallbackContext obj) => ThrottleInput = true;
+        private void DisableThrottle(InputAction.CallbackContext obj) => ThrottleInput = false;
+        private void EnableHovering(InputAction.CallbackContext obj) => HoverInput = true;
+        private void DisableHovering(InputAction.CallbackContext obj) => HoverInput = false;
+        private void EnableImpulse(InputAction.CallbackContext obj) => ImpulseInput = true;
+        private void DisableImpulse(InputAction.CallbackContext obj) => ImpulseInput = false;
+        #endregion
 
         #region Toggle SAS Modes
 

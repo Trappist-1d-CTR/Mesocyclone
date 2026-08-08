@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Mesocyclone
 {
     // same here
-    public sealed class AirCellBehavior : MonoBehaviour
+    public sealed class AirCellBehavior : Tickable
     {
         #region Variables
 
@@ -72,7 +72,7 @@ namespace Mesocyclone
 
         // int iy = 0;
 
-        private void Awake()
+        private void Start()
         {
             // GameObject reference
             GameObject controller = GameObject.FindGameObjectWithTag("GameController");
@@ -98,7 +98,7 @@ namespace Mesocyclone
             InverseDistanceWeighting.FollowDrone = FollowDrone;
         }
 
-        private void FixedUpdate()
+        public override void FixedTick()
         {
             // if the current time scale is 0, we don't want to run the simulation, as it will cause errors and unnecessary calculations
             if (Time.timeScale == 0f) return;
@@ -521,6 +521,8 @@ namespace Mesocyclone
                 #endregion
             }
         }
+
+        public override void Tick() { return; }
 
         // conditional makes it so every call for this function is skipped, so i dont have to spam preprocessors
         [System.Diagnostics.Conditional("UNITY_EDITOR")]

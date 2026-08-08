@@ -105,7 +105,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""name"": ""ImpulseThrust"",
                     ""type"": ""Button"",
                     ""id"": ""b07dc9a3-a571-4354-8200-1a8a3abf468b"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
@@ -114,7 +114,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""name"": ""AirBrakes"",
                     ""type"": ""Button"",
                     ""id"": ""5e48aa2d-fa26-49d9-8312-62403302a761"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -154,6 +154,15 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Orientation"",
+                    ""type"": ""Value"",
+                    ""id"": ""a548b4f8-7a8b-4724-a135-c3199c1b8d79"",
+                    ""expectedControlType"": ""Vector3"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -277,6 +286,83 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleSASMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""3D Vector"",
+                    ""id"": ""ac0236d3-d03c-4239-b790-e3e5f11aaf44"",
+                    ""path"": ""3DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""2a7bbc2a-33f2-495a-b72a-6d16c3a41d67"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""f1db07bd-d9f2-4d41-96e5-644753760fa9"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""e83d0c62-4321-4d48-aec8-2a734b9aaf7c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""2229e02b-91ce-41aa-a7c9-36cfb619b9fd"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""forward"",
+                    ""id"": ""0ac4453e-9777-4352-9efa-bf869ed41f7f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""backward"",
+                    ""id"": ""2e132516-c5e9-4e50-a895-4e31dcc7f71a"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -306,7 +392,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""name"": ""RollClock"",
                     ""type"": ""Button"",
                     ""id"": ""0a806f74-d753-4dd1-b478-4e2298d72955"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -315,7 +401,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""name"": ""RollCounterClock"",
                     ""type"": ""Button"",
                     ""id"": ""9506b580-e4e3-44aa-bff1-291b29297354"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -632,6 +718,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_FlightControls_ToggleSASMode = m_FlightControls.FindAction("ToggleSASMode", throwIfNotFound: true);
         m_FlightControls_ToggleHoverMode = m_FlightControls.FindAction("ToggleHoverMode", throwIfNotFound: true);
         m_FlightControls_MouseClick = m_FlightControls.FindAction("MouseClick", throwIfNotFound: true);
+        m_FlightControls_Orientation = m_FlightControls.FindAction("Orientation", throwIfNotFound: true);
         // ControlSurfaces
         m_ControlSurfaces = asset.FindActionMap("ControlSurfaces", throwIfNotFound: true);
         m_ControlSurfaces_PitchUp = m_ControlSurfaces.FindAction("PitchUp", throwIfNotFound: true);
@@ -738,6 +825,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     private readonly InputAction m_FlightControls_ToggleSASMode;
     private readonly InputAction m_FlightControls_ToggleHoverMode;
     private readonly InputAction m_FlightControls_MouseClick;
+    private readonly InputAction m_FlightControls_Orientation;
     /// <summary>
     /// Provides access to input actions defined in input action map "FlightControls".
     /// </summary>
@@ -777,6 +865,10 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "FlightControls/MouseClick".
         /// </summary>
         public InputAction @MouseClick => m_Wrapper.m_FlightControls_MouseClick;
+        /// <summary>
+        /// Provides access to the underlying input action "FlightControls/Orientation".
+        /// </summary>
+        public InputAction @Orientation => m_Wrapper.m_FlightControls_Orientation;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -824,6 +916,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @MouseClick.started += instance.OnMouseClick;
             @MouseClick.performed += instance.OnMouseClick;
             @MouseClick.canceled += instance.OnMouseClick;
+            @Orientation.started += instance.OnOrientation;
+            @Orientation.performed += instance.OnOrientation;
+            @Orientation.canceled += instance.OnOrientation;
         }
 
         /// <summary>
@@ -856,6 +951,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @MouseClick.started -= instance.OnMouseClick;
             @MouseClick.performed -= instance.OnMouseClick;
             @MouseClick.canceled -= instance.OnMouseClick;
+            @Orientation.started -= instance.OnOrientation;
+            @Orientation.performed -= instance.OnOrientation;
+            @Orientation.canceled -= instance.OnOrientation;
         }
 
         /// <summary>
@@ -1323,6 +1421,13 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Orientation" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOrientation(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "ControlSurfaces" which allows adding and removing callbacks.

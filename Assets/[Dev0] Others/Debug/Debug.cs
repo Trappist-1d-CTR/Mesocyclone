@@ -148,6 +148,8 @@ namespace Mesocyclone.Debug
 
         internal static void OnQuit()
         {
+            DebugControls.Dev.ToggleDevTools.performed -= ToggleDevTools;
+            DebugControls.Disable();
             _isRunning = false;
         }
 
@@ -190,7 +192,7 @@ namespace Mesocyclone.Debug
     /// <summary>
     /// Handles MCDebug and integrates it into the Unity player loop
     /// </summary>
-    internal sealed class MCDebugHandler : MonoBehaviour
+    internal sealed class MCDebugHandler : Tickable
     {
         static GameObject go;
 
@@ -204,15 +206,17 @@ namespace Mesocyclone.Debug
             DontDestroyOnLoad(go);
         }
 
-        void Awake() // nevermind
+        void Start() // nevermind
         {
 
         }
 
-        void Update() // runs every frame, obvi
+        public override void Tick() // runs every frame, obvi
         {
             MCDebug.Update();
         }
+
+        public override void FixedTick() { return; }
 
         void OnGUI() => MCDebug.OnGUI();
 

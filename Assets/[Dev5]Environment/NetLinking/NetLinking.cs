@@ -7,7 +7,7 @@ using Mesocyclone.UI;
 
 namespace Mesocyclone
 {
-    public class NetLinking : MonoBehaviour
+    public class NetLinking : Tickable
     {
         #region Variables
 
@@ -67,7 +67,7 @@ namespace Mesocyclone
             NotifierSystem.Send("Structures connected: 0/10", System.DateTime.Now.ToLongTimeString(), 1);
         }
 
-        private void Update()
+        override public void Tick()
         {
             #region Run Animation Timers
 
@@ -231,7 +231,7 @@ namespace Mesocyclone
             #endregion
         }
 
-        void FixedUpdate()
+        override public void FixedTick()
         {
             #region NetLink Structures
 

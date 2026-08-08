@@ -21,7 +21,7 @@ namespace Mesocyclone
     /// <summary>
     /// for your safety, do not look at the code
     /// </summary>
-    public sealed partial class DynamicGameStateHandler : MonoBehaviour
+    public sealed partial class DynamicGameStateHandler : Tickable
     {
         #region Resource Checking
 
@@ -263,7 +263,7 @@ namespace Mesocyclone
         }
         #endregion
 
-        private void Update()
+        public override void Tick()
         {
             if (shouldEvaluate) _Update();
 
@@ -278,6 +278,7 @@ namespace Mesocyclone
             if (shouldEvaluate) Evaluate();
         }
 
+        public override void FixedTick() { return; }
 
         private void Evaluate()
         {
