@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEditor;
 
 namespace Mesocyclone
 {
@@ -10,7 +11,8 @@ namespace Mesocyclone
     {
         public Joar() : base("fuck you.")
         {
-            UnityEngine.Debug.LogError(base.Message);
+            //UnityEngine.Debug.LogError(base.Message);
+            EditorApplication.isPaused = true;
         }
     }
 }

@@ -10,6 +10,8 @@ public class HangarScript : Tickable
     public Rigidbody Platform;
     public Rigidbody Cover;
 
+    private HingeJoint CoverHinge;
+
     private Vector3 PlatformShelteredPos;
 
     public float PlatformExtensionHeight;
@@ -18,6 +20,10 @@ public class HangarScript : Tickable
     public float CoverTorqueForce;
 
     public float AnimationTimer;
+
+    private bool WaitForCoverHit;
+
+    private AudioSource CentrifugeSFX;
 
     public enum HangarSituations
     {
@@ -37,6 +43,9 @@ public class HangarScript : Tickable
 
         if (HangarState == HangarSituations.Sheltered)
             GameObject.FindGameObjectWithTag("Player").SendMessage("InHangar", gameObject);
+
+        CentrifugeSFX = GetComponentInChildren<AudioSource>();
+        CoverHinge = transform.GetComponentInChildren<HingeJoint>();
     }
 
     public override void FixedTick()
@@ -80,12 +89,37 @@ public class HangarScript : Tickable
 
         if (HangarState is HangarSituations.Closing or HangarSituations.Sheltered)
         {
-            if (Cover.rotation.eulerAngles.z <= 90)
+            if (CoverHinge.angle <= -90)
+            {
                 Cover.AddRelativeTorque(-CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
+                if (!CentrifugeSFX.isPlaying)
+                    CentrifugeSFX.Play();
+                else if (CentrifugeSFX.time > 18)
+                    CentrifugeSFX.time = 1;
+
+                if (!WaitForCoverHit) WaitForCoverHit = true;
+            }
+            else if (CentrifugeSFX.isPlaying && CentrifugeSFX.time > 3 && CentrifugeSFX.time < 18)
+            {
+                CentrifugeSFX.time = 18;
+            }
         }
-        else if (Cover.rotation.eulerAngles.z >= 90)
+        else if (float.IsNaN(CoverHinge.angle) || CoverHinge.angle >= -90)
         {
             Cover.AddRelativeTorque(CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
+            if (!CentrifugeSFX.isPlaying)
+                CentrifugeSFX.Play();
+            else if (CentrifugeSFX.time > 18)
+                CentrifugeSFX.time = 1;
+
+            if (!WaitForCoverHit) WaitForCoverHit = true;
+        }
+        else
+        {
+            if (CentrifugeSFX.isPlaying && CentrifugeSFX.time > 3 && CentrifugeSFX.time < 18)
+            {
+                CentrifugeSFX.time = 18;
+            }
         }
 
 
@@ -97,7 +131,25 @@ public class HangarScript : Tickable
         #endregion
     }
 
-    public override void Tick() { return; }
+    public override void Tick()
+    {
+        #region Check For Cover Hit
+        if (WaitForCoverHit && Cover.angularVelocity.magnitude < 0.01f && (CoverHinge.angle > -1f || CoverHinge.angle < -176f || float.IsNaN(CoverHinge.angle)))
+        {
+            WaitForCoverHit = false;
+            Debug.Log("Cover Hit!");
+            CoverHit();
+        }
+        #endregion
+    }
+
+    #region Cover Collision Sound
+    private void CoverHit()
+    {
+        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Collisions/MetalCollision");
+        AudioManager.Instance.Play(audioclip, MinPitch: 0.2f, MaxPitch: 0.4f, Volume: 0.95f, Is2D: false, Position: Cover.worldCenterOfMass);
+    }
+    #endregion
 
     public void ShelterHangar()
     {

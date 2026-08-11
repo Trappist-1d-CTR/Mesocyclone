@@ -199,7 +199,7 @@ namespace Mesocyclone
         }
 
         
-        private void Awake()
+        private void Start()
         {
             __Awake();
 
@@ -215,8 +215,11 @@ namespace Mesocyclone
 
         private void OnDestroy()
         {
+            InputSystem.onAnyButtonPress.Call(currentAction => stopwatch.Restart());
             DebugControls.Dev.AssignGameState.performed -= GameStateReassign;
             DebugControls.Disable();
+
+            CheckAnyButtons.Dispose();
         }
 
         #region Dev Utils
@@ -362,6 +365,8 @@ namespace Mesocyclone
 
         #region Idle Checking
 
+        private IDisposable CheckAnyButtons;
+
         // this IDE is such bullshit
         // when i was half asleep coding the first iteration of this i fucking wrote "stopwatch.Elapsed.TotalMinutes(0.5)"
         // first of all, that math is wrong, my apolagies to everyone reading this
@@ -395,8 +400,6 @@ namespace Mesocyclone
 
         private void _Update()
         {
-            InputSystem.onAnyButtonPress.Call(currentAction => stopwatch.Restart());
-
             double minutesIdle = stopwatch.Elapsed.TotalMinutes;
 
             foreach (var (minutes, state) in idleThresholds)
@@ -424,6 +427,9 @@ namespace Mesocyclone
 
         private void __Awake()
         {
+            //Idle check activation
+            CheckAnyButtons = InputSystem.onAnyButtonPress.Call(currentAction => stopwatch.Restart());
+
             OnGameStateChanged += ((GameState oldState, GameState newState) =>
             {
                 UnityEngine.Debug.Log($"Game State is being changed from {oldState} to {newState}");

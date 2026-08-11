@@ -210,6 +210,7 @@ namespace Mesocyclone.UI
                 {
                     NotifThumbnail.text = /*"[" + NotifierSystem.PiorityMessageList[0].MET + "] : " + */NotifierSystem.PiorityMessageList[0].msg;
                     NotifOutline.color = NotifNewMsgColor;
+                    SFX_Notification();
                 }
                 else if (NotifAnimTimer < NotifierSystem.PiorityMessageList[0].duration)
                 {
@@ -274,39 +275,32 @@ namespace Mesocyclone.UI
             }
         }
 
-        #region Pause Menus Controls
+        #region Play UI SFX
+        public static void SFX_Click()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
+            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.5f);
+        }
 
+        public static void SFX_Notification()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/UI Special 2");
+            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.04f, Volume: 0.14f);
+        }
+
+        public static void SFX_Linking()
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Signal Alt");
+            AudioManager.Instance.Play(audioclip, MinPitch: 0.96f, MaxPitch: 1.04f, Volume: 0.2f);
+        }
+        #endregion
+
+        #region Pause Menus Controls
         public void SoundTest()
         {
             AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
             soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
         }
-
-        #region Play UI Sounds
-        public static void SFX_Click()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
-            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
-        }
-
-        public static void SFX_Notification()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/UI Special");
-            AudioManager.Instance.Play(audioclip, MinPitch: 0.95f, MaxPitch: 1.05f, Volume: 2f);
-        }
-
-        public static void SFX_Linking()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Linking/Signal Alt");
-            AudioManager.Instance.Play(audioclip, MinPitch: 0.95f, MaxPitch: 1.05f, Volume: 2f);
-        }
-
-        public static void SFX_Linked()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Linking/UI Special 2");
-            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.7f);
-        }
-        #endregion
 
         public void EscapeUI()
         {

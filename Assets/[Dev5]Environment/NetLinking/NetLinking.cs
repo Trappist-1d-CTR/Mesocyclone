@@ -91,6 +91,8 @@ namespace Mesocyclone
                 SignalAnimTimer < 0.75f ? 90 : 150;
             SignalMask.rectTransform.sizeDelta = new Vector2(size, size);
 
+            if (SignalAnimTimer == 0) UICamManager.SFX_Linking();
+
             LinkingProgress.value = Structures[FocusStructure].LinkProgress();
             #endregion
 

@@ -277,7 +277,7 @@ namespace Mesocyclone
             public List<Vector3> TableElements;
         }
 
-        private int DataTimeTick;
+        //private int DataTimeTick;
         public int DataTimeRate;
 
         public enum DataGatherStageType : byte
@@ -294,6 +294,11 @@ namespace Mesocyclone
         private float TimeAtGatheringStart;
         #endregion
 
+        #region SFX
+        public AudioSource[] EngineSFX;
+        public AudioSource[] WindSFX;
+        #endregion
+
         #endregion
 
         void Start()
@@ -305,6 +310,8 @@ namespace Mesocyclone
             C = GameObject.FindGameObjectWithTag("GameController").GetComponent<AGlobalValues>();
             DataComputer = gameObject.GetComponentInChildren<AirDataComputer>(false);
             UICam = gameObject.GetComponentInChildren<UICamManager>(false);
+            EngineSFX = gameObject.transform.GetChild(4).GetComponents<AudioSource>();
+            WindSFX = gameObject.transform.GetChild(5).GetComponents<AudioSource>();
 
             #endregion
 
@@ -398,9 +405,9 @@ namespace Mesocyclone
             #endregion
 
             #region Data Output Setup
-            DataGatherStage = DataGatherStageType.Idle;
-            OutputData = new();
-            DataTimeTick = 0;
+            //DataGatherStage = DataGatherStageType.Idle;
+            //OutputData = new();
+            //DataTimeTick = 0;
             #endregion
 
             #region Steady Flight Setup
@@ -1266,6 +1273,20 @@ namespace Mesocyclone
             }
 
             #endregion
+
+            #region SFX
+            foreach (AudioSource source in EngineSFX)
+            {
+                source.volume = Thrust * 0.2f + (0.25f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust) + (ImpulseActive ? 0.4f : 0) + (FLIPPerforming ? 0.25f : 0);
+                source.pitch = 1f + (0.05f * Mathf.Sin(0.6f + Time.time + Random.Range(-0.3f, 0.3f))) - (0.8f * source.volume);
+            }
+
+            foreach (AudioSource source in WindSFX)
+            {
+                source.volume = Mathf.Pow(AirSpeed.magnitude, 1f / 3f) / 20f;
+                source.pitch = 0.7f + (0.05f * Mathf.Sin(Time.time + Random.Range(-0.2f, 0.2f))) - (0.2f * source.volume);
+            }
+            #endregion
         }
 
         #region Handle Engines Input
@@ -1509,5 +1530,13 @@ namespace Mesocyclone
 
             #endregion
         }
+
+        #region Collision Sound
+        private void OnCollisionEnter(Collision collision)
+        {
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Collisions/MetalCollision");
+            AudioManager.Instance.Play(audioclip, MinPitch: 0.5f, MaxPitch: 0.7f, Volume: Mathf.Pow(collision.relativeVelocity.magnitude, 1f / 3f) * 0.05f, Is2D: false, Position: transform.position);
+        }
+        #endregion
     }
 }

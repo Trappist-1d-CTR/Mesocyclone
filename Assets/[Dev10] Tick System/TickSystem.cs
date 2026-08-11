@@ -68,8 +68,9 @@ namespace Mesocyclone
             {
                 foreach (var tickable in _tickables)
                 {
-                    tickable.Accumulator += Time.deltaTime;
+                    /*tickable.Accumulator += Time.deltaTime;
                     float interval = 1f / (tickable.TickRate * Time.timeScale);
+
 
                     // using while makes it so multiple due ticks catch up - i think so... 
                     // and even if it does, not sure how well it does performance wise
@@ -77,7 +78,9 @@ namespace Mesocyclone
                     {
                         tickable.Tick();
                         tickable.Accumulator -= interval;
-                    }
+                    }*/
+
+                    tickable.Tick();
                 }
             }
             // definitely not an MSC reference

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
+using UnityEditor;
 
 #nullable enable // i hate this
 
@@ -11,7 +12,7 @@ namespace Mesocyclone
     /// <summary>
     /// Class that handles all the audio
     /// </summary>
-    public sealed class AudioManager : MonoBehaviour
+    public sealed class AudioManager : Tickable
     {
         #region Variables
 
@@ -102,7 +103,7 @@ namespace Mesocyclone
 
         private AudioManager() { }
 
-        void Awake()
+        void Start()
         {
             if (_instance != null && _instance != this)
             {
@@ -152,19 +153,35 @@ namespace Mesocyclone
 
 #if UNITY_EDITOR
 
-        bool Increase = UnityEditor.EditorUtility.DisplayDialog
-        (
-            "Audio Pool Full",
-            $"The audio pool is full ({Pool.Count} / {PoolSize})!!\nIncrement pool size by 1 to fit space?",
-            "Ye", "Nah"
-        );
+            bool Increase = UnityEditor.EditorUtility.DisplayDialog
+            (
+                "Audio Pool Full",
+                $"The audio pool is full ({Pool.Count} / {PoolSize})!!\nIncrement pool size by 1 to fit space?",
+                "Ye", "Nah"
+            );
 
-        if (Increase)
-        {
-            MaxPoolSize++;
-            PoolSize++;
-            return AddEntryToPool();
-        }
+            if (Increase)
+            {
+                MaxPoolSize++;
+                PoolSize++;
+                return AddEntryToPool();
+            }
+            else
+            {
+                bool AllGood = UnityEditor.EditorUtility.DisplayDialog
+                (
+                    "Pool Size Kept",
+                    $"You chose not to increment pool size, everything good?",
+                    "Ye", "STOP EVERYTHING FOR ENTROPY'S SAKE-"
+                );
+
+                if (!AllGood)
+                {
+                    UnityEngine.Debug.Log("Oke :3");
+                    DestroyImmediate(Instance.gameObject);
+                    throw new Joar();
+                }
+            }
 
 #endif
 
@@ -410,7 +427,7 @@ namespace Mesocyclone
 
         #region Update & Muffling
 
-        void Update()
+        public override void Tick()
         {
             if (Listener == null) return;
 
@@ -422,6 +439,8 @@ namespace Mesocyclone
                 Entry.Filter.cutoffFrequency = Mathf.Lerp(22000f, 10f, Occlusion);
             }
         }
+
+        public override void FixedTick() { return; }
 
         float GetOcclusion(AudioSource Source)
         {
