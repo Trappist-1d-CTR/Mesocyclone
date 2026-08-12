@@ -89,9 +89,7 @@ namespace Mesocyclone
         /// <remarks>Use this for everything but physics stuff</remarks>
         /// <seealso cref="Tickable.FixedTick()"/>
         public virtual void Tick()
-        {
-            
-        }
+        { }
 
         /// <summary>
         /// <para>Called every tick interval (closer to actual ticks than Tick() lol), based on the TickRate and FixedAccumulator.</para>
@@ -99,18 +97,14 @@ namespace Mesocyclone
         /// </summary>
         /// <seealso cref="Tickable.Tick()"/>
         public virtual void FixedTick()
-        {
-            
-        }
+        { }
 
         /// <summary>
         /// <para>Called after every rendered frame. Just replace LateUpdate() ig</para>
         /// <para>Only usefuly for very specific things</para>
         /// </summary>
         public virtual void LateTick()
-        {
-            
-        }
+        { }
 
         /*
         /// <summary>

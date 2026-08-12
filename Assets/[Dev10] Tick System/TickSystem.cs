@@ -36,7 +36,7 @@ namespace Mesocyclone
 
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Init()
+        private static void Init()
         {
             if (Instance == null)
             {
@@ -44,7 +44,6 @@ namespace Mesocyclone
                 _ = tickSystem.AddComponent<TickSystem>();
             }
         }
-
 
         void Awake()
         {
@@ -79,7 +78,7 @@ namespace Mesocyclone
                         tickable.Accumulator -= interval;
                     }*/
 
-                    tickable.Tick();
+                    tickable._Tick();
                 }
             }
             // definitely not an MSC reference
@@ -101,10 +100,23 @@ namespace Mesocyclone
 
                     while (tickable.FixedAccumulator >= interval)
                     {
-                        tickable.FixedTick();
+                        tickable._FixedTick();
                         tickable.FixedAccumulator -= interval;
                     }
                 }
+            }
+            catch
+            {
+                throw new Joar();
+            }
+        }
+
+        void LateUpdate()
+        {
+            try
+            {
+                foreach (var tickable in _tickables)
+                    tickable._LateTick();
             }
             catch
             {

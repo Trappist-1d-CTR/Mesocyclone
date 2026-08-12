@@ -522,8 +522,6 @@ namespace Mesocyclone
             }
         }
 
-        public override void Tick() { return; }
-
         // conditional makes it so every call for this function is skipped, so i dont have to spam preprocessors
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public void DebugEverything(int i)

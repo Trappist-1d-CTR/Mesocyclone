@@ -211,8 +211,6 @@ namespace Mesocyclone.Debug
             MCDebug.Update();
         }
 
-        public override void FixedTick() { return; }
-
         void OnGUI() => MCDebug.OnGUI();
 
         void OnDestroy()

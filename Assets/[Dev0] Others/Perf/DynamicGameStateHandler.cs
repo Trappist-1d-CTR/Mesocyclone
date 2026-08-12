@@ -281,8 +281,6 @@ namespace Mesocyclone
             if (shouldEvaluate) Evaluate();
         }
 
-        public override void FixedTick() { return; }
-
         private void Evaluate()
         {
             try

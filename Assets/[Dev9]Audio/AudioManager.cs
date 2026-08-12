@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mesocyclone;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 using UnityEditor;
 
 #nullable enable // i hate this
 
-namespace Mesocyclone
+namespace Mesocyclone.Music
 {
     /// <summary>
     /// Class that handles all the audio
@@ -125,7 +126,7 @@ namespace Mesocyclone
         /// <summary>
         /// Creates a new child GO with it's own AudioSource and lowpass filter
         /// </summary>
-        PoolEntry AddEntryToPool()
+        private PoolEntry AddEntryToPool()
         {
             GameObject _Child = new($"Audio Source {Pool.Count}");
             _Child.transform.SetParent(transform);
@@ -148,7 +149,7 @@ namespace Mesocyclone
 
         #region Pool Functions
 
-        PoolEntry? GetFreeEntry()
+        private PoolEntry? GetFreeEntry()
         {
             foreach (var Entry in Pool)
                 if (!Entry.Source.isPlaying) return Entry;
@@ -156,39 +157,39 @@ namespace Mesocyclone
             if (Pool.Count < PoolSize)
                 return AddEntryToPool();
 
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
 
-            bool Increase = UnityEditor.EditorUtility.DisplayDialog
-            (
-                "Audio Pool Full",
-                $"The audio pool is full ({Pool.Count} / {PoolSize})!!\nIncrement pool size by 1 to fit space?",
-                "Ye", "Nah"
-            );
-
-            if (Increase)
-            {
-                MaxPoolSize++;
-                PoolSize++;
-                return AddEntryToPool();
-            }
-            else
-            {
-                bool AllGood = UnityEditor.EditorUtility.DisplayDialog
+                bool Increase = UnityEditor.EditorUtility.DisplayDialog
                 (
-                    "Pool Size Kept",
-                    $"You chose not to increment pool size, everything good?",
-                    "Ye", "STOP EVERYTHING FOR ENTROPY'S SAKE-"
+                    "Audio Pool Full",
+                    $"The audio pool is full ({Pool.Count} / {PoolSize})!!\nIncrement pool size by 1 to fit space?",
+                    "Sure", "Nah"
                 );
 
-                if (!AllGood)
+                if (Increase)
                 {
-                    UnityEngine.Debug.Log("Oke :3");
-                    DestroyImmediate(Instance.gameObject);
-                    throw new Joar();
+                    MaxPoolSize++;
+                    PoolSize++;
+                    return AddEntryToPool();
                 }
-            }
+                else
+                {
+                    bool AllGood = UnityEditor.EditorUtility.DisplayDialog
+                    (
+                        "Pool Size Kept",
+                        $"You chose not to increment pool size, is everything good?",
+                        "Affirmative", "STOP EVERYTHING FOR ENTROPY'S SAKE-"
+                    );
 
-#endif
+                    if (!AllGood)
+                    {
+                        UnityEngine.Debug.Log("Oke :3");
+                        DestroyImmediate(Instance.gameObject);
+                        throw new Joar();
+                    }
+                }
+
+            #endif
 
             UnityEngine.Debug.LogWarning("Audio Pool is full!! No new sources will play until one is free");
             return null;
@@ -199,14 +200,16 @@ namespace Mesocyclone
 
         #region Play Functions
 
-        public void Play(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 15f, // range in which the volume is max
-                        float MaxDistance = 100f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void Play
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 15f, // range in which the volume is max
+            float MaxDistance = 100f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PoolEntry Entry = GetFreeEntry();
             if (Entry == null) return;
@@ -215,16 +218,18 @@ namespace Mesocyclone
             Entry.Source.PlayOneShot(Clip);
         }
 
-        public void Play(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        float MinPitch, // minimum pitch to choose from
-                        float MaxPitch, // maximum pitch to choose from
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 15f, // range in which the volume is max
-                        float MaxDistance = 100f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void Play
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            float MinPitch, // minimum pitch to choose from
+            float MaxPitch, // maximum pitch to choose from
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 15f, // range in which the volume is max
+            float MaxDistance = 100f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PoolEntry Entry = GetFreeEntry();
             if (Entry == null) return;
@@ -234,7 +239,16 @@ namespace Mesocyclone
             Entry.Source.PlayOneShot(Clip);
         }
 
-        void ConfigureEntry(PoolEntry Entry, Vector3 Position, bool Is2D, float Volume, float MinDistance, float MaxDistance, AudioRolloffMode RolloffMode)
+        private void ConfigureEntry
+        (
+            PoolEntry Entry,
+            Vector3 Position,
+            bool Is2D,
+            float Volume,
+            float MinDistance,
+            float MaxDistance,
+            AudioRolloffMode RolloffMode
+        )
         {
             Entry.GO.transform.position = Position;
             Entry.Source.spatialBlend = Is2D ? 0f : 1f;
@@ -250,14 +264,16 @@ namespace Mesocyclone
 
         #region Play Repeating Functions
 
-        public Mesocyclone.Debug.Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public Mesocyclone.Debug.Process PlayRepeating
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             Mesocyclone.Debug.Process _Process = new(() => PlayRepeatingRoutine(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
             RepeatingClips.Add(_Process);
@@ -265,16 +281,18 @@ namespace Mesocyclone
             return _Process;
         }
 
-        public Mesocyclone.Debug.Process PlayRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        float MinPitch,
-                        float MaxPitch,
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public Mesocyclone.Debug.Process PlayRepeating
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            float MinPitch,
+            float MaxPitch,
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             Mesocyclone.Debug.Process _Process = new(() => PlayRepeatingRoutine(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
             RepeatingClips.Add(_Process);
@@ -323,59 +341,67 @@ namespace Mesocyclone
                 Clip.Start();
         }
 
-        public void InterruptAllSources(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void InterruptAllSources
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PauseAll();
             Play(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
             Invoke(nameof(UnPauseAll), Clip.length);
         }
 
-        public void InterruptAllSources(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        float MinPitch,
-                        float MaxPitch,
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void InterruptAllSources
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            float MinPitch,
+            float MaxPitch,
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PauseAll();
             Play(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
             Invoke(nameof(UnPauseAll), Clip.length);
         }
 
-        public void InterruptAllSourcesWithRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void InterruptAllSourcesWithRepeating
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PauseAll();
             InterruptingRepeatingClip = PlayRepeating(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
         }
 
-        public void InterruptAllSourcesWithRepeating(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        float MinPitch,
-                        float MaxPitch,
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        public void InterruptAllSourcesWithRepeating
+        (   
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            float MinPitch,
+            float MaxPitch,
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             PauseAll();
             InterruptingRepeatingClip = PlayRepeating(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
@@ -393,14 +419,16 @@ namespace Mesocyclone
 
         #region Repeating Routines
 
-        IEnumerator PlayRepeatingRoutine(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        private IEnumerator PlayRepeatingRoutine
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             while (true)
             {
@@ -409,16 +437,18 @@ namespace Mesocyclone
             }
         }
 
-        IEnumerator PlayRepeatingRoutine(AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
-                        float MinPitch,
-                        float MaxPitch,
-                        Vector3 Position = default, // Position in space
-                        bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
-                        float Volume = 1f, // volume : 0 - 1
-                        float MinDistance = 1f, // range in which the volume is max
-                        float MaxDistance = 5f, // range in which you can no longer hear the source
-                        AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
-                        )
+        private IEnumerator PlayRepeatingRoutine
+        (
+            AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
+            float MinPitch,
+            float MaxPitch,
+            Vector3 Position = default, // Position in space
+            bool Is2D = true, // does the sound play globally? (makes 3D related arguments futile)
+            float Volume = 1f, // volume : 0 - 1
+            float MinDistance = 1f, // range in which the volume is max
+            float MaxDistance = 5f, // range in which you can no longer hear the source
+            AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
+        )
         {
             while (true)
             {
@@ -445,9 +475,7 @@ namespace Mesocyclone
             }
         }
 
-        public override void FixedTick() { return; }
-
-        float GetOcclusion(AudioSource Source)
+        private float GetOcclusion(AudioSource Source)
         {
             Vector3 ListenerPosition = Listener.transform.position;
             Vector3 RayOrigin = Source.transform.position;
@@ -485,6 +513,6 @@ namespace Mesocyclone
 
         #endregion
     }
+}
 
 #nullable disable
-}

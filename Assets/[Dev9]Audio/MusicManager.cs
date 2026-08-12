@@ -123,9 +123,6 @@ namespace Mesocyclone.Music
             }
         }
 
-        public override void FixedTick() { return; }
-
-
         #region Functions
 
         #region Misc
@@ -170,5 +167,6 @@ namespace Mesocyclone.Music
         #endregion
     }
 
-#nullable disable
 }
+
+#nullable disable
