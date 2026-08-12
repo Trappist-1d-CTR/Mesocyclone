@@ -34,7 +34,7 @@ namespace Mesocyclone
         }
 
         [Serializable]
-        class PoolEntry
+        private class PoolEntry
         {
             public GameObject? GO;
             public AudioSource? Source;
@@ -43,13 +43,14 @@ namespace Mesocyclone
 
         [Header("Pool Stuff")]
         [Tooltip("Collection (List<>) of all the nested AudioSource Game Objects")]
-        [SerializeField] List<PoolEntry> Pool = new();
+        [SerializeField]
+        private List<PoolEntry> Pool = new();
 
         [Space(18)]
         [Tooltip("Controls the max amount of AudioSource Game Objects that can exist in the Pool")]
         [Range(0, 255)]
         [SerializeField] byte _poolSize = 32;
-        byte PoolSize
+        private byte PoolSize
         {
             get => _poolSize;
             set
@@ -76,22 +77,26 @@ namespace Mesocyclone
 
         [Space(10)]
         [Tooltip("Process that's currently interrupting all other sounds")]
-        [SerializeField] Mesocyclone.Debug.Process? InterruptingRepeatingClip;
+        [SerializeField]
+        private Mesocyclone.Debug.Process? InterruptingRepeatingClip;
 
         [Header("Audio Listener & Raycasting")]
         [Tooltip("Reference to any objects with the Audio Listener component")]
-        [SerializeField] AudioListener Listener;
+        [SerializeField]
+        private AudioListener Listener;
 
         [Tooltip("Current Layer the rays shoot out from and detect collision")]
-        [SerializeField] LayerMask OcclusionMask;
+        [SerializeField]
+        private LayerMask OcclusionMask;
 
         [Tooltip("Controls how many walls the raycast has to go through before max muffling\nTweak this to whatever you feel is right")]
         [Range(0, 255)]
-        [SerializeField] byte _maxWalls = 32; // controls how many "walls" the raycast has the go through before max muffling // tweak this to your liking
-        int MaxWalls
+        [SerializeField]
+        private byte _maxWalls = 32; // controls how many "walls" the raycast has the go through before max muffling // tweak this to your liking
+        private int MaxWalls // no idea why this isn't a byte
         {
-            get => _maxWalls;
-            set => Mathf.Clamp(value, 0, 255);
+            get { return _maxWalls; }
+            set { _maxWalls = Mathf.Clamp(value, 0, 255); }
         }
 
         #endregion

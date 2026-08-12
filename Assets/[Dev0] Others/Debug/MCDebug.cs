@@ -197,18 +197,13 @@ namespace Mesocyclone.Debug
         static GameObject go;
 
         [RuntimeInitializeOnLoadMethod] // screw you unity
-        static void Init()
+        private static void Init()
         {
             MCDebug.Init();
 
             go = new GameObject("Debug Handler");
             _ = go.AddComponent<MCDebugHandler>();
             DontDestroyOnLoad(go);
-        }
-
-        void Start() // nevermind
-        {
-
         }
 
         public override void Tick() // runs every frame, obvi

@@ -1,3 +1,5 @@
+// extremely original lol
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,7 +53,7 @@ namespace Mesocyclone.Music
 
         private MusicManager() { }
 
-        private void Start()
+        void Start()
         {
             #region Init
             if (_instance != null && _instance != this)

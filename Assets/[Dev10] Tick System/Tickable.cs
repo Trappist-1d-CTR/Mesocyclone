@@ -9,8 +9,9 @@ namespace Mesocyclone
     // thank you IntelliSense for automating all these strings! <3
 
     /// <summary>
-    /// Base class for a tickable MonoBehaviour
-    /// <para>Made for dynamic tick rates, instead of a global Time.fixedDeltaTime</para>
+    /// <para>Base class for a tickable MonoBehaviour</para>
+    /// <br/>
+    /// <para>Made for dynamic tick rates, instead of a global Time.fixedDeltaTime. <br/> <i><b>P.S: not true</b></i></para>
     /// </summary>
     public abstract class Tickable : MonoBehaviour
     {
@@ -21,7 +22,7 @@ namespace Mesocyclone
         public static readonly float DefaultFixedTickRate = 100f; // default tick rate for all fixed tickables, can be changed in the future if needed
 
         [SerializeField, Tooltip("The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
-        float tickRate = DefaultTickRate; // set this to what's best
+        private float tickRate = DefaultTickRate; // set this to what's best
         public float TickRate
         {
             get => tickRate;
@@ -34,7 +35,7 @@ namespace Mesocyclone
         }
 
         [SerializeField, Tooltip("The rate at which this tickable should be updated.\nSet to 0 to disable ticking.")]
-        float fixedTickRate = DefaultFixedTickRate; // set this to what's best
+        private float fixedTickRate = DefaultFixedTickRate; // set this to what's best
         public float FixedTickRate
         {
             get => fixedTickRate;
@@ -52,7 +53,8 @@ namespace Mesocyclone
         [ReadOnly, SerializeField, Tooltip("The accumulated time since the last fixed tick, used to determine when to call FixedTick()")]
         public float FixedAccumulator;
 
-        bool isRegistered = false;
+        [field: SerializeField]
+        public bool isRegistered { get; private set; } = false;
 
         protected virtual void Awake()
         {
@@ -82,16 +84,35 @@ namespace Mesocyclone
         }
 
         /// <summary>
-        /// Tick method called every tick, based on the TickRate and Accumulator
+        /// <para>Called every frame.<para>
         /// </summary>
-        public abstract void Tick();
+        /// <remarks>Use this for everything but physics stuff</remarks>
+        /// <seealso cref="Tickable.FixedTick()"/>
+        public virtual void Tick()
+        {
+            
+        }
 
         /// <summary>
-        /// FixedTick method called every fixed tick, based on the TickRate and FixedAccumulator
-        /// <para>Useful for physics based tickables</para>
+        /// <para>Called every tick interval (closer to actual ticks than Tick() lol), based on the TickRate and FixedAccumulator.</para>
+        /// <para>Useful for physics based tickable behaviours</para>
         /// </summary>
-        public abstract void FixedTick();
+        /// <seealso cref="Tickable.Tick()"/>
+        public virtual void FixedTick()
+        {
+            
+        }
 
+        /// <summary>
+        /// <para>Called after every rendered frame. Just replace LateUpdate() ig</para>
+        /// <para>Only usefuly for very specific things</para>
+        /// </summary>
+        public virtual void LateTick()
+        {
+            
+        }
+
+        /*
         /// <summary>
         /// Implement logic to adjust TickRate based on performance metrics or other criteria
         /// <para>Override this method in derived classes to implement custom logic for dynamic tick rate adjustment based on distance or other factors.</para>
@@ -99,7 +120,7 @@ namespace Mesocyclone
         /// <param name="maxDistance">The maximum distance at which the tick rate should be adjusted</param>
         /// <param name="target">The target GameObject to consider for distance, defaults to the main camera</param>
         /// </summary>
-        /*protected virtual void ImplementDynamicTickRateBasedOnDistance(float minDistance, float maxDistance, GameObject target = null)
+        protected virtual void ImplementDynamicTickRateBasedOnDistance(float minDistance, float maxDistance, GameObject target = null)
         {
             target ??= Camera.main?.gameObject;
 
@@ -129,6 +150,7 @@ namespace Mesocyclone
             {
                 TickRate = 50f; // Default tick rate if no object is hit
             }
-        }*/
+        }
+        */
     }
 }

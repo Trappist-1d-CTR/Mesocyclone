@@ -11,7 +11,6 @@ namespace Mesocyclone
         List<Tickable> _tickables = new();
         public IReadOnlyList<Tickable> Tickables => _tickables;
 
-
         public void Register(Tickable Tickable)
         {
             if (!_tickables.Contains(Tickable))
