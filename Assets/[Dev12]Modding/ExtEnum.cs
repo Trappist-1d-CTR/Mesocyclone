@@ -24,7 +24,7 @@ namespace Mesocyclone.Modding
     /// <br/><br/>
     /// And here's how you'd define an ExtEnum equivalent: <br/>
     /// <code>
-    /// public class Test : ExtEnum&lt;T&gt;
+    /// public class Test : ExtEnum&lt;Test&gt;
     /// {
     ///     public static readonly Test Hello = new("Hello", true);
     ///     public static readonly Test World = new("World", true);
@@ -65,7 +65,7 @@ namespace Mesocyclone.Modding
     ///     }
     /// }
     /// </code>
-    /// <br/><br/><br/>
+    /// <br/><br/><br/><br/>
     /// <i>Oh and if you're curios, ExtEnum is an abbrevation of Extended Enumerator, if that wasn't already obvious.</i>
     /// </tutorial>
     /// </remarks>
