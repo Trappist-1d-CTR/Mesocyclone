@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 // props to the rain world MSC developers for coming up with this genius thing
 
@@ -161,14 +160,6 @@ namespace Mesocyclone.Modding
         public static bool operator !=(ExtEnum<T> left, ExtEnum<T> right)
         {
             return !(left == right);
-        }
-    }
-
-    public static class ExtEnumInitializer
-    {
-        public static void InitTypes<T>() where T : ExtEnum<T>
-        {
-            RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
         }
     }
 }
