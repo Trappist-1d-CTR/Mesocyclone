@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Mail;
 using UnityEngine;
 
 // base class for all performance overloads
