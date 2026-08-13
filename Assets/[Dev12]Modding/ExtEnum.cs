@@ -39,7 +39,7 @@ namespace Mesocyclone.Modding
     /// <br/><br/>
     /// And here's how to add entries to an existing enum: <br/>
     /// <code>
-    /// namespace MyModdedEnum
+    /// public static class MyModdedEnum
     /// {
     ///     public static CreatureTemplate.Type NewCreature;
     ///     public static CreatureTemplate.Type AnotherCreature;
