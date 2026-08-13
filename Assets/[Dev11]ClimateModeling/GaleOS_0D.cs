@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Mesocyclone
 {
-    public class GaleOS_0D : MonoBehaviour
+    public class GaleOS_0D : Tickable
     {
         #region Variables
 
@@ -26,16 +26,14 @@ namespace Mesocyclone
 
         #endregion
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        public override void Tick()
         {
             GlobalValues = GameObject.FindGameObjectWithTag("GameController").GetComponent<AGlobalValues>();
             t = 0;
             dt = tMultiplier * Time.fixedDeltaTime;
         }
 
-        // Update is called once per frame
-        void FixedUpdate()
+        public override void FixedTick()
         {
             if (dt != tMultiplier * Time.fixedDeltaTime) dt = tMultiplier * Time.fixedDeltaTime;
 

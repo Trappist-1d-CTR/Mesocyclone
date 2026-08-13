@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
-// base class for all performance overloads
+// last resort for humanity.
 
 namespace Mesocyclone
 {
     /// <summary>
-    /// last resort for humanity
+    /// Base class for all performance overloads.
     /// </summary>
     public class PerformanceOverloadException : Exception
     {
