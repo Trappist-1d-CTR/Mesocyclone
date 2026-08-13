@@ -1,10 +1,13 @@
 using System;
 using System.Runtime.CompilerServices;
 
-public static class ExtEnumInitializer
+namespace Mesocyclone.Modding
 {
-    public static void InitTypes<T>() where T : ExtEnum<T>
+    public static class ExtEnumInitializer
     {
-        RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
+        public static void InitTypes<T>() where T : ExtEnum<T>
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
+        }
     }
 }
