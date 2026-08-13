@@ -138,7 +138,7 @@ namespace Mesocyclone
                     case GameState.Frozen:
                         break;
                     case GameState.Crash:
-                        throw new PerformanceOverloadException(); // drive the game to crash with an exception ; exceptions don't usually cause a crash for some reason, so the exception just simply quits the program
+                        PerformanceOverloadException.Call(); // drive the game to crash with an exception ; exceptions don't usually cause a crash for some reason, so the exception just simply quits the program
                 }
             }
         }
