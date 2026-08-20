@@ -10,11 +10,14 @@ namespace Mesocyclone
     {
         public Joar() : base("fuck you.")
         {
-            //UnityEngine.Debug.LogError(base.Message);
+            // awwww, why you comment out :(
+            // UnityEngine.Debug.LogError(base.Message);
 
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPaused = true;
-#endif
+            UnityEngine.Debug.LogException(this);
+
+            #if DEV
+                UnityEditor.EditorApplication.isPaused = true;
+            #endif
         }
     }
 }

@@ -570,8 +570,6 @@ namespace Mesocyclone
             FrameCount++;
         }
 
-        public override void Tick() { return; }
-
         #endregion
     }
 }

@@ -27,10 +27,10 @@ And ofc a _**special thanks**_ to several others such as:
 * And to everyone tuned in on TIG :D
 
 ## The Code
-The codeitself is full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
+The code itself is ~~horrible~~, full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
 You can find the ones I coded myself, though, by peeking into the Assets Folder and locating all the ones marked with the following [Dev#] (# being a number) and then opening the folder named "Script(s)".
 
-Everything was made in Unity, Blender, Visual Studio, and C#
+Everything was made in Unity, Blender, Visual Studio (& Code), and C#
 
 - [Dev1] was my attempt, as one of my school teachers suggested, to analyze how gas particles would behave as singular particles rather than how they're actually dealt with in the actual project. Useful for physics demonstration or if you need a foundation to base yourself on.
 - [Dev2] was my initial attempt at simulating gas physics, with fixed grids made out of hexagons which would exchange particles, heat, etc. Because of performance issues, however, this idea was discarded. I don't remember too much about it, so feel free to explore it yourself.
@@ -42,8 +42,10 @@ Everything was made in Unity, Blender, Visual Studio, and C#
 - [Dev8] is the Main Menu. Yes, I am making Dev#s for anything now-
 - [Dev9] Is the audio engine, which, well, serves as a framework to play audio clips
 - [Dev10] This is specifically for the game's custom tick system, so we can support dynamic tick rates for performance
+- [Dev11] Climate Model (very descriptive)
+- [Dev12] This is the modding API for the game. So far is mostly gonna just be extenum, but in the far future will be heavily expanded on (no promises)
 - [Dev0] is not my code. It's code I got from someone else to get fullscreen during testing without having to make 1000 builds.
-    - Includes sub-folders for various different miscellaneous things, such as the debugger (formerly debugger & profiler), custom editor windows & GUI's & Utils, and custom Exceptions (don't look at that)
+    - Includes sub-folders for various different miscellaneous things, such as the debugger (formerly debugger & profiler), custom editor windows & GUI's & Utils, custome exceptions, performance things, etc.
 
 ## Gale - The Exoplanet
 More information on it here (props to Artifexian for the original WorldSmith template which I slightly modified for my own needs):
