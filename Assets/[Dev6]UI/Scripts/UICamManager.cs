@@ -313,11 +313,19 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
+                AudioManager.Instance.UnPauseAll();
+
+                transform.parent.SendMessage("PauseSFX", false);
+                GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
             }
             else
             {
                 ToggleMenu(0);
                 Time.timeScale = 0;
+                AudioManager.Instance.PauseAll();
+
+                transform.parent.SendMessage("PauseSFX", true);
+                GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);
             }
         }
 

@@ -50,7 +50,7 @@ public class HangarScript : Tickable
 
     public override void FixedTick()
     {
-        #region Platform and Cover animations
+        #region Platform-Cover Animations and Centrifuge SFX
 
         switch (HangarState)
         {
@@ -151,6 +151,19 @@ public class HangarScript : Tickable
     }
     #endregion
 
+    public void PauseSFX(bool ToPause)
+    {
+        if (ToPause)
+        {
+            CentrifugeSFX.Pause();
+        }
+        else
+        {
+            CentrifugeSFX.UnPause();
+        }
+    }
+
+    #region Hangar Commands
     public void ShelterHangar()
     {
         if (HangarState == HangarSituations.Standby)
@@ -168,4 +181,5 @@ public class HangarScript : Tickable
             HangarState = HangarSituations.Launching;
         }
     }
+    #endregion
 }

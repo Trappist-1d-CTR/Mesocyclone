@@ -35,6 +35,8 @@ namespace Mesocyclone
         public TextMeshProUGUI BrightnessValue;
         public Slider ContrastSlider;
         public TextMeshProUGUI ContrastValue;
+        public Slider GammaSlider;
+        public TextMeshProUGUI GammaValue;
         #endregion
 
         #endregion
@@ -109,11 +111,24 @@ namespace Mesocyclone
             }
             ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
         }
+
+        public void SetGamma(float Value)
+        {
+            LiftGammaGain LGG;
+
+            SimulationSettings.Gamma = Value;
+            SimulationSettings.Save();
+            if (VolumeSettings.profile.TryGet(out LGG))
+            {
+                LGG.gamma.Override(new(1, 1, 1, Value));
+            }
+            GammaValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
+        }
         #endregion
 
         public void SoundClick()
         {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Click");
+            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
             AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.6f);
         }
 

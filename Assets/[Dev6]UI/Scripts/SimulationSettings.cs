@@ -7,6 +7,7 @@ namespace Mesocyclone
         #region Values
         public static float Brightness;
         public static float Contrast;
+        public static float Gamma;
         #endregion
 
         #region Save/Load Settings
@@ -14,6 +15,7 @@ namespace Mesocyclone
         {
             Brightness = -0.1f;
             Contrast = 0;
+            Gamma = 0;
         }
 
         public static void Load()
@@ -22,6 +24,7 @@ namespace Mesocyclone
             {
                 Brightness = PlayerPrefs.GetFloat("Brightness");
                 Contrast = PlayerPrefs.GetFloat("Contrast");
+                Gamma = Contrast = PlayerPrefs.GetFloat("Gamma");
             }
             else
             {
@@ -33,6 +36,7 @@ namespace Mesocyclone
         {
             PlayerPrefs.SetFloat("Brightness", Brightness);
             PlayerPrefs.SetFloat("Contrast", Contrast);
+            PlayerPrefs.SetFloat("Gamma", Gamma);
 
             PlayerPrefs.Save();
         }

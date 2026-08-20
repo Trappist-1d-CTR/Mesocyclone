@@ -71,7 +71,7 @@ namespace Mesocyclone.UI.Feedbacking
             FeedbackVariable.ScreenshotFilePath = path;
 
             string Address = "feedback.unknownsimprograms@gmail.com"; //put address here (NOT A PERSONAL ADDRESS)
-            string Password = "zrmxbrfioqghfcrr"; //put password here (if you're some random person on GitHub, please don't screw us over ;-;)
+            string Password = "ucsgopfqbfkpfcvr"; //put password here (if you're some random person on GitHub, please don't screw us over ;-;)
             MailMessage mail = new(Address, Address);
             mail.Subject = "MESOCYCLONE FEEDBACK (" + FeedbackVariable.Version + ")";
             mail.Body = FormatMessage(FeedbackVariable);
@@ -93,7 +93,7 @@ namespace Mesocyclone.UI.Feedbacking
             }
             catch (System.Exception e)
             {
-                UnityEngine.Debug.Log("Email error: " + e.ToString());
+                UnityEngine.Debug.LogWarning("Email error: " + e.ToString());
             }
         }
     }

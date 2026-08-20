@@ -267,7 +267,7 @@ namespace Mesocyclone
 
         #region Script Optimization Memory
         private Vector3 Memory;
-        private Vector3 ResetPosition;
+        private Transform ResetTransform;
         #endregion
 
         #region Data Output
@@ -293,7 +293,7 @@ namespace Mesocyclone
 
         private float TimeAtGatheringStart;
         #endregion
-
+        
         #region SFX
         public AudioSource[] EngineSFX;
         public AudioSource[] WindSFX;
@@ -386,9 +386,6 @@ namespace Mesocyclone
 
             //Calculate ReferenceDynamicPressure
             ReferenceDynPressure = C.GaleAtmD * 400f;
-
-            //Setup ResetPosition to position at Start()
-            ResetPosition = DronePhysics.position;
 
             //Setup Steady Flight Test if enabled
             if (SteadyFlightTest)
@@ -1277,7 +1274,7 @@ namespace Mesocyclone
             #region SFX
             foreach (AudioSource source in EngineSFX)
             {
-                source.volume = Thrust * 0.2f + (0.25f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust) + (ImpulseActive ? 0.4f : 0) + (FLIPPerforming ? 0.25f : 0);
+                source.volume = 0.7f * (Thrust * 0.2f + (0.25f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust) + (ImpulseActive ? 0.4f : 0) + (FLIPPerforming ? 0.25f : 0));
                 source.pitch = 1f + (0.05f * Mathf.Sin(0.6f + Time.time + Random.Range(-0.3f, 0.3f))) - (0.8f * source.volume);
             }
 
@@ -1332,7 +1329,7 @@ namespace Mesocyclone
         #region Reset Drone Position, Velocity, and Engines
         private void ResetDrone(InputAction.CallbackContext obj)
         {
-            InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = ResetPosition;
+            InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = ResetTransform.position + (1.3f * Vector3.up);
             PhysicsVelocity = DronePhysics.linearVelocity = Vector3.zero;
             if (Air != null) Air.DronePosition = PhysicsPosition;
             PhysicsAcceleration = TotWeight = (C.GaleG * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * C.GaleAtmD * Vector3.up / DronePhysics.mass);
@@ -1353,6 +1350,9 @@ namespace Mesocyclone
         #region Hangar Controls
         public IEnumerator InHangar(GameObject Sender)
         {
+            if (ResetTransform == null)
+                ResetTransform = Sender.transform;
+
             yield return new WaitUntil(() => HoverActive);
 
             Sender.SendMessage("LaunchHangar");
@@ -1403,11 +1403,25 @@ namespace Mesocyclone
         }
         #endregion
 
-        #region Relay UI Controls
+        #region Relay/ed UI Controls
         private void SendEscapeUI(InputAction.CallbackContext obj)
         {
             UICam.EscapeUI();
             return;
+        }
+
+        public void PauseSFX(bool ToPause)
+        {
+            if (ToPause)
+            {
+                foreach (AudioSource source in EngineSFX) source.Pause();
+                foreach (AudioSource source in WindSFX) source.Pause();
+            }
+            else
+            {
+                foreach (AudioSource source in EngineSFX) source.UnPause();
+                foreach (AudioSource source in WindSFX) source.UnPause();
+            }
         }
         #endregion
 

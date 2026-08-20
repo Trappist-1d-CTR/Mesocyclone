@@ -18,6 +18,8 @@ namespace Mesocyclone
         public TextMeshProUGUI BrightnessValue;
         public Slider ContrastSlider;
         public TextMeshProUGUI ContrastValue;
+        public Slider GammaSlider;
+        public TextMeshProUGUI GammaValue;
         #endregion
 
         void Start()
@@ -29,6 +31,8 @@ namespace Mesocyclone
             BrightnessValue.text = (Mathf.Round(SimulationSettings.Brightness * 20f) / 20f).ToString();
             ContrastSlider.value = SimulationSettings.Contrast;
             ContrastValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
+            GammaSlider.value = SimulationSettings.Gamma;
+            GammaValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
             #endregion
         }
 
@@ -57,6 +61,19 @@ namespace Mesocyclone
                 ColorAdj.contrast.value = SimulationSettings.Contrast;
             }
             ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
+        }
+
+        public void SetGamma(float Value)
+        {
+            LiftGammaGain LGG;
+
+            SimulationSettings.Gamma = Value;
+            SimulationSettings.Save();
+            if (VolumeSettings.profile.TryGet(out LGG))
+            {
+                LGG.gamma.Override(new(1, 1, 1, Value));
+            }
+            GammaValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
         }
         #endregion
     }
