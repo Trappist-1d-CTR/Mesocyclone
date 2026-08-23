@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
+// Last time i checked Unity's mono roslyn compiler can only compile C# 9 code... how tf do lock statements compile?!?!??!!??
+
 namespace Mesocyclone
 {
     /// <summary>
