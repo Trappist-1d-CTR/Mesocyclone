@@ -15,11 +15,11 @@ namespace Mesocyclone
         protected readonly Action<T> onGet;
         protected readonly Action<T> onRelease;
         protected readonly Action<T> onClear;
-        public readonly uint maxSize { get; protected set; }
+        public uint maxSize { get; protected set; }
 
         public int count { get { return countActive + countInactive; } } // just add the 2 lol
         public int countActive { get; protected set; }
-        public int countInctive { get { return inactive.Count; } }
+        public int countInactive { get { return inactive.Count; } }
 
         public Pool
         (
@@ -41,7 +41,7 @@ namespace Mesocyclone
         {
             T item = inactive.Count > 0 ? inactive.Pop() : createFunction();
             countActive++;
-            onGet?.Invoke();
+            onGet?.Invoke(item);
             return item;
         }
 
@@ -50,7 +50,7 @@ namespace Mesocyclone
             // if the pool is full, discard the instance
             if (inactive.Count >= (int)maxSize)
             {
-                onDestroy?.Invoke(item);
+                onClear?.Invoke(item);
             }
             else
             {
@@ -63,7 +63,7 @@ namespace Mesocyclone
         public void Clear()
         {
             foreach (T item in inactive)
-                onDestroy?.Invoke(item);
+                onClear?.Invoke(item);
             inactive.Clear();
             countActive = 0;
         }

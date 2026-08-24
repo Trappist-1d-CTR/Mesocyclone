@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 using Mesocyclone;
 using Mesocyclone.UI.Feedbacking;
+using Mesocyclone.Sound;
 
 namespace Mesocyclone.UI
 {
@@ -236,6 +237,13 @@ namespace Mesocyclone.UI
             {
                 FeedbackAssessmentButtons[i].interactable = (4 - i) != (int)FeedbackSystem.FeedbackVariable.Assessment;
             }
+            #endregion
+
+            #region Check Camera Settings
+
+            if (Cam.fieldOfView != SimulationSettings.FOV)
+                Cam.fieldOfView = SimulationSettings.FOV;
+
             #endregion
         }
 

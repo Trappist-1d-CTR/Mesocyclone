@@ -10,7 +10,7 @@ using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 
 #nullable enable // i hate this
 
-namespace Mesocyclone.Music
+namespace Mesocyclone.Sound
 {
     /// <summary>
     /// Class that handles the in-game music
@@ -39,7 +39,7 @@ namespace Mesocyclone.Music
         public string CurrentContext = "";
         public bool HasSeenStar;
 
-        public AudioClip MenuMusic;
+        public AudioClip? MenuMusic;
         public AudioClip GameAmbience;
         public AudioClip GameMusic;
 
@@ -50,8 +50,6 @@ namespace Mesocyclone.Music
 
         #endregion
 
-
-        private MusicManager() { }
 
         void Start()
         {
@@ -76,14 +74,14 @@ namespace Mesocyclone.Music
 
             Ambience_Main = AudioManager.Instance.PlayRepeating(GameAmbience);
 
-            if (CurrentContext == "MainMenu")
+            if (CurrentContext == "MainMenu" && MenuMusic != null)
             {
                 Music_Main = AudioManager.Instance.PlayRepeating(MenuMusic);
                 Music_Main_Playing = "MenuMusic";
 
                 Ambience_Main.Stop();
             }
-            else
+            else if (GameMusic != null)
             {
                 Music_Main = AudioManager.Instance.PlayRepeating(GameMusic);
                 Music_Main_Playing = "GameMusic";
@@ -95,28 +93,28 @@ namespace Mesocyclone.Music
         {
             if (CurrentContext == "MainMenu")
             {
-                if (Music_Main_Playing != "MenuMusic")
+                if (Music_Main_Playing != "MenuMusic" && Music_Main != null && MenuMusic != null)
                 {
                     AudioManager.Instance.StopRepeating(Music_Main);
                     Music_Main = AudioManager.Instance.PlayRepeating(MenuMusic);
                     Music_Main_Playing = "MenuMusic";
                 }
 
-                if (Ambience_Main.isRunning)
+                if (Ambience_Main != null && Ambience_Main.isRunning)
                 {
                     Ambience_Main.Stop(true);
                 }
             }
             else
             {
-                if (Music_Main_Playing != "GameMusic")
+                if (Music_Main_Playing != "GameMusic" && Music_Main != null)
                 {
                     AudioManager.Instance.StopRepeating(Music_Main);
                     Music_Main = AudioManager.Instance.PlayRepeating(GameMusic);
                     Music_Main_Playing = "GameMusic";
                 }
 
-                if (!Ambience_Main.isRunning)
+                if (Ambience_Main != null && !Ambience_Main.isRunning)
                 {
                     Ambience_Main.Start(true);
                 }

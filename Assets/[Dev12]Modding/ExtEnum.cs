@@ -98,7 +98,7 @@ namespace Mesocyclone.Modding
 
             foreach (T existing in values)
             {
-                if (existing.value is value)
+                if (existing.value == value)
                     throw new InvalidOperationException($"ExtEnum entry \"{value}\" us already registered for type {typeof(T).Name}. " + "Two mods (or your own code) are colliding on the same name.");
             }
 
@@ -125,7 +125,7 @@ namespace Mesocyclone.Modding
         public static T Find(string value)
         {
             foreach (T entry in values)
-                if (entry.value is value)
+                if (entry.value == value)
                     return entry;
             
             return null;
@@ -138,7 +138,7 @@ namespace Mesocyclone.Modding
 
         public override bool Equals(object obj)
         {
-            return obj is ExtEnum<T> other && other.value is value;
+            return obj is ExtEnum<T> other && other.value == value;
         }
 
         public override int GetHashCode()

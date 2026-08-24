@@ -8,7 +8,7 @@ using UnityEditor;
 
 #nullable enable // i hate this
 
-namespace Mesocyclone.Music
+namespace Mesocyclone.Sound
 {
     /// <summary>
     /// Class that handles all the audio
@@ -97,7 +97,7 @@ namespace Mesocyclone.Music
         private int MaxWalls // no idea why this isn't a byte
         {
             get { return _maxWalls; }
-            set { _maxWalls = Mathf.Clamp(value, 0, 255); }
+            set { _maxWalls = (byte)Mathf.Clamp(value, 0, 255); }
         }
 
         #endregion
@@ -107,7 +107,6 @@ namespace Mesocyclone.Music
 
         #region Init
 
-        private AudioManager() { }
 
         void Start()
         {
@@ -152,7 +151,7 @@ namespace Mesocyclone.Music
         private PoolEntry? GetFreeEntry()
         {
             foreach (var Entry in Pool)
-                if (!Entry.Source.isPlaying) return Entry;
+                if (Entry.Source != null && !Entry.Source.isPlaying) return Entry;
 
             if (Pool.Count < PoolSize)
                 return AddEntryToPool();
@@ -211,11 +210,11 @@ namespace Mesocyclone.Music
             AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
         )
         {
-            PoolEntry Entry = GetFreeEntry();
+            PoolEntry? Entry = GetFreeEntry();
             if (Entry == null) return;
 
             ConfigureEntry(Entry, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
-            Entry.Source.PlayOneShot(Clip);
+            if (Entry.Source != null) Entry.Source.PlayOneShot(Clip);
         }
 
         public void Play
@@ -231,12 +230,12 @@ namespace Mesocyclone.Music
             AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
         )
         {
-            PoolEntry Entry = GetFreeEntry();
+            PoolEntry? Entry = GetFreeEntry();
             if (Entry == null) return;
 
             ConfigureEntry(Entry, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode);
-            Entry.Source.pitch = UnityEngine.Random.Range(MinPitch, MaxPitch);
-            Entry.Source.PlayOneShot(Clip);
+            if (Entry.Source != null) Entry.Source.pitch = UnityEngine.Random.Range(MinPitch, MaxPitch);
+            if (Entry.Source != null) Entry.Source.PlayOneShot(Clip);
         }
 
         private void ConfigureEntry
@@ -250,13 +249,18 @@ namespace Mesocyclone.Music
             AudioRolloffMode RolloffMode
         )
         {
-            Entry.GO.transform.position = Position;
-            Entry.Source.spatialBlend = Is2D ? 0f : 1f;
-            Entry.Source.minDistance = MinDistance;
-            Entry.Source.maxDistance = MaxDistance;
-            Entry.Source.rolloffMode = RolloffMode;
-            Entry.Source.volume = Volume;
-            Entry.Source.pitch = 1f;
+            if (Entry.GO != null) Entry.GO.transform.position = Position;
+            else throw new Joar();
+            if (Entry.Source != null)
+            {
+                Entry.Source.spatialBlend = Is2D ? 0f : 1f;
+                Entry.Source.minDistance = MinDistance;
+                Entry.Source.maxDistance = MaxDistance;
+                Entry.Source.rolloffMode = RolloffMode;
+                Entry.Source.volume = Volume;
+                Entry.Source.pitch = 1f;
+            }
+            else throw new Joar();
         }
 
         #endregion
@@ -326,7 +330,7 @@ namespace Mesocyclone.Music
         public void PauseAll()
         {
             foreach (var Entry in Pool)
-                Entry.Source.Pause();
+                if (Entry.Source != null) Entry.Source.Pause();
 
             foreach (var Clip in RepeatingClips)
                 Clip.Stop();
@@ -335,7 +339,7 @@ namespace Mesocyclone.Music
         public void UnPauseAll()
         {
             foreach (var Entry in Pool)
-                Entry.Source.UnPause();
+                if (Entry.Source != null) Entry.Source.UnPause();
 
             foreach (var Clip in RepeatingClips)
                 Clip.Start();
@@ -468,10 +472,13 @@ namespace Mesocyclone.Music
 
             foreach (var Entry in Pool)
             {
-                if (!Entry.Source.isPlaying) continue;
+                if (Entry.Source != null && Entry.Filter != null)
+                {
+                    if (!Entry.Source.isPlaying) continue;
 
-                float Occlusion = GetOcclusion(Entry.Source);
-                Entry.Filter.cutoffFrequency = Mathf.Lerp(22000f, 10f, Occlusion);
+                    float Occlusion = GetOcclusion(Entry.Source);
+                    Entry.Filter.cutoffFrequency = Mathf.Lerp(22000f, 10f, Occlusion);
+                }
             }
         }
 

@@ -9,7 +9,7 @@ namespace Mesocyclone
     /// </summary>
     public class KeyedPool<TKey, T> where T : IPool<T>
     {
-        protected readonly Dictionary<TKey, IPool<T>> _pools = new();
+        protected Dictionary<TKey, IPool<T>> _pools = new();
         public IReadOnlyDictionary<TKey, IPool<T>> pools { get { return _pools; } }
 
         protected readonly Func<TKey, IPool<T>> poolFactory;
@@ -22,14 +22,14 @@ namespace Mesocyclone
         public T Get(TKey key)
         {
             if (!pools.TryGetValue(key, out var pool))
-                pools[key] = pool = poolFactory(key);
+                _pools = (Dictionary<TKey, IPool<T>>)(pool = poolFactory(key));
             
             return pool.Get();
         }
 
         public void Release(TKey key, T item)
         {
-            return pools[key].Release(item);
+            pools[key].Release(item);
         }
     }
 }

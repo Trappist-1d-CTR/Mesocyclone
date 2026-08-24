@@ -2668,6 +2668,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   CurrentContext: 
   HasSeenStar: 0
   MenuMusic: {fileID: 8300000, guid: 3be36b9f1e0359d4aa5f2f48d08bf193, type: 3}
@@ -3675,6 +3676,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   FollowDrone: 1
   AirCellObjects: 0
   TerrainAtSeaLevel: 0
@@ -4197,6 +4199,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   R: 8.31432
   GreekS: 0.000000056703744
   NA: 0

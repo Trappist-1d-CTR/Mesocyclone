@@ -52,12 +52,12 @@ namespace Mesocyclone
         {
             try
             {
-                ProcessStartInfo PSI = new
+                ProcessStartInfo PSI = new ProcessStartInfo
                 {
                     FileName = "which",
                     Arguments = "beep",
                     RedirectStandardOutput = true,
-                    UserShellExecute = false,
+                    UseShellExecute = false,
                     CreateNoWindow = true
                 };
 
@@ -104,7 +104,7 @@ namespace Mesocyclone
                 case RuntimePlatform.OSXPlayer:
                 case RuntimePlatform.OSXEditor:
                     System.Console.Write("\a");
-                
+                    break;
                 case RuntimePlatform.LinuxPlayer:
                 case RuntimePlatform.LinuxEditor:
                     if (hasAsciiBellSupport)
@@ -124,7 +124,7 @@ namespace Mesocyclone
             if (!File.Exists(soundPath))
                 return;
             
-            string[] players = ["paplay", "aplay"];
+            string[] players = new string[2] { "paplay", "aplay" };
 
             foreach (var player in players)
             {

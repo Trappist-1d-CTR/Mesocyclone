@@ -78,7 +78,7 @@ namespace Mesocyclone
                         tickable.Accumulator -= interval;
                     }*/
 
-                    tickable._Tick();
+                    tickable.Tick();
                 }
             }
             // definitely not an MSC reference
@@ -100,7 +100,7 @@ namespace Mesocyclone
 
                     while (tickable.FixedAccumulator >= interval)
                     {
-                        tickable._FixedTick();
+                        tickable.FixedTick();
                         tickable.FixedAccumulator -= interval;
                     }
                 }
@@ -116,7 +116,7 @@ namespace Mesocyclone
             try
             {
                 foreach (var tickable in _tickables)
-                    tickable._LateTick();
+                    tickable.LateTick();
             }
             catch
             {

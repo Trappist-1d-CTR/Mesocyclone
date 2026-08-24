@@ -9,6 +9,7 @@ using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 
 using UnityEditor;
 using Mesocyclone;
+using Mesocyclone.Sound;
 
 #nullable enable // in case this isn't disabled
 

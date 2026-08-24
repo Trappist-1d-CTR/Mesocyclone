@@ -16,18 +16,18 @@ namespace Mesocyclone
     public class ThreadSafePool<T> : IPool<T>
     {
         protected readonly Stack<T> inactive = new();
-        protected readonly Func<T> createFunction = new();
+        protected readonly Func<T> createFunction;
         protected readonly Action<T> onGet;
         protected readonly Action<T> onRelease;
         protected readonly Action<T> onClear;
-        public readonly uint maxSize { get; protected set; }
+        public uint maxSize { get; protected set; }
         protected readonly object gate = new();
 
         private int _countActive;
 
         public int count { get { return countActive + countInactive; } }
-        public int countInactive { get { lock (gate) return inactive.Count; } }
-        public int countActive { get { lock (gate) return _countActive; } }
+        public int countInactive { get { lock (gate) return inactive.Count; } protected set { _countActive = value; } }
+        public int countActive { get { lock (gate) return _countActive; } protected set { _countActive = value; } }
 
         public ThreadSafePool
         (
@@ -58,7 +58,7 @@ namespace Mesocyclone
             }
 
             if (item is null)
-                item.createFunction();
+                createFunction();
 
             onGet?.Invoke(item);
             return item;
@@ -66,7 +66,7 @@ namespace Mesocyclone
 
         public void Release(T item)
         {
-            onRelease?.Invoke();
+            onRelease?.Invoke(item);
 
             lock (gate)
             {
@@ -98,7 +98,7 @@ namespace Mesocyclone
             for (int i = 0; i < count; i++)
             {
                 T item = createFunction();
-                onRelease?.Invoke();
+                onRelease?.Invoke(item);
 
                 lock (gate)
                 {

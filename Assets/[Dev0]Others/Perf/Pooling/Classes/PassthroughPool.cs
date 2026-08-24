@@ -12,9 +12,9 @@ namespace Mesocyclone
         protected readonly Func<T> createFunction;
         protected readonly Action<T> onClear;
         
-        public int countActive { get { return 0; } }
+        public int countActive { get { return 0; } protected set { countActive = value; } }
         public int countInactive { get; protected set; }
-        public int count { get { return countActive; } }
+        public int count { get { return countActive; } protected set { count = value; } }
 
         public PassthroughPool(Func<T> createFunction, Action<T> onClear = null)
         {
