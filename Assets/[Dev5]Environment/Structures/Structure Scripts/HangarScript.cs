@@ -138,7 +138,7 @@ public class HangarScript : Tickable
         if (WaitForCoverHit && Cover.angularVelocity.magnitude < 0.01f && (CoverHinge.angle > -1f || CoverHinge.angle < -176f || float.IsNaN(CoverHinge.angle)))
         {
             WaitForCoverHit = false;
-            Debug.Log("Cover Hit!");
+            //Debug.Log("Cover Hit!");
             CoverHit();
         }
         #endregion

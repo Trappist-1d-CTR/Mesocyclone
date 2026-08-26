@@ -96,7 +96,7 @@ namespace Mesocyclone.UI
             CameraScale = 1;
             NotifSelectedMessage = 1;
             NotifAnimTimer = -1;
-            Application.targetFrameRate = -1;
+            SimulationSettings.Load();
 
             #region Initialize AudioListener
 
@@ -163,11 +163,11 @@ namespace Mesocyclone.UI
 
         public override void Tick()
         {
-            #region FOV from Speed
+            #region Camera FOV
 
-            if (FOVFromSpeed.keys.Length != 0)
+            if (FOVFromSpeed.keys.Length != 0 && Cam.fieldOfView != SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude))
             {
-                Cam.fieldOfView = FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude);
+                Cam.fieldOfView = SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude);
             }
 
             #endregion

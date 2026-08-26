@@ -464,6 +464,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   DroneNet: []
   Structures: []
   FocusStructure: 0
@@ -497,6 +498,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   DroneDataTxt: 
   NetLinker:
     MainBody:
@@ -684,6 +686,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   h: 0
   prev_h: Infinity
   delta_h: 0
@@ -730,6 +733,7 @@ MonoBehaviour:
   fixedTickRate: 100
   Accumulator: 0
   FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
   DroneBody: {fileID: 0}
   Cam: {fileID: 0}
   CamCollisionRadius: 0.02

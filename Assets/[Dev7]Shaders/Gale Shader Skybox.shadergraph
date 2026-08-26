@@ -4876,7 +4876,7 @@
     "m_Title": "Light Scattering",
     "m_Position": {
         "x": -52.0,
-        "y": 460.8001708984375
+        "y": 460.8000793457031
     }
 }
 
@@ -5799,7 +5799,7 @@
     "m_Hidden": false,
     "m_PerRendererData": false,
     "m_customAttributes": [],
-    "m_Value": 5.0,
+    "m_Value": 9.5649995803833,
     "m_FloatType": 0,
     "m_LiteralFloatMode": false,
     "m_RangeValues": {
@@ -6759,8 +6759,8 @@
     "m_ObjectId": "ceb6baee353145c28edfd51f2f002e96",
     "m_Title": "Star",
     "m_Position": {
-        "x": -1395.1998291015625,
-        "y": 467.9999084472656
+        "x": -1395.2001953125,
+        "y": 467.9999694824219
     }
 }
 
@@ -7005,7 +7005,7 @@
     "m_Title": "Sky",
     "m_Position": {
         "x": -2404.000244140625,
-        "y": -272.79998779296877
+        "y": -272.8000793457031
     }
 }
 
@@ -7442,9 +7442,9 @@
     "m_PerRendererData": false,
     "m_customAttributes": [],
     "m_Value": {
-        "r": 0.9725490212440491,
-        "g": 0.9686274528503418,
-        "b": 1.0,
+        "r": 1.0,
+        "g": 0.8235294222831726,
+        "b": 0.6313725709915161,
         "a": 1.0
     },
     "isMainColor": false,

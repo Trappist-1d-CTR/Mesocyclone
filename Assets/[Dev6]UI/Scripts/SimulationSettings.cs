@@ -22,16 +22,16 @@ namespace Mesocyclone
         #region Save/Load Settings
         public static void Default()
         {
-            FOV = 40;
+            FOV = 37;
             FPSCap = 60;
             VSync = true;
 
             ResolutionX = 1920;
             ResolutionY = 1080;
             Fullscreen = true;
-            Brightness = -0.1f;
+            Brightness = 0;
             Contrast = 0;
-            Gamma = 0;
+            Gamma = 0.1f;
             AntiAliasing = 1;
             AnisotropicFiltering = 0;
 
