@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Rendering;
@@ -21,6 +22,8 @@ namespace Mesocyclone.UI
         public Rigidbody DroneBody;
 
         #region Camera & UI
+        private InputMap InputControl;
+
         public Camera Cam;
         private Vector2 CameraRotation;
         private Vector3 localCamRot;
@@ -92,11 +95,21 @@ namespace Mesocyclone.UI
             ToggleMenu(-1);
             #endregion
 
-            MET = 0;
+            #region Camera Controls
+
             CameraScale = 1;
+
+            InputControl = new();
+            InputControl.Enable();
+
+            #endregion
+
+            #region Misc Setups
+            MET = 0;
             NotifSelectedMessage = 1;
             NotifAnimTimer = -1;
             SimulationSettings.Load();
+            #endregion
 
             #region Initialize AudioListener
 
@@ -107,17 +120,66 @@ namespace Mesocyclone.UI
             #endregion
         }
 
-        public override void FixedTick()
+        private void OnDestroy()
+        {
+            #region Disable Camera Controls
+
+            InputControl.UIControls.CamResetPivot.performed += ResetPivot;
+
+            InputControl.Disable();
+
+            #endregion
+        }
+
+        public override void Tick()
         {
             #region Camera Controls
             Vector3 ScaledCamVector = CameraVector * CameraScale;
+            Vector2 ConsoleCamInput = InputControl.UIControls.MoveCam.ReadValue<Vector2>();
 
-            if (BackgrES.PointerOverElement)
+            if (ConsoleCamInput != Vector2.zero)
+            {
+                if (InputControl.UIControls.CamZoomMod.IsPressed())
+                {
+                    // Camera scaling
+                    CameraScale += -0.16f * SimulationSettings.CameraSensitivity * ConsoleCamInput.y;
+                    CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
+                }
+                else if (InputControl.UIControls.CamPivotMod.IsPressed())
+                {
+                    // Camera local rotation
+                    localCamRot = new(localCamRot.x + (10 * -SimulationSettings.CameraSensitivity * ConsoleCamInput.y), localCamRot.y + (10 * (Mathf.Abs(localCamRot.x) >= 90 ? -1f : 1f) * SimulationSettings.CameraSensitivity * ConsoleCamInput.x));
+
+                    if (Mathf.Abs(localCamRot.x) > 180)
+                    {
+                        localCamRot.x = Mathf.Sign(localCamRot.x) * (Mathf.Abs(localCamRot.x) - 360);
+                    }
+                    if (Mathf.Abs(localCamRot.y) >= 360)
+                    {
+                        localCamRot.y -= Mathf.Sign(localCamRot.y) * 360;
+                    }
+                }
+                else
+                {
+                    // Up/down rotation                                                                                     // Rotation around normal
+                    CameraRotation = new(CameraRotation.x + (10 * -SimulationSettings.CameraSensitivity * ConsoleCamInput.y), CameraRotation.y + (10 * (Mathf.Abs(CameraRotation.x) >= 90 ? -1f : 1f) * SimulationSettings.CameraSensitivity * ConsoleCamInput.x));
+
+                    if (Mathf.Abs(CameraRotation.x) > 180)
+                    {
+                        CameraRotation.x = Mathf.Sign(CameraRotation.x) * (Mathf.Abs(CameraRotation.x) - 360);
+                    }
+                    if (Mathf.Abs(CameraRotation.y) >= 360)
+                    {
+                        CameraRotation.y -= Mathf.Sign(CameraRotation.y) * 360;
+                    }
+                }
+            }
+            else if (BackgrES.PointerOverElement)
             {
                 if (ButtonEventSystem.PointerDown(1))
                 {
-                    // Up/down rotation                                                 // Rotation around normal
-                    CameraRotation = new(CameraRotation.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+                    // Up/down rotation                                                                                                     // Rotation around normal
+                    CameraRotation = new(CameraRotation.x + (-SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.y), CameraRotation.y + ((Mathf.Abs(CameraRotation.x) >= 90 ? -1f : 1f) * SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.x));
 
                     if (Mathf.Abs(CameraRotation.x) > 180)
                     {
@@ -131,13 +193,13 @@ namespace Mesocyclone.UI
                 else if (ButtonEventSystem.PointerDown(0, 1))
                 {
                     // Camera scaling
-                    CameraScale += -0.0008f * ButtonEventSystem.PointerDeltaPos.y;
+                    CameraScale += -0.016f * SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.y;
                     CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
                 }
                 else if (ButtonEventSystem.PointerDown(2))
                 {
                     // Camera local rotation
-                    localCamRot = new(localCamRot.x + (-0.1f * ButtonEventSystem.PointerDeltaPos.y), localCamRot.y + ((Mathf.Abs(localCamRot.x) >= 90 ? -0.1f : 0.1f) * ButtonEventSystem.PointerDeltaPos.x));
+                    localCamRot = new(localCamRot.x + (-SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.y), localCamRot.y + ((Mathf.Abs(localCamRot.x) >= 90 ? -1f : 1f) * SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.x));
 
                     if (Mathf.Abs(localCamRot.x) > 180)
                     {
@@ -158,11 +220,6 @@ namespace Mesocyclone.UI
             transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
             #endregion
 
-            MET += Time.fixedDeltaTime;
-        }
-
-        public override void Tick()
-        {
             #region Camera FOV
 
             if (FOVFromSpeed.keys.Length != 0 && Cam.fieldOfView != SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude))
@@ -245,6 +302,13 @@ namespace Mesocyclone.UI
                 Cam.fieldOfView = SimulationSettings.FOV;
 
             #endregion
+
+            MET += Time.deltaTime;
+        }
+
+        private void ResetPivot(InputAction.CallbackContext obj)
+        {
+            localCamRot = Vector3.zero;
         }
 
         private Vector3 CamDistance(Vector3 Vector)

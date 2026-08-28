@@ -12,6 +12,9 @@ namespace Mesocyclone
     public sealed class GameSettingsManager : MonoBehaviour
     {
         #region Variables
+
+        public bool DefaultSettings;
+
         public Volume VolumeSettings;
 
         public Slider FOVSlider;
@@ -31,11 +34,15 @@ namespace Mesocyclone
         public TMP_Dropdown AntiAliasingDropdown;
         public TMP_Dropdown AnisotropicFilteringDropdown;
 
+        public Toggle InvertedPitchToggle;
+        public Slider CamSensitivitySlider;
+        public TextMeshProUGUI CamSensitivityValue;
+
         #endregion
 
         void Start()
         {
-            //SimulationSettings.Default();
+            if (DefaultSettings) SimulationSettings.Default();
             SimulationSettings.Load();
 
             #region Initialize Settings UI
@@ -58,6 +65,10 @@ namespace Mesocyclone
             AntiAliasingDropdown.value = SimulationSettings.AntiAliasing;
             AnisotropicFilteringDropdown.value = SimulationSettings.AnisotropicFiltering;
 
+            InvertedPitchToggle.isOn = SimulationSettings.InvertedPitch;
+            CamSensitivitySlider.value = SimulationSettings.CameraSensitivity * 10f;
+            CamSensitivityValue.text = (Mathf.Round(SimulationSettings.CameraSensitivity * 100f) / 10f).ToString();
+
             #endregion
 
             #region Set Settings
@@ -75,10 +86,14 @@ namespace Mesocyclone
         }
 
         #region Settings Functions
+
+        #region Camera Settings
         public void SetFOV(float Value)
         {
             SimulationSettings.FOV = Value;
             SimulationSettings.Save();
+
+            FOVValue.text = Mathf.RoundToInt(Value).ToString();
         }
 
         public void SetFPSCap(int Value)
@@ -106,6 +121,10 @@ namespace Mesocyclone
         {
             QualitySettings.vSyncCount = SimulationSettings.VSync ? 0 : 1;
         }
+
+        #endregion
+
+        #region Video Settings
 
         public void SetResolutionX(string Value)
         {
@@ -151,7 +170,7 @@ namespace Mesocyclone
             ColorAdjustments ColorAdj;
             if (VolumeSettings.profile.TryGet(out ColorAdj))
             {
-                ColorAdj.postExposure.value = 1.5f + SimulationSettings.Brightness;
+                ColorAdj.postExposure.value = (gameObject.CompareTag("MainMenuManager") ? 1.5f : 0) + SimulationSettings.Brightness;
             }
         }
 
@@ -216,6 +235,27 @@ namespace Mesocyclone
         {
             QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(SimulationSettings.AnisotropicFiltering);
         }
+
+        #endregion
+
+        #region Controls Settings
+
+        public void SetInvertedPitch(bool Value)
+        {
+            SimulationSettings.InvertedPitch = Value;
+            SimulationSettings.Save();
+        }
+
+        public void SetCamSensitivity(float Value)
+        {
+            SimulationSettings.CameraSensitivity = Value / 10f;
+            SimulationSettings.Save();
+
+            CamSensitivityValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
+        }
+
+        #endregion
+
         #endregion
     }
 }

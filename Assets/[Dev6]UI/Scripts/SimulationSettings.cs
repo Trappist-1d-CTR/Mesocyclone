@@ -17,6 +17,9 @@ namespace Mesocyclone
         public static float Gamma;
         public static int AntiAliasing;
         public static int AnisotropicFiltering;
+
+        public static bool InvertedPitch;
+        public static float CameraSensitivity;
         #endregion
 
         #region Save/Load Settings
@@ -29,18 +32,21 @@ namespace Mesocyclone
             ResolutionX = 1920;
             ResolutionY = 1080;
             Fullscreen = true;
-            Brightness = 0;
-            Contrast = 0;
-            Gamma = 0.1f;
+            Brightness = 0f;
+            Contrast = 0f;
+            Gamma = 0f;
             AntiAliasing = 1;
             AnisotropicFiltering = 0;
+
+            InvertedPitch = true;
+            CameraSensitivity = 0.1f;
 
             Save();
         }
 
         public static void Load()
         {
-            if (PlayerPrefs.HasKey("Brightness"))
+            try
             {
                 FOV = PlayerPrefs.GetFloat("FOV");
                 FPSCap = PlayerPrefs.GetInt("FPSCap");
@@ -54,8 +60,11 @@ namespace Mesocyclone
                 Gamma = Contrast = PlayerPrefs.GetFloat("Gamma");
                 AntiAliasing = PlayerPrefs.GetInt("AntiAliasing");
                 AnisotropicFiltering = PlayerPrefs.GetInt("AnisotropicFiltering");
+
+                InvertedPitch = PlayerPrefs.GetInt("InvertedPitch") == 1;
+                CameraSensitivity = PlayerPrefs.GetFloat("CameraSensitivity");
             }
-            else
+            catch
             {
                 Default();
             }
@@ -75,6 +84,9 @@ namespace Mesocyclone
             PlayerPrefs.SetFloat("Gamma", Gamma);
             PlayerPrefs.SetInt("AntiAliasing", AntiAliasing);
             PlayerPrefs.SetInt("AnisotropicFiltering", AnisotropicFiltering);
+
+            PlayerPrefs.SetInt("InvertedPitch", InvertedPitch ? 1 : 0);
+            PlayerPrefs.SetFloat("CameraSensitivity", CameraSensitivity);
 
             PlayerPrefs.Save();
         }

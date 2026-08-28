@@ -118,7 +118,6 @@ namespace Mesocyclone
         public float LastImpulseBurn;
         public float ImpulseThreshold;
         public float ImpulseInputErrorTimer;
-        public bool ImpulseInput;
 
         public enum HoverModeType : int
         {
@@ -141,7 +140,6 @@ namespace Mesocyclone
         public int HoverMaxAngle;
         public float[] HoverTargetSpeed;
         public float HoverInputErrorTimer;
-        public bool HoverInput;
 
         public bool FLIPPerforming;
         public float FLIPCharge;
@@ -191,13 +189,15 @@ namespace Mesocyclone
 
         public float PitchSpeed;
         public float PitchNeutral;
-
         public float AileronsDefaultAngle;
         public float RollJerk;
-
         public float YawSpeed;
-
         private float[] NeutralControlsTimer;
+
+        public bool ImpulseInput;
+        public bool HoverInput;
+        public bool AirBrakesInput;
+
         #endregion
 
         #region Atmospherical Physics
@@ -423,13 +423,15 @@ namespace Mesocyclone
             //Throttle Controls
             InputControl.FlightControls.Thrust.started += EnableThrottle;
             InputControl.FlightControls.Thrust.canceled += DisableThrottle;
-            //Hover Controls
-            InputControl.FlightControls.Hovering.started += EnableHovering;
-            InputControl.FlightControls.Hovering.canceled += DisableHovering;
             //Impulse Controls
             InputControl.FlightControls.ImpulseThrust.started += EnableImpulse;
             InputControl.FlightControls.ImpulseThrust.canceled += DisableImpulse;
+            //Air Brakes Controls
+            InputControl.FlightControls.AirBrakes.started += EnableAirBrakes;
+            InputControl.FlightControls.AirBrakes.canceled += DisableAirBrakes;
 
+            //Hover Controls
+            InputControl.FlightControls.Hovering.performed += ToggleHovering;
             //Switch Hover Modes
             InputControl.FlightControls.ToggleHoverMode.performed += SwitchModes;
             //Toggle SAS Modes
@@ -448,8 +450,7 @@ namespace Mesocyclone
 
             InputControl.FlightControls.Thrust.started -= EnableThrottle;
             InputControl.FlightControls.Thrust.performed -= DisableThrottle;
-            InputControl.FlightControls.Hovering.started -= EnableHovering;
-            InputControl.FlightControls.Hovering.performed -= DisableHovering;
+            InputControl.FlightControls.Hovering.started -= ToggleHovering;
             InputControl.FlightControls.ImpulseThrust.started -= EnableImpulse;
             InputControl.FlightControls.ImpulseThrust.performed -= DisableImpulse;
 
@@ -997,20 +998,12 @@ namespace Mesocyclone
 
                     if (InputValues[0] || InputValues[1])
                     {
-                        if (InputValues[0] && InputValues[1])
+                        if (NeutralControlsTimer[0] == 0)
                         {
-                            ControlSurfaceTargetAngle[0] = PitchNeutral;
-                            if (NeutralControlsTimer[0] != InputMargin) NeutralControlsTimer[0] = InputMargin;
+                            ControlSurfaceTargetAngle[0] += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
+                            ControlSurfaceTargetAngle[0] = Mathf.Clamp(ControlSurfaceTargetAngle[0], -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
                         }
-                        else
-                        {
-                            if (NeutralControlsTimer[0] == 0)
-                            {
-                                ControlSurfaceTargetAngle[0] += (InputValues[0] ? 1 : -1) * PitchSpeed * Time.fixedDeltaTime;
-                                ControlSurfaceTargetAngle[0] = Mathf.Clamp(ControlSurfaceTargetAngle[0], -ControlSurfaceMaxAngles[0], ControlSurfaceMaxAngles[0]);
-                            }
-                            else NeutralControlsTimer[0] = Mathf.Min(0, NeutralControlsTimer[0] - Time.fixedDeltaTime);
-                        }
+                        else NeutralControlsTimer[0] = Mathf.Min(0, NeutralControlsTimer[0] - Time.fixedDeltaTime);
                     }
 
                     #endregion
@@ -1203,13 +1196,23 @@ namespace Mesocyclone
         {
             #region Handle Orientation Input
 
-            Vector3 Input = InputControl.FlightControls.Orientation.ReadValue<Vector3>();
-            InputValues[0] = Input.y > 0; //Pitch Up
-            InputValues[1] = Input.y < 0; //Pitch Down
-            InputValues[2] = Input.z > 0; //Roll Clock
-            InputValues[3] = Input.z < 0; //Roll Counter
-            InputValues[4] = Input.x > 0; //Yaw Right
-            InputValues[5] = Input.x < 0; //Yaw Left
+            Vector3 OrientationInput = InputControl.FlightControls.Orientation.ReadValue<Vector3>();
+
+            if (SimulationSettings.InvertedPitch)
+            {
+                InputValues[0] = OrientationInput.y < -0.3f; //Pitch Up
+                InputValues[1] = OrientationInput.y > 0.3f; //Pitch Down
+            }
+            else
+            {
+                InputValues[0] = OrientationInput.y > 0.3f; //Pitch Up
+                InputValues[1] = OrientationInput.y < -0.3f; //Pitch Down
+            }
+            
+            InputValues[2] = OrientationInput.z > 0.3f; //Roll Clock
+            InputValues[3] = OrientationInput.z < -0.3f; //Roll Counter
+            InputValues[4] = OrientationInput.x > 0.3f && !ImpulseInput && !AirBrakesInput; //Yaw Right
+            InputValues[5] = OrientationInput.x < -0.3f && !ImpulseInput && !AirBrakesInput; //Yaw Left
             #endregion
 
             #region Physics Visualizer
@@ -1290,10 +1293,11 @@ namespace Mesocyclone
         #region Handle Engines Input
         private void EnableThrottle(InputAction.CallbackContext obj) => ThrottleInput = true;
         private void DisableThrottle(InputAction.CallbackContext obj) => ThrottleInput = false;
-        private void EnableHovering(InputAction.CallbackContext obj) => HoverInput = true;
-        private void DisableHovering(InputAction.CallbackContext obj) => HoverInput = false;
+        private void ToggleHovering(InputAction.CallbackContext obj) => HoverInput = !HoverInput;
         private void EnableImpulse(InputAction.CallbackContext obj) => ImpulseInput = true;
         private void DisableImpulse(InputAction.CallbackContext obj) => ImpulseInput = false;
+        private void EnableAirBrakes(InputAction.CallbackContext obj) => AirBrakesInput = true;
+        private void DisableAirBrakes(InputAction.CallbackContext obj) => AirBrakesInput = false;
         #endregion
 
         #region Toggle SAS Modes
@@ -1315,11 +1319,13 @@ namespace Mesocyclone
         #region Hover Modes Control
         private void SwitchModes(InputAction.CallbackContext obj)
         {
-            int mode = (int)HoverMode;
-            mode += Mathf.RoundToInt(-Mathf.Sign(InputControl.FlightControls.ToggleHoverMode.ReadValue<float>()));
-            mode = Mathf.Clamp(mode, 1, 5);
-            HoverMode = (HoverModeType)mode;
-            return;
+            if (!ImpulseInput && !AirBrakesInput)
+            {
+                int mode = (int)HoverMode;
+                mode += Mathf.RoundToInt(-Mathf.Sign(InputControl.FlightControls.ToggleHoverMode.ReadValue<float>()));
+                mode = Mathf.Clamp(mode, 1, 5);
+                HoverMode = (HoverModeType)mode;
+            }
         }
         #endregion
 

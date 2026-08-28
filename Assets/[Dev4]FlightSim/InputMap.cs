@@ -200,6 +200,39 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""265d7793-517b-4820-9702-7c4a7f0fa99f"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Thrust"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""8f13d1b6-b891-4921-af65-cd5abb633f7d"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Thrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""485941ae-7363-4dd5-920d-8fd74bf7c3c2"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Thrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""e654c6af-9686-466a-ad44-c16f567844fb"",
                     ""path"": ""<Keyboard>/leftCtrl"",
@@ -209,6 +242,39 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""action"": ""AirBrakes"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""b7e46e53-422a-4df1-bb69-c631d08b0d30"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AirBrakes"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""15034e63-31ac-456a-891e-0fbbf0c85506"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""AirBrakes"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""d0e18bd5-946d-46b3-a90e-2fa34bb3f5b1"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""AirBrakes"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -222,12 +288,56 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""afcbad03-a97e-4685-8065-c0fca06aa0c5"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ImpulseThrust"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""d332c4b3-de99-4706-8155-6f4e7ac8de01"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ImpulseThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""04265d83-8ef6-4e21-866d-33fe00db673b"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ImpulseThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""8f35f32d-76f3-4173-bb70-2ab88f534656"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""Hovering"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""047202a5-b4d1-4ae6-927c-0b7ab3fbc45f"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
                     ""action"": ""Hovering"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -277,18 +387,62 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""76c88a25-c91f-47a6-a365-a0e3db988317"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleHoverMode"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""c0609f75-ed23-4354-85e7-c483ce43d297"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""ToggleHoverMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""0300c286-ca28-42e6-b52b-354681309693"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""ToggleHoverMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""ff289981-0d4c-4d70-8f49-f88a0a12a913"",
                     ""path"": ""<Keyboard>/t"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";PC - KeyMouse (Standard)"",
                     ""action"": ""ToggleSASMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""3D Vector"",
+                    ""name"": """",
+                    ""id"": ""6ec8baab-105b-4369-bf69-5f5dba188a59"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""ToggleSASMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""3D Vector - PC"",
                     ""id"": ""ac0236d3-d03c-4239-b790-e3e5f11aaf44"",
                     ""path"": ""3DVector"",
                     ""interactions"": """",
@@ -301,7 +455,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""2a7bbc2a-33f2-495a-b72a-6d16c3a41d67"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC - KeyMouse (Standard)"",
@@ -312,7 +466,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""f1db07bd-d9f2-4d41-96e5-644753760fa9"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC - KeyMouse (Standard)"",
@@ -363,134 +517,83 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""action"": ""Orientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
-                }
-            ]
-        },
-        {
-            ""name"": ""ControlSurfaces"",
-            ""id"": ""cf501cd6-3384-431b-ac67-68a563aa565e"",
-            ""actions"": [
-                {
-                    ""name"": ""PitchUp"",
-                    ""type"": ""Button"",
-                    ""id"": ""9d9ddf46-e7e0-487c-90f9-59a8a915a2c4"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""PitchDown"",
-                    ""type"": ""Button"",
-                    ""id"": ""0e742c79-d6ca-424f-b0de-ec8a55837695"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""RollClock"",
-                    ""type"": ""Button"",
-                    ""id"": ""0a806f74-d753-4dd1-b478-4e2298d72955"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""RollCounterClock"",
-                    ""type"": ""Button"",
-                    ""id"": ""9506b580-e4e3-44aa-bff1-291b29297354"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""YawRight"",
-                    ""type"": ""Button"",
-                    ""id"": ""e28b97d5-8f97-43f6-bd2a-856a19de330e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""YawLeft"",
-                    ""type"": ""Button"",
-                    ""id"": ""de49f581-4d65-40e8-9089-4f36be6c3ea6"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""3688190a-ebe9-4da5-9f92-5d6fdb4e8823"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""name"": ""3D Vector - Controller"",
+                    ""id"": ""39c52618-ef96-482d-ac43-fd4bd39a5ede"",
+                    ""path"": ""3DVector(mode=2)"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""PitchUp"",
-                    ""isComposite"": false,
+                    ""groups"": """",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""2c835dad-b094-4244-b9d1-bca5d2b7e8cc"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""name"": ""up"",
+                    ""id"": ""05bc53ce-9caa-4d80-9dc3-11c96d7b214e"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""PitchDown"",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""56420366-f013-4678-8400-2e8b192c0f5f"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""name"": ""down"",
+                    ""id"": ""0391a216-ba7a-40fb-a2f8-9144ee7cbed0"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""RollClock"",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""c448fb7a-8169-4bbc-9321-21db88e9636f"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""name"": ""left"",
+                    ""id"": ""f7b942d3-aa94-4da1-a7f2-d693a7a52e46"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""RollCounterClock"",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""0544b26b-b39b-479b-86d7-f2ec9f5fe23b"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""name"": ""right"",
+                    ""id"": ""afe65022-e51a-43e8-bbca-aeaf78652462"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""YawRight"",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""59321424-5785-42b0-8a50-e8b42652db78"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""name"": ""forward"",
+                    ""id"": ""3c6fd956-07b7-4c37-ad16-0e1cb08b8d44"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""PC - KeyMouse (Standard)"",
-                    ""action"": ""YawLeft"",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""backward"",
+                    ""id"": ""8e7d8f35-567d-4927-9f32-cf79f8579cd6"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Orientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -506,6 +609,42 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MoveCam"",
+                    ""type"": ""Value"",
+                    ""id"": ""89ec40ff-849b-4b33-bfef-43a4592e28c0"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CamZoomMod"",
+                    ""type"": ""Button"",
+                    ""id"": ""5c1a6b8d-a387-4cc8-a775-037b62f82f8b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CamPivotMod"",
+                    ""type"": ""Button"",
+                    ""id"": ""bc9765a0-d90a-4f37-af01-626b716e1c2f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CamResetPivot"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6d4ab7e-276e-456a-ba4c-725397409cdf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Tap"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -517,6 +656,127 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";PC - KeyMouse (Standard)"",
                     ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""da4a07ce-0739-4242-b99a-52a1d2152118"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""753477a3-232d-44de-8947-1802075b2fac"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveCam"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""ac82ee5f-48bf-4186-80eb-1ff6cd6a943d"",
+                    ""path"": ""<Gamepad>/rightStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""MoveCam"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""3082a394-d138-41aa-ab9b-9b29002b90dd"",
+                    ""path"": ""<Gamepad>/rightStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""MoveCam"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""f55f403f-cfff-4523-89c0-ca50a41b8956"",
+                    ""path"": ""<Gamepad>/rightStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""MoveCam"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""d551da37-2a91-4f17-89c7-2dd9360d374c"",
+                    ""path"": ""<Gamepad>/rightStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""MoveCam"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""3c2eb37e-fb70-4967-9285-2026d0bf3632"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CamZoomMod"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""115d832e-ffd1-453e-bb7b-6fbad16391b9"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""CamZoomMod"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""9f585797-e0fa-4d18-b962-27ac3df219d3"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""CamZoomMod"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1df1249-cd72-4432-8a19-8e4fc1e28012"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""CamResetPivot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""18985ea9-ea51-4edf-bb3f-5cc7dfeb126a"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""CamPivotMod"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -584,6 +844,39 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC - KeyMouse (Standard)"",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""2e9bb012-b81a-4a10-90d6-9a133d5d3670"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""b767fd88-282d-41a3-a15d-db831a250cf6"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""ResetDrone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""35676b5e-a2cf-442a-87bd-d5ec3a1ea36d"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
                     ""action"": ""ResetDrone"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -706,6 +999,17 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""isOR"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Controller"",
+            ""bindingGroup"": ""Controller"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
         }
     ]
 }");
@@ -719,17 +1023,13 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_FlightControls_ToggleHoverMode = m_FlightControls.FindAction("ToggleHoverMode", throwIfNotFound: true);
         m_FlightControls_MouseClick = m_FlightControls.FindAction("MouseClick", throwIfNotFound: true);
         m_FlightControls_Orientation = m_FlightControls.FindAction("Orientation", throwIfNotFound: true);
-        // ControlSurfaces
-        m_ControlSurfaces = asset.FindActionMap("ControlSurfaces", throwIfNotFound: true);
-        m_ControlSurfaces_PitchUp = m_ControlSurfaces.FindAction("PitchUp", throwIfNotFound: true);
-        m_ControlSurfaces_PitchDown = m_ControlSurfaces.FindAction("PitchDown", throwIfNotFound: true);
-        m_ControlSurfaces_RollClock = m_ControlSurfaces.FindAction("RollClock", throwIfNotFound: true);
-        m_ControlSurfaces_RollCounterClock = m_ControlSurfaces.FindAction("RollCounterClock", throwIfNotFound: true);
-        m_ControlSurfaces_YawRight = m_ControlSurfaces.FindAction("YawRight", throwIfNotFound: true);
-        m_ControlSurfaces_YawLeft = m_ControlSurfaces.FindAction("YawLeft", throwIfNotFound: true);
         // UIControls
         m_UIControls = asset.FindActionMap("UIControls", throwIfNotFound: true);
         m_UIControls_Esc = m_UIControls.FindAction("Esc", throwIfNotFound: true);
+        m_UIControls_MoveCam = m_UIControls.FindAction("MoveCam", throwIfNotFound: true);
+        m_UIControls_CamZoomMod = m_UIControls.FindAction("CamZoomMod", throwIfNotFound: true);
+        m_UIControls_CamPivotMod = m_UIControls.FindAction("CamPivotMod", throwIfNotFound: true);
+        m_UIControls_CamResetPivot = m_UIControls.FindAction("CamResetPivot", throwIfNotFound: true);
         // Dev
         m_Dev = asset.FindActionMap("Dev", throwIfNotFound: true);
         m_Dev_ResetDrone = m_Dev.FindAction("ResetDrone", throwIfNotFound: true);
@@ -740,7 +1040,6 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     ~@InputMap()
     {
         UnityEngine.Debug.Assert(!m_FlightControls.enabled, "This will cause a leak and performance issues, InputMap.FlightControls.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_ControlSurfaces.enabled, "This will cause a leak and performance issues, InputMap.ControlSurfaces.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UIControls.enabled, "This will cause a leak and performance issues, InputMap.UIControls.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Dev.enabled, "This will cause a leak and performance issues, InputMap.Dev.Disable() has not been called.");
     }
@@ -988,161 +1287,14 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     /// </summary>
     public FlightControlsActions @FlightControls => new FlightControlsActions(this);
 
-    // ControlSurfaces
-    private readonly InputActionMap m_ControlSurfaces;
-    private List<IControlSurfacesActions> m_ControlSurfacesActionsCallbackInterfaces = new List<IControlSurfacesActions>();
-    private readonly InputAction m_ControlSurfaces_PitchUp;
-    private readonly InputAction m_ControlSurfaces_PitchDown;
-    private readonly InputAction m_ControlSurfaces_RollClock;
-    private readonly InputAction m_ControlSurfaces_RollCounterClock;
-    private readonly InputAction m_ControlSurfaces_YawRight;
-    private readonly InputAction m_ControlSurfaces_YawLeft;
-    /// <summary>
-    /// Provides access to input actions defined in input action map "ControlSurfaces".
-    /// </summary>
-    public struct ControlSurfacesActions
-    {
-        private @InputMap m_Wrapper;
-
-        /// <summary>
-        /// Construct a new instance of the input action map wrapper class.
-        /// </summary>
-        public ControlSurfacesActions(@InputMap wrapper) { m_Wrapper = wrapper; }
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/PitchUp".
-        /// </summary>
-        public InputAction @PitchUp => m_Wrapper.m_ControlSurfaces_PitchUp;
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/PitchDown".
-        /// </summary>
-        public InputAction @PitchDown => m_Wrapper.m_ControlSurfaces_PitchDown;
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/RollClock".
-        /// </summary>
-        public InputAction @RollClock => m_Wrapper.m_ControlSurfaces_RollClock;
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/RollCounterClock".
-        /// </summary>
-        public InputAction @RollCounterClock => m_Wrapper.m_ControlSurfaces_RollCounterClock;
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/YawRight".
-        /// </summary>
-        public InputAction @YawRight => m_Wrapper.m_ControlSurfaces_YawRight;
-        /// <summary>
-        /// Provides access to the underlying input action "ControlSurfaces/YawLeft".
-        /// </summary>
-        public InputAction @YawLeft => m_Wrapper.m_ControlSurfaces_YawLeft;
-        /// <summary>
-        /// Provides access to the underlying input action map instance.
-        /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_ControlSurfaces; }
-        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
-        public void Enable() { Get().Enable(); }
-        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
-        public void Disable() { Get().Disable(); }
-        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
-        public bool enabled => Get().enabled;
-        /// <summary>
-        /// Implicitly converts an <see ref="ControlSurfacesActions" /> to an <see ref="InputActionMap" /> instance.
-        /// </summary>
-        public static implicit operator InputActionMap(ControlSurfacesActions set) { return set.Get(); }
-        /// <summary>
-        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
-        /// </summary>
-        /// <param name="instance">Callback instance.</param>
-        /// <remarks>
-        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
-        /// </remarks>
-        /// <seealso cref="ControlSurfacesActions" />
-        public void AddCallbacks(IControlSurfacesActions instance)
-        {
-            if (instance == null || m_Wrapper.m_ControlSurfacesActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_ControlSurfacesActionsCallbackInterfaces.Add(instance);
-            @PitchUp.started += instance.OnPitchUp;
-            @PitchUp.performed += instance.OnPitchUp;
-            @PitchUp.canceled += instance.OnPitchUp;
-            @PitchDown.started += instance.OnPitchDown;
-            @PitchDown.performed += instance.OnPitchDown;
-            @PitchDown.canceled += instance.OnPitchDown;
-            @RollClock.started += instance.OnRollClock;
-            @RollClock.performed += instance.OnRollClock;
-            @RollClock.canceled += instance.OnRollClock;
-            @RollCounterClock.started += instance.OnRollCounterClock;
-            @RollCounterClock.performed += instance.OnRollCounterClock;
-            @RollCounterClock.canceled += instance.OnRollCounterClock;
-            @YawRight.started += instance.OnYawRight;
-            @YawRight.performed += instance.OnYawRight;
-            @YawRight.canceled += instance.OnYawRight;
-            @YawLeft.started += instance.OnYawLeft;
-            @YawLeft.performed += instance.OnYawLeft;
-            @YawLeft.canceled += instance.OnYawLeft;
-        }
-
-        /// <summary>
-        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
-        /// </summary>
-        /// <remarks>
-        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
-        /// </remarks>
-        /// <seealso cref="ControlSurfacesActions" />
-        private void UnregisterCallbacks(IControlSurfacesActions instance)
-        {
-            @PitchUp.started -= instance.OnPitchUp;
-            @PitchUp.performed -= instance.OnPitchUp;
-            @PitchUp.canceled -= instance.OnPitchUp;
-            @PitchDown.started -= instance.OnPitchDown;
-            @PitchDown.performed -= instance.OnPitchDown;
-            @PitchDown.canceled -= instance.OnPitchDown;
-            @RollClock.started -= instance.OnRollClock;
-            @RollClock.performed -= instance.OnRollClock;
-            @RollClock.canceled -= instance.OnRollClock;
-            @RollCounterClock.started -= instance.OnRollCounterClock;
-            @RollCounterClock.performed -= instance.OnRollCounterClock;
-            @RollCounterClock.canceled -= instance.OnRollCounterClock;
-            @YawRight.started -= instance.OnYawRight;
-            @YawRight.performed -= instance.OnYawRight;
-            @YawRight.canceled -= instance.OnYawRight;
-            @YawLeft.started -= instance.OnYawLeft;
-            @YawLeft.performed -= instance.OnYawLeft;
-            @YawLeft.canceled -= instance.OnYawLeft;
-        }
-
-        /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="ControlSurfacesActions.UnregisterCallbacks(IControlSurfacesActions)" />.
-        /// </summary>
-        /// <seealso cref="ControlSurfacesActions.UnregisterCallbacks(IControlSurfacesActions)" />
-        public void RemoveCallbacks(IControlSurfacesActions instance)
-        {
-            if (m_Wrapper.m_ControlSurfacesActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        /// <summary>
-        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
-        /// </summary>
-        /// <remarks>
-        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
-        /// </remarks>
-        /// <seealso cref="ControlSurfacesActions.AddCallbacks(IControlSurfacesActions)" />
-        /// <seealso cref="ControlSurfacesActions.RemoveCallbacks(IControlSurfacesActions)" />
-        /// <seealso cref="ControlSurfacesActions.UnregisterCallbacks(IControlSurfacesActions)" />
-        public void SetCallbacks(IControlSurfacesActions instance)
-        {
-            foreach (var item in m_Wrapper.m_ControlSurfacesActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_ControlSurfacesActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    /// <summary>
-    /// Provides a new <see cref="ControlSurfacesActions" /> instance referencing this action map.
-    /// </summary>
-    public ControlSurfacesActions @ControlSurfaces => new ControlSurfacesActions(this);
-
     // UIControls
     private readonly InputActionMap m_UIControls;
     private List<IUIControlsActions> m_UIControlsActionsCallbackInterfaces = new List<IUIControlsActions>();
     private readonly InputAction m_UIControls_Esc;
+    private readonly InputAction m_UIControls_MoveCam;
+    private readonly InputAction m_UIControls_CamZoomMod;
+    private readonly InputAction m_UIControls_CamPivotMod;
+    private readonly InputAction m_UIControls_CamResetPivot;
     /// <summary>
     /// Provides access to input actions defined in input action map "UIControls".
     /// </summary>
@@ -1158,6 +1310,22 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UIControls/Esc".
         /// </summary>
         public InputAction @Esc => m_Wrapper.m_UIControls_Esc;
+        /// <summary>
+        /// Provides access to the underlying input action "UIControls/MoveCam".
+        /// </summary>
+        public InputAction @MoveCam => m_Wrapper.m_UIControls_MoveCam;
+        /// <summary>
+        /// Provides access to the underlying input action "UIControls/CamZoomMod".
+        /// </summary>
+        public InputAction @CamZoomMod => m_Wrapper.m_UIControls_CamZoomMod;
+        /// <summary>
+        /// Provides access to the underlying input action "UIControls/CamPivotMod".
+        /// </summary>
+        public InputAction @CamPivotMod => m_Wrapper.m_UIControls_CamPivotMod;
+        /// <summary>
+        /// Provides access to the underlying input action "UIControls/CamResetPivot".
+        /// </summary>
+        public InputAction @CamResetPivot => m_Wrapper.m_UIControls_CamResetPivot;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1187,6 +1355,18 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Esc.started += instance.OnEsc;
             @Esc.performed += instance.OnEsc;
             @Esc.canceled += instance.OnEsc;
+            @MoveCam.started += instance.OnMoveCam;
+            @MoveCam.performed += instance.OnMoveCam;
+            @MoveCam.canceled += instance.OnMoveCam;
+            @CamZoomMod.started += instance.OnCamZoomMod;
+            @CamZoomMod.performed += instance.OnCamZoomMod;
+            @CamZoomMod.canceled += instance.OnCamZoomMod;
+            @CamPivotMod.started += instance.OnCamPivotMod;
+            @CamPivotMod.performed += instance.OnCamPivotMod;
+            @CamPivotMod.canceled += instance.OnCamPivotMod;
+            @CamResetPivot.started += instance.OnCamResetPivot;
+            @CamResetPivot.performed += instance.OnCamResetPivot;
+            @CamResetPivot.canceled += instance.OnCamResetPivot;
         }
 
         /// <summary>
@@ -1201,6 +1381,18 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Esc.started -= instance.OnEsc;
             @Esc.performed -= instance.OnEsc;
             @Esc.canceled -= instance.OnEsc;
+            @MoveCam.started -= instance.OnMoveCam;
+            @MoveCam.performed -= instance.OnMoveCam;
+            @MoveCam.canceled -= instance.OnMoveCam;
+            @CamZoomMod.started -= instance.OnCamZoomMod;
+            @CamZoomMod.performed -= instance.OnCamZoomMod;
+            @CamZoomMod.canceled -= instance.OnCamZoomMod;
+            @CamPivotMod.started -= instance.OnCamPivotMod;
+            @CamPivotMod.performed -= instance.OnCamPivotMod;
+            @CamPivotMod.canceled -= instance.OnCamPivotMod;
+            @CamResetPivot.started -= instance.OnCamResetPivot;
+            @CamResetPivot.performed -= instance.OnCamResetPivot;
+            @CamResetPivot.canceled -= instance.OnCamResetPivot;
         }
 
         /// <summary>
@@ -1365,6 +1557,19 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             return asset.controlSchemes[m_PCKeyMouseStandardSchemeIndex];
         }
     }
+    private int m_ControllerSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme ControllerScheme
+    {
+        get
+        {
+            if (m_ControllerSchemeIndex == -1) m_ControllerSchemeIndex = asset.FindControlSchemeIndex("Controller");
+            return asset.controlSchemes[m_ControllerSchemeIndex];
+        }
+    }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "FlightControls" which allows adding and removing callbacks.
     /// </summary>
@@ -1430,56 +1635,6 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         void OnOrientation(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "ControlSurfaces" which allows adding and removing callbacks.
-    /// </summary>
-    /// <seealso cref="ControlSurfacesActions.AddCallbacks(IControlSurfacesActions)" />
-    /// <seealso cref="ControlSurfacesActions.RemoveCallbacks(IControlSurfacesActions)" />
-    public interface IControlSurfacesActions
-    {
-        /// <summary>
-        /// Method invoked when associated input action "PitchUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPitchUp(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "PitchDown" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPitchDown(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "RollClock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRollClock(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "RollCounterClock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRollCounterClock(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "YawRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnYawRight(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "YawLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnYawLeft(InputAction.CallbackContext context);
-    }
-    /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UIControls" which allows adding and removing callbacks.
     /// </summary>
     /// <seealso cref="UIControlsActions.AddCallbacks(IUIControlsActions)" />
@@ -1493,6 +1648,34 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEsc(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveCam" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveCam(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CamZoomMod" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCamZoomMod(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CamPivotMod" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCamPivotMod(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CamResetPivot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCamResetPivot(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dev" which allows adding and removing callbacks.

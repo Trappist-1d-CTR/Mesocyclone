@@ -9,6 +9,7 @@ TagManager:
   - PartMap
   - AirCellTest
   - ArtificialStructure
+  - MainMenuManager
   layers:
   - Default
   - TransparentFX
