@@ -163,6 +163,15 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""FLIP"",
+                    ""type"": ""Button"",
+                    ""id"": ""f45851f9-251a-41e4-a25d-fad4a02a1520"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -594,6 +603,17 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""action"": ""Orientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f96c9072-15d5-4037-a4f5-157386db6251"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""FLIP"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1023,6 +1043,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         m_FlightControls_ToggleHoverMode = m_FlightControls.FindAction("ToggleHoverMode", throwIfNotFound: true);
         m_FlightControls_MouseClick = m_FlightControls.FindAction("MouseClick", throwIfNotFound: true);
         m_FlightControls_Orientation = m_FlightControls.FindAction("Orientation", throwIfNotFound: true);
+        m_FlightControls_FLIP = m_FlightControls.FindAction("FLIP", throwIfNotFound: true);
         // UIControls
         m_UIControls = asset.FindActionMap("UIControls", throwIfNotFound: true);
         m_UIControls_Esc = m_UIControls.FindAction("Esc", throwIfNotFound: true);
@@ -1125,6 +1146,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
     private readonly InputAction m_FlightControls_ToggleHoverMode;
     private readonly InputAction m_FlightControls_MouseClick;
     private readonly InputAction m_FlightControls_Orientation;
+    private readonly InputAction m_FlightControls_FLIP;
     /// <summary>
     /// Provides access to input actions defined in input action map "FlightControls".
     /// </summary>
@@ -1168,6 +1190,10 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "FlightControls/Orientation".
         /// </summary>
         public InputAction @Orientation => m_Wrapper.m_FlightControls_Orientation;
+        /// <summary>
+        /// Provides access to the underlying input action "FlightControls/FLIP".
+        /// </summary>
+        public InputAction @FLIP => m_Wrapper.m_FlightControls_FLIP;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1218,6 +1244,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Orientation.started += instance.OnOrientation;
             @Orientation.performed += instance.OnOrientation;
             @Orientation.canceled += instance.OnOrientation;
+            @FLIP.started += instance.OnFLIP;
+            @FLIP.performed += instance.OnFLIP;
+            @FLIP.canceled += instance.OnFLIP;
         }
 
         /// <summary>
@@ -1253,6 +1282,9 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
             @Orientation.started -= instance.OnOrientation;
             @Orientation.performed -= instance.OnOrientation;
             @Orientation.canceled -= instance.OnOrientation;
+            @FLIP.started -= instance.OnFLIP;
+            @FLIP.performed -= instance.OnFLIP;
+            @FLIP.canceled -= instance.OnFLIP;
         }
 
         /// <summary>
@@ -1633,6 +1665,13 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnOrientation(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FLIP" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFLIP(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UIControls" which allows adding and removing callbacks.

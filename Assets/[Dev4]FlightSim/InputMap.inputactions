@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "FLIP",
+                    "type": "Button",
+                    "id": "f45851f9-251a-41e4-a25d-fad4a02a1520",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -508,6 +517,17 @@
                     "action": "Orientation",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f96c9072-15d5-4037-a4f5-157386db6251",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "FLIP",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

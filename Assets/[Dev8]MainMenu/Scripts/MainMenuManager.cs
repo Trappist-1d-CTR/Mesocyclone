@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using TMPro;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using Mesocyclone.Sound;
+
 
 namespace Mesocyclone
 {
@@ -29,9 +29,11 @@ namespace Mesocyclone
         public Image LoadingBar;
         #endregion
 
+        public EventSystem MenuEventSystem;
+
         #endregion
 
-        void Awake()
+        void Start()
         {
             SimulationSettings.Load();
 
@@ -57,6 +59,10 @@ namespace Mesocyclone
                 if (MenuPosition == 1)
                 {
                     _ = StartCoroutine(LoadGameAsync());
+                }
+                else
+                {
+                    MenuEventSystem.SetSelectedGameObject(MenuPanels[MenuPosition].GetComponentInChildren<Button>(false).gameObject);
                 }
             }
         }

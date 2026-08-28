@@ -436,6 +436,8 @@ namespace Mesocyclone
             InputControl.FlightControls.ToggleHoverMode.performed += SwitchModes;
             //Toggle SAS Modes
             InputControl.FlightControls.ToggleSASMode.performed += ToggleSASModes;
+            //F.L.I.P.
+            InputControl.FlightControls.FLIP.performed += FLIP;
             //Pause/Unpause
             InputControl.UIControls.Esc.performed += SendEscapeUI;
             //Reset Drone Position
@@ -456,6 +458,7 @@ namespace Mesocyclone
 
             InputControl.FlightControls.ToggleHoverMode.performed -= SwitchModes;
             InputControl.FlightControls.ToggleSASMode.performed -= ToggleSASModes;
+            InputControl.FlightControls.FLIP.performed -= FLIP;
             InputControl.UIControls.Esc.performed -= SendEscapeUI;
             InputControl.Dev.ResetDrone.performed -= ResetDrone;
 
@@ -1330,7 +1333,7 @@ namespace Mesocyclone
         #endregion
 
         #region Trigger F.L.I.P.
-        public void FLIP() => FLIPPerforming = !FLIPPerforming && FLIPCharge == NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge;
+        public void FLIP(InputAction.CallbackContext obj = default) => FLIPPerforming = !FLIPPerforming && FLIPCharge == NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge;
         #endregion
 
         #region Reset Drone Position, Velocity, and Engines

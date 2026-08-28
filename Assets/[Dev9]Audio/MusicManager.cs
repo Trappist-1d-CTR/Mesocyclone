@@ -40,8 +40,8 @@ namespace Mesocyclone.Sound
         public bool HasSeenStar;
 
         public AudioClip? MenuMusic;
-        public AudioClip GameAmbience;
-        public AudioClip GameMusic;
+        public AudioClip? GameAmbience;
+        public AudioClip? GameMusic;
 
         public string Music_Main_Playing = "";
         public Process? Ambience_Main;
@@ -72,9 +72,9 @@ namespace Mesocyclone.Sound
             SceneManager.sceneLoaded += CheckScene;
             CheckScene(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
-            Ambience_Main = AudioManager.Instance.PlayRepeating(GameAmbience);
+            if (GameAmbience != null) Ambience_Main = AudioManager.Instance.PlayRepeating(GameAmbience);
 
-            if (CurrentContext == "MainMenu" && MenuMusic != null)
+            if (CurrentContext == "MainMenu" && MenuMusic != null && Ambience_Main != null)
             {
                 Music_Main = AudioManager.Instance.PlayRepeating(MenuMusic);
                 Music_Main_Playing = "MenuMusic";
@@ -107,7 +107,7 @@ namespace Mesocyclone.Sound
             }
             else
             {
-                if (Music_Main_Playing != "GameMusic" && Music_Main != null)
+                if (Music_Main_Playing != "GameMusic" && Music_Main != null && GameMusic != null)
                 {
                     AudioManager.Instance.StopRepeating(Music_Main);
                     Music_Main = AudioManager.Instance.PlayRepeating(GameMusic);

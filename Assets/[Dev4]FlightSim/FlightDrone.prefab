@@ -514,7 +514,6 @@ MonoBehaviour:
   LastImpulseBurn: 0
   ImpulseThreshold: 0
   ImpulseInputErrorTimer: 0
-  ImpulseInput: 0
   HoverMode: 1
   HoverThrust: 0
   HoverTarget: 0
@@ -525,7 +524,6 @@ MonoBehaviour:
   HoverTargetSpeed:
   - 1.5
   HoverInputErrorTimer: 0
-  HoverInput: 0
   FLIPPerforming: 0
   FLIPCharge: 0
   FLIPThrustPos: {x: -0.37, y: 0, z: -0.1}
@@ -554,6 +552,9 @@ MonoBehaviour:
   AileronsDefaultAngle: 18
   RollJerk: 0
   YawSpeed: 10
+  ImpulseInput: 0
+  HoverInput: 0
+  AirBrakesInput: 0
   Wind: {x: -50, y: 0, z: 0}
   AirSpeed: {x: -50, y: 0, z: 0}
   InducedDragAoA: []
@@ -747,18 +748,18 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 30
-      inSlope: 0.05
-      outSlope: 0.05
+      value: 1
+      inSlope: 0.0016666667
+      outSlope: 0.0016666667
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 600
-      value: 60
-      inSlope: 0.05
-      outSlope: 0.05
+      value: 2
+      inSlope: 0.0016666667
+      outSlope: 0.0016666667
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -795,6 +796,7 @@ MonoBehaviour:
   NotifOutline: {fileID: 0}
   NotifNewMsgColor: {r: 1, g: 0.51666665, b: 0, a: 1}
   audioListener: {fileID: 0}
+  UIEventSystem: {fileID: 0}
 --- !u!114 &5759906812268864115
 MonoBehaviour:
   m_ObjectHideFlags: 0

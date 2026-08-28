@@ -84,7 +84,7 @@ namespace Mesocyclone.Sound
         [Header("Audio Listener & Raycasting")]
         [Tooltip("Reference to any objects with the Audio Listener component")]
         [SerializeField]
-        private AudioListener Listener;
+        private AudioListener? Listener;
 
         [Tooltip("Current Layer the rays shoot out from and detect collision")]
         [SerializeField]
@@ -484,27 +484,31 @@ namespace Mesocyclone.Sound
 
         private float GetOcclusion(AudioSource Source)
         {
-            Vector3 ListenerPosition = Listener.transform.position;
-            Vector3 RayOrigin = Source.transform.position;
-            Vector3 Direction = (ListenerPosition - RayOrigin).normalized;
-            float Remaining = Vector3.Distance(RayOrigin, ListenerPosition);
-
-            float StepPerWall = 1f / MaxWalls;
-            float Occlusion = 0f;
-
-            for (int i = 0; i < MaxWalls; i++)
+            if (Listener != null)
             {
-                if (!Physics.Raycast(RayOrigin, Direction, out RaycastHit Hit, Remaining, OcclusionMask))
-                    break;
+                Vector3 ListenerPosition = Listener.transform.position;
+                Vector3 RayOrigin = Source.transform.position;
+                Vector3 Direction = (ListenerPosition - RayOrigin).normalized;
+                float Remaining = Vector3.Distance(RayOrigin, ListenerPosition);
 
-                Occlusion += StepPerWall;
-                Remaining -= Hit.distance + 1E-2f; // aka 0.01
-                RayOrigin = Hit.point + Direction * 1E-2f; // aka 0.01
+                float StepPerWall = 1f / MaxWalls;
+                float Occlusion = 0f;
 
-                if (Remaining <= 0f) break;
+                for (int i = 0; i < MaxWalls; i++)
+                {
+                    if (!Physics.Raycast(RayOrigin, Direction, out RaycastHit Hit, Remaining, OcclusionMask))
+                        break;
+
+                    Occlusion += StepPerWall;
+                    Remaining -= Hit.distance + 1E-2f; // aka 0.01
+                    RayOrigin = Hit.point + Direction * 1E-2f; // aka 0.01
+
+                    if (Remaining <= 0f) break;
+                }
+
+                return Mathf.Clamp01(Occlusion); // clamp the value between 0 - 1 since this will be returned to be used for t in the Lerp function
             }
-
-            return Mathf.Clamp01(Occlusion); // clamp the value between 0 - 1 since this will be returned to be used for t in the Lerp function
+            else return 0;
         }
 
         #endregion

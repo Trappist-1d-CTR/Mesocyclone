@@ -70,6 +70,8 @@ namespace Mesocyclone.UI
         [SerializeField] AudioListener audioListener;
         #endregion
 
+        public EventSystem UIEventSystem;
+
         #endregion
 
         public Process soundTest;
@@ -389,6 +391,8 @@ namespace Mesocyclone.UI
 
                 transform.parent.SendMessage("PauseSFX", false);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
+
+                UIEventSystem.SetSelectedGameObject(null);
             }
             else
             {
@@ -398,6 +402,8 @@ namespace Mesocyclone.UI
 
                 transform.parent.SendMessage("PauseSFX", true);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);
+
+                UIEventSystem.SetSelectedGameObject(UIEventSystem.transform.parent.GetComponentInChildren<Button>(false).gameObject);
             }
         }
 
@@ -408,6 +414,8 @@ namespace Mesocyclone.UI
             SettingsMenu.SetActive(idx == 1);
             FeedbackMenu.SetActive(idx == 2);
             FeedbackSent.SetActive(idx == 4);
+
+            UIEventSystem.SetSelectedGameObject(UIEventSystem.transform.parent.GetComponentInChildren<Button>(false).gameObject);
         }
 
         public void QuitToMenu()
