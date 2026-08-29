@@ -20,6 +20,7 @@ And ofc a _**special thanks**_ to several others such as:
 
 * **Random -** guidance on UI and UX
 * **Cup of Jo** for the amazing music (still not in-game, but planned to be soon)
+* **GamerGleb** for moderating our server and its shenanigans
 * **Playtesters -** the bread, Random, Nix
 * **fnuecke -** for their fullscreen script
 * **Code Monkey -** for their various C# libs
