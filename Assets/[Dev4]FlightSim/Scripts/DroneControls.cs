@@ -1333,6 +1333,7 @@ namespace Mesocyclone
         #endregion
 
         #region Trigger F.L.I.P.
+        public void FLIPButton() => FLIP();
         public void FLIP(InputAction.CallbackContext obj = default) => FLIPPerforming = !FLIPPerforming && FLIPCharge == NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge;
         #endregion
 

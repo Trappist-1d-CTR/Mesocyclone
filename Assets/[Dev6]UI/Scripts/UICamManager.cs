@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using Unity.Cinemachine;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 using Mesocyclone;
 using Mesocyclone.UI.Feedbacking;
@@ -24,18 +24,20 @@ namespace Mesocyclone.UI
         #region Camera & UI
         private InputMap InputControl;
 
-        public Camera Cam;
+        private CinemachineBrain CamBrain;
+        public Transform CamTarget;
+        public CinemachineCamera ThirdCamera;
+        private CinemachinePanTilt ThirdCamPanTilt;
+        public CinemachineCamera FirstCamera;
+
         private Vector2 CameraRotation;
         private Vector3 localCamRot;
-        private Vector3 CameraVector;
-        private float CameraScale;
-        public float CamCollisionRadius;
+        public float CamDistance;
+        public float MinCamDistance;
+        public float MaxCamDistance;
 
         public Canvas UICanvas;
         public ButtonEventSystem BackgrES;
-
-        public float MinCamScale;
-        public float MaxCamScale;
         #endregion
 
         #region Camera Effects
@@ -78,14 +80,15 @@ namespace Mesocyclone.UI
 
         void Start()
         {
-            #region Get Components and Vectors
+            #region Get Components and Values
 
             DroneBody = transform.GetComponentInParent<Rigidbody>();
+            CamBrain = GetComponent<CinemachineBrain>();
+            ThirdCamPanTilt = ThirdCamera.GetComponent<CinemachinePanTilt>();
 
-            Cam = gameObject.GetComponent<Camera>();
+            CamDistance = ThirdCamera.GetComponent<CinemachineThirdPersonFollow>().CameraDistance;
             localCamRot = Vector3.zero;
             CameraRotation = Vector3.zero;
-            CameraVector = transform.localPosition;
 
             #endregion
 
@@ -98,8 +101,6 @@ namespace Mesocyclone.UI
             #endregion
 
             #region Camera Controls
-
-            CameraScale = 1;
 
             InputControl = new();
             InputControl.Enable();
@@ -136,7 +137,6 @@ namespace Mesocyclone.UI
         public override void Tick()
         {
             #region Camera Controls
-            Vector3 ScaledCamVector = CameraVector * CameraScale;
             Vector2 ConsoleCamInput = InputControl.UIControls.MoveCam.ReadValue<Vector2>();
 
             if (ConsoleCamInput != Vector2.zero)
@@ -144,8 +144,10 @@ namespace Mesocyclone.UI
                 if (InputControl.UIControls.CamZoomMod.IsPressed())
                 {
                     // Camera scaling
-                    CameraScale += -0.16f * SimulationSettings.CameraSensitivity * ConsoleCamInput.y;
-                    CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
+                    CamDistance += -0.16f * SimulationSettings.CameraSensitivity * ConsoleCamInput.y;
+                    CamDistance = Mathf.Clamp(CamDistance, MinCamDistance, MaxCamDistance);
+
+                    ThirdCamera.GetComponent<CinemachineThirdPersonFollow>().CameraDistance = CamDistance;
                 }
                 else if (InputControl.UIControls.CamPivotMod.IsPressed())
                 {
@@ -195,8 +197,10 @@ namespace Mesocyclone.UI
                 else if (ButtonEventSystem.PointerDown(0, 1))
                 {
                     // Camera scaling
-                    CameraScale += -0.016f * SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.y;
-                    CameraScale = Mathf.Clamp(CameraScale, MinCamScale, MaxCamScale);
+                    CamDistance += -0.016f * SimulationSettings.CameraSensitivity * ButtonEventSystem.PointerDeltaPos.y;
+                    CamDistance = Mathf.Clamp(CamDistance, MinCamDistance, MaxCamDistance);
+
+                    ThirdCamera.GetComponent<CinemachineThirdPersonFollow>().CameraDistance = CamDistance;
                 }
                 else if (ButtonEventSystem.PointerDown(2))
                 {
@@ -217,16 +221,13 @@ namespace Mesocyclone.UI
                     localCamRot = Vector3.zero;
                 }
             }
-
-            transform.localRotation = Quaternion.Euler(6 + CameraRotation.x + localCamRot.x, 90 + CameraRotation.y + localCamRot.y, 0);
-            transform.localPosition = CamDistance(Quaternion.AngleAxis(CameraRotation.y, Vector3.up) * (Quaternion.AngleAxis(CameraRotation.x, Vector3.back) * ScaledCamVector));
             #endregion
 
             #region Camera FOV
 
-            if (FOVFromSpeed.keys.Length != 0 && Cam.fieldOfView != SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude))
+            if (FOVFromSpeed.keys.Length != 0 && ThirdCamera.Lens.FieldOfView != SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude))
             {
-                Cam.fieldOfView = SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude);
+                SetFOV(SimulationSettings.FOV + FOVFromSpeed.Evaluate(DroneBody.linearVelocity.magnitude));
             }
 
             #endregion
@@ -298,32 +299,22 @@ namespace Mesocyclone.UI
             }
             #endregion
 
-            #region Check Camera Settings
-
-            if (Cam.fieldOfView != SimulationSettings.FOV)
-                Cam.fieldOfView = SimulationSettings.FOV;
-
-            #endregion
-
             MET += Time.deltaTime;
+        }
+
+        public override void FixedTick()
+        {
+            #region Set Camera Rotations
+            CamTarget.localRotation = Quaternion.Euler(CameraRotation.x, CameraRotation.y + 90, 0);
+            CamTarget.rotation = Quaternion.Euler(CamTarget.rotation.eulerAngles.x, CamTarget.rotation.eulerAngles.y, 0);
+            ThirdCamPanTilt.TiltAxis.Value = ThirdCamPanTilt.TiltAxis.Center + localCamRot.x;
+            ThirdCamPanTilt.PanAxis.Value = ThirdCamPanTilt.PanAxis.Center + localCamRot.y;
+            #endregion
         }
 
         private void ResetPivot(InputAction.CallbackContext obj)
         {
             localCamRot = Vector3.zero;
-        }
-
-        private Vector3 CamDistance(Vector3 Vector)
-        {
-            RaycastHit HitInfo;
-            if (Physics.SphereCast(transform.parent.position, CamCollisionRadius, transform.parent.rotation * Vector, out HitInfo, Vector.magnitude, -1 ^ LayerMask.GetMask("NetLinker")))
-            {
-                return Vector.normalized * HitInfo.distance;
-            }
-            else
-            {
-                return Vector;
-            }
         }
 
         public void NotifChangeSelectedMessage(string type)
@@ -348,6 +339,16 @@ namespace Mesocyclone.UI
                 NotifSelectedMessage = Mathf.Clamp(NotifSelectedMessage, 1, NotifierSystem.MainMessageList.Count);
             }
         }
+
+        #region Set Camera Settings
+
+        private void SetFOV(float FOV)
+        {
+            ThirdCamera.Lens.FieldOfView = FOV;
+            FirstCamera.Lens.FieldOfView = FOV;
+        }
+
+        #endregion
 
         #region Play UI SFX
         public static void SFX_Click()

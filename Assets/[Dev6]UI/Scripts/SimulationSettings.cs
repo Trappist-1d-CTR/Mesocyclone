@@ -25,7 +25,7 @@ namespace Mesocyclone
         #region Save/Load Settings
         public static void Default()
         {
-            FOV = 37;
+            FOV = 40;
             FPSCap = 60;
             VSync = true;
 
