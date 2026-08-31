@@ -1,17 +1,17 @@
 # Mesocyclone
-Mesocyclone is a planned 3D game that combines Climate and Weather Simulations with Flight Physics and Exoplanetary Models.
-I'm currently developing it with half bread (started solo), system by system, through the months. Our goal is to hopefully create a good demo to present to the outside world and prove its potential.
+Mesocyclone is an in-development 3D game that combines Climate and Weather Simulations with Flight Physics and Exoplanetary Models.
+I'm currently developing it with half bread (started solo), system by system, through the months. We've made a demo you can find on Itch.io over https://trappist-1-d.itch.io/mesocyclone!!! :D
 
-But I don't want to focus nearly much on the gameplay or hook aspect.
+We got a good gameplay loop and flight physics going up! Ww plan to keep updating the demo while expanding the capabilities of our physical simulations in the future.
 
-As I develop the exoplanet, Gale, its environment, with sheer passive hostility and alien conditions, I want to see what happens when multiple deterministic systems collide. What happens when chaos takes place and the most miniscule of variations lead to wildly different outcomes and non-scripted phenomena arise.
+Mainly because, as I develop the exoplanet, Gale, its environment, with sheer passive hostility and alien conditions, I want to see what happens when multiple deterministic systems collide. What happens when chaos takes place (as it does within climate) and the most miniscule of variations lead to wildly different outcomes and non-scripted phenomena arise.
 
 ## Development
 You can take a look at the game's development through my TigSource topic: https://forums.tigsource.com/index.php?topic=76539.0
 It contains lots of physics, explanations, and nerdy af jokes (all of which will certainly contain some mistakes in grammar/spelling/reasoning/factuality). Enjoy! :D
 
 ## The Team
-Currently, **Astraλ** and **half bread** are the main part of the team.
+Currently, **Astraλ** and **half bread** are the main part of the programming team.
 
 * **Astraλ -** Lead Developer, Founder, Primary Programmer, Gameplay Design, Creative, 3D Modeling, Graphics, Lore & Worldbuilding, Astronomy & Science, Marketing & Business side of things
 * **hald bread -** Secondary Programmer & Code Reviewer, SFX & Music, LSD
@@ -19,7 +19,9 @@ Currently, **Astraλ** and **half bread** are the main part of the team.
 And ofc a _**special thanks**_ to several others such as:
 
 * **Random -** guidance on UI and UX
-* **Playtesters -** the bread, Random, (Astraλ, fill out the rest plz ;-;)
+* **Cup of Jo** for the amazing music (still not in-game, but planned to be soon)
+* **GamerGleb** for moderating our server and its shenanigans
+* **Playtesters -** the bread, Random, Nix
 * **fnuecke -** for their fullscreen script
 * **Code Monkey -** for their various C# libs
 * **Lepsima -** for their auto-exposure package
@@ -27,8 +29,8 @@ And ofc a _**special thanks**_ to several others such as:
 * And to everyone tuned in on TIG :D
 
 ## The Code
-The code itself is ~~horrible~~, full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
-You can find the ones I coded myself, though, by peeking into the Assets Folder and locating all the ones marked with the following [Dev#] (# being a number) and then opening the folder named "Script(s)".
+The code itself is ~~horrible~~ (ignore that, it's just half bread being mean >:( ), full of third-party libraries, both from Unity and ones I intalled (all of which, to my knowledge, are free to use and distribute; but if I'm wrong, please tell me so).
+You can find the ones we coded, though, by peeking into the Assets Folder and locating all the ones marked with the following [Dev#] (# being a number) and then opening the folder named "Script(s)".
 
 Everything was made in Unity, Blender, Visual Studio (& Code), and C#
 
@@ -44,7 +46,7 @@ Everything was made in Unity, Blender, Visual Studio (& Code), and C#
 - [Dev10] This is specifically for the game's custom tick system, so we can support dynamic tick rates for performance
 - [Dev11] Climate Model (very descriptive)
 - [Dev12] This is the modding API for the game. So far is mostly gonna just be extenum, but in the far future will be heavily expanded on (no promises)
-- [Dev0] is not my code. It's code I got from someone else to get fullscreen during testing without having to make 1000 builds.
+- [Dev0] is not my code. It's code I got from someone else, like a script that gets fullscreen during in-editor testing without having to make 1000 builds every time.
     - Includes sub-folders for various different miscellaneous things, such as the debugger (formerly debugger & profiler), custom editor windows & GUI's & Utils, custome exceptions, performance things, etc.
 
 ## Gale - The Exoplanet
@@ -69,8 +71,8 @@ Once you click on the Play button on the scene either in the [Dev3] or [Dev5] fo
 - VisualizationMode can be set to any number from 0 to 3. At 0 nothing's done, at 1 there will be drawn vectors showing the forces at play (lift, gravity, thrust, drag), at 2 the forces of each wing part (lift and induced drag) will be shown, at 3 torque forces from each wing part (represented as force vectors instead of torques: as the forces that push up or down certain parts of the plane) will be shown.
 - AirChamberTest can be set to false (unchecked) or true (checked). When true, the drone will not be able to move but will rotate freely and winds from Air Cells will be ignored. Instead, you can modify that value manually above by changing the "Wind" Vector3, as if the drone were in a controlled wind chamber. To simulate the drone flying straight ahead, a negative X value must be put. Flying straight backwards requires a positive X value. Flying upwards requires negative Y value, while for downwards a positive Y value. Flying rightwards requires a negative Z value, while for leftwards a negative Z value. You can combine these to get something like flying ahead but skewed to the left and downwards a bit: negative X, positive Y, positive Z.
 ## Build
-Flight Drone Test: On the right side of the repository's home page, click on "1 tags" within "Releases" to get to the build. Download the zip and extract it, you'll find installation instructions within it.
+Check out Itch.io for the releases: https://trappist-1-d.itch.io/mesocyclone
 
 # Copyright
-Technically: Look up MIT copyright license.
-Practically: Feel free to browse around the project in general and to download and/or copy any of the files, both in the project's entirety and in parts of it, as long as it's done either non-commercially or (in the case of a YouTube video) within the criteria of fair use. Moreover, while you can take parts of it (code snippets/files and unity scenes) and implement them into your own projects (with or without attribution), you cannot take the whole project and use it commercially (like selling). And whatever you end up doing with it, don't pretend to be the one to have made what you took from someone else (in general, not just regarding this project).
+In short: Look up MIT copyright license BUT you can't get the entirety of it and use it commercially, only snippets.
+In long: Feel free to browse around the project in general and to download and/or copy any of the files, both in the project's entirety and in parts of it, as long as it's done either non-commercially or (in the case of a YouTube video) within the criteria of fair use. Moreover, while you can take parts of it (code snippets/files and unity scenes) and implement them into your own projects (with or without attribution), you cannot take the whole project and use it commercially (like selling). And whatever you end up doing with it, don't pretend to be the one to have made what you took from someone else (in general, not just regarding this project).
