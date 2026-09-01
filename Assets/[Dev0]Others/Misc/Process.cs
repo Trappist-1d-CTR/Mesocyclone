@@ -4,9 +4,8 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Mesocyclone.Sound;
+using Mesocyclone.Deprecated;
 
 namespace Mesocyclone.Debug
 {

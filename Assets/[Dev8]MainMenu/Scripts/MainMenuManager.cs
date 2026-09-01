@@ -69,7 +69,7 @@ namespace Mesocyclone
 
         public void SelectPanel(int ID)
         {
-            if (ID >= 0) FMODManager.SFX_Click();
+            if (ID >= 0) FMODManager.UI_Click();
             else ID = 0;
             MenuPosition = ID;
             Panel();

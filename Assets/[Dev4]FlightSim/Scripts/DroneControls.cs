@@ -1,10 +1,9 @@
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mesocyclone.UI;
-using Mesocyclone.Sound;
+using Mesocyclone.FMOD;
 
 namespace Mesocyclone
 {
@@ -1559,8 +1558,7 @@ namespace Mesocyclone
         #region Collision Sound
         private void OnCollisionEnter(Collision collision)
         {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/Collisions/MetalCollision");
-            AudioManager.Instance.Play(audioclip, MinPitch: 0.5f, MaxPitch: 0.7f, Volume: Mathf.Pow(collision.relativeVelocity.magnitude, 1f / 3f) * 0.05f, Is2D: false, Position: transform.position);
+            FMODManager.Collision_DroneTerrain(gameObject);
         }
         #endregion
     }
