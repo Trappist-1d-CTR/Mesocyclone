@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mesocyclone.Debug; // System.Diagnostics.Process exists...
+using Mesocyclone.Debug;
 
 #nullable enable // i hate this
 
@@ -12,26 +12,12 @@ namespace Mesocyclone.Deprecated
     /// <summary>
     /// Class that handles the in-game music
     /// </summary>
-    public sealed class MusicManager : Tickable
+    [Obsolete("Old Unity-based Music Manager")]
+    public class MusicManager : Tickable // why was this tickable??
     {
         #region Variables
 
-        public static MusicManager? _instance;
-        public static MusicManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    GameObject MusicManagerGO = new("Music Manager");
-                    _instance = MusicManagerGO.AddComponent<MusicManager>();
-                    DontDestroyOnLoad(MusicManagerGO);
-                }
-                return _instance;
-            }
-
-            private set => _instance = value;
-        }
+        public static MusicManager Instance { get; private set; }
 
         public string CurrentContext = "";
         public bool HasSeenStar;
@@ -48,17 +34,18 @@ namespace Mesocyclone.Deprecated
         #endregion
 
 
-        void Start()
+        private void Start()
         {
-            #region Init
             DestroyImmediate(gameObject);
-            /*if (_instance != null && _instance != this)
+
+            #region Init
+            /*if (Instance is not null and not this) // what a mouthful
             {
                 Destroy(gameObject);
                 return;
             }
 
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);*/
             #endregion
 
@@ -152,7 +139,24 @@ namespace Mesocyclone.Deprecated
 
         #region OnDestroy
 
-        void OnDestroy()
+        private void OnEnable()
+        {
+            Instance ??= this;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= CheckScene;
+            Instance = null!;
+        }
+
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= CheckScene;
+            Instance = null!;
+        }
+
+        private void OnApplicationQuit()
         {
             SceneManager.sceneLoaded -= CheckScene;
             Instance = null!;

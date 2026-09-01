@@ -1,4 +1,5 @@
-using System;
+// deprecated
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,26 +11,12 @@ namespace Mesocyclone.Deprecated
     /// <summary>
     /// Class that handles all the audio
     /// </summary>
-    public sealed class AudioManager : Tickable
+    [Obsolete("Old Unity-based audio manager")]
+    public class AudioManager : Tickable
     {
         #region Variables
 
-        public static AudioManager? _instance;
-        public static AudioManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    GameObject AudioManagerGO = new("Audio Manager");
-                    _instance = AudioManagerGO.AddComponent<AudioManager>();
-                    DontDestroyOnLoad(AudioManagerGO);
-                }
-                return _instance;
-            }
-
-            private set => _instance = value;
-        }
+        public static AudioManager Instance { get; private set; }
 
         [Serializable]
         private class PoolEntry
@@ -104,17 +91,15 @@ namespace Mesocyclone.Deprecated
 
         #region Init
 
-        void Start()
+        private void Start()
         {
-            DestroyImmediate(gameObject);
-
-            /*if (_instance != null && _instance != this)
+            /*if (Instance is not null and not this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             Listener = FindFirstObjectByType<AudioListener>();
             OcclusionMask = LayerMask.GetMask("Terrain");*/
@@ -249,6 +234,7 @@ namespace Mesocyclone.Deprecated
         {
             if (Entry.GO != null) Entry.GO.transform.position = Position;
             else throw new Joar();
+
             if (Entry.Source != null)
             {
                 Entry.Source.spatialBlend = Is2D ? 0f : 1f;
@@ -516,7 +502,15 @@ namespace Mesocyclone.Deprecated
 
         public void SetPoolSize(byte NewSize) => PoolSize = NewSize;
 
-        void OnDestroy() => Instance = null!;
+        private void OnDestroy()
+        {
+            Instance = null!;
+        }
+
+        private void OnApplicationQuit()
+        {
+            Instance = null!;
+        }
 
         #endregion
 

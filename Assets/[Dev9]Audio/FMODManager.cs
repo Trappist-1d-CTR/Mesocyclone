@@ -61,7 +61,7 @@ namespace Mesocyclone.MesoFMOD
             #region Functions
             public static void Stop()
             {
-                if (State is not MusicState.Idle)
+                if (State is not (MusicState.Idle))
                 {
                     State = MusicState.IsStopping;
                     MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
@@ -71,7 +71,7 @@ namespace Mesocyclone.MesoFMOD
             }
             public static void Start()
             {
-                if (State is not MusicState.IsPlaying or MusicState.IsSwitching)
+                if (State is not (MusicState.IsPlaying or MusicState.IsSwitching))
                 {
                     State = MusicState.IsStarting;
                     RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
@@ -81,7 +81,7 @@ namespace Mesocyclone.MesoFMOD
             }
             public static void Switch()
             {
-                if (State is not MusicState.Idle or MusicState.IsStopping)
+                if (State is not (MusicState.Idle or MusicState.IsStopping))
                 {
                     State = MusicState.IsSwitching;
                     MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
@@ -213,18 +213,39 @@ namespace Mesocyclone.MesoFMOD
         }
         #endregion
 
-        #region Play UI SFX
-        public static void UI_Click() => RuntimeManager.PlayOneShot("event:/UI/Click");
+        public static class UI
+        {
+            #region Play UI SFX 
+            public static void PlayClick()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Click");
+            }
 
-        public static void UI_Notification() => RuntimeManager.PlayOneShot("event:/UI/Notification");
+            public static void PlayNotification()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Notification");
+            }
 
-        public static void UI_Linking() => RuntimeManager.PlayOneShot("event:/UI/Linking");
-        #endregion
+            public static void PlayLinking()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Linking");
+            }
+            #endregion
+        }
 
-        #region Play Collision SFX
-        public static void Collision_HangarCover(Vector3 pos) => RuntimeManager.PlayOneShot("event:/Collisions/HangarCover", pos);
+        public static class Collision
+        {
+            #region Play Collision SFX
+            public static void PlayHangarCover(Vector3 pos)
+            {
+                RuntimeManager.PlayOneShot("event:/Collision/HangarCover", pos);
+            }
 
-        public static void Collision_DroneTerrain(GameObject drone) => RuntimeManager.PlayOneShotAttached("event:/Collisions/DroneTerrain", drone);
-        #endregion
+            public static void PlayDroneTerrain(GameObject drone)
+            {
+                RuntimeManager.PlayOneShotAttached("event:/Collision/DroneTerrain", drone);
+            }
+            #endregion
+        }
     }
 }

@@ -2,9 +2,9 @@
 Mesocyclone is an in-development 3D game that combines Climate and Weather Simulations with Flight Physics and Exoplanetary Models.
 I'm currently developing it with half bread (started solo), system by system, through the months. We've made a demo you can find on Itch.io over https://trappist-1-d.itch.io/mesocyclone!!! :D
 
-We got a good gameplay loop and flight physics going up! Ww plan to keep updating the demo while expanding the capabilities of our physical simulations in the future.
+We got a good gameplay loop and flight physics going up! We plan to keep updating the demo while expanding the capabilities of our physical simulations in the future.
 
-Mainly because, as I develop the exoplanet, Gale, its environment, with sheer passive hostility and alien conditions, I want to see what happens when multiple deterministic systems collide. What happens when chaos takes place (as it does within climate) and the most miniscule of variations lead to wildly different outcomes and non-scripted phenomena arise.
+Mainly because, as I develop the exoplanet, Gale, its environment, with sheer passive hostility and alien conditions, I want to see what happens when multiple deterministic systems collide. What happens when chaos takes place (as it does within climate) and the most minuscule of variations lead to wildly different outcomes and non-scripted phenomena arise.
 
 ## Development
 You can take a look at the game's development through my TigSource topic: https://forums.tigsource.com/index.php?topic=76539.0
@@ -14,7 +14,7 @@ It contains lots of physics, explanations, and nerdy af jokes (all of which will
 Currently, **Astraλ** and **half bread** are the main part of the programming team.
 
 * **Astraλ -** Lead Developer, Founder, Primary Programmer, Gameplay Design, Creative, 3D Modeling, Graphics, Lore & Worldbuilding, Astronomy & Science, Marketing & Business side of things
-* **hald bread -** Secondary Programmer & Code Reviewer, SFX & Music, LSD
+* **half bread -** Secondary Programmer & Code Reviewer, SFX provider, LSD
 
 And ofc a _**special thanks**_ to several others such as:
 

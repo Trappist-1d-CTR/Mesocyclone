@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 using TMPro;
 using Mesocyclone.MesoFMOD;
 
-
 namespace Mesocyclone
 {
     public class MainMenuManager : MonoBehaviour
@@ -69,7 +68,7 @@ namespace Mesocyclone
 
         public void SelectPanel(int ID)
         {
-            if (ID >= 0) FMODManager.UI_Click();
+            if (ID >= 0) FMODManager.UI.Click();
             else ID = 0;
             MenuPosition = ID;
             Panel();

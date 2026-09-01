@@ -344,17 +344,17 @@ namespace Mesocyclone.UI
         #region Play UI SFX
         public static void SFX_Click()
         {
-            FMODManager.UI_Click();
+            FMODManager.UI.Click();
         }
 
         public static void SFX_Notification()
         {
-            FMODManager.UI_Notification();
+            FMODManager.UI.Notification();
         }
 
         public static void SFX_Linking()
         {
-            FMODManager.UI_Linking();
+            FMODManager.UI.Linking();
         }
         #endregion
 

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeMonkey.Utils;
 
-namespace Mesocyclone.Unused
+namespace Mesocyclone.Deprecated
 {
+    [Obsolete]
     public class HeatSim : MonoBehaviour
     {
         #region Variables
