@@ -202,7 +202,8 @@ MonoBehaviour:
       Value: 0
       HasValue: 0
     Plugins:
-      Value: []
+      Value:
+      - phonon_fmod
       HasValue: 1
     StaticPlugins:
       Value: []
@@ -393,7 +394,7 @@ MonoBehaviour:
   sourceProjectPath: Assets/Plugins/MesocycloneFMOD/MesocycloneFMOD.fspro
   sourceBankPath: Assets/Plugins/MesocycloneFMOD/Build
   sourceBankPathUnformatted: 
-  BankRefreshCooldown: 1
+  BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
   AutomaticEventLoading: 1
   BankLoadType: 0

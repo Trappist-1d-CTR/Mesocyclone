@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mesocyclone;
-using Mesocyclone.Sound;
+using Mesocyclone.FMOD;
 
 public class HangarScript : Tickable
 {
@@ -147,8 +145,7 @@ public class HangarScript : Tickable
     #region Cover Collision Sound
     private void CoverHit()
     {
-        AudioClip audioclip = Resources.Load<AudioClip>("SFX/Collisions/MetalCollision");
-        AudioManager.Instance.Play(audioclip, MinPitch: 0.2f, MaxPitch: 0.4f, Volume: 0.95f, Is2D: false, Position: Cover.worldCenterOfMass);
+        FMODManager.Collision_HangarCover(Cover.worldCenterOfMass);
     }
     #endregion
 
