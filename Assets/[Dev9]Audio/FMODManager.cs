@@ -1,25 +1,209 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System;
 using FMODUnity;
 using FMOD.Studio;
 
-namespace Mesocyclone.FMOD
+namespace Mesocyclone.MesoFMOD
 {
-    public static class FMODManager
+    public sealed class FMODManager : Tickable
     {
         #region Variables
+
+        public static FMODManager Instance;
+
         public static Bus UIBus;
         public static Bus WorldBus;
         public static Bus MusicBus;
+
+        public int Playing;
+
         #endregion
 
-        #region Setup
-        public static void GetBusses()
+        #region Music Manager
+
+        public enum TrackType
         {
+            Concept = 0,
+            MainMenu = 1,
+            Game = 2,
+            Threat = 3,
+            Special = 4
+        }
+        public class MusicTrack
+        {
+            public int TrackVolume;
+            public int TrackIndex;
+            public TrackType TrackType;
+            public string TrackName;
+            public string Artist;
+        }
+
+        public enum MusicState
+        {
+            Idle = 0,
+            IsStopping = 1,
+            IsStarting = 2,
+            IsSwitching = 3,
+            IsPlaying = 4
+        }
+
+        public static class MusicManager
+        {
+            public static MusicState State;
+            public static int PlayingTrack;
+            public static int SelectedTrack;
+            public static int TrackListLength;
+            public static MusicTrack[] Tracks;
+            public static string[] Situation;
+
+            #region Functions
+            public static void Stop()
+            {
+                if (State is not MusicState.Idle)
+                {
+                    State = MusicState.IsStopping;
+                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                    PlayingTrack = -1;
+                    State = MusicState.Idle;
+                }
+            }
+            public static void Start()
+            {
+                if (State is not MusicState.IsPlaying or MusicState.IsSwitching)
+                {
+                    State = MusicState.IsStarting;
+                    RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
+                    PlayingTrack = SelectedTrack;
+                    State = MusicState.IsPlaying;
+                }
+            }
+            public static void Switch()
+            {
+                if (State is not MusicState.Idle or MusicState.IsStopping)
+                {
+                    State = MusicState.IsSwitching;
+                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                    RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
+                    PlayingTrack = SelectedTrack;
+                    State = MusicState.IsPlaying;
+                }
+            }
+
+            public static void Assessment()
+            {
+                switch (Situation[0])
+                {
+                    case "MainMenu":
+                        PickTrack(TrackType.MainMenu);
+                        break;
+
+                    case "DemoDevelopment":
+                        PickTrack(TrackType.Game);
+                        break;
+
+                    default:
+                        PickTrack(TrackType.Concept);
+                        break;
+                }
+            }
+            public static void PickTrack(TrackType type)
+            {
+                if (PlayingTrack != -1 && Tracks[PlayingTrack].TrackType == type) return;
+
+                List<MusicTrack> pickList = new();
+
+                foreach (MusicTrack item in Tracks)
+                {
+                    if (item.TrackType == type)
+                        pickList.Add(item);
+                }
+                SelectedTrack = pickList[UnityEngine.Random.Range(0, pickList.Count)].TrackIndex;
+
+                if (PlayingTrack == -1) Start();
+                else Switch();
+            }
+
+            #endregion
+        }
+        private static string MusicDataTxt;
+
+        #endregion
+
+        private void Start()
+        {
+            #region Init
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else DestroyImmediate(gameObject);
+            #endregion
+
+            #region Get Busses
             UIBus = RuntimeManager.GetBus("Bus:/UI");
             WorldBus = RuntimeManager.GetBus("Bus:/World");
             MusicBus = RuntimeManager.GetBus("Bus:/Music");
+            #endregion
+
+            #region Get Music Tracks
+            int DebugStage = 0;
+            try
+            {
+                MusicDataTxt = System.IO.File.ReadAllText(Application.streamingAssetsPath + "/DroneData/MusicPlaylist.json");
+
+                string[] data = MusicDataTxt.Split(new string[] { "{", ";", "}" }, StringSplitOptions.RemoveEmptyEntries);
+
+                DebugStage++;
+
+                MusicManager.State = 0;
+                MusicManager.PlayingTrack = -1;
+                MusicManager.SelectedTrack = -1;
+                MusicManager.TrackListLength = int.Parse(data[0]);
+                MusicManager.Tracks = new MusicTrack[MusicManager.TrackListLength];
+                MusicManager.Situation = new string[1] { "" };
+
+                DebugStage++;
+
+                for (int i = 0; i < MusicManager.TrackListLength; i++)
+                {
+                    string[] trackData = data[i + 1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    MusicManager.Tracks[i] = new()
+                    {
+                        TrackVolume = int.Parse(trackData[0]),
+                        TrackIndex = int.Parse(trackData[1]),
+                        TrackType = (TrackType)int.Parse(trackData[2]),
+                        TrackName = trackData[3],
+                        Artist = trackData[4]
+                    };
+
+                    DebugStage++;
+                }
+            }
+            catch
+            {
+                UnityEngine.Debug.LogError("Unable to load music: " + DebugStage);
+            }
+            #endregion
         }
-        #endregion
+
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
+        public override void Tick()
+        {
+            if (MusicManager.Situation[0] != SceneManager.GetActiveScene().name)
+            {
+                MusicManager.Situation[0] = SceneManager.GetActiveScene().name;
+                MusicManager.Assessment();
+            }
+
+            Playing = MusicManager.PlayingTrack;
+        }
 
         #region Pause/Resume
         public static void PauseTime(bool paused)
@@ -38,9 +222,9 @@ namespace Mesocyclone.FMOD
         #endregion
 
         #region Play Collision SFX
-        public static void Collision_HangarCover(Vector3 pos) => RuntimeManager.PlayOneShot("event:/Collision/HangarCover", pos);
+        public static void Collision_HangarCover(Vector3 pos) => RuntimeManager.PlayOneShot("event:/Collisions/HangarCover", pos);
 
-        public static void Collision_DroneTerrain(GameObject drone) => RuntimeManager.PlayOneShotAttached("event:/Collision/DroneTerrain", drone);
+        public static void Collision_DroneTerrain(GameObject drone) => RuntimeManager.PlayOneShotAttached("event:/Collisions/DroneTerrain", drone);
         #endregion
     }
 }

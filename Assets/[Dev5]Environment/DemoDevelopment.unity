@@ -7656,38 +7656,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 551337705}
-  - component: {fileID: 551337704}
+  - component: {fileID: 551337706}
   m_Layer: 0
-  m_Name: MusicManager
+  m_Name: FMODManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &551337704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551337703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9fd24797ad3762438bfa551622a1364, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mesocyclone.Music.MusicManager
-  tickRate: 60
-  fixedTickRate: 100
-  Accumulator: 0
-  FixedAccumulator: 0
-  <isRegistered>k__BackingField: 0
-  CurrentContext: 
-  HasSeenStar: 0
-  MenuMusic: {fileID: 8300000, guid: 3be36b9f1e0359d4aa5f2f48d08bf193, type: 3}
-  GameAmbience: {fileID: 8300000, guid: 3be36b9f1e0359d4aa5f2f48d08bf193, type: 3}
-  GameMusic: {fileID: 8300000, guid: 3be36b9f1e0359d4aa5f2f48d08bf193, type: 3}
-  Music_Main_Playing: 
-  Ambience_StarSight: {fileID: 0}
 --- !u!4 &551337705
 Transform:
   m_ObjectHideFlags: 0
@@ -7703,6 +7679,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &551337706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551337703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4dc9f9e08815a24b9c7681c304175e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mesocyclone.FMOD.FMODManager
+  tickRate: 60
+  fixedTickRate: 100
+  Accumulator: 0
+  FixedAccumulator: 0
+  <isRegistered>k__BackingField: 0
 --- !u!4 &561411988 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}

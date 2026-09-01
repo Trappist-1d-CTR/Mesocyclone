@@ -104,10 +104,11 @@ namespace Mesocyclone.Deprecated
 
         #region Init
 
-
         void Start()
         {
-            if (_instance != null && _instance != this)
+            DestroyImmediate(gameObject);
+
+            /*if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -116,7 +117,7 @@ namespace Mesocyclone.Deprecated
             _instance = this;
             DontDestroyOnLoad(gameObject);
             Listener = FindFirstObjectByType<AudioListener>();
-            OcclusionMask = LayerMask.GetMask("Terrain");
+            OcclusionMask = LayerMask.GetMask("Terrain");*/
         }
 
         /// <summary>

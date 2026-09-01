@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mesocyclone.UI;
-using Mesocyclone.FMOD;
+using Mesocyclone.MesoFMOD;
 
 namespace Mesocyclone
 {

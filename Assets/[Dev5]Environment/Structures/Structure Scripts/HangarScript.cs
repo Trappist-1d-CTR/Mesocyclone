@@ -1,6 +1,6 @@
 using UnityEngine;
 using Mesocyclone;
-using Mesocyclone.FMOD;
+using Mesocyclone.MesoFMOD;
 
 public class HangarScript : Tickable
 {

@@ -51,14 +51,15 @@ namespace Mesocyclone.Deprecated
         void Start()
         {
             #region Init
-            if (_instance != null && _instance != this)
+            DestroyImmediate(gameObject);
+            /*if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
             _instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);*/
             #endregion
 
             #region Setup and Components
