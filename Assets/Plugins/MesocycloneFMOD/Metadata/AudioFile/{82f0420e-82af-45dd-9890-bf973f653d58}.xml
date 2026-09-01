@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{82f0420e-82af-45dd-9890-bf973f653d58}">
+		<property name="assetPath">
+			<value>SFX/Collisions/MetalCollision.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.1279999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1676141b-f61f-48aa-a277-c50fdb75fdeb}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{ee7a2632-0952-4ceb-b6fd-a41d4b0c3528}">
+		<property name="assetPath">
+			<value>Music/The Pull.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>205.92326530612246</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1676141b-f61f-48aa-a277-c50fdb75fdeb}</destination>
+		</relationship>
+	</object>
+</objects>

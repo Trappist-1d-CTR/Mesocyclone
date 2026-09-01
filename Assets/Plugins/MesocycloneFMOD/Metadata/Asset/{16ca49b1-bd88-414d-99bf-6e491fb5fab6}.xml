@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="EncodableAsset" id="{16ca49b1-bd88-414d-99bf-6e491fb5fab6}">
+		<property name="assetPath">
+			<value>SFX/Collisions/</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1676141b-f61f-48aa-a277-c50fdb75fdeb}</destination>
+		</relationship>
+	</object>
+</objects>

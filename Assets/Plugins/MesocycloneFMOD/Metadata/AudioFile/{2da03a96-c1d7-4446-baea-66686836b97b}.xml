@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{2da03a96-c1d7-4446-baea-66686836b97b}">
+		<property name="assetPath">
+			<value>SFX/UI/Signal Alt.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.58764583333333331</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1676141b-f61f-48aa-a277-c50fdb75fdeb}</destination>
+		</relationship>
+	</object>
+</objects>

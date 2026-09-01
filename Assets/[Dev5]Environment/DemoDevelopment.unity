@@ -34042,7 +34042,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1766233016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34057,7 +34057,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
     Enabled: 0
-    m_Value: 0
+    m_Value: 1
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -34067,7 +34067,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 1453793527}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 47
+    FieldOfView: 37
     OrthographicSize: 5
     NearClipPlane: 0.02
     FarClipPlane: 4000
@@ -36735,10 +36735,10 @@ GameObject:
   - component: {fileID: 69790163125904073}
   - component: {fileID: 69790163125904068}
   - component: {fileID: 69790163125904072}
-  - component: {fileID: 69790163125904071}
   - component: {fileID: 69790163125904070}
   - component: {fileID: 69790163125904067}
   - component: {fileID: 69790163125904069}
+  - component: {fileID: 69790163125904074}
   m_Layer: 6
   m_Name: DroneComputer
   m_TagString: MainCamera
@@ -36767,7 +36767,7 @@ MonoBehaviour:
   CamTarget: {fileID: 404231907}
   ThirdCamera: {fileID: 1138501483}
   FirstCamera: {fileID: 1766233016}
-  CameraDistance: 0
+  CamDistance: 0
   MinCamDistance: 1.2
   MaxCamDistance: 30
   UICanvas: {fileID: 8966088916417911552}
@@ -36950,14 +36950,6 @@ MonoBehaviour:
   - {fileID: 2862165522475132296}
   - {fileID: 7656740147649419929}
   - {fileID: 9043147494798594091}
---- !u!81 &69790163125904071
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 69790163125904066}
-  m_Enabled: 1
 --- !u!20 &69790163125904072
 Camera:
   m_ObjectHideFlags: 0
@@ -36991,7 +36983,7 @@ Camera:
     height: 1
   near clip plane: 0.02
   far clip plane: 4000
-  field of view: 47
+  field of view: 37
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -37017,13 +37009,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69790163125904066}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.030843563, y: 0.7064338, z: -0.030843563, w: 0.7064338}
+  m_LocalPosition: {x: -3, y: 0.29999995, z: 0}
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1453793527}
   m_LocalEulerAnglesHint: {x: 6, y: 90, z: 0}
+--- !u!114 &69790163125904074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69790163125904066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!114 &77777298835173593
 MonoBehaviour:
   m_ObjectHideFlags: 0

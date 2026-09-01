@@ -353,18 +353,21 @@ namespace Mesocyclone.UI
         #region Play UI SFX
         public static void SFX_Click()
         {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
-            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.5f);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Click");
         }
 
         public static void SFX_Notification()
         {
+            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Notification");
+
             AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/UI Special 2");
             AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.04f, Volume: 0.14f);
         }
 
         public static void SFX_Linking()
         {
+            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Linking");
+
             AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Signal Alt");
             AudioManager.Instance.Play(audioclip, MinPitch: 0.96f, MaxPitch: 1.04f, Volume: 0.2f);
         }
