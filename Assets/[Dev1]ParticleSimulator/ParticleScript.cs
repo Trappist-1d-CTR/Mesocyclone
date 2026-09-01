@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mesocyclone.Unused
+namespace Mesocyclone.Deprecated
 {
+    [Obsolete]
     public class ParticleScript : MonoBehaviour
     {
         private Rigidbody2D Physics;

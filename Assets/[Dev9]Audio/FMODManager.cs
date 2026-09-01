@@ -29,18 +29,39 @@ namespace Mesocyclone.FMOD
         }
         #endregion
 
-        #region Play UI SFX
-        public static void UI_Click() => RuntimeManager.PlayOneShot("event:/UI/Click");
+        public static class UI
+        {
+            #region Play UI SFX 
+            public static void PlayClick()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Click");
+            }
 
-        public static void UI_Notification() => RuntimeManager.PlayOneShot("event:/UI/Notification");
+            public static void PlayNotification()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Notification");
+            }
 
-        public static void UI_Linking() => RuntimeManager.PlayOneShot("event:/UI/Linking");
-        #endregion
+            public static void PlayLinking()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Linking");
+            }
+            #endregion
+        }
 
-        #region Play Collision SFX
-        public static void Collision_HangarCover(Vector3 pos) => RuntimeManager.PlayOneShot("event:/Collision/HangarCover", pos);
+        public static class Collision
+        {
+            #region Play Collision SFX
+            public static void PlayHangarCover(Vector3 pos)
+            {
+                RuntimeManager.PlayOneShot("event:/Collision/HangarCover", pos);
+            }
 
-        public static void Collision_DroneTerrain(GameObject drone) => RuntimeManager.PlayOneShotAttached("event:/Collision/DroneTerrain", drone);
-        #endregion
+            public static void PlayDroneTerrain(GameObject drone)
+            {
+                RuntimeManager.PlayOneShotAttached("event:/Collision/DroneTerrain", drone);
+            }
+            #endregion
+        }
     }
 }
