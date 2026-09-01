@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using TMPro;
-using Mesocyclone.Sound;
+using Mesocyclone.FMOD;
 
 
 namespace Mesocyclone
@@ -37,7 +37,7 @@ namespace Mesocyclone
         {
             SimulationSettings.Load();
 
-            SelectPanel(0);
+            SelectPanel(-1);
         }
 
         #region Panels Functions
@@ -69,16 +69,12 @@ namespace Mesocyclone
 
         public void SelectPanel(int ID)
         {
+            if (ID >= 0) FMODManager.SFX_Click();
+            else ID = 0;
             MenuPosition = ID;
             Panel();
         }
         #endregion
-
-        public void SoundClick()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
-            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.01f, Volume: 0.6f);
-        }
 
         public void QuitGame()
         {

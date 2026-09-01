@@ -57,7 +57,6 @@ namespace Mesocyclone
             #endregion
 
             #region Setup Animations
-
             FocusStructure = 0;
             SignalAnimTimer = -1;
             #endregion
@@ -94,6 +93,7 @@ namespace Mesocyclone
             if (SignalAnimTimer == 0) UICamManager.SFX_Linking();
 
             LinkingProgress.value = Structures[FocusStructure].LinkProgress();
+
             #endregion
 
             #region Structure Radar
@@ -230,6 +230,7 @@ namespace Mesocyclone
                     }
                 }
             }
+
             #endregion
         }
 

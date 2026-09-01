@@ -9,9 +9,8 @@ using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
-using Mesocyclone;
 using Mesocyclone.UI.Feedbacking;
-using Mesocyclone.Sound;
+using Mesocyclone.FMOD;
 
 namespace Mesocyclone.UI
 {
@@ -112,14 +111,6 @@ namespace Mesocyclone.UI
             NotifSelectedMessage = 1;
             NotifAnimTimer = -1;
             SimulationSettings.Load();
-            #endregion
-
-            #region Initialize AudioListener
-
-            if (gameObject.GetComponent<AudioListener>() == null)
-                audioListener = gameObject.AddComponent<AudioListener>();
-            else audioListener = gameObject.GetComponent<AudioListener>();
-
             #endregion
         }
 
@@ -353,32 +344,21 @@ namespace Mesocyclone.UI
         #region Play UI SFX
         public static void SFX_Click()
         {
-            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Click");
+            FMODManager.SFX_Click();
         }
 
         public static void SFX_Notification()
         {
-            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Notification");
-
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/UI Special 2");
-            AudioManager.Instance.Play(audioclip, MinPitch: 1f, MaxPitch: 1.04f, Volume: 0.14f);
+            FMODManager.SFX_Notification();
         }
 
         public static void SFX_Linking()
         {
-            FMODUnity.RuntimeManager.PlayOneShot("event:/UI/Linking");
-
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Signal Alt");
-            AudioManager.Instance.Play(audioclip, MinPitch: 0.96f, MaxPitch: 1.04f, Volume: 0.2f);
+            FMODManager.SFX_Linking();
         }
         #endregion
 
         #region Pause Menus Controls
-        public void SoundTest()
-        {
-            AudioClip audioclip = Resources.Load<AudioClip>("SFX/GeneralUI/Click");
-            soundTest = AudioManager.Instance.PlayRepeating(audioclip, MinPitch: 1f, MaxPitch: 1f, MinDistance: 100f, MaxDistance: 1000f, Volume: Mathf.Infinity, Is2D: false, Position: 30 * Vector3.up, RolloffMode: AudioRolloffMode.Logarithmic);
-        }
 
         public void EscapeUI()
         {
@@ -391,7 +371,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
-                AudioManager.Instance.UnPauseAll();
+                FMODManager.PauseTime(false);
 
                 transform.parent.SendMessage("PauseSFX", false);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
@@ -402,7 +382,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(0);
                 Time.timeScale = 0;
-                AudioManager.Instance.PauseAll();
+                FMODManager.PauseTime(true);
 
                 transform.parent.SendMessage("PauseSFX", true);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);

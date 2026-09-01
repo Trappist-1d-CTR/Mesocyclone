@@ -36735,10 +36735,10 @@ GameObject:
   - component: {fileID: 69790163125904073}
   - component: {fileID: 69790163125904068}
   - component: {fileID: 69790163125904072}
+  - component: {fileID: 69790163125904074}
   - component: {fileID: 69790163125904070}
   - component: {fileID: 69790163125904067}
   - component: {fileID: 69790163125904069}
-  - component: {fileID: 69790163125904074}
   m_Layer: 6
   m_Name: DroneComputer
   m_TagString: MainCamera

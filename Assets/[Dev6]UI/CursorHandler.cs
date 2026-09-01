@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Unity.Collection;
+using Unity.Collections;
+using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 // normally i'd use Unity's own custom cursor API, but for custom cursor animation/logic it doesn't work that well...
 // so that's why i use Image
@@ -59,6 +61,7 @@ namespace Mesocyclone
         {
             GameObject canvasGO = new GameObject("Cursor Canvas");
             Canvas canvas = canvasGO.AddComponent<Canvas>();
+            canvas.sortingOrder = 30001;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasGO.AddComponent<CanvasScaler>();
             canvasGO.AddComponent<GraphicRaycaster>();
@@ -68,6 +71,8 @@ namespace Mesocyclone
             cursorGO.transform.SetParent(canvasGO.transform, false);
             cursorGO.GetComponent<Image>().raycastTarget = false;
             cursorGO.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cursor/MCursor");
+            cursorGO.GetComponent<RectTransform>().pivot = new(0, 1);
+            cursorGO.GetComponent<RectTransform>().sizeDelta = new(25, 25);
             cursorGO.AddComponent<CursorHandler>();
         }
 
@@ -75,7 +80,7 @@ namespace Mesocyclone
         {
             main ??= this;
 
-            if (gameObject.GetComponent<RectTransform> is null)
+            if (gameObject.GetComponent<RectTransform>() == null)
                 rectTransform = gameObject.AddComponent<RectTransform>();
             else
                 rectTransform = gameObject.GetComponent<RectTransform>();
@@ -89,7 +94,7 @@ namespace Mesocyclone
 
             // hide OS cursor
             Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.None; 
+            Cursor.lockState = CursorLockMode.None;
         }
 
         private void Update()
@@ -119,7 +124,7 @@ namespace Mesocyclone
 
         protected virtual void FollowMouse()
         {
-            Vector2 mousePosition = Input.mousePosition;
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
 
             if (canvas.renderMode is RenderMode.ScreenSpaceOverlay)
             {
@@ -144,7 +149,7 @@ namespace Mesocyclone
         protected virtual void UpdateHoverState()
         {
             // true if it is over any uGUI element*
-            bool isOverUI = EventSystem.current is not null && EventSystem.current.IsPointerOverGameObject();
+            bool isOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
             // transition when hover state changes
             if (isOverUI != wasOverUI)

@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using Mesocyclone.UI;
+using Lepsima.Shaders.AutoExposure;
 
 namespace Mesocyclone
 {
@@ -68,6 +66,12 @@ namespace Mesocyclone
             InvertedPitchToggle.isOn = SimulationSettings.InvertedPitch;
             CamSensitivitySlider.value = SimulationSettings.CameraSensitivity * 10f;
             CamSensitivityValue.text = (Mathf.Round(SimulationSettings.CameraSensitivity * 100f) / 10f).ToString();
+
+            AutoExposure AutoExp;
+            if (VolumeSettings.profile.TryGet(out AutoExp))
+            {
+                AutoExp.active = true;
+            }
 
             #endregion
 
