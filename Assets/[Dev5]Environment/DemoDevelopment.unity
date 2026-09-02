@@ -1644,6 +1644,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 79602859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &311937291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 311937293}
+  - component: {fileID: 311937292}
+  m_Layer: 0
+  m_Name: DemoDOTS
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &311937292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311937291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Scenes::Unity.Scenes.SubScene
+  _SceneAsset: {fileID: 102900000, guid: 76eceb3e32307ae4bb24657b1b68be4f, type: 3}
+  _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  AutoLoadScene: 1
+  _SceneGUID:
+    Value:
+      x: 3820932711
+      y: 1319568163
+      z: 3075883707
+      w: 4109076145
+--- !u!4 &311937293
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311937291}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &320637837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7688,14 +7741,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 551337703}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4dc9f9e08815a24b9c7681c304175e3, type: 3}
+  m_Script: {fileID: 11500000, guid: ed42dd13773a47f478147fc13de18e29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mesocyclone.FMOD.FMODManager
-  tickRate: 60
-  fixedTickRate: 100
-  Accumulator: 0
-  FixedAccumulator: 0
-  <isRegistered>k__BackingField: 0
   Playing: 0
 --- !u!4 &561411988 stripped
 Transform:
@@ -62574,3 +62622,4 @@ SceneRoots:
   - {fileID: 2083857064}
   - {fileID: 1930139999}
   - {fileID: 551337705}
+  - {fileID: 311937293}

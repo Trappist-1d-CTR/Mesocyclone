@@ -204,8 +204,8 @@ namespace Mesocyclone
 
             #region Setup Star Variables
             StarM = 1.896f * SunM;
-            StarR = 54.7f * SunR;
-            StarT = 6307f; // K
+            StarR = 54.74f * SunR;
+            StarT = 3783f; // K
             #endregion
 
             #region Setup Gale Variables
