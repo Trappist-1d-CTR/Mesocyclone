@@ -3,6 +3,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
 
 #nullable enable // i hate this
 
@@ -16,8 +18,7 @@ namespace Mesocyclone.Deprecated
     {
         #region Variables
 
-        public static AudioManager Instance { get; private set; }
-
+        public static AudioManager? Instance { get; private set; }
         [Serializable]
         private class PoolEntry
         {
@@ -139,37 +140,37 @@ namespace Mesocyclone.Deprecated
             if (Pool.Count < PoolSize)
                 return AddEntryToPool();
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
 
-                bool Increase = UnityEditor.EditorUtility.DisplayDialog
+            bool Increase = UnityEditor.EditorUtility.DisplayDialog
                 (
                     "Audio Pool Full",
                     $"The audio pool is full ({Pool.Count} / {PoolSize})!!\nIncrement pool size by 1 to fit space?",
                     "Sure", "Nah"
                 );
 
-                if (Increase)
-                {
-                    MaxPoolSize++;
-                    PoolSize++;
-                    return AddEntryToPool();
-                }
-                else
-                {
-                    bool AllGood = UnityEditor.EditorUtility.DisplayDialog
-                    (
-                        "Pool Size Kept",
-                        $"You chose not to increment pool size, is everything good?",
-                        "Affirmative", "STOP EVERYTHING FOR ENTROPY'S SAKE-"
-                    );
+            if (Increase)
+            {
+                MaxPoolSize++;
+                PoolSize++;
+                return AddEntryToPool();
+            }
+            else
+            {
+                bool AllGood = UnityEditor.EditorUtility.DisplayDialog
+                (
+                    "Pool Size Kept",
+                    $"You chose not to increment pool size, is everything good?",
+                    "Affirmative", "STOP EVERYTHING FOR ENTROPY'S SAKE-"
+                );
 
-                    if (!AllGood)
-                    {
-                        UnityEngine.Debug.Log("Oke :3");
-                        DestroyImmediate(Instance.gameObject);
-                        throw new Joar();
-                    }
+                if (!AllGood && Instance != null)
+                {
+                    UnityEngine.Debug.Log("Oke :3");
+                    DestroyImmediate(Instance.gameObject);
+                    throw new Joar();
                 }
+            }
 
             #endif
 

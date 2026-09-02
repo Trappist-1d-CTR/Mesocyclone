@@ -5,7 +5,7 @@ using System;
 using FMODUnity;
 using FMOD.Studio;
 
-namespace Mesocyclone.MesoFMOD
+namespace Mesocyclone.MesoMOD
 {
     public sealed class FMODManager : Tickable
     {
@@ -31,7 +31,7 @@ namespace Mesocyclone.MesoFMOD
             Threat = 3,
             Special = 4
         }
-        public class MusicTrack
+        public struct MusicTrack
         {
             public int TrackVolume;
             public int TrackIndex;
@@ -49,7 +49,7 @@ namespace Mesocyclone.MesoFMOD
             IsPlaying = 4
         }
 
-        public static class MusicManager
+        public static class Jukebox
         {
             public static MusicState State;
             public static int PlayingTrack;
@@ -158,19 +158,19 @@ namespace Mesocyclone.MesoFMOD
 
                 DebugStage++;
 
-                MusicManager.State = 0;
-                MusicManager.PlayingTrack = -1;
-                MusicManager.SelectedTrack = -1;
-                MusicManager.TrackListLength = int.Parse(data[0]);
-                MusicManager.Tracks = new MusicTrack[MusicManager.TrackListLength];
-                MusicManager.Situation = new string[1] { "" };
+                Jukebox.State = 0;
+                Jukebox.PlayingTrack = -1;
+                Jukebox.SelectedTrack = -1;
+                Jukebox.TrackListLength = int.Parse(data[0]);
+                Jukebox.Tracks = new MusicTrack[Jukebox.TrackListLength];
+                Jukebox.Situation = new string[1] { "" };
 
                 DebugStage++;
 
-                for (int i = 0; i < MusicManager.TrackListLength; i++)
+                for (int i = 0; i < Jukebox.TrackListLength; i++)
                 {
                     string[] trackData = data[i + 1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                    MusicManager.Tracks[i] = new()
+                    Jukebox.Tracks[i] = new()
                     {
                         TrackVolume = int.Parse(trackData[0]),
                         TrackIndex = int.Parse(trackData[1]),
@@ -196,13 +196,13 @@ namespace Mesocyclone.MesoFMOD
 
         public override void Tick()
         {
-            if (MusicManager.Situation[0] != SceneManager.GetActiveScene().name)
+            if (Jukebox.Situation[0] != SceneManager.GetActiveScene().name)
             {
-                MusicManager.Situation[0] = SceneManager.GetActiveScene().name;
-                MusicManager.Assessment();
+                Jukebox.Situation[0] = SceneManager.GetActiveScene().name;
+                Jukebox.Assessment();
             }
 
-            Playing = MusicManager.PlayingTrack;
+            Playing = Jukebox.PlayingTrack;
         }
 
         #region Pause/Resume
@@ -230,6 +230,11 @@ namespace Mesocyclone.MesoFMOD
             {
                 RuntimeManager.PlayOneShot("event:/UI/Linking");
             }
+
+            public static void PlayWawa()
+            {
+                RuntimeManager.PlayOneShot("event:/UI/Wawa");
+            }
             #endregion
         }
 
@@ -238,12 +243,12 @@ namespace Mesocyclone.MesoFMOD
             #region Play Collision SFX
             public static void PlayHangarCover(Vector3 pos)
             {
-                RuntimeManager.PlayOneShot("event:/Collision/HangarCover", pos);
+                RuntimeManager.PlayOneShot("event:/Collisions/HangarCover", pos);
             }
-
+            
             public static void PlayDroneTerrain(GameObject drone)
             {
-                RuntimeManager.PlayOneShotAttached("event:/Collision/DroneTerrain", drone);
+                RuntimeManager.PlayOneShotAttached("event:/Collisions/DroneTerrain", drone);
             }
             #endregion
         }

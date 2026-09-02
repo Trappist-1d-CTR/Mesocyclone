@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Mesocyclone.Deprecated
 {
@@ -18,7 +19,7 @@ namespace Mesocyclone.Deprecated
 
             gameObject.transform.localScale = new Vector3(Radius * 2, Radius * 2, Radius * 2);
 
-            float rand = Random.Range(-0.01f, 0.01f);
+            float rand = UnityEngine.Random.Range(-0.01f, 0.01f);
             Physics.linearVelocity = new Vector2(5 - rand, -2 + rand);
 
 

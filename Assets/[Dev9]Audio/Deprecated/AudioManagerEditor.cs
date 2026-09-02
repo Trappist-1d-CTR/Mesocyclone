@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace Mesocyclone.Deprecated
 {
@@ -12,6 +13,7 @@ namespace Mesocyclone.Deprecated
 
     #region Play Options Window
 
+    [Obsolete]
     public class AudioManagerPlayWindow : EditorWindow
     {
         #region Variables

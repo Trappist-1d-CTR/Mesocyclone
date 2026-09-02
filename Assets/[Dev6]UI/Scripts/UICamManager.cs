@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -10,7 +9,7 @@ using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 using Mesocyclone.UI.Feedbacking;
-using Mesocyclone.MesoFMOD;
+using Mesocyclone.MesoMOD;
 
 namespace Mesocyclone.UI
 {
@@ -344,17 +343,17 @@ namespace Mesocyclone.UI
         #region Play UI SFX
         public static void SFX_Click()
         {
-            FMODManager.UI.Click();
+            FMODManager.UI.PlayClick();
         }
 
         public static void SFX_Notification()
         {
-            FMODManager.UI.Notification();
+            FMODManager.UI.PlayNotification();
         }
 
         public static void SFX_Linking()
         {
-            FMODManager.UI.Linking();
+            FMODManager.UI.PlayLinking();
         }
         #endregion
 

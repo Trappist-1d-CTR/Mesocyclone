@@ -7696,6 +7696,7 @@ MonoBehaviour:
   Accumulator: 0
   FixedAccumulator: 0
   <isRegistered>k__BackingField: 0
+  Playing: 0
 --- !u!4 &561411988 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5904771401238491615, guid: 048d14491edec894fb04fd271408c907, type: 3}
@@ -36729,8 +36730,10 @@ GameObject:
   - component: {fileID: 69790163125904068}
   - component: {fileID: 69790163125904072}
   - component: {fileID: 69790163125904074}
+  - component: {fileID: 69790163125904076}
   - component: {fileID: 69790163125904070}
   - component: {fileID: 69790163125904067}
+  - component: {fileID: 69790163125904075}
   - component: {fileID: 69790163125904069}
   m_Layer: 6
   m_Name: DroneComputer
@@ -37023,6 +37026,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
   nonRigidbodyVelocity: 0
   attenuationObject: {fileID: 0}
+--- !u!114 &69790163125904075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69790163125904066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57139413b3576d441a30b7c37e48917e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  DefaultSettings: 0
+  VolumeSettings: {fileID: 1787261785}
+  FOVSlider: {fileID: 988461074510234030}
+  FOVValue: {fileID: 6041825943998160620}
+  FPSCapDropdown: {fileID: 7232450018725514446}
+  VSyncToggle: {fileID: 3473300029802399010}
+  ResolutionXInputField: {fileID: 767347942385636498}
+  ResolutionYInputField: {fileID: 1361761637446704092}
+  FullscreenToggle: {fileID: 2508704284443692663}
+  BrightnessSlider: {fileID: 4739991228058994870}
+  BrightnessValue: {fileID: 8900057532376726825}
+  ContrastSlider: {fileID: 550094608716541217}
+  ContrastValue: {fileID: 4593434266155471301}
+  GammaSlider: {fileID: 1668186348189178191}
+  GammaValue: {fileID: 5913064007336775449}
+  AntiAliasingDropdown: {fileID: 6795375181988306505}
+  AnisotropicFilteringDropdown: {fileID: 8030102762824448123}
+  InvertedPitchToggle: {fileID: 3648987187145848376}
+  CamSensitivitySlider: {fileID: 9061276382657446939}
+  CamSensitivityValue: {fileID: 696897592113073992}
+--- !u!114 &69790163125904076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69790163125904066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd9ebf1401392e4bbd47fea32f47642, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SteamAudioUnity::SteamAudio.SteamAudioListener
+  currentBakedListener: {fileID: 0}
+  applyReverb: 1
+  reverbType: 0
+  useAllProbeBatches: 0
+  probeBatches: []
+  mTotalDataSize: 0
+  mProbeDataSizes: 
+  mIdentifier:
+    type: 0
+    variation: 0
+    endpointInfluence:
+      center:
+        x: 0
+        y: 0
+        z: 0
+      radius: 0
+  mProbeBatchesUsed: []
 --- !u!114 &77777298835173593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38157,9 +38221,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
-        m_MethodName: SetContrast
+        m_MethodName: SetGamma
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -38694,7 +38758,19 @@ MonoBehaviour:
   m_CharacterLimit: 5
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 69790163125904075}
+        m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
+        m_MethodName: SetResolutionX
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -38712,19 +38788,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
-        m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
-        m_MethodName: SetResolutionX
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -39317,7 +39381,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetFOV
         m_Mode: 0
@@ -40054,7 +40118,19 @@ MonoBehaviour:
   m_CharacterLimit: 5
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 69790163125904075}
+        m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
+        m_MethodName: SetResolutionY
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -40072,19 +40148,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
-        m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
-        m_MethodName: SetResolutionY
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -40655,7 +40719,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetGamma
         m_Mode: 0
@@ -40809,7 +40873,7 @@ RectTransform:
   m_Father: {fileID: 2627137905460273763}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.4857143, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -42942,7 +43006,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetFullscreen
         m_Mode: 0
@@ -44336,7 +44400,7 @@ RectTransform:
   m_Father: {fileID: 2849481929529963732}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.27272728, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -45572,7 +45636,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetVSync
         m_Mode: 0
@@ -45967,7 +46031,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetInvertedPitch
         m_Mode: 0
@@ -48426,7 +48490,7 @@ RectTransform:
   m_Father: {fileID: 180438120965642766}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.42857143, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -49026,7 +49090,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetBrightness
         m_Mode: 0
@@ -49506,8 +49570,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3775910027693069029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.4857143, y: 0}
+  m_AnchorMax: {x: 0.4857143, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -51378,8 +51442,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3446157158687123722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -51766,7 +51830,6 @@ GameObject:
   - component: {fileID: 5341262687938408113}
   - component: {fileID: 1224480787458939388}
   - component: {fileID: 3601117424941022616}
-  - component: {fileID: 6785034933449012013}
   m_Layer: 5
   m_Name: SettingsMenu
   m_TagString: Untagged
@@ -54741,8 +54804,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2810388678469307613}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.27272728, y: 0}
+  m_AnchorMax: {x: 0.27272728, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -55033,7 +55096,7 @@ RectTransform:
   m_Father: {fileID: 2430628142955271164}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -55465,38 +55528,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6785034933449012013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5540937198607188644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57139413b3576d441a30b7c37e48917e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  DefaultSettings: 0
-  VolumeSettings: {fileID: 1787261785}
-  FOVSlider: {fileID: 988461074510234030}
-  FOVValue: {fileID: 6041825943998160620}
-  FPSCapDropdown: {fileID: 7232450018725514446}
-  VSyncToggle: {fileID: 3473300029802399010}
-  ResolutionXInputField: {fileID: 767347942385636498}
-  ResolutionYInputField: {fileID: 1361761637446704092}
-  FullscreenToggle: {fileID: 2508704284443692663}
-  BrightnessSlider: {fileID: 4739991228058994870}
-  BrightnessValue: {fileID: 8900057532376726825}
-  ContrastSlider: {fileID: 550094608716541217}
-  ContrastValue: {fileID: 4593434266155471301}
-  GammaSlider: {fileID: 1668186348189178191}
-  GammaValue: {fileID: 5913064007336775449}
-  AntiAliasingDropdown: {fileID: 6795375181988306505}
-  AnisotropicFilteringDropdown: {fileID: 8030102762824448123}
-  InvertedPitchToggle: {fileID: 3648987187145848376}
-  CamSensitivitySlider: {fileID: 9061276382657446939}
-  CamSensitivityValue: {fileID: 696897592113073992}
 --- !u!224 &6785235028720656095
 RectTransform:
   m_ObjectHideFlags: 0
@@ -55599,7 +55630,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetAntiAliasing
         m_Mode: 0
@@ -56523,7 +56554,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetFPSCap
         m_Mode: 0
@@ -56550,8 +56581,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3288601164690584228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -57149,8 +57180,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5103809415157810844}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.42857143, y: 0}
+  m_AnchorMax: {x: 0.42857143, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -58177,7 +58208,7 @@ RectTransform:
   m_Father: {fileID: 4977086763353406250}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -58439,7 +58470,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetAnisotropicFiltering
         m_Mode: 0
@@ -59522,9 +59553,9 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 5285183528816331868}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnDown: {fileID: 3445793587343806872}
+    m_SelectOnLeft: {fileID: 5285183528816331868}
+    m_SelectOnRight: {fileID: 6222381632810023047}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -59550,7 +59581,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetResolution
         m_Mode: 1
@@ -61577,6 +61608,7 @@ GameObject:
   - component: {fileID: 8966088916417911552}
   - component: {fileID: 8966088916417911553}
   - component: {fileID: 8966088916417911554}
+  - component: {fileID: 8966088916417911560}
   m_Layer: 5
   m_Name: CanvasUI
   m_TagString: Untagged
@@ -61615,6 +61647,38 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &8966088916417911560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8966088916417911555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57139413b3576d441a30b7c37e48917e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  DefaultSettings: 0
+  VolumeSettings: {fileID: 1787261785}
+  FOVSlider: {fileID: 988461074510234030}
+  FOVValue: {fileID: 6041825943998160620}
+  FPSCapDropdown: {fileID: 7232450018725514446}
+  VSyncToggle: {fileID: 3473300029802399010}
+  ResolutionXInputField: {fileID: 767347942385636498}
+  ResolutionYInputField: {fileID: 1361761637446704092}
+  FullscreenToggle: {fileID: 2508704284443692663}
+  BrightnessSlider: {fileID: 4739991228058994870}
+  BrightnessValue: {fileID: 8900057532376726825}
+  ContrastSlider: {fileID: 550094608716541217}
+  ContrastValue: {fileID: 4593434266155471301}
+  GammaSlider: {fileID: 1668186348189178191}
+  GammaValue: {fileID: 5913064007336775449}
+  AntiAliasingDropdown: {fileID: 6795375181988306505}
+  AnisotropicFilteringDropdown: {fileID: 8030102762824448123}
+  InvertedPitchToggle: {fileID: 3648987187145848376}
+  CamSensitivitySlider: {fileID: 9061276382657446939}
+  CamSensitivityValue: {fileID: 696897592113073992}
 --- !u!222 &8966088916433298051
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -62160,7 +62224,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6785034933449012013}
+      - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
         m_MethodName: SetCamSensitivity
         m_Mode: 0
@@ -62504,9 +62568,9 @@ SceneRoots:
   - {fileID: 1453793527}
   - {fileID: 1138501484}
   - {fileID: 1766233017}
+  - {fileID: 8966088916417911559}
   - {fileID: 79602859}
   - {fileID: 1901281956}
   - {fileID: 2083857064}
-  - {fileID: 8966088916417911559}
   - {fileID: 1930139999}
   - {fileID: 551337705}

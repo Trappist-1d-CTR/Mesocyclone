@@ -38,7 +38,7 @@ namespace Mesocyclone
 
         #endregion
 
-        void Start()
+        private void Start()
         {
             if (DefaultSettings) SimulationSettings.Default();
             SimulationSettings.Load();
@@ -72,6 +72,7 @@ namespace Mesocyclone
             {
                 AutoExp.active = true;
             }
+            else throw new Joar();
 
             #endregion
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using Mesocyclone;
-using Mesocyclone.MesoFMOD;
+using Mesocyclone.MesoMOD;
 
 public class HangarScript : Tickable
 {
@@ -145,21 +145,9 @@ public class HangarScript : Tickable
     #region Cover Collision Sound
     private void CoverHit()
     {
-        FMODManager.Collision_HangarCover(Cover.worldCenterOfMass);
+        FMODManager.Collision.PlayHangarCover(Cover.worldCenterOfMass);
     }
     #endregion
-
-    public void PauseSFX(bool ToPause)
-    {
-        if (ToPause)
-        {
-            CentrifugeSFX.Pause();
-        }
-        else
-        {
-            CentrifugeSFX.UnPause();
-        }
-    }
 
     #region Hangar Commands
     public void ShelterHangar()

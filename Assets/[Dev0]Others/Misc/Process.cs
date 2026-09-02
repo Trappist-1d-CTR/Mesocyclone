@@ -12,6 +12,7 @@ namespace Mesocyclone.Debug
     /// <summary>
     /// Re-Format / Wrapper of Unity's Coroutine system for my (half bread) personal liking :]
     /// </summary>
+    /// 
     public sealed class Process
     {
         #region Variables
@@ -48,7 +49,7 @@ namespace Mesocyclone.Debug
                 return;
             }
 
-            coroutine = AudioManager.Instance.StartCoroutine(routine()); // didn't have any other singleton :/
+            //coroutine = AudioManager.Instance.StartCoroutine(routine()); // didn't have any other singleton :/
 
             #if SHOW_PROCESS_INFO
                 if (!silent) UnityEngine.Debug.Log($"Starting Process {coroutine} => {routine}");
@@ -76,7 +77,7 @@ namespace Mesocyclone.Debug
                 if (!silent) UnityEngine.Debug.Log($"Stopping Process => {routine}");
             #endif
 
-            AudioManager.Instance.StopCoroutine(coroutine);
+            //AudioManager.Instance.StopCoroutine(coroutine);
             coroutine = null;
         }
 

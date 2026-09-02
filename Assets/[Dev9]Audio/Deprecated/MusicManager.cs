@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mesocyclone.Debug;
+using System;
 
 #nullable enable // i hate this
 
@@ -13,7 +14,7 @@ namespace Mesocyclone.Deprecated
     /// Class that handles the in-game music
     /// </summary>
     [Obsolete("Old Unity-based Music Manager")]
-    public class MusicManager : Tickable // why was this tickable??
+    public class MusicManager : MonoBehaviour // why was this tickable?? // not anymore :3
     {
         #region Variables
 
@@ -74,7 +75,7 @@ namespace Mesocyclone.Deprecated
             #endregion
         }
 
-        public override void Tick()
+        private void Update()
         {
             if (CurrentContext == "MainMenu")
             {
