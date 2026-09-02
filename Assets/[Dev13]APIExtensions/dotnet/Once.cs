@@ -1,6 +1,6 @@
 using System;
 
-namespace System.Extensions
+namespace Mesocyclone
 {
     /// <summary>
     /// Represents a value that can only be set once.
