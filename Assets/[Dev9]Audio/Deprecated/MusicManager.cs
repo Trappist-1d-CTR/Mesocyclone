@@ -8,6 +8,8 @@ using System;
 
 #nullable enable // i hate this
 
+#pragma warning disable
+
 namespace Mesocyclone.Deprecated
 {
     /// <summary>
@@ -57,6 +59,7 @@ namespace Mesocyclone.Deprecated
 
             SceneManager.sceneLoaded += CheckScene;
             CheckScene(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+
 
             if (GameAmbience != null) Ambience_Main = AudioManager.Instance.PlayRepeating(GameAmbience);
 

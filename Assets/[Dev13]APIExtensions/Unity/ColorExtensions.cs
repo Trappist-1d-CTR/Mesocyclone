@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace UnityEngine
 {
     /// <summary>
@@ -37,7 +39,7 @@ namespace UnityEngine
             }
 
             if (count is 0)
-                return Color.linear;
+                return new Color().linear;
             
             return new Color(r / count, g / count, b / count, a / count).gamma;
         }

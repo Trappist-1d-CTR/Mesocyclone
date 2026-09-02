@@ -370,7 +370,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
-                JukeBox.PauseTime(false);
+                FMODManager.Instance.PauseTime(false);
 
                 transform.parent.SendMessage("PauseSFX", false);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
@@ -381,7 +381,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(0);
                 Time.timeScale = 0;
-                JukeBox.PauseTime(true);
+                FMODManager.Instance.PauseTime(true);
 
                 transform.parent.SendMessage("PauseSFX", true);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);

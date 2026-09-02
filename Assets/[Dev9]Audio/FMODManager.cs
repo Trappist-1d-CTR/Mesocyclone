@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Extensions;
 using FMODUnity;
 using FMOD.Studio;
-using Mesocyclone.Security.Critical;
 
 namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the modding API btw, that's BepInEx's job
 {
@@ -28,37 +26,9 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         #region Saul
 
-         // say hello to saul, take good care of him
-        private static SteamAudioListener _saul;
-
-        public static SteamAudioListener Saul
-        {
-            get { return _saul; }
-            set
-            {
-                if (_saul is not null && value is null)
-                    throw new SaulIsMissingOrDead(); // saul is not safe
-                else
-                    _saul = value; // saul is safe
-            }
-        }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void EnsureListener()
-        {
-            if (Saul is not null) return; // saul is safe
-
-            Camera camera = Camera.main;
-
-            if (camera is null)
-            {
-                UnityEngine.Debug.LogWarning("JukeBox: no main camera detected for audio listening!!");
-                return;
-            }
-
-            camera.gameObject.GetOrAddComponent<FMODUnity.StudioListener>();
-            Saul = camera.gameObject.GetOrAddComponent<SteamAudioListener>();
-        }
+        // say hello to saul, take good care of him
+        //I SHALL BANISH HIM TO THE SHADOW REALM AND P-RANK HIM FOR FUN! I SHALL GRIND HIM DOWN UNTIL HIS VERY QUARKS WEEP TO BE SPARED! THE WILL AND MERCY OF GOD SHALL NOT SAVE HIM, HELL WILL STAND HORRIFIED BEFORE MY RUTHLESSNESS, AND V1 SHALL FINALLY TREAT ME WITH THE LOVE AND CARE I DESERVE IT AS THE PRINCESS I AM!!!     D I E ! ! ! ! !
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////private static SteamAudioListener _saul;public static SteamAudioListener Saul{get{return _saul;}set{if(_saul is not null && value is null)throw new SaulIsMissingOrDead();/*saulisnotsafe - Exactly.*/else _saul=value;/*saulissafe - No.*/}}[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]private static void EnsureListener(){if (Saul is not null) return;/*saulissafe - No.*/Camera camera=Camera.main;if(camera is null){UnityEngine.Debug.LogWarning("JukeBox: no main camera detected for audio listening!!");return;}camera.gameObject.GetOrAddComponent<FMODUnity.StudioListener>();Saul=camera.gameObject.GetOrAddComponent<SteamAudioListener>();}
 
         #endregion
 
@@ -106,7 +76,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 if (State is not MusicState.Idle)
                 {
                     State = MusicState.IsStopping;
-                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE); // holy FMOD naming conventions are so fucked. This isn't C++ my guy
+                    Instance.MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE); // holy FMOD naming conventions are so fucked. This isn't C++ my guy
                     PlayingTrack = -1;
                     State = MusicState.Idle;
                 }
@@ -126,7 +96,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 if (State is not (MusicState.Idle or MusicState.IsStopping))
                 {
                     State = MusicState.IsSwitching;
-                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                    Instance.MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
                     RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
                     PlayingTrack = SelectedTrack;
                     State = MusicState.IsPlaying;
@@ -150,15 +120,16 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                         break;
                 }
             }
+
             public static void PickTrack(TrackType type)
             {
-                if (PlayingTrack != -1 && Tracks[PlayingTrack].Type == type) return;
+                if (PlayingTrack != -1 && Tracks[PlayingTrack].TrackType == type) return;
 
                 List<MusicTrack> pickList = new();
 
                 foreach (MusicTrack item in Tracks)
                 {
-                    if (item.Type == type)
+                    if (item.TrackType == type)
                         pickList.Add(item);
                 }
                 SelectedTrack = pickList[UnityEngine.Random.Range(0, pickList.Count)].TrackIndex;
@@ -215,9 +186,9 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                     string[] trackData = data[i + 1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                     Jukebox.Tracks[i] = new()
                     {
-                        Volume = int.Parse(trackData[0]),
+                        TrackVolume = int.Parse(trackData[0]),
                         TrackIndex = int.Parse(trackData[1]),
-                        Type = (TrackType)int.Parse(trackData[2]),
+                        TrackType = (TrackType)int.Parse(trackData[2]),
                         TrackName = trackData[3],
                         Artist = trackData[4]
                     };
@@ -249,10 +220,10 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
         }
 
         #region Pause/Resume
-        public static void PauseTime(bool paused)
+        public void PauseTime(bool paused)
         {
-            _ = WorldBus.setPaused(paused);
-            _ = MusicBus.setPaused(paused);
+            _ = Instance.WorldBus.setPaused(paused);
+            _ = Instance.MusicBus.setPaused(paused);
         }
         #endregion
 

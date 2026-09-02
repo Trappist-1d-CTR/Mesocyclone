@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
+#pragma warning disable
+
 namespace Mesocyclone.Deprecated
 {
 #nullable enable // in case this isn't disabled

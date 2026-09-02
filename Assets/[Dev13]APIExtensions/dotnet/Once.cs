@@ -32,7 +32,7 @@ namespace Mesocyclone
     /// <typeparam name="T"></typeparam>
     public struct NativeOnce<T> where T : struct
     {
-        public T? Value { get; private set; } = null;
+        public T? Value { get; private set; }
 
         public T Assign(T value)
         {
@@ -40,7 +40,7 @@ namespace Mesocyclone
                 throw new InvalidOperationException("Value has already been assigned.");
 
             Value = value;
-            return Value;
+            return (T)Value;
         }
     }
 }
