@@ -1,6 +1,6 @@
 using UnityEngine;
 using Mesocyclone;
-using Mesocyclone.MesoFMOD;
+using Mesocyclone.MesoMod;
 
 public class HangarScript : Tickable
 {
@@ -145,7 +145,7 @@ public class HangarScript : Tickable
     #region Cover Collision Sound
     private void CoverHit()
     {
-        FMODManager.Collision_HangarCover(Cover.worldCenterOfMass);
+        JukeBox.Collision_HangarCover(Cover.worldCenterOfMass);
     }
     #endregion
 

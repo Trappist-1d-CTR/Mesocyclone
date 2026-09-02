@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Collections;
+using System; // since for whatever reason Unity doesn't compile this implicitly -.-
 
 // normally i'd use Unity's own custom cursor API, but for custom cursor animation/logic it doesn't work that well...
 // so that's why i use Image

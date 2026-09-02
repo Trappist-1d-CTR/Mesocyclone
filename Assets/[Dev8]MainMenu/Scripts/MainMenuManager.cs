@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using TMPro;
-using Mesocyclone.MesoFMOD;
+using Mesocyclone.MesoMod;
 
 namespace Mesocyclone
 {
@@ -68,7 +68,7 @@ namespace Mesocyclone
 
         public void SelectPanel(int ID)
         {
-            if (ID >= 0) FMODManager.UI.Click();
+            if (ID >= 0) JukeBox.UI.Click();
             else ID = 0;
             MenuPosition = ID;
             Panel();
