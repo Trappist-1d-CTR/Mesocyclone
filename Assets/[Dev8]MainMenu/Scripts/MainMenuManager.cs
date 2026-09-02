@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using TMPro;
-using Mesocyclone.MesoMOD;
+using Mesocyclone.MesoMod;
 
 namespace Mesocyclone
 {

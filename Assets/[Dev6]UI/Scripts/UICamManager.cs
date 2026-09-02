@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
 using Mesocyclone.Debug; // System.Diagnostics.Process exists...
 using Mesocyclone.UI.Feedbacking;
-using Mesocyclone.MesoMOD;
+using Mesocyclone.MesoMod;
 
 namespace Mesocyclone.UI
 {
@@ -370,7 +370,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
-                FMODManager.PauseTime(false);
+                JukeBox.PauseTime(false);
 
                 transform.parent.SendMessage("PauseSFX", false);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
@@ -381,7 +381,7 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(0);
                 Time.timeScale = 0;
-                FMODManager.PauseTime(true);
+                JukeBox.PauseTime(true);
 
                 transform.parent.SendMessage("PauseSFX", true);
                 GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);

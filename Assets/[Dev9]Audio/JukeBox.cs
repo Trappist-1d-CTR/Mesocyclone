@@ -1,29 +1,70 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
+using UnityEngine.Extensions;
 using FMODUnity;
 using FMOD.Studio;
+using Mesocyclone.Security.Critical;
 
-namespace Mesocyclone.MesoMOD
+namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the modding API btw, that's BepInEx's job
 {
-    public sealed class FMODManager : Tickable
+    /// <summary>
+    /// New and improved music manager! :D
+    /// </summary>
+    public class FMODManager : MonoBehaviour // kickass name
     {
         #region Variables
 
-        public static FMODManager Instance;
+        public static FMODManager Instance { get; private set; }
 
-        public static Bus UIBus;
-        public static Bus WorldBus;
-        public static Bus MusicBus;
+        public Bus UIBus;
+        public Bus WorldBus;
+        public Bus MusicBus;
 
         public int Playing;
 
         #endregion
 
+        #region Saul
+
+         // say hello to saul, take good care of him
+        private static SteamAudioListener _saul;
+
+        public static SteamAudioListener Saul
+        {
+            get { return _saul; }
+            set
+            {
+                if (_saul is not null && value is null)
+                    throw new SaulIsMissingOrDead(); // saul is not safe
+                else
+                    _saul = value; // saul is safe
+            }
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void EnsureListener()
+        {
+            if (Saul is not null) return; // saul is safe
+
+            Camera camera = Camera.main;
+
+            if (camera is null)
+            {
+                UnityEngine.Debug.LogWarning("JukeBox: no main camera detected for audio listening!!");
+                return;
+            }
+
+            camera.gameObject.GetOrAddComponent<FMODUnity.StudioListener>();
+            Saul = camera.gameObject.GetOrAddComponent<SteamAudioListener>();
+        }
+
+        #endregion
+
         #region Music Manager
 
-        public enum TrackType
+        public enum TrackType : byte
         {
             Concept = 0,
             MainMenu = 1,
@@ -31,6 +72,7 @@ namespace Mesocyclone.MesoMOD
             Threat = 3,
             Special = 4
         }
+
         public struct MusicTrack
         {
             public int TrackVolume;
@@ -40,13 +82,13 @@ namespace Mesocyclone.MesoMOD
             public string Artist;
         }
 
-        public enum MusicState
+        public enum MusicState : byte
         {
-            Idle = 0,
-            IsStopping = 1,
-            IsStarting = 2,
-            IsSwitching = 3,
-            IsPlaying = 4
+            Idle,
+            IsStopping,
+            IsStarting,
+            IsSwitching,
+            IsPlaying
         }
 
         public static class Jukebox
@@ -61,10 +103,10 @@ namespace Mesocyclone.MesoMOD
             #region Functions
             public static void Stop()
             {
-                if (State is not (MusicState.Idle))
+                if (State is not MusicState.Idle)
                 {
                     State = MusicState.IsStopping;
-                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                    MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE); // holy FMOD naming conventions are so fucked. This isn't C++ my guy
                     PlayingTrack = -1;
                     State = MusicState.Idle;
                 }
@@ -110,13 +152,13 @@ namespace Mesocyclone.MesoMOD
             }
             public static void PickTrack(TrackType type)
             {
-                if (PlayingTrack != -1 && Tracks[PlayingTrack].TrackType == type) return;
+                if (PlayingTrack != -1 && Tracks[PlayingTrack].Type == type) return;
 
                 List<MusicTrack> pickList = new();
 
                 foreach (MusicTrack item in Tracks)
                 {
-                    if (item.TrackType == type)
+                    if (item.Type == type)
                         pickList.Add(item);
                 }
                 SelectedTrack = pickList[UnityEngine.Random.Range(0, pickList.Count)].TrackIndex;
@@ -150,6 +192,7 @@ namespace Mesocyclone.MesoMOD
 
             #region Get Music Tracks
             int DebugStage = 0;
+
             try
             {
                 MusicDataTxt = System.IO.File.ReadAllText(Application.streamingAssetsPath + "/DroneData/MusicPlaylist.json");
@@ -172,9 +215,9 @@ namespace Mesocyclone.MesoMOD
                     string[] trackData = data[i + 1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                     Jukebox.Tracks[i] = new()
                     {
-                        TrackVolume = int.Parse(trackData[0]),
+                        Volume = int.Parse(trackData[0]),
                         TrackIndex = int.Parse(trackData[1]),
-                        TrackType = (TrackType)int.Parse(trackData[2]),
+                        Type = (TrackType)int.Parse(trackData[2]),
                         TrackName = trackData[3],
                         Artist = trackData[4]
                     };
@@ -194,7 +237,7 @@ namespace Mesocyclone.MesoMOD
             Instance = null;
         }
 
-        public override void Tick()
+        private void Update()
         {
             if (Jukebox.Situation[0] != SceneManager.GetActiveScene().name)
             {
