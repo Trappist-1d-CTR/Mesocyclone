@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-namespace Mesocyclone
+// put here to avoid type conflicts
+namespace Mesocyclone.Deprecated
 {
-    // I don't imagine anything inheriting AirCell
-    public sealed class AirCell
+    public class AirCell
     {
         /*  Definitions
                 dynamic: different for every cell and for every moment in time

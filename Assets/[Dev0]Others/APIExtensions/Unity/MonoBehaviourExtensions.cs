@@ -1,4 +1,7 @@
-namespace UnityEngine.Extensions
+using System;
+using UnityEngine;
+
+namespace Mesocyclone
 {
     /// <summary>
     /// Extension methods for <a href="https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.html">MonoBehaviour</a>

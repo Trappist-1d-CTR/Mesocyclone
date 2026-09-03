@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mesocyclone
+namespace Mesocyclone.Deprecated
 {
     public sealed class AGlobalValues : Tickable
     {

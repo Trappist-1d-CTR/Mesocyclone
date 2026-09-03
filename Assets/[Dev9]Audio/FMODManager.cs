@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using FMODUnity;
 using FMOD.Studio;
+using Mesocyclone;
 
 namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the modding API btw, that's BepInEx's job
 {
@@ -28,7 +29,48 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         // say hello to saul, take good care of him
         //I SHALL BANISH HIM TO THE SHADOW REALM AND P-RANK HIM FOR FUN! I SHALL GRIND HIM DOWN UNTIL HIS VERY QUARKS WEEP TO BE SPARED! THE WILL AND MERCY OF GOD SHALL NOT SAVE HIM, HELL WILL STAND HORRIFIED BEFORE MY RUTHLESSNESS, AND V1 SHALL FINALLY TREAT ME WITH THE LOVE AND CARE I DESERVE AS THE PRINCESS I AM!!!     D I E ! ! ! ! !
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////private static SteamAudioListener _saul;public static SteamAudioListener Saul{get{return _saul;}set{if(_saul is not null && value is null)throw new SaulIsMissingOrDead();/*saulisnotsafe - Exactly.*/else _saul=value;/*saulissafe - No.*/}}[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]private static void EnsureListener(){if (Saul is not null) return;/*saulissafe - No.*/Camera camera=Camera.main;if(camera is null){UnityEngine.Debug.LogWarning("JukeBox: no main camera detected for audio listening!!");return;}camera.gameObject.GetOrAddComponent<FMODUnity.StudioListener>();Saul=camera.gameObject.GetOrAddComponent<SteamAudioListener>();}
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////private static SteamAudioListener _saul;public static SteamAudioListener Saul{get{return _saul;}set{if(_saul is not null && value is null)throw new SaulIsMissingOrDead();/*saulisnotsafe - Exactly.*/else _saul=value;/*saulissafe - No.*/}}[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]private static void EnsureListener(){if (Saul is not null) return;/*saulissafe - No.*/Camera camera=Camera.main;if(camera is null){UnityEngine.Debug.LogWarning("JukeBox: no main camera detected for audio listening!!");return;}camera.gameObject.GetOrAddComponent<FMODUnity.StudioListener>();Saul=camera.gameObject.GetOrAddComponent<SteamAudioListener>();} // what the fuck is this
+
+        // NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+        // WHAT DID PAUL EVER DOO
+
+        /*     
+                                                                                                    
+                                                                                                    
+        =%%=                                                                    #@@@@=.             
+     .+@@@@@%.                                                                  @@@#@@@*            
+     @@@*-*@@@@@#                                                              .@@#:=@@@#           
+     @@##:*++#@@@*   -@@@@@*                                                   .@@**:-=@@-          
+     @@@+=.+*#@:@@@-@@@#%@@@+               .... ....                   ...... .%@*@==#*%%-         
+     .#@#++:::#@*@@%@@++=+=@@              %@@@--%@@@@:                .+%%#@@@:=@#@=-:.-@%:        
+      .%@*+--:-#@@##@+#-*=*@@           -%@@@@@%#@@@@@@@@@@*-          *@@%#@@@@@@:@--.:=*@=        
+       :@@.-:--::::==+:+=@@@#        :@@@@@@@@@+==@@@=*##@@@@@@=:      %@*#:=@@@@@@#--:-=+@*        
+        +@#---=-:. :---+#@*        .#@@@%=*@@==-...=*-#@@@+=%@@@@#     *@@@#:@-@*@@.=-::+:@#        
+        -@@:=::--..:..#-@@.      .+@@@##@@@-:=+====**=---+#-**:#@@%     %@+@.+#++::-:=::*:@%        
+         =@@#=.:=..:::@-@*      #@@@@=:==::=*+--*##==#*+---=-.=%+@@@+    @@@-.+*=.:-.::-*:@#        
+          @@+#.:-..:=-#-@*     +@@%==-++-.-#@@@@@@@@@@@@--*=-:  +=*@@+   @@@:-::..::..-#=@@=        
+          @@@#%--:.--+%#@+    -@@-*-++=:=@@@@@@@@@@@@@@@@@=:-:   -*:@@=  @@@*+-...::.*+=@@*:        
+          :@@@=*#--.+@-@@:   +@@==.    -@@@@@=.      .*@@@@@::.   .=:@@- @@@-@*:::=@@.@@@%.         
+           :@@@@=@@@@#@@+   =@@=-:    =@@@#:::::. .:::. =@@@@::.   :+=@# -@@@+@@@@=@@@@@.           
+             :@@@@@%@@@#    %@:%::  .=@@@=.-++=-..:=++=.. *@@@::.  ::-@@-  *@@@%%@@@@@:             
+               +@@@@@@      @@+*-:  -@@@-.-*+-=-=+--::+=. .+@@@.:  :-+@@@:   %@@@@%                 
+                            %@.-=. :@@@=.:+= --:-==-.::=:.  =@@#:  :=+@@@-                          
+                            %@.-=.:%@@= .-+-:-::+*-.: .=-.  .@@@=  :==@@@=                          
+                            %@:--.-@@%  .-+-#@@@@@@@@@*--.   -@@@: .=+@@@-                          
+                            @@==-.#@@-  .:*@@@@@@@@@@@@@+.    +@@+  :#+@@:                          
+                            %@-*::@@@   -@@@@@#-...:#@@@@@-   .@@@: -+@@-                           
+                            =@@:-=@@=  +@@@@+..  ..::.-@@@@*   +@@=:*-@@.                           
+                             *@*#+@@.:%@@@#:.          .*@@@@- :@@==:@@=                            
+                             :@@=:@@@@@@@-:-::::.   .:::--@@@@@@@@ *@@*.                            
+                              #@*+@@@@@#: .::::-::::--:::.:*@@@@@@+@@@                              
+                               @@#@**-=.      .::::::..     .-++#=#%@@                              
+                               #@@@#@@%=-:                 .:.#@@@@@@#                              
+                                @@@@@@@@@+*#*+=--=+=--=+*%**@@@@@%@@*                               
+                                      +@@@@@@@@@@@@@@@@@@@@@@@+                                     
+                                        .%@@@@@@@@@@@@@@@@@%                                        
+                                                                                  
+
+        */
 
         #endregion
 
@@ -36,11 +78,11 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         public enum TrackType : byte
         {
-            Concept = 0,
-            MainMenu = 1,
-            Game = 2,
-            Threat = 3,
-            Special = 4
+            Concept,
+            MainMenu,
+            Game,
+            Threat,
+            Special
         }
 
         public struct MusicTrack
