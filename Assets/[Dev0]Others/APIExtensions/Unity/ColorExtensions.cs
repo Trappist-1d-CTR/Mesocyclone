@@ -1,6 +1,7 @@
+using UnityEngine;
 using System.Collections.Generic;
 
-namespace UnityEngine
+namespace Mesocyclone
 {
     /// <summary>
     /// Extension methods for <a href="https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Color.html">Color</a>

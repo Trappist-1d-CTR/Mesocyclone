@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace Mesocyclone
+namespace Mesocyclone.Deprecated
 {
-    // same here
-    public sealed class AirCellBehavior : Tickable
+    public class AirCellBehavior : Tickable
     {
         #region Variables
 

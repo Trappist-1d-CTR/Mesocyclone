@@ -5,7 +5,9 @@ using Unity.Burst;
 using Unity.Jobs;
 using UnityEngine.Jobs;
 
-namespace Mesocyclone.GlobalData
+// do we even use a single unity thing here??
+
+namespace Mesocyclone.Data // changed from GlobalData to make namespace and class unambigious
 {
     public struct GlobalData
     {
@@ -213,7 +215,10 @@ namespace Mesocyclone.GlobalData
         }
     }
 
-    public partial struct GlobalCalc : ISystem
+    // oh mb astraa i thought u meant it had static functions and not only had
+    // anyways, you implement ISystem if you're gonna query components
+    // and this shouldn't have worked because you need to implement functions such as OnUpdate(ref GameState)
+    public class GlobalCalc
     {
         [BurstCompile]
         public static float StaticPressureAtHeight(float Height)
