@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: Zeta Simulations Studio
   productName: Mesocyclone Demo
-  defaultCursor: {fileID: 0}
+  defaultCursor: {fileID: 2800000, guid: c4df9a92060beeb4c9e519d9bceb6682, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
@@ -366,7 +366,7 @@ PlayerSettings:
     m_APIs: 0b000000
     m_Automatic: 0
   - m_BuildTarget: WindowsStandaloneSupport
-    m_APIs: 1500000012000000020000000b000000
+    m_APIs: 1200000002000000150000000b000000
     m_Automatic: 0
   - m_BuildTarget: LinuxStandaloneSupport
     m_APIs: 1100000015000000
