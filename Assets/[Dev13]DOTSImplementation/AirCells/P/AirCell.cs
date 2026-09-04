@@ -1,3 +1,5 @@
+/*
+
 // would be amazing if we had global using declerations in unity -.-
 
 using System;
@@ -8,6 +10,7 @@ using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Jobs;
 using Mesocyclone.Data;
+
 
 namespace Mesocyclone
 {
@@ -276,7 +279,6 @@ namespace Mesocyclone
         }
     }
 
-    /*
     [Obsolete]
     public class AirCellAuthoring : MonoBehaviour
     {
@@ -334,8 +336,8 @@ namespace Mesocyclone
             }
         }
     }
-    */
 
 
     #endregion
 }
+*/
