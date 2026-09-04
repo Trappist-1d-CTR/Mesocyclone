@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Mesocyclone.Data;
-using System.Numerics;
 
 // this class contains all the components for an air cell
 // alongside the authoring component that prefab has attached to automatically bind
