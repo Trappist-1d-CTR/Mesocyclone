@@ -49,8 +49,9 @@ namespace Mesocyclone
     /// <summary>
     /// Entity component for special air cell behaviour flags (booleans)
     /// </summary>
-    public struct AirCellBehaviorFlags : IComponentData
+    public struct AirCellBehaviourFlags : IComponentData
     {
+        // technically entities but tomato tamato
         public bool AirCellObjects;
         public bool TerrainAtSeaLevel; // ironic
         public bool InterpolationWithTerrain;
@@ -65,6 +66,8 @@ namespace Mesocyclone
 
     public struct AirCellGroup : IComponentData
     {
+        public AirCellGroupMember AirCellGroup;
+        public NativeList<Entity> AirCellObjectGroup;
         public int CellGroupNumber;
     }
 
@@ -91,28 +94,51 @@ namespace Mesocyclone
         //public BlobAssetReferece<BlobCurve> AmbientalHeat; // thanks astraa
     }
 
+    public struct AirCellMemoryOptimization
+    {
+        public NativeArray<float> StaticPressureSOM;
+        public NativeArray<float> TempSOM;
+        public NativeArray<float> PrevStatVolumeSOM;
+        public NativeArray<float> DynVolumeSOM;
+        public NativeArray<float> PrevDynVolumeSOM;
+        public NativeList<float3> CellRepulsionSOM;
+    }
+
     /// <summary>
     /// Self explanatory
     /// </summary>
     public struct AirCellBounds : IComponentData
     {
-        public float2 AirCellsBounds;
+        public float2 Value;
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public struct AirCellSimulationConfig : IComponentData
     {
+        public float3 DronePosition;
+        public float CdTest;
         public float TimeScale;
         public float DistanceScale;
         public float GravityScale;
+        public NativeList<float3> AirCellStartingGrid;
+        public float MoleTest;
+        public float TempTest;
+        public float3 VelTest;
+        public float3 CenterTest;
+        public Entity CubeEntity;
     }
+
+    /// <summary>
+    /// Entity component attached for the moment the air cell needs to be spawned. Which gets seen by the AirCellSpawnSystem and actually spawns in the air cell :]
+    /// </summary>
+    public struct AirCellInNeedOfSpawnPlz : IComponentData
+    { }
 
     #endregion
 
 
 
     #region American Authors
-
 
     /// <summary>
     /// The author for all aircell related components & bakers
@@ -152,25 +178,13 @@ namespace Mesocyclone
         public float AmbientHeat;
 
         [Header("Bounds")]
-        public Vector2 AirCellsBounds;
+        public Vector2 AirCellBounds;
 
         [Header("Simulation")]
         public float TimeScale;
         public float DistanceScale;
         public float GravityScale;
-
-        private void Awake()
-        {
-            // base values
-            CellCenter = default;
-            Moles = 1000;
-            Temperature = 300;
-            Velocity = default;
-            StiffnessConstant.Assign(0.5f);
-
-            // simulation
-            TimeScale = 1f;
-        }
+        public GameObject CubeEnity;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public class Baker : Baker<AirCellAuthoring>
@@ -178,6 +192,16 @@ namespace Mesocyclone
             public override void Bake(AirCellAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+
+                // base values
+                authoring.CellCenter = default;
+                authoring.Moles = 1000;
+                authoring.Temperature = 300;
+                authoring.Velocity = default;
+                authoring.StiffnessConstant.Assign(0.5f);
+
+                authoring.TimeScale = 1f;
+                authoring.CellsInstantiated = false;
 
                 AddComponent(entity, new AirCell
                 {
@@ -201,7 +225,7 @@ namespace Mesocyclone
                     Value = authoring.StiffnessConstant
                 });
 
-                AddComponent(entity, new AirCellBehaviorFlags
+                AddComponent(entity, new AirCellBehaviourFlags
                 {
                     AirCellObjects = authoring.AirCellObjects,
                     TerrainAtSeaLevel = authoring.TerrainAtSeaLevel,
@@ -229,15 +253,25 @@ namespace Mesocyclone
 
                 AddComponent(entity, new AirCellBounds
                 {
-                    AirCellsBounds = authoring.AirCellsBounds 
+                    Value = authoring.AirCellBounds
                 });
+
+                DependsOn(authoring.CubeEnity);
+                Entity cube = GetEntity(authoring.CubeEnity, TransformUsageFlags.Dynamic);
 
                 AddComponent(entity, new AirCellSimulationConfig
                 {
                     TimeScale = authoring.TimeScale,
                     DistanceScale = authoring.DistanceScale,
-                    GravityScale = authoring.GravityScale
+                    GravityScale = authoring.GravityScale,
+                    CubeEntity = cube
                 });
+
+                AddComponent(entity, new AirCellInNeedOfSpawnPlz());
+
+                // ye so apperently order matters here
+                // one of my least favorite things abt programming -.-
+                InverseDistanceWeighting.FollowDrone = IsComponentEnabled<FollowDrone>(entity);
             }
         }
     }
