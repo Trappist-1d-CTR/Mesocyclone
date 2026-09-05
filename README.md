@@ -21,7 +21,7 @@ And ofc a _**special thanks**_ to several others such as:
 * **Random -** guidance on UI and UX
 * **Cup of Jo -** for the amazing music
 * **GamerGleb -** for moderating our server and its shenanigans
-* **Playtesters -** the bread, Random, Nix
+* **Playtesters -** the bread, Random, Nix, Distinct/Nazbok
 * **fnuecke -** for their fullscreen script
 * **jedjoud10 -** for their Voxel Terrain package for DOTS
 * **Code Monkey -** for their various C# libs
