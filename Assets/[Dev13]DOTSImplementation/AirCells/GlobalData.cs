@@ -225,6 +225,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
         {
             return GlobalData.Data.Gale.AtmPressure * math.exp(-GlobalData.Data.Gale.SurfGravity * GlobalData.Data.Gale.AtmMM * Height / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp));
         }
+        
         [BurstCompile]
         public static float DensityAtHeight(float Height)
         {

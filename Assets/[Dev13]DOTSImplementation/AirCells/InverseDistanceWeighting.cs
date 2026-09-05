@@ -2,6 +2,11 @@ using System;
 using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
+using Unity.Burst;
+using UnityEngine.Burst;
+
+// fuck you
+#pragma warning disable CA2211
 
 namespace Mesocyclone
 {
@@ -21,21 +26,25 @@ namespace Mesocyclone
         public static NativeArray<float> Values { get; private set; }
         private static bool LockValues;
 
+        [BurstCompile]
         public static void IntializeIndicesNative()
         {
-            Indices = new(Allocator.Temp); // way too lazy to manually dispose of this
+            Indices = new(Allocator.Temp); // wayy too lazy to manually dispose of this
         }
 
+        [BurstCompile]
         public static void DronePosition(float3 position)
         {
             Query = FollowDrone ? new float3(0, position.y, 0) : position;
         }
 
+        [BurstCompile]
         public static void Add(int index)
         {
             Indices.Add(index);
         }
 
+        [BurstCompile]
         public static void Remove(int index)
         {
             if (Indices.Count is 1)
@@ -45,6 +54,7 @@ namespace Mesocyclone
             Indices.Remove(index);
         }
 
+        [BurstCompile]
         public static void BeginInterpolation()
         {
             SUM_wu = new(6, Allocator.Temp, NativeArrayOptions.ClearMemory);
@@ -59,6 +69,7 @@ namespace Mesocyclone
             LockValues = false;
         }
 
+        [BurstCompile]
         public static void InterpolationStep(float3 xi, NativeArray<float> u)
         {
             if (R is 0)
@@ -89,6 +100,7 @@ namespace Mesocyclone
             }
         }
 
+        [BurstCompile]
         public static bool BroadcastInterpolation(bool terrainAlreadyInterpolated)
         {
             if (SUM_w is 0)
@@ -112,6 +124,7 @@ namespace Mesocyclone
             return true;
         }
 
+        [BurstCompile]
         public static void GetClosestCell(NativeArray<float> u)
         {
             if (!LockValues)
@@ -119,3 +132,5 @@ namespace Mesocyclone
         }
     }
 }
+
+#pragma warning restore CA2211

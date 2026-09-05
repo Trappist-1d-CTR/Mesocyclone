@@ -3,6 +3,7 @@ using System.ComponentModel;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Collections;
 using Mesocyclone.Data;
 
 // this class contains all the components for an air cell
@@ -44,7 +45,6 @@ namespace Mesocyclone
         public bool AirCellObjects;
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
-        public bool CellsInstantiated;
     }
 
     // this component is turned either on or off
@@ -91,7 +91,8 @@ namespace Mesocyclone
         public NativeList<float3> CellRepulsion;
     }
 
-    // we'll c how this will work
+    // flag that marks that the cell needs to be initialized
+    // pretty obvious
     public struct AirCellNeedsInitialization : IComponentData
     { }
 
@@ -145,7 +146,6 @@ namespace Mesocyclone
         public bool AirCellObjects;
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
-        public bool CellsInstantiated;
         public bool FollowDrone;
 
         [Header("Grouping")]
@@ -211,7 +211,6 @@ namespace Mesocyclone
                     AirCellObjects = authoring.AirCellObjects,
                     TerrainAtSeaLevel = authoring.TerrainAtSeaLevel,
                     InterpolationWithTerrain = authoring.InterpolationWithTerrain,
-                    CellsInstantiated = authoring.CellsInstantiated
                 });
 
                 AddComponent(entity, new FollowDrone());

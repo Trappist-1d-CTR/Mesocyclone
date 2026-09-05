@@ -196,12 +196,14 @@ namespace Mesocyclone.Deprecated
 
                     //while (AirCellGroup[i].Accumulator >= interval) { }
 
+                    /*
                     if (i == 0)
                     {
-                        //Debug.Log("");
-                        //Debug.Log("Velocity: " + AirCellGroup[i].Velocity);
-                        //Debug.Log("Acceleration: " + AirCellGroup[i].Acceleration);
+                        Debug.Log("");
+                        Debug.Log("Velocity: " + AirCellGroup[i].Velocity);
+                        Debug.Log("Acceleration: " + AirCellGroup[i].Acceleration);
                     }
+                    */
 
                     DebugEverything(i);
 
