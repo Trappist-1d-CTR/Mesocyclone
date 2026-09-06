@@ -3,87 +3,88 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Burst;
-using UnityEngine.Burst;
 
 // fuck you
-#pragma warning disable CA2211
+//#pragma warning disable CA2211
+//wut?... not getting any CA2211 errors btw </3
 
-namespace Mesocyclone
+namespace Mesocyclone.MesoDOTS
 {
+    [BurstCompile]
     // the DOTS compatable version
-    public static class InverseDistanceWeighting
+    public class InverseDistanceWeighting
     {
-        public static float R = 1000;
-        public static float3 Query;
-        public static NativeList<int> Indices;
-        public static int LastIndex;
+        public static InverseDistanceWeighting Instance { get; private set; }
+        public InverseDistanceWeighting()
+        {
+            Instance = this;
+        }
 
-        public static NativeArray<float> SUM_wu;
-        public static float SUM_w;
+        public float R = 1000;
+        public float3 Query;
+        public readonly NativeList<int> Indices = new(Allocator.Persistent); // wayy too lazy to manually dispose of this  Astraa: NUH UH!
 
-        public static bool FollowDrone;
+        public NativeArray<float> SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        public float SUM_w;
 
-        public static NativeArray<float> Values { get; private set; }
-        private static bool LockValues;
+        public bool FollowDrone;
+
+        public NativeArray<float> Values { get; private set; }
+        private bool LockValues;
 
         [BurstCompile]
-        public static void IntializeIndicesNative()
+        public void IntializeIndicesNative()
         {
-            Indices = new(Allocator.Temp); // wayy too lazy to manually dispose of this
+            
         }
 
         [BurstCompile]
-        public static void DronePosition(float3 position)
+        public void DronePosition(in float3 position)
         {
             Query = FollowDrone ? new float3(0, position.y, 0) : position;
         }
 
         [BurstCompile]
-        public static void Add(int index)
+        public void Add(int index)
         {
             Indices.Add(index);
         }
 
         [BurstCompile]
-        public static void Remove(int index)
+        public void Remove(int index)
         {
-            if (Indices.Count is 1)
-            {
-                LastIndex = index;
-            }
-            Indices.Remove(index);
+            Indices.RemoveAt(index);
         }
 
         [BurstCompile]
-        public static void BeginInterpolation()
+        public void BeginInterpolation()
         {
-            SUM_wu = new(6, Allocator.Temp, NativeArrayOptions.ClearMemory);
             SUM_wu[0] = 0f;
             SUM_wu[1] = 0f;
             SUM_wu[2] = 0f;
             SUM_wu[3] = 0f;
             SUM_wu[4] = 0f;
-            SUM_wu[5] = 0f; 
+            SUM_wu[5] = 0f;
 
             SUM_w = 0;
             LockValues = false;
         }
 
         [BurstCompile]
-        public static void InterpolationStep(float3 xi, NativeArray<float> u)
+        public void InterpolationStep(in float3 xi, in NativeArray<float> u)
         {
             if (R is 0)
                 throw new InvalidOperationException("Interpolation step attempt with no radius");
             
             if (!LockValues)
             {
-                float d = float3.Distance(Query, xi);
+                float3 diff = Query - xi;
+                float d = math.sqrt(math.square(diff.x) + math.square(diff.y) + math.square(diff.z));
 
                 if (d is 0)
                 {
-                    Values = new(Allocator.Temp, NativeArrayOptions.ClearMemory);
+                    //Values = new(u.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);  wait, why do you even need this if you just set it to 'u' immediately after?
                     Values = u;
-
                     LockValues = true;
 
                     return;
@@ -101,31 +102,34 @@ namespace Mesocyclone
         }
 
         [BurstCompile]
-        public static bool BroadcastInterpolation(bool terrainAlreadyInterpolated)
+        public bool BroadcastInterpolation(bool terrainAlreadyInterpolated)
         {
             if (SUM_w is 0)
                 return false;
             
             if (!LockValues)
             {
-                Values = new(SUM_wu.Length, Allocator.Temp, NativeArrayOptions.ClearMemory);
+                NativeArray<float> vals = new(SUM_wu.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
 
                 for (int i = 0; i < SUM_wu.Length; i++)
-                    Values[i] = SUM_wu[i] / SUM_w;
+                    vals[i] = SUM_wu[i] / SUM_w;
                 
                 if (!terrainAlreadyInterpolated && Query.y < 10)
                 {
-                    Values[0] *= Query.y / 10f;
-                    Values[1] *= Query.y / 10f;
-                    Values[3] *= Query.y / 10f;
+                    vals[0] *= Query.y / 10f;
+                    vals[1] *= Query.y / 10f;
+                    vals[2] *= Query.y / 10f;
                 }
+
+                Values = vals;
+                vals.Dispose();
             }
 
             return true;
         }
 
         [BurstCompile]
-        public static void GetClosestCell(NativeArray<float> u)
+        public void GetClosestCell(in NativeArray<float> u)
         {
             if (!LockValues)
                 Values = u;

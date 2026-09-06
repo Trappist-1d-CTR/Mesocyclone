@@ -218,6 +218,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
     // oh mb astraa i thought u meant it had static functions and not only had
     // anyways, you implement ISystem if you're gonna query components
     // and this shouldn't have worked because you need to implement functions such as OnUpdate(ref GameState)
+    [BurstCompile]
     public class GlobalCalc
     {
         [BurstCompile]

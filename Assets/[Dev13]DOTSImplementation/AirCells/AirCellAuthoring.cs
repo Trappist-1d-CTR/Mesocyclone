@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.ComponentModel;
 using UnityEngine;
@@ -10,7 +11,7 @@ using Mesocyclone.Data;
 // alongside the authoring component that prefab has attached to automatically bind
 // all the ECS components
 
-namespace Mesocyclone
+namespace Mesocyclone.MesoDOTS
 {
     #region ECS Component Data
 
@@ -59,7 +60,7 @@ namespace Mesocyclone
 
     // entity sampled from the simulation singleton prefab
     [InternalBufferCapacity(30)] // arbitrary value
-    public struct AirCellGroupMember : IComponentData
+    public struct AirCellGroupMember : IBufferElementData
     {
         public Entity Value;
     }
@@ -68,8 +69,7 @@ namespace Mesocyclone
     public struct AirCellLocalEnvironment : IComponentData
     {
         public float AverageLocalTemp;
-        public float AverageLocalWind;
-        public float LocalLatitude;
+        public float3 AverageLocalWind;
         public float AmbientHeat;
     }
 
@@ -88,7 +88,7 @@ namespace Mesocyclone
         public NativeArray<float> PrevStatVolume;
         public NativeArray<float> DynVolume;
         public NativeArray<float> PrevDynVolume;
-        public NativeList<float3> CellRepulsion;
+        public NativeArray<float3> CellRepulsion;
     }
 
     // flag that marks that the cell needs to be initialized
@@ -107,7 +107,7 @@ namespace Mesocyclone
         public float GravityScale;
         public float3 DronePosition;
         public float CdTest;
-        public NativeList<float3> StartingGrid;
+        public NativeArray<float3> StartingGrid;
         public float MoleTest;
         public float TempTest;
         public float3 VelTest;
@@ -166,7 +166,7 @@ namespace Mesocyclone
         public float[] PrevStatVolume;
         public float[] DynVolume;
         public float[] PrevDynVolume;
-        public List<Vector3> CellRepulsion = new();
+        public NativeArray<float3> CellRepulsion = new();
 
 
         #region Baker
@@ -226,18 +226,17 @@ namespace Mesocyclone
                 {
                     AverageLocalTemp = authoring.AverageLocalTemp,
                     AverageLocalWind = authoring.AverageLocalWind,
-                    LocalLatitude = authoring.LocalLatitude,
                     AmbientHeat = authoring.AmbientHeat
                 });
 
                 AddComponent(entity, new AirCellOptimization
                 {
-                    StaticPressure = authoring.StaticPressure,
-                    Temp = authoring.Temp,
-                    PrevStatVolume = authoring.PrevDynVolume,
-                    DynVolume = authoring.DynVolume,
-                    PrevDynVolume = authoring.PrevDynVolume,
-                    CellRepulsion = authoring.CellRepulsion
+                    StaticPressure = new NativeArray<float>(authoring.StaticPressure, Allocator.Temp),
+                    Temp = new NativeArray<float>(authoring.Temp, Allocator.Temp),
+                    PrevStatVolume = new NativeArray<float>(authoring.PrevStatVolume, Allocator.Temp),
+                    DynVolume = new NativeArray<float>(authoring.DynVolume, Allocator.Temp),
+                    PrevDynVolume = new NativeArray<float>(authoring.PrevDynVolume, Allocator.Temp),
+                    CellRepulsion = new NativeArray<float3>(authoring.CellRepulsion, Allocator.Temp)
                 });
 
                 AddComponent(entity, new AirCellBounds

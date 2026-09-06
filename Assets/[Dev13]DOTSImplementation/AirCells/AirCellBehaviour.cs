@@ -15,13 +15,12 @@ using Mesocyclone.Data;
 
 // systems for the behaviour of air cell entities
 
-namespace Mesocyclone
+namespace Mesocyclone.MesoDOTS
 {
-    [BurstCompile]
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))] // make it every fixed time step
-    public partial struct AirCellBehaviour : ISystem
+    public partial struct AirCellManager : ISystem
     {
-        private ComponentLookup<Aircell> _airCellLookup;
+        private ComponentLookup<AirCell> _airCellLookup;
         private ComponentLookup<AirCellGeometry> _geoLookup;
         private ComponentLookup<AirCellOptimization> _somLookup;
 
@@ -31,6 +30,8 @@ namespace Mesocyclone
             _geoLookup = state.GetComponentLookup<AirCellGeometry>();
             _somLookup = state.GetComponentLookup<AirCellOptimization>();
 
+            _ = new InverseDistanceWeighting();
+
             // system only starts updating if there's an entity with this component
             state.RequireForUpdate<AirCell>();
         }
@@ -38,14 +39,14 @@ namespace Mesocyclone
         public void OnUpdate(ref SystemState state)
         {
             var sim = SystemAPI.GetSingletonRW<AirCellSimulation>();
-            float dt = SystemAPI.Time.DeltaTime * sim.TimeScale;
+            float dt = SystemAPI.Time.DeltaTime * sim.ValueRO.TimeScale;
 
             _airCellLookup.Update(ref state);
 
             state.Dependency = new AirCellUpdateJob
             {
                 FixedDeltaTime = dt,
-                sim = sim,
+                sim = sim.ValueRO,
                 AirCellLookup = _airCellLookup,
                 GeoLookup = _geoLookup,
                 SOMLookup = _somLookup
@@ -53,18 +54,18 @@ namespace Mesocyclone
         }
 
         #region Physics Functions
-
+        [BurstCompile]
         public static void PerformVelocity(ref AirCell cell, float deltaTime)
         {
             cell.CellCenter += cell.Velocity * deltaTime;
         }
-
+        [BurstCompile]
         public static void PerformAcceleration(ref AirCell cell, float3 acc, float deltaTime)
         {
             cell.Acceleration = acc;
             cell.Velocity += cell.Acceleration * deltaTime;
         }
-
+        [BurstCompile]
         public static void AccelerationAlongVelocity(ref AirCell cell, float acc, float deltaTime)
         {
             if (math.lengthsq(cell.Velocity) > 1E-10f)
@@ -79,8 +80,8 @@ namespace Mesocyclone
 
         #region Volume Functions
 
-        // no geo?
-        [BustCompile]
+        // no geo?  we poor af frfr :broken_heart:
+        [BurstCompile]
         public static void SetSizeV(ref AirCellGeometry geo, float v)
         {
             geo.CellStaticVolume = v;
@@ -89,7 +90,7 @@ namespace Mesocyclone
             geo.CellRadius = math.sqrt(geo.CellCircleArea / math.PI);
         }
 
-        [BustCompile]
+        [BurstCompile]
         public static void SetSizeVL(ref AirCellGeometry geo, float v, float l)
         {
             geo.CellStaticVolume = v;
@@ -98,7 +99,7 @@ namespace Mesocyclone
             geo.CellRadius = math.sqrt(geo.CellCircleArea / math.PI);
         }
 
-        [BustCompile]
+        [BurstCompile]
         public static void SetSizeRL(ref AirCellGeometry geo, float r, float l)
         {
             geo.CellRadius = r;
@@ -121,6 +122,7 @@ namespace Mesocyclone
         public ComponentLookup<AirCellGeometry> GeoLookup;
         public ComponentLookup<AirCellOptimization> SOMLookup;
 
+        [BurstCompile]
         private void Execute
         (
             // ref is for Reading and Writing
@@ -171,7 +173,7 @@ namespace Mesocyclone
 
                     #region Insolation
                     memberCell.Temperature = som.Temp[i];
-                    memberCell.Temperature += mem = GlobalData.Data.Gale.Insolation.Evaluate();
+                    memberCell.Temperature += mem = GlobalData.Data.Gale.Insolation;
                     #endregion
 
                     #endregion
@@ -183,7 +185,7 @@ namespace Mesocyclone
 
         #region Debug
 
-        [BustCompile]
+        [BurstCompile]
         [Conditional("DEV")]
         public void DebugEverything
         (
@@ -222,7 +224,7 @@ namespace Mesocyclone
                 if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
                 
-                if (c.CellCenter.y <= -geo.CellHeight / 2f);
+                if (c.CellCenter.y <= -geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
             }
         }

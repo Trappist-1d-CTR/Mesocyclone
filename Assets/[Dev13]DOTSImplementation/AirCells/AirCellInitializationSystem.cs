@@ -1,11 +1,14 @@
+using Unity.Collections;
 using System;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
+using Unity.Transforms;
 using Unity.Jobs;
 using UnityEngine.Jobs;
+using Mesocyclone.Data;
 
-namespace Mesocyclone
+namespace Mesocyclone.MesoDOTS
 {
     [BurstCompile]
     public partial struct AirCellInitializationSystem : ISystem
@@ -18,7 +21,7 @@ namespace Mesocyclone
         public void OnUpdate(ref SystemState state)
         {
             EntityCommandBuffer ECB = new(Allocator.Temp);
-            AirCellSimulation sim = SystemAPI.GetSingletonRW<AirCellSimulation>();
+            RefRW<AirCellSimulation> sim = SystemAPI.GetSingletonRW<AirCellSimulation>();
 
             foreach
             (
@@ -49,7 +52,7 @@ namespace Mesocyclone
                     // iterate through every cell in the buffer
                     for (int i = 0; i < group.ValueRO.CellGroupNumber; i++)
                     {
-                        Entity c = ECB.Instantiate(sim.Prefab);
+                        Entity c = ECB.Instantiate(sim.ValueRO.Prefab);
                         buffer.Add(new AirCellGroupMember
                         {
                             Value = c
@@ -60,7 +63,7 @@ namespace Mesocyclone
                         float b = bounds.ValueRO.Value.x;
                         float h = bounds.ValueRO.Value.y;
 
-                        sim.MoleTest = GlobalData.Data.Gale.AtmPressure * 1000000f * h / (GlobalData.Data.Gale.Radius * GlobalData.Data.Gale.SurfTemp * group.ValueRO.CellGroupNumber);
+                        sim.ValueRW.MoleTest = GlobalData.Data.Gale.AtmPressure * 1000000f * h / (GlobalData.Data.Gale.Radius * GlobalData.Data.Gale.SurfTemp * group.ValueRO.CellGroupNumber);
 
                         float3 InstantiateLocation = new float3
                         {

@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Mathematics;
 using System;
 using System.ComponentModel;
 using UnityEngine;
-using Unity.Entites;
+using Unity.Entities;
 
-namespace Mesocyclone
+namespace Mesocyclone.MesoDOTS
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public class AirCellSimulationAuthoring : MonoBehaviour
@@ -13,7 +16,7 @@ namespace Mesocyclone
         public float GravityScale = 1f;
         public Vector3 DronePosition;
         public float CdTest;
-        public List<Vector3> StartingGrid;
+        public float3[] StartingGrid;
         public float MoleTest;
         public float TempTest;
         public Vector3 VelTest;
@@ -44,7 +47,7 @@ namespace Mesocyclone
                     GravityScale = authoring.GravityScale,
                     DronePosition = authoring.DronePosition,
                     CdTest = authoring.CdTest,
-                    StartingGrid = authoring.StartingGrid,
+                    StartingGrid = new NativeArray<float3>(authoring.StartingGrid, Allocator.Temp),
                     MoleTest = authoring.MoleTest,
                     TempTest = authoring.TempTest,
                     VelTest = authoring.VelTest,
