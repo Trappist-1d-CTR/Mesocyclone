@@ -39,10 +39,12 @@ namespace Mesocyclone
                 count++;
             }
 
-            if (count is 0)
+            if (count == 0)
                 return new Color().linear;
             
             return new Color(r / count, g / count, b / count, a / count).gamma;
         }
+
+        // gotta wait till CoreCLR to have extension blocks to include params :(
     }
 }

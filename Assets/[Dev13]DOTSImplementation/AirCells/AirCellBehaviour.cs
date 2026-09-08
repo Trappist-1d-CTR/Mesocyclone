@@ -18,7 +18,7 @@ using Mesocyclone.Data;
 namespace Mesocyclone.MesoDOTS
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))] // make it every fixed time step
-    public partial struct AirCellManager : ISystem
+    public partial struct AirCellManager : ISystem // okay i guess you could call it a manager instead
     {
         private ComponentLookup<AirCell> _airCellLookup;
         private ComponentLookup<AirCellGeometry> _geoLookup;
@@ -42,6 +42,8 @@ namespace Mesocyclone.MesoDOTS
             float dt = SystemAPI.Time.DeltaTime * sim.ValueRO.TimeScale;
 
             _airCellLookup.Update(ref state);
+            _geoLookup.Update(ref state);
+            _somLookup.Update(ref state);
 
             state.Dependency = new AirCellUpdateJob
             {
@@ -59,12 +61,14 @@ namespace Mesocyclone.MesoDOTS
         {
             cell.CellCenter += cell.Velocity * deltaTime;
         }
+
         [BurstCompile]
         public static void PerformAcceleration(ref AirCell cell, float3 acc, float deltaTime)
         {
             cell.Acceleration = acc;
             cell.Velocity += cell.Acceleration * deltaTime;
         }
+
         [BurstCompile]
         public static void AccelerationAlongVelocity(ref AirCell cell, float acc, float deltaTime)
         {
