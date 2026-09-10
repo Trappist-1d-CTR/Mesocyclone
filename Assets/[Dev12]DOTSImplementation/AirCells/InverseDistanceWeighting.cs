@@ -33,12 +33,6 @@ namespace Mesocyclone.MesoDOTS
         private bool LockValues;
 
         [BurstCompile]
-        public void IntializeIndicesNative()
-        {
-            
-        }
-
-        [BurstCompile]
         public void DronePosition(in float3 position)
         {
             Query = FollowDrone ? new float3(0, position.y, 0) : position;
@@ -57,8 +51,10 @@ namespace Mesocyclone.MesoDOTS
         }
 
         [BurstCompile]
-        public void BeginInterpolation()
+        public void BeginInterpolation(bool followDrone)
         {
+            FollowDrone = followDrone;
+
             SUM_wu[0] = 0f;
             SUM_wu[1] = 0f;
             SUM_wu[2] = 0f;
@@ -105,7 +101,9 @@ namespace Mesocyclone.MesoDOTS
         public bool BroadcastInterpolation(bool terrainAlreadyInterpolated)
         {
             if (SUM_w is 0)
+            {
                 return false;
+            }
             
             if (!LockValues)
             {

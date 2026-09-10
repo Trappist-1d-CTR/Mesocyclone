@@ -231,8 +231,8 @@ namespace Mesocyclone.Deprecated
 
                     DebugEverything(i);
 
-                    #region Radiative Heating/Cooling
-                    mem = (C.GreekS * C.AtmSpecificEmissivity * ((2f * AirCellGroup[i].CellCircleArea) + (2f * UnityEngine.Mathf.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.MathF.Pow(AirCellGroup[i].Temperature, 4f) * dt);
+                    #region Radiative Cooling
+                    mem = -(C.GreekS * C.AtmSpecificEmissivity * ((2f * AirCellGroup[i].CellCircleArea) + (2f * UnityEngine.Mathf.PI * AirCellGroup[i].CellRadius * AirCellGroup[i].CellHeight)) * System.MathF.Pow(AirCellGroup[i].Temperature, 4f) * dt);
 
                     /* 
                     if (i == 0)
@@ -286,7 +286,7 @@ namespace Mesocyclone.Deprecated
                     if (TerrainAtSeaLevel && AirCellGroup[i].CellCenter.y < AirCellGroup[i].CellHeight / 2)
                     {
                         DynVolumeSOM[i] *= 0.5f + (AirCellGroup[i].CellCenter.y / AirCellGroup[i].CellHeight);
-                        AirCellGroup[i].PerformAcceleration((StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.MathF.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[i].Moles * C.GaleAtmMM)) * Vector3.up);
+                        AirCellGroup[i].PerformAcceleration(StaticPressureSOM[i] * AirCellGroup[i].CellCircleArea * (System.MathF.Pow(AirCellGroup[i].CellStaticVolume / DynVolumeSOM[i], (1f + (C.MolarHeatCapacity / C.R))) - 1f) / (AirCellGroup[i].Moles * C.GaleAtmMM) * Vector3.up);
 
                         //if (TempSOM[i] - AirCellGroup[i].Temperature > 1) Debug.Log("Heavy Terrain Rep. Temperature Change [" + i + "] ; SOM = " + TempSOM[i] + " ; Temp = " + AirCellGroup[i].Temperature);
                         //TempSOM[i] = AirCellGroup[i].Temperature;

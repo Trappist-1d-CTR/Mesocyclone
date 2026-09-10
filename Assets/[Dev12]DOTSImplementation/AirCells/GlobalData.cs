@@ -212,6 +212,12 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
             }
 
             public const float StiffK = 0.01f;
+
+            public const float MolarHeatCapacity = 27f;
+
+            public const float AtmSpecificEmissivity = 300f;
+
+            public const float AtmHeatCp = 950.6951f;
         }
     }
 

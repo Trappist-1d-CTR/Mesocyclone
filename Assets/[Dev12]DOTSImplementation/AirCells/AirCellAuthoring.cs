@@ -46,12 +46,8 @@ namespace Mesocyclone.MesoDOTS
         public bool AirCellObjects;
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
+        public bool FollowDrone;
     }
-
-    // this component is turned either on or off
-    // whether the air cell should follow the drone or not
-    public struct FollowDrone : IComponentData, IEnableableComponent
-    { }
 
     public struct AirCellGroup : IComponentData
     {
@@ -211,10 +207,8 @@ namespace Mesocyclone.MesoDOTS
                     AirCellObjects = authoring.AirCellObjects,
                     TerrainAtSeaLevel = authoring.TerrainAtSeaLevel,
                     InterpolationWithTerrain = authoring.InterpolationWithTerrain,
+                    FollowDrone = authoring.FollowDrone
                 });
-
-                AddComponent(entity, new FollowDrone());
-                SetComponentEnabled<FollowDrone>(entity, authoring.FollowDrone);
 
                 AddComponent(entity, new AirCellGroup
                 {
