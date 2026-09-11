@@ -6,10 +6,16 @@ So here's just a little styling guide for how the game is written ig.
 - When we mention a "variable" (which is traditionally used in other languages like python, lua, etc.), we're referring to a field or property. Here, even tho on the technical level is the contrary, a property is closer to field as it's just a field with logic when it's referenced and modified. That's our mindset
 
 camelCase
-* All variables, events, and constants on half bread's part. (*tho to please astraa i sometimes use PascalCase for everything*)
+* All type members on half bread's part. (*tho to please astraa i sometimes use PascalCase for everything*)
 
 PascalCase
-* All variables, events, and constants on Astraa's part. And sometimes will use a blend between PascalCase and snake_case, so don't mind that :P
-* All functions, events, classes, structs, interfaces, enums, extenums, namespaces, etc.
+* All types, *& members on Astraa's part*. And sometimes will use a blend between PascalCase and snake_case, so don't mind that :P
+* half bread also uses this for members just to please Astraa for code they both will work on a lot (like DOTS)
 
-yeah that's pretty much it ._.
+SCREAMING_SNAKE_CASE
+* *sometimes* constants... But usually for constant we use PascalCase
+
+// comments
+* if you want to be able to distinguish between a comment half bread and Astraa made:
+    * half bread puts a space between the marker: `// hello,`.
+    * And Astraa doesn't: `// scugs!!`
