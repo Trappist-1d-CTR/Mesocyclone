@@ -18,4 +18,4 @@ SCREAMING_SNAKE_CASE
 // comments
 * if you want to be able to distinguish between a comment half bread and Astraa made:
     * half bread puts a space between the marker: `// hello,`.
-    * And Astraa doesn't: `// scugs!!`
+    * And Astraa doesn't: `//scugs!!`
