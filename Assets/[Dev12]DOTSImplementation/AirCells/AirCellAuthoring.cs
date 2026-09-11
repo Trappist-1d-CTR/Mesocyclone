@@ -35,85 +35,12 @@ namespace Mesocyclone.MesoDOTS
         public float CellHeight;
     }
 
-    // physical property that defines how resistant it is to deformation
-    public struct AirCellStiffness : IComponentData
-    {
-        public float Value;
-    }
-
-    // self explanatory
-    public struct AirCellBehaviourFlags : IComponentData
-    {
-        public bool AirCellObjects;
-        public bool TerrainAtSeaLevel;
-        public bool InterpolationWithTerrain;
-        public bool FollowDrone;
-    }
-
-    public struct AirCellGroup : IComponentData
-    {
-        public int CellGroupNumber;
-    }
-
-    // entity sampled from the simulation singleton prefab
-    [InternalBufferCapacity(30)] // arbitrary value
-    public struct AirCellGroupMember : IBufferElementData
-    {
-        public Entity Value;
-    }
-
-    // data on the local environment to read off of
-    public struct AirCellLocalEnvironment : IComponentData
-    {
-        public float AverageLocalTemp;
-        public float3 AverageLocalWind;
-        public float AmbientHeat;
-    }
-
-    // the bounds the air cell is restricted to
-    public struct AirCellBounds : IComponentData
-    {
-        public float2 Value;
-    }
-
-    // handles values which change stuff about the logic
-    // for performance
-    public struct AirCellOptimization : IComponentData
-    {
-        public NativeArray<float> StaticPressure;
-        public NativeArray<float> Temp;
-        public NativeArray<float> PrevStatVolume;
-        public NativeArray<float> DynVolume;
-        public NativeArray<float> PrevDynVolume;
-        public NativeList<float3> CellRepulsion;
-    }
-
     // flag that marks that the cell needs to be initialized
     // pretty obvious
     public struct AirCellNeedsInitialization : IComponentData
     { }
 
-
-    // singleton holding values for the general
-    // simulation of air cells
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public struct AirCellSimulation : IComponentData
-    {
-        public float TimeScale;
-        public float DistanceScale;
-        public float GravityScale;
-        public float3 DronePosition;
-        public float CdTest;
-        public NativeArray<float3> StartingGrid;
-        public float MoleTest;
-        public float TempTest;
-        public float3 VelTest;
-        public float3 CenterTest;
-        public Entity Prefab; // the prefab entity to be used for all air cells
-    }
-
     #endregion
-
 
 
     #region Authoring Component
@@ -136,35 +63,6 @@ namespace Mesocyclone.MesoDOTS
         public float CellCircleArea;
         public float CellRadius;
         public float CellHeight;
-
-        [Header("Stiffness")]
-        public float StiffnessConstant = 0.5f;
-
-        [Header("Behaviour Flags")]
-        public bool AirCellObjects;
-        public bool TerrainAtSeaLevel;
-        public bool InterpolationWithTerrain;
-        public bool FollowDrone;
-
-        [Header("Grouping")]
-        public int CellGroupNumber;
-
-        [Header("Environment")]
-        public float AverageLocalTemp;
-        public float AverageLocalWind;
-        public float LocalLatitude;
-        public float AmbientHeat;
-
-        [Header("Bounds")]
-        public Vector2 AirCellBounds;
-
-        [Header("Script Optimization")]
-        public float[] StaticPressure;
-        public float[] Temp;
-        public float[] PrevStatVolume;
-        public float[] DynVolume;
-        public float[] PrevDynVolume;
-        public NativeList<float3> CellRepulsion = new();
 
 
         #region Baker
@@ -198,47 +96,6 @@ namespace Mesocyclone.MesoDOTS
                     CellCircleArea = authoring.CellCircleArea,
                     CellRadius = authoring.CellRadius,
                     CellHeight = authoring.CellHeight
-                });
-
-                AddComponent(entity, new AirCellStiffness
-                {
-                    Value = authoring.StiffnessConstant
-                });
-
-                AddComponent(entity, new AirCellBehaviourFlags
-                {
-                    AirCellObjects = authoring.AirCellObjects,
-                    TerrainAtSeaLevel = authoring.TerrainAtSeaLevel,
-                    InterpolationWithTerrain = authoring.InterpolationWithTerrain,
-                    FollowDrone = authoring.FollowDrone
-                });
-
-                AddComponent(entity, new AirCellGroup
-                {
-                    CellGroupNumber = authoring.CellGroupNumber
-                });
-                AddBuffer<AirCellGroupMember>(entity);
-
-                AddComponent(entity, new AirCellLocalEnvironment
-                {
-                    AverageLocalTemp = authoring.AverageLocalTemp,
-                    AverageLocalWind = authoring.AverageLocalWind,
-                    AmbientHeat = authoring.AmbientHeat
-                });
-
-                AddComponent(entity, new AirCellOptimization
-                {
-                    StaticPressure = new NativeArray<float>(authoring.StaticPressure, Allocator.Temp),
-                    Temp = new NativeArray<float>(authoring.Temp, Allocator.Temp),
-                    PrevStatVolume = new NativeArray<float>(authoring.PrevStatVolume, Allocator.Temp),
-                    DynVolume = new NativeArray<float>(authoring.DynVolume, Allocator.Temp),
-                    PrevDynVolume = new NativeArray<float>(authoring.PrevDynVolume, Allocator.Temp),
-                    CellRepulsion = authoring.CellRepulsion
-                });
-
-                AddComponent(entity, new AirCellBounds
-                {
-                    Value = authoring.AirCellBounds
                 });
 
                 AddComponent(entity, new AirCellNeedsInitialization());

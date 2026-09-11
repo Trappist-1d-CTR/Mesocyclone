@@ -489,7 +489,7 @@ namespace Mesocyclone
             PhysicsPosition = DronePhysics.position;
             Mesocyclone.Deprecated.InverseDistanceWeighting.DronePos(PhysicsPosition);
             if (Air != null) Air.DronePosition = PhysicsPosition;
-            PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
+            PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
             //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
             PhysicsRotation = DronePhysics.rotation;
             PhysicsAngVelocity = DronePhysics.angularVelocity;
@@ -776,7 +776,7 @@ namespace Mesocyclone
 
                 #region Lift
                 Memory = t.up;
-                PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+                PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                 TotLift += Check;
                 //Debug.Log(AoA + " ; " + Check + " ; (" + Vector3.Dot(AirSpeed, t.up) + ", " + Vector3.Dot(AirSpeed, t.right) + ")");
 
@@ -786,7 +786,7 @@ namespace Mesocyclone
 
                 #region Induced Drag
                 Memory = -AirSpeed.normalized;
-                PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+                PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                 TotDrag += Check;
 
                 if (VisualizationMode == VisualizationModeType.LiftDrag)
@@ -795,7 +795,7 @@ namespace Mesocyclone
 
                 #region Torque
 
-                Memory = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
+                Memory = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
                 PhysicsTorque += Check = Vector3.Cross(L - DronePhysics.centerOfMass, Memory);
 
                 //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
@@ -824,7 +824,7 @@ namespace Mesocyclone
 
                     #region Lift
                     Memory = t.up;
-                    PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+                    PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * LiftAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                     TotLift += Check;
 
                     if (VisualizationMode == VisualizationModeType.LiftDrag)
@@ -833,7 +833,7 @@ namespace Mesocyclone
 
                     #region Induced Drag
                     Memory = -AirSpeed.normalized;
-                    PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
+                    PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * InducedDragAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * Memory / DronePhysics.mass;
                     TotDrag += Check;
 
                     if (VisualizationMode == VisualizationModeType.LiftDrag)
@@ -841,7 +841,7 @@ namespace Mesocyclone
                     #endregion
 
                     #region Torque
-                    Memory = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
+                    Memory = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * TorqueAoA[i].Evaluate(AoA) * NetLinker.Parts.DronePartStats[i].Area * AirSpeed.sqrMagnitude * ((i != 7) ? Vector3.up : Vector3.forward);
                     PhysicsTorque += Check = Vector3.Cross(L - DronePhysics.centerOfMass, Memory);
 
                     //if (i == 0) Debug.Log("i=" + i + " ; AoA " + AoA + " => " + Check.z);
@@ -866,7 +866,7 @@ namespace Mesocyclone
             #region Input Controls System (ICS)
 
             CurrentAngles = new Vector3(DataComputer.p, DataComputer.r, DataComputer.y);
-            DynamicPressure = GlobalCalc.DensityAtHeight(PhysicsPosition.y) * AirSpeed.sqrMagnitude;
+            DynamicPressure = GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * AirSpeed.sqrMagnitude;
 
             switch (SASMode)
             {
@@ -1138,21 +1138,21 @@ namespace Mesocyclone
             MainStats s = NetLinker.MainBody.DroneBodyStats[0];
 
             //Forward Drag
-            PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
+            PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.AirBrakesCd : s.FrontCd) * s.FrontArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
             //   UnityEngine.Debug.Log("Wind: " + AirSpeed + "; Forward Drag: " + Check);
 
             Memory = transform.up;
 
             //Vertical Drag
-            PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
+            PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * s.BottomCd * s.BottomArea * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
             //   UnityEngine.Debug.Log("Vertical Drag: " + Check);
 
             Memory = transform.forward;
 
             //Side Drag
-            PhysicsAcceleration += Check = 0.5f * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
+            PhysicsAcceleration += Check = 0.5f * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * (InputControl.FlightControls.AirBrakes.IsPressed() ? s.SideBrakesCd : s.SideCd) * (s.SideArea - (InputControl.FlightControls.AirBrakes.IsPressed() ? NetLinker.Parts.DronePartStats[7].Area : 0)) * Mathf.Pow(Vector3.Dot(AirSpeed, Memory), 2) * Mathf.Sign(Vector3.Dot(AirSpeed, Memory)) * Memory / DronePhysics.mass;
             TotDrag += Check;
             //   UnityEngine.Debug.Log("Side Drag: " + Check);
 
@@ -1342,7 +1342,7 @@ namespace Mesocyclone
             Mesocyclone.Deprecated.InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = ResetTransform.position + (1.3f * Vector3.up);
             PhysicsVelocity = DronePhysics.linearVelocity = Vector3.zero;
             if (Air != null) Air.DronePosition = PhysicsPosition;
-            PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalc.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
+            PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
             PhysicsRotation = DronePhysics.rotation = Quaternion.Euler(0f, 0f, 0f);
             PhysicsAngVelocity = DronePhysics.angularVelocity = Vector3.zero;
             PhysicsTorque = Vector3.zero;

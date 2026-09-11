@@ -239,4 +239,17 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
             return GlobalData.Data.Gale.AtmSurfDensity * math.exp(-GlobalData.Data.Gale.SurfGravity * GlobalData.Data.Gale.AtmMM * Height / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp));
         }
     }
+
+    public class GlobalCalcGO
+    {
+        public static float StaticPressureAtHeight(float Height)
+        {
+            return GlobalData.Data.Gale.AtmPressure * math.exp(-GlobalData.Data.Gale.SurfGravity * GlobalData.Data.Gale.AtmMM * Height / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp));
+        }
+
+        public static float DensityAtHeight(float Height)
+        {
+            return GlobalData.Data.Gale.AtmSurfDensity * math.exp(-GlobalData.Data.Gale.SurfGravity * GlobalData.Data.Gale.AtmMM * Height / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp));
+        }
+    }
 }

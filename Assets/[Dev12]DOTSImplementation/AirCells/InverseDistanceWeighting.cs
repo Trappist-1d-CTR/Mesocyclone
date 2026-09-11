@@ -74,7 +74,7 @@ namespace Mesocyclone.MesoDOTS
         {
             if (R is 0)
                 throw new InvalidOperationException("Interpolation step attempt with no radius");
-            
+
             if (!LockValues)
             {
                 float3 diff = Query - xi;
@@ -108,14 +108,14 @@ namespace Mesocyclone.MesoDOTS
             {
                 return false;
             }
-            
+
             if (!LockValues)
             {
                 NativeArray<float> vals = new(SUM_wu.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
 
                 for (int i = 0; i < SUM_wu.Length; i++)
                     vals[i] = SUM_wu[i] / SUM_w;
-                
+
                 if (!terrainAlreadyInterpolated && Query.y < 10)
                 {
                     vals[0] *= Query.y / 10f;
@@ -141,5 +141,3 @@ namespace Mesocyclone.MesoDOTS
         }
     }
 }
-
-#pragma warning restore CA2211
