@@ -18,6 +18,7 @@ namespace Mesocyclone.MesoDOTS
     // base component for all air cells
     public struct AirCell : IComponentData
     {
+        public int ID;
         public float3 CellCenter;
         public float Moles;
         public float Temperature;
@@ -84,7 +85,7 @@ namespace Mesocyclone.MesoDOTS
         public NativeArray<float> PrevStatVolume;
         public NativeArray<float> DynVolume;
         public NativeArray<float> PrevDynVolume;
-        public NativeArray<float3> CellRepulsion;
+        public NativeList<float3> CellRepulsion;
     }
 
     // flag that marks that the cell needs to be initialized
@@ -123,6 +124,7 @@ namespace Mesocyclone.MesoDOTS
     public class AirCellAuthoring : MonoBehaviour
     {
         [Header("Main")]
+        public int CellID;
         public Vector3 CellCenter;
         public float Moles = 1000f;
         public float Temperature = 300f;
@@ -162,7 +164,7 @@ namespace Mesocyclone.MesoDOTS
         public float[] PrevStatVolume;
         public float[] DynVolume;
         public float[] PrevDynVolume;
-        public NativeArray<float3> CellRepulsion = new();
+        public NativeList<float3> CellRepulsion = new();
 
 
         #region Baker
@@ -182,6 +184,7 @@ namespace Mesocyclone.MesoDOTS
 
                 AddComponent(entity, new AirCell
                 {
+                    ID = authoring.CellID,
                     CellCenter = authoring.CellCenter,
                     Moles = authoring.Moles,
                     Temperature = authoring.Temperature,
@@ -230,7 +233,7 @@ namespace Mesocyclone.MesoDOTS
                     PrevStatVolume = new NativeArray<float>(authoring.PrevStatVolume, Allocator.Temp),
                     DynVolume = new NativeArray<float>(authoring.DynVolume, Allocator.Temp),
                     PrevDynVolume = new NativeArray<float>(authoring.PrevDynVolume, Allocator.Temp),
-                    CellRepulsion = new NativeArray<float3>(authoring.CellRepulsion, Allocator.Temp)
+                    CellRepulsion = authoring.CellRepulsion
                 });
 
                 AddComponent(entity, new AirCellBounds

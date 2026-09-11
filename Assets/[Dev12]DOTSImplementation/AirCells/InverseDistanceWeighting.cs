@@ -1,8 +1,8 @@
 using System;
-using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Burst;
+using Unity.Entities;
 
 // fuck you
 //#pragma warning disable CA2211
@@ -12,25 +12,28 @@ namespace Mesocyclone.MesoDOTS
 {
     [BurstCompile]
     // the DOTS compatable version
-    public class InverseDistanceWeighting
+    public struct InverseDistanceWeighting : IComponentData
     {
-        public static InverseDistanceWeighting Instance { get; private set; }
-        public InverseDistanceWeighting()
-        {
-            Instance = this;
-        }
-
-        public float R = 1000;
+        public float R;
         public float3 Query;
-        public readonly NativeList<int> Indices = new(Allocator.Persistent); // wayy too lazy to manually dispose of this  Astraa: NUH UH!
-
-        public NativeArray<float> SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        public readonly NativeList<int> Indices;
+        public NativeArray<float> SUM_wu;
         public float SUM_w;
-
         public bool FollowDrone;
-
-        public NativeArray<float> Values { get; private set; }
+        public NativeArray<float> Values;
         private bool LockValues;
+
+        public InverseDistanceWeighting(bool ParameterToMakeTheCompilerHappy)
+        {
+            R = 1000;
+            Query = float3.zero;
+            Indices = new(Allocator.Persistent); // wayy too lazy to manually dispose of this  Astraa: NUH UH!
+            SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            SUM_w = 0;
+            FollowDrone = false;
+            LockValues = false;
+            Values = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        }
 
         [BurstCompile]
         public void DronePosition(in float3 position)
@@ -80,7 +83,8 @@ namespace Mesocyclone.MesoDOTS
                 if (d is 0)
                 {
                     //Values = new(u.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);  wait, why do you even need this if you just set it to 'u' immediately after?
-                    Values = u;
+                    Values.Dispose();
+                    Values = new(u, Allocator.Persistent);
                     LockValues = true;
 
                     return;
@@ -130,7 +134,10 @@ namespace Mesocyclone.MesoDOTS
         public void GetClosestCell(in NativeArray<float> u)
         {
             if (!LockValues)
-                Values = u;
+            {
+                Values.Dispose();
+                Values = new(u, Allocator.Persistent);
+            }
         }
     }
 }

@@ -19,20 +19,31 @@ using Mesocyclone.Data;
 
 namespace Mesocyclone.MesoDOTS
 {
+    [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))] // make it every fixed time step
     public partial struct AirCellManager : ISystem
     {
         private ComponentLookup<AirCell> _airCellLookup;
         private ComponentLookup<AirCellGeometry> _geoLookup;
         private ComponentLookup<AirCellOptimization> _somLookup;
+        private EntityQuery AirCellQuery;
+
+        private PhysicsWorldSingleton physicsWorld;
+        public InverseDistanceWeighting interpolation;
 
         public void OnCreate(ref SystemState state)
         {
+            //Get Lookups
             _airCellLookup = state.GetComponentLookup<AirCell>();
             _geoLookup = state.GetComponentLookup<AirCellGeometry>();
             _somLookup = state.GetComponentLookup<AirCellOptimization>();
 
-            _ = new InverseDistanceWeighting();
+            //Get Singeltons
+            physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
+            interpolation = new(true);
+
+            //Get Air Cell Query
+            AirCellQuery = state.GetEntityQuery(ComponentType.ReadWrite<LocalTransform>(), ComponentType.ReadWrite<AirCell>(), ComponentType.ReadWrite<AirCellGeometry>());
 
             // system only starts updating if there's an entity with this component
             state.RequireForUpdate<AirCell>();
@@ -41,18 +52,29 @@ namespace Mesocyclone.MesoDOTS
         public void OnUpdate(ref SystemState state)
         {
             var sim = SystemAPI.GetSingletonRW<AirCellSimulation>();
+            var group = SystemAPI.GetSingletonRW<AirCellGroup>();
+            var env = SystemAPI.GetSingletonRW<AirCellLocalEnvironment>();
+            var som = SystemAPI.GetSingletonRW<AirCellOptimization>();
+            var flags = SystemAPI.GetSingletonRW<AirCellBehaviourFlags>();
+            var bounds = SystemAPI.GetSingletonRW<AirCellBounds>();
+
             float dt = SystemAPI.Time.DeltaTime * sim.ValueRO.TimeScale;
 
             _airCellLookup.Update(ref state);
 
-            state.Dependency = new AirCellUpdateJob
+            state.Dependency = new AirCellPhysics1Job
             {
                 FixedDeltaTime = dt,
-                sim = sim.ValueRO,
+                sim = (RefRO<AirCellSimulation>)sim,
+                group = (RefRO<AirCellGroup>)group,
+                env = env,
+                som = som,
+                physicsWorld = physicsWorld,
+                flags = (RefRO<AirCellBehaviourFlags>)flags,
+                bounds = (RefRO<AirCellBounds>)bounds,
                 AirCellLookup = _airCellLookup,
-                GeoLookup = _geoLookup,
-                SOMLookup = _somLookup
-            }.ScheduleParallel(state.Dependency);
+                GeoLookup = _geoLookup
+            }.ScheduleParallel(AirCellQuery, state.Dependency);
         }
 
         #region Physics Functions
@@ -113,16 +135,16 @@ namespace Mesocyclone.MesoDOTS
         #endregion
     }
 
-    // actual update logic for the air cells
     [BurstCompile]
-    public partial struct AirCellUpdateJob : IJobEntity
+    public partial struct AirCellValuesSetupJob : IJobEntity
     {
         public float FixedDeltaTime;
-        public AirCellSimulation sim;
+        public RefRO<AirCellGroup> group;
+        public RefRW<AirCellLocalEnvironment> env;
+        public RefRW<AirCellOptimization> som;
 
         public ComponentLookup<AirCell> AirCellLookup;
         public ComponentLookup<AirCellGeometry> GeoLookup;
-        public ComponentLookup<AirCellOptimization> SOMLookup;
 
         [BurstCompile]
         private void Execute
@@ -132,348 +154,78 @@ namespace Mesocyclone.MesoDOTS
             ref LocalTransform transform,
             ref AirCell cell,
             ref AirCellGeometry geo,
-            ref AirCellSimulation sim,
-            ref AirCellGroup group,
-            ref AirCellLocalEnvironment env,
-            ref AirCellOptimization som,
-            in PhysicsWorldSingleton physicsWorld,
-            in AirCellBehaviourFlags flags,
-            in AirCellBounds bounds,
             in DynamicBuffer<AirCellGroupMember> buffer
         )
         {
-            if (sim.TimeScale == 0f)
-                return;
-            
-            env.AverageLocalTemp = 0;
-            env.AverageLocalWind = float3.zero;
+            // only lads with true ball know this is not the original
+            //double mem; // ...he glazes afar into the distance, as he realizes he is amongst the only double left...
+            float mem; // nevermind
 
-            // we do all this cuz we need to scan the surrounding entities with air cell components
-            for (int i = 0; i < group.CellGroupNumber; i++)
-            {
-                Entity member = buffer[i].Value;
+            #region Values Setup
 
-                if (AirCellLookup.TryGetComponent(member, out AirCell memberCell))
-                {
-                    // only lads with true ball know this is not the original
-                    //double mem; // ...he glazes afar into the distance, as he realizes he is amongst the only double left...
-                    float mem; // nevermind
+            #region Average Local Values
 
-                    #region Average Local Values
+            env.ValueRW.AverageLocalTemp += cell.Temperature / group.ValueRO.CellGroupNumber;
+            env.ValueRW.AverageLocalWind += cell.Temperature / group.ValueRO.CellGroupNumber;
 
-                    env.AverageLocalTemp += memberCell.Temperature / group.CellGroupNumber;
-                    env.AverageLocalWind += memberCell.Temperature / group.CellGroupNumber;
-
-                    #endregion
-
-                    #region Values Setup
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Calculate Static Pressure
-                    som.StaticPressure[i] = GlobalCalc.StaticPressureAtHeight(memberCell.CellCenter.y);
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Insolation
-                    memberCell.Temperature = som.Temp[i];
-                    memberCell.Temperature += mem = GlobalData.Data.Gale.Insolation * geo.CellCircleArea / (GlobalData.Data.AtmHeatCp * GlobalData.Data.Gale.AtmMM * memberCell.Moles) * FixedDeltaTime;
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Radiative Heating/Cooling
-                    mem = -GlobalData.Const.StefBoltz * GlobalData.Data.AtmSpecificEmissivity * ((2f * geo.CellCircleArea) + (2f * math.PI * geo.CellRadius * geo.CellHeight)) * System.MathF.Pow(memberCell.Temperature - env.AverageLocalTemp, 4f) * FixedDeltaTime;
-                    memberCell.Temperature += mem;
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #endregion
-
-                    #region Air Cell Physics
-
-                    #region Calculate Static Volume
-                    AirCellManager.SetSizeV(ref geo, memberCell.Moles * GlobalData.Const.R * memberCell.Temperature / som.StaticPressure[i]);
-                    if (som.PrevStatVolume[i] == 0) som.PrevStatVolume[i] = geo.CellStaticVolume;
-                    som.DynVolume[i] = geo.CellStaticVolume;
-                    #endregion
-
-                    #region Static Adiabatic Temperature Changes
-                    memberCell.Temperature *= math.pow(som.PrevStatVolume[i] / geo.CellStaticVolume, GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
-                    som.PrevStatVolume[i] = geo.CellStaticVolume;
-                    /*
-                    if (math.abs(som.Temp[i] - memberCell.Temperature) > 10)
-                    {
-                        UnityEngine.Debug.Log("Heavy Abiatic Temperature Change [" + i + "] ; SOM = " + TempSOM[i] + " ; Temp = " + AirCellGroup[i].Temperature);
-                    }*/
-
-                    som.Temp[i] = memberCell.Temperature;
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Air Cell Terrain Repulsion
-                    if (flags.TerrainAtSeaLevel && memberCell.CellCenter.y < geo.CellHeight / 2f)
-                    {
-                        som.DynVolume[i] *= 0.5f + (memberCell.CellCenter.y / geo.CellHeight);
-                        AirCellManager.PerformAcceleration(ref memberCell, new float3(0, som.StaticPressure[i] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.DynVolume[i], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (memberCell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
-                    }
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Perform Gravity and Buoyancy
-                    AirCellManager.PerformAcceleration(ref memberCell, new float3(0, GlobalData.Data.Gale.SurfGravity * ((memberCell.Temperature / env.AverageLocalTemp) - 1f), 0), FixedDeltaTime);
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Perform Air Cell Drag
-                    AirCellManager.PerformAcceleration(ref memberCell, new float3(sim.CdTest * math.pow(memberCell.Velocity.x - env.AverageLocalWind.x, 2f) / (4f * geo.CellRadius), sim.CdTest * math.pow(memberCell.Velocity.y - env.AverageLocalWind.y, 2f) / (2f * geo.CellHeight), sim.CdTest * math.pow(memberCell.Velocity.z - env.AverageLocalWind.z, 2f) / (4f * geo.CellRadius)), FixedDeltaTime);
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Check for Terrain Collision - to do: improve with bouncing
-                    if (memberCell.CellCenter.y <= (-geo.CellHeight / 2f))
-                    {
-                        memberCell.CellCenter = new float3(memberCell.CellCenter.x, -geo.CellHeight / 2f + 0.2f, memberCell.CellCenter.z);
-                    }
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Keep Within Boundaries - note: for testing purposes
-
-                    if (math.abs(memberCell.CellCenter.x) >= (bounds.Value.x / 2) + 0.1f)
-                    {
-                        memberCell.Velocity += new float3(-math.sign(memberCell.CellCenter.x) * 50f * FixedDeltaTime, 0f, 0f);
-                    }
-
-                    if (math.abs(memberCell.CellCenter.z) >= (bounds.Value.x / 2))
-                    {
-                        memberCell.Velocity += new float3(0, 0, -math.sign(memberCell.CellCenter.z) * 50f * FixedDeltaTime);
-                    }
-
-                    if (memberCell.CellCenter.y >= bounds.Value.y + 0.1)
-                    {
-                        memberCell.Velocity += new float3(0, -math.sign(memberCell.CellCenter.y) * 50 * FixedDeltaTime, 0);
-                    }
-
-                    #endregion
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #endregion
-
-                    #region Inter-Cell Repulsion
-                    som.CellRepulsion = new NativeArray<float3>();
-                    float d, r1, r2, d1, d2, A, h;
-
-                    for (int i2 = i + 1; i2 < group.CellGroupNumber; i2++)
-                    {
-                        Entity member2 = buffer[i2].Value;
-                        if (AirCellLookup.TryGetComponent(member2, out AirCell member2Cell) && GeoLookup.TryGetComponent(member2, out AirCellGeometry geo2))
-                        {
-                            #region Check For and Calculate Overlaps
-                            d = SafeValue(math.sqrt(math.square(memberCell.CellCenter.x - member2Cell.CellCenter.x) +
-                                math.square(memberCell.CellCenter.z - member2Cell.CellCenter.z)));
-
-                            if ((h = math.abs(memberCell.CellCenter.y - member2Cell.CellCenter.y)) < (geo.CellHeight + geo2.CellHeight) / 2f && 
-                                d < (geo.CellRadius + geo2.CellRadius))
-                            {
-                                #region Cell Overlap Calculations
-
-                                r1 = math.max(geo.CellRadius, geo2.CellRadius);
-                                r2 = math.min(geo.CellRadius, geo2.CellRadius);
-
-                                h = math.abs(h - ((geo.CellHeight + geo2.CellHeight) / 2f));
-
-                                d1 = (math.square(r1) - math.square(r2) + math.square(d)) / (2 * d);
-                                d2 = d - d1;
-
-                                A = (math.square(r1) * math.acos(d1 / r1)) - (d1 * math.sqrt(math.square(r1) - math.square(d1))) + 
-                                    (math.square(r2) * math.acos(d2 / r2)) - (d2 * math.sqrt(math.square(r2) - math.square(d2)));
-
-                                #endregion
-
-                                if (h * A > 0 && som.DynVolume[i] > 0 && som.DynVolume[i2] > 0)
-                                {
-                                    som.DynVolume[i] = SafeValue(som.DynVolume[i] - (A * h / 2f));
-                                    som.DynVolume[i2] = SafeValue(som.DynVolume[i2] - (A * h / 2f));
-
-                                    som.CellRepulsion = new NativeArray<float3>(array: som.CellRepulsion.Concat(new NativeArray<float3>(new float3[1] { new float3(i, i2, A * h) }, Allocator.TempJob)).ToArray(), Allocator.TempJob);
-                                }
-                                else
-                                {
-                                    som.DynVolume[i] = SafeValue(som.DynVolume[i]);
-                                    som.DynVolume[i2] = SafeValue(som.DynVolume[i2]);
-                                }
-
-                                DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-                                DebugEverything(i2, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-                            }
-                            #endregion
-                        }
-                    }
-
-                    #endregion
-                }
-
-                #region Repulsion Physics
-
-                foreach (float3 Repulsion in som.CellRepulsion)
-                {
-                    int i1 = (int)Repulsion.x;
-                    int i2 = (int)Repulsion.y;
-
-                    if (AirCellLookup.TryGetComponent(buffer[i1].Value, out AirCell repulCell) && AirCellLookup.TryGetComponent(buffer[i2].Value, out AirCell repul2Cell) && GeoLookup.TryGetComponent(buffer[i1].Value, out AirCellGeometry repulGeo) && GeoLookup.TryGetComponent(buffer[i2].Value, out AirCellGeometry repul2Geo))
-                    {
-                        float mag = (som.StaticPressure[i1] * math.pow(som.CellRepulsion[i1].z, 2f / 3f) *
-                            (math.pow(repulGeo.CellStaticVolume / som.DynVolume[i1], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) /
-                            (repulCell.Moles * GlobalData.Data.Gale.AtmMM));
-                        float norm = math.sqrt(math.square(repulCell.CellCenter.x - repul2Cell.CellCenter.x) + math.square(repulCell.CellCenter.y - repul2Cell.CellCenter.y) + math.square(repulCell.CellCenter.z - repul2Cell.CellCenter.z));
-
-                        AirCellManager.PerformAcceleration(ref repulCell, mag * ((repulCell.CellCenter - repul2Cell.CellCenter) / norm), FixedDeltaTime);
-
-                        mag = (som.StaticPressure[i2] * math.pow(som.CellRepulsion[i2].z, 2f / 3f) *
-                            (math.pow(repul2Geo.CellStaticVolume / som.DynVolume[i2], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) /
-                            (repul2Cell.Moles * GlobalData.Data.Gale.AtmMM));
-                        
-                        AirCellManager.PerformAcceleration(ref repul2Cell, mag * ((repul2Cell.CellCenter - repulCell.CellCenter) / norm), FixedDeltaTime);
-                    }
-                }
-
-                #endregion
-
-                if (AirCellLookup.TryGetComponent(member, out memberCell))
-                {
-                    #region Cell-Terrain Repulsion
-
-                    if (!flags.TerrainAtSeaLevel)
-                    {
-                        float maxD = math.sqrt(math.pow(geo.CellRadius, 2) + math.pow(geo.CellHeight / 2f, 2f));
-
-                        RaycastInput ray = new RaycastInput();
-                        ray.Start = memberCell.CellCenter + new float3(0, geo.CellHeight / 2f, 0);
-                        ray.End = ray.Start - new float3(0, maxD, 0);
-                        ray.Filter = new CollisionFilter();
-                        ray.Filter.CollidesWith = 1 << 3;
-                        Unity.Physics.RaycastHit hit;
-                        if (physicsWorld.CastRay(ray, out hit))
-                        {
-                            float d3 = math.abs(hit.Position.y - memberCell.CellCenter.y);
-                            if (d3 < geo.CellHeight / 2f)
-                            {
-                                som.DynVolume[i] *= 0.5f + (d3 / geo.CellHeight);
-                                AirCellManager.PerformAcceleration(ref memberCell, new float3(0, som.StaticPressure[i] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.DynVolume[i], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (memberCell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region Perform Physics
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #region Dynamic Abiatic Temperature Change
-
-                    som.DynVolume[i] = SafeValue(som.DynVolume[i]);
-                    if (som.PrevDynVolume[i] == 0) som.PrevDynVolume[i] = som.DynVolume[i];
-                    memberCell.Temperature *= math.pow(som.PrevDynVolume[i] / som.DynVolume[i], GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
-                    som.PrevDynVolume = som.DynVolume;
-
-                    #endregion
-
-                    AirCellManager.PerformVelocity(ref memberCell, FixedDeltaTime);
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    //To visualize the Air Cells
-                    if (flags.AirCellObjects) transform.Position = memberCell.CellCenter;
-
-                    //For interpolation
-                    if (InverseDistanceWeighting.Instance.Indices.Contains<int>(i))
-                    {
-                        if (math.sqrt(math.square(InverseDistanceWeighting.Instance.Query.x - memberCell.CellCenter.x) +
-                            math.square(InverseDistanceWeighting.Instance.Query.y - memberCell.CellCenter.y) +
-                            math.square(InverseDistanceWeighting.Instance.Query.z - memberCell.CellCenter.z)) > InverseDistanceWeighting.Instance.R)
-                            InverseDistanceWeighting.Instance.Remove(i);
-                    }
-                    else if (math.sqrt(math.square(InverseDistanceWeighting.Instance.Query.x - memberCell.CellCenter.x) +
-                            math.square(InverseDistanceWeighting.Instance.Query.y - memberCell.CellCenter.y) +
-                            math.square(InverseDistanceWeighting.Instance.Query.z - memberCell.CellCenter.z)) <= InverseDistanceWeighting.Instance.R)
-                        InverseDistanceWeighting.Instance.Add(i);
-
-                    /*
-                    if (i == 0)
-                    {
-                        UnityEngine.Debug.Log("");
-                        UnityEngine.Debug.Log("Velocity: " + memberCell.Velocity);
-                        UnityEngine.Debug.Log("Acceleration: " + memberCell.Acceleration);
-                    }*/
-
-                    DebugEverything(i, in buffer, in AirCellLookup, in GeoLookup, in SOMLookup);
-
-                    #endregion
-                }
-            }
-
-            #region Interpolation
-
-            InverseDistanceWeighting.Instance.BeginInterpolation(flags.FollowDrone);
-
-            if (flags.InterpolationWithTerrain)
-            {
-                InverseDistanceWeighting.Instance.InterpolationStep(flags.FollowDrone ? float3.zero : new float3(InverseDistanceWeighting.Instance.Query.x, 0, InverseDistanceWeighting.Instance.Query.z),
-                    new NativeArray<float>(new float[6]
-                    {
-                        0f, 0f, 0f, sim.MoleTest, env.AverageLocalTemp, 0f
-                    }, Allocator.TempJob));
-            }
-
-            foreach (int ii in InverseDistanceWeighting.Instance.Indices)
-            {
-                Entity member = buffer[ii].Value;
-                if (AirCellLookup.TryGetComponent(member, out AirCell interpCell))
-                {
-                    InverseDistanceWeighting.Instance.InterpolationStep(interpCell.CellCenter,
-                        new NativeArray<float>(new float[6] { interpCell.Velocity.x * sim.TimeScale, interpCell.Velocity.y * sim.TimeScale,
-                        interpCell.Velocity.z * sim.TimeScale, interpCell.Moles, interpCell.Temperature, 0 /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */ }, Allocator.TempJob));
-                }
-            }
-
-            if (!InverseDistanceWeighting.Instance.BroadcastInterpolation(flags.InterpolationWithTerrain))
-            {
-                int minI = 0;
-                float minD = math.INFINITY;
-
-                for (int i = 0; i < group.CellGroupNumber; i++)
-                {
-                    Entity interpMember = buffer[i].Value;
-                    if (AirCellLookup.TryGetComponent(interpMember, out AirCell interpCell))
-                    {
-                        if (minD > math.sqrt(math.square(InverseDistanceWeighting.Instance.Query.x - interpCell.CellCenter.x) +
-                            math.square(InverseDistanceWeighting.Instance.Query.y - interpCell.CellCenter.y) +
-                            math.square(InverseDistanceWeighting.Instance.Query.z - interpCell.CellCenter.z)))
-                        {
-                            minD = math.sqrt(math.square(InverseDistanceWeighting.Instance.Query.x - interpCell.CellCenter.x) +
-                            math.square(InverseDistanceWeighting.Instance.Query.y - interpCell.CellCenter.y) +
-                            math.square(InverseDistanceWeighting.Instance.Query.z - interpCell.CellCenter.z));
-                            minI = i;
-                        }
-                    }
-                }
-
-                Entity closestMember = buffer[minI].Value;
-                if (AirCellLookup.TryGetComponent(closestMember, out AirCell closestCell))
-                    InverseDistanceWeighting.Instance.GetClosestCell(new NativeArray<float>(new float[6] { closestCell.Velocity.x * sim.TimeScale,
-                    closestCell.Velocity.y * sim.TimeScale, closestCell.Velocity.z * sim.TimeScale, closestCell.Moles, closestCell.Temperature, 0 /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */ }, Allocator.TempJob));
-            }
             #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Calculate Static Pressure
+            som.ValueRW.StaticPressure[cell.ID] = GlobalCalc.StaticPressureAtHeight(cell.CellCenter.y);
+            som.ValueRW = som.ValueRO;
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Insolation
+            cell.Temperature = som.ValueRO.Temp[cell.ID];
+            cell.Temperature += mem = GlobalData.Data.Gale.Insolation * geo.CellCircleArea / (GlobalData.Data.AtmHeatCp * GlobalData.Data.Gale.AtmMM * cell.Moles) * FixedDeltaTime;
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Radiative Cooling
+            mem = -GlobalData.Const.StefBoltz * GlobalData.Data.AtmSpecificEmissivity * ((2f * geo.CellCircleArea) + (2f * math.PI * geo.CellRadius * geo.CellHeight)) * System.MathF.Pow(cell.Temperature, 4f) * FixedDeltaTime;
+            //cell.Temperature += mem;
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Calculate Static Volume
+
+            AirCellManager.SetSizeV(ref geo, cell.Moles * GlobalData.Const.R * cell.Temperature / som.ValueRO.StaticPressure[cell.ID]);
+            if (som.ValueRO.PrevStatVolume[cell.ID] == 0)
+            {
+                som.ValueRW.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
+            }
+            som.ValueRW.DynVolume[cell.ID] = geo.CellStaticVolume;
+
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Static Adiabatic Temperature Changes
+
+            cell.Temperature *= math.pow(som.ValueRO.PrevStatVolume[cell.ID] / geo.CellStaticVolume, GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
+            som.ValueRW.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
+            /*
+            if (math.abs(som.Temp[cell.ID] - cell.Temperature) > 10)
+            {
+                UnityEngine.Debug.Log("Heavy Abiatic Temperature Change [" + cell.ID + "] ; SOM = " + som.Temp[cell.ID] + " ; Temp = " + cell.Temperature);
+            }*/
+
+            som.ValueRW.Temp[cell.ID] = cell.Temperature;
+
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #endregion
+
+            env.ValueRW = env.ValueRO;
+            som.ValueRW = som.ValueRO;
         }
 
         #region Debug
@@ -485,8 +237,7 @@ namespace Mesocyclone.MesoDOTS
             int i,
             in DynamicBuffer<AirCellGroupMember> buffer,
             in ComponentLookup<AirCell> airCellLookup,
-            in ComponentLookup<AirCellGeometry> geoLookup,
-            in ComponentLookup<AirCellOptimization> somLookup
+            in ComponentLookup<AirCellGeometry> geoLookup
         )
         {
             Entity member = buffer[i].Value;
@@ -496,8 +247,6 @@ namespace Mesocyclone.MesoDOTS
                 airCellLookup.TryGetComponent(member, out AirCell c)
                 &&
                 geoLookup.TryGetComponent(member, out AirCellGeometry geo)
-                &&
-                somLookup.TryGetComponent(member, out AirCellOptimization som)
             )
             {
                 float3 vel = c.Velocity;
@@ -507,16 +256,16 @@ namespace Mesocyclone.MesoDOTS
 
                 if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
                     UnityEngine.Debug.LogError($"Nan Cell Velocity\ni = {i}");
-                
+
                 if (!float.IsFinite(c.Temperature))
                     UnityEngine.Debug.LogError($"NaN Cell Temperature\ni = {i}");
-                
+
                 if (!float.IsFinite(geo.CellStaticVolume))
                     UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
 
-                if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
-                
+
                 if (c.CellCenter.y <= -geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
             }
@@ -529,5 +278,537 @@ namespace Mesocyclone.MesoDOTS
         }
 
         #endregion
+    }
+
+    [BurstCompile]
+    public partial struct AirCellPhysics1Job : IJobEntity
+    {
+        public float FixedDeltaTime;
+        public RefRO<AirCellSimulation> sim;
+        public RefRO<AirCellGroup> group;
+        public RefRW<AirCellLocalEnvironment> env;
+        public RefRW<AirCellOptimization> som;
+        public PhysicsWorldSingleton physicsWorld;
+        public RefRO<AirCellBehaviourFlags> flags;
+        public RefRO<AirCellBounds> bounds;
+
+        public ComponentLookup<AirCell> AirCellLookup;
+        public ComponentLookup<AirCellGeometry> GeoLookup;
+
+        [BurstCompile]
+        private void Execute
+        (
+            // ref is for Reading and Writing
+            // in is for reading-only
+            ref LocalTransform transform,
+            ref AirCell cell,
+            ref AirCellGeometry geo,
+            in DynamicBuffer<AirCellGroupMember> buffer
+        )
+        {
+            #region Air Cell Physics
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Air Cell Terrain Repulsion
+            if (flags.ValueRO.TerrainAtSeaLevel && cell.CellCenter.y < geo.CellHeight / 2f)
+            {
+                som.ValueRW.DynVolume[cell.ID] *= 0.5f + (cell.CellCenter.y / geo.CellHeight);
+                AirCellManager.PerformAcceleration(ref cell, new float3(0, som.ValueRO.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.ValueRO.DynVolume[cell.ID], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
+            }
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Perform Gravity and Buoyancy
+            AirCellManager.PerformAcceleration(ref cell, new float3(0, GlobalData.Data.Gale.SurfGravity * ((cell.Temperature / env.ValueRO.AverageLocalTemp) - 1f), 0), FixedDeltaTime);
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Perform Air Cell Drag
+            AirCellManager.PerformAcceleration(ref cell, new float3(sim.ValueRO.CdTest * math.pow(cell.Velocity.x - env.ValueRO.AverageLocalWind.x, 2f) / (4f * geo.CellRadius),
+                sim.ValueRO.CdTest * math.pow(cell.Velocity.y - env.ValueRO.AverageLocalWind.y, 2f) / (2f * geo.CellHeight),
+                sim.ValueRO.CdTest * math.pow(cell.Velocity.z - env.ValueRO.AverageLocalWind.z, 2f) / (4f * geo.CellRadius)), FixedDeltaTime);
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Check for Terrain Collision - to do: improve with bouncing
+            if (cell.CellCenter.y <= (-geo.CellHeight / 2f))
+            {
+                cell.CellCenter = new float3(cell.CellCenter.x, -geo.CellHeight / 2f + 0.2f, cell.CellCenter.z);
+            }
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Keep Within Boundaries - note: for testing purposes
+
+            if (math.abs(cell.CellCenter.x) >= (bounds.ValueRO.Value.x / 2) + 0.1f)
+            {
+                cell.Velocity += new float3(-math.sign(cell.CellCenter.x) * 50f * FixedDeltaTime, 0f, 0f);
+            }
+
+            if (math.abs(cell.CellCenter.z) >= (bounds.ValueRO.Value.x / 2))
+            {
+                cell.Velocity += new float3(0, 0, -math.sign(cell.CellCenter.z) * 50f * FixedDeltaTime);
+            }
+
+            if (cell.CellCenter.y >= bounds.ValueRO.Value.y + 0.1)
+            {
+                cell.Velocity += new float3(0, -math.sign(cell.CellCenter.y) * 50 * FixedDeltaTime, 0);
+            }
+
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Cell-Terrain Repulsion
+
+            if (!flags.ValueRO.TerrainAtSeaLevel)
+            {
+                float maxD = math.sqrt(math.pow(geo.CellRadius, 2) + math.pow(geo.CellHeight / 2f, 2f));
+
+                RaycastInput ray = new RaycastInput();
+                ray.Start = cell.CellCenter + new float3(0, geo.CellHeight / 2f, 0);
+                ray.End = ray.Start - new float3(0, maxD, 0);
+                ray.Filter = new CollisionFilter();
+                ray.Filter.CollidesWith = 1 << 3;
+                Unity.Physics.RaycastHit hit;
+                if (physicsWorld.CastRay(ray, out hit))
+                {
+                    float d3 = math.abs(hit.Position.y - cell.CellCenter.y);
+                    if (d3 < geo.CellHeight / 2f)
+                    {
+                        som.ValueRW.DynVolume[cell.ID] *= 0.5f + (d3 / geo.CellHeight);
+                        AirCellManager.PerformAcceleration(ref cell, new float3(0, som.ValueRO.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.ValueRO.DynVolume[cell.ID], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
+                    }
+                }
+            }
+
+            #endregion
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #endregion
+
+            #region Calculate Inter-Cell Repulsion Forces
+
+            som.ValueRW.CellRepulsion.Clear();
+            float d, r1, r2, d1, d2, A, h;
+
+            for (int i2 = cell.ID + 1; i2 < group.ValueRO.CellGroupNumber; i2++)
+            {
+                Entity member2 = buffer[i2].Value;
+                if (AirCellLookup.TryGetComponent(member2, out AirCell cell2) && GeoLookup.TryGetComponent(member2, out AirCellGeometry geo2))
+                {
+                    #region Check For and Calculate Overlaps
+                    d = SafeValue(math.sqrt(math.square(cell.CellCenter.x - cell2.CellCenter.x) +
+                        math.square(cell.CellCenter.z - cell2.CellCenter.z)));
+
+                    if ((h = math.abs(cell.CellCenter.y - cell2.CellCenter.y)) < (geo.CellHeight + geo2.CellHeight) / 2f &&
+                        d < (geo.CellRadius + geo2.CellRadius))
+                    {
+                        #region Cell Overlap Calculations
+
+                        r1 = math.max(geo.CellRadius, geo2.CellRadius);
+                        r2 = math.min(geo.CellRadius, geo2.CellRadius);
+
+                        h = math.abs(h - ((geo.CellHeight + geo2.CellHeight) / 2f));
+
+                        d1 = (math.square(r1) - math.square(r2) + math.square(d)) / (2 * d);
+                        d2 = d - d1;
+
+                        A = (math.square(r1) * math.acos(d1 / r1)) - (d1 * math.sqrt(math.square(r1) - math.square(d1))) +
+                            (math.square(r2) * math.acos(d2 / r2)) - (d2 * math.sqrt(math.square(r2) - math.square(d2)));
+
+                        #endregion
+
+                        if (h * A > 0 && som.ValueRO.DynVolume[cell.ID] > 0 && som.ValueRO.DynVolume[i2] > 0)
+                        {
+                            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID] - (A * h / 2f));
+                            som.ValueRW.DynVolume[i2] = SafeValue(som.ValueRO.DynVolume[i2] - (A * h / 2f));
+
+                            som.ValueRW.CellRepulsion.Add(new float3(cell.ID, i2, A * h));
+                        }
+                        else
+                        {
+                            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID]);
+                            som.ValueRW.DynVolume[i2] = SafeValue(som.ValueRO.DynVolume[i2]);
+                        }
+
+                        DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+                        DebugEverything(i2, in buffer, in AirCellLookup, in GeoLookup);
+                    }
+                    #endregion
+                }
+            }
+
+            #endregion
+
+            som.ValueRW = som.ValueRO;
+        }
+
+        #region Debug
+
+        [BurstCompile]
+        [Conditional("DEV")]
+        public void DebugEverything
+        (
+            int i,
+            in DynamicBuffer<AirCellGroupMember> buffer,
+            in ComponentLookup<AirCell> airCellLookup,
+            in ComponentLookup<AirCellGeometry> geoLookup
+        )
+        {
+            Entity member = buffer[i].Value;
+
+            if
+            (
+                airCellLookup.TryGetComponent(member, out AirCell c)
+                &&
+                geoLookup.TryGetComponent(member, out AirCellGeometry geo)
+            )
+            {
+                float3 vel = c.Velocity;
+
+                if (!float.IsFinite(c.CellCenter.x) || !float.IsFinite(c.CellCenter.y) || !float.IsFinite(c.CellCenter.z))
+                    UnityEngine.Debug.LogError($"NaN Position\ni = {i}");
+
+                if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
+                    UnityEngine.Debug.LogError($"Nan Cell Velocity\ni = {i}");
+
+                if (!float.IsFinite(c.Temperature))
+                    UnityEngine.Debug.LogError($"NaN Cell Temperature\ni = {i}");
+
+                if (!float.IsFinite(geo.CellStaticVolume))
+                    UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
+
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
+
+                if (c.CellCenter.y <= -geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
+            }
+        }
+
+        [BurstCompile]
+        float SafeValue(float value)
+        {
+            return math.max(value, 1e-2f);
+        }
+
+        #endregion
+    }
+
+    [BurstCompile]
+    public partial struct AirCellRepulsionPhysicsJob : IJobParallelFor
+    {
+        public float FixedDeltaTime;
+        public RefRW<AirCellOptimization> som;
+
+        public ComponentLookup<AirCell> AirCellLookup;
+        public ComponentLookup<AirCellGeometry> GeoLookup;
+        public DynamicBuffer<AirCellGroupMember> buffer;
+
+        [BurstCompile]
+        public void Execute(int index)
+        {
+            #region Repulsion Physics
+
+            float3 Repulsion = som.ValueRO.CellRepulsion[index];
+
+            int i1 = (int)Repulsion.x;
+            int i2 = (int)Repulsion.y;
+
+            if (AirCellLookup.TryGetComponent(buffer[i1].Value, out AirCell repulCell) && AirCellLookup.TryGetComponent(buffer[i2].Value, out AirCell repul2Cell) && GeoLookup.TryGetComponent(buffer[i1].Value, out AirCellGeometry repulGeo) && GeoLookup.TryGetComponent(buffer[i2].Value, out AirCellGeometry repul2Geo))
+            {
+                float mag = (som.ValueRO.StaticPressure[i1] * math.pow(som.ValueRO.CellRepulsion[i1].z, 2f / 3f) *
+                    (math.pow(repulGeo.CellStaticVolume / som.ValueRO.DynVolume[i1], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) /
+                    (repulCell.Moles * GlobalData.Data.Gale.AtmMM));
+                float norm = math.sqrt(math.square(repulCell.CellCenter.x - repul2Cell.CellCenter.x) + math.square(repulCell.CellCenter.y - repul2Cell.CellCenter.y) + math.square(repulCell.CellCenter.z - repul2Cell.CellCenter.z));
+
+                AirCellManager.PerformAcceleration(ref repulCell, mag * ((repulCell.CellCenter - repul2Cell.CellCenter) / norm), FixedDeltaTime);
+
+                mag = (som.ValueRO.StaticPressure[i2] * math.pow(som.ValueRO.CellRepulsion[i2].z, 2f / 3f) *
+                    (math.pow(repul2Geo.CellStaticVolume / som.ValueRO.DynVolume[i2], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) /
+                    (repul2Cell.Moles * GlobalData.Data.Gale.AtmMM));
+
+                AirCellManager.PerformAcceleration(ref repul2Cell, mag * ((repul2Cell.CellCenter - repulCell.CellCenter) / norm), FixedDeltaTime);
+            }
+
+            #endregion
+        }
+
+        #region Debug
+
+        [BurstCompile]
+        [Conditional("DEV")]
+        public void DebugEverything
+        (
+            int i,
+            in DynamicBuffer<AirCellGroupMember> buffer,
+            in ComponentLookup<AirCell> airCellLookup,
+            in ComponentLookup<AirCellGeometry> geoLookup
+        )
+        {
+            Entity member = buffer[i].Value;
+
+            if
+            (
+                airCellLookup.TryGetComponent(member, out AirCell c)
+                &&
+                geoLookup.TryGetComponent(member, out AirCellGeometry geo)
+            )
+            {
+                float3 vel = c.Velocity;
+
+                if (!float.IsFinite(c.CellCenter.x) || !float.IsFinite(c.CellCenter.y) || !float.IsFinite(c.CellCenter.z))
+                    UnityEngine.Debug.LogError($"NaN Position\ni = {i}");
+
+                if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
+                    UnityEngine.Debug.LogError($"Nan Cell Velocity\ni = {i}");
+
+                if (!float.IsFinite(c.Temperature))
+                    UnityEngine.Debug.LogError($"NaN Cell Temperature\ni = {i}");
+
+                if (!float.IsFinite(geo.CellStaticVolume))
+                    UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
+
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
+
+                if (c.CellCenter.y <= -geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
+            }
+        }
+
+        [BurstCompile]
+        float SafeValue(float value)
+        {
+            return math.max(value, 1e-2f);
+        }
+
+        #endregion
+    }
+
+    [BurstCompile]
+    public partial struct AirCellPhysics2Job : IJobEntity
+    {
+        public float FixedDeltaTime;
+        public RefRW<AirCellOptimization> som;
+        public RefRO<AirCellBehaviourFlags> flags;
+        public InverseDistanceWeighting interp;
+
+        public ComponentLookup<AirCell> AirCellLookup;
+        public ComponentLookup<AirCellGeometry> GeoLookup;
+
+        [BurstCompile]
+        private void Execute
+        (
+            // ref is for Reading and Writing
+            // in is for reading-only
+            ref LocalTransform transform,
+            ref AirCell cell,
+            ref AirCellGeometry geo,
+            in DynamicBuffer<AirCellGroupMember> buffer
+        )
+        {
+            #region Perform Physics
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #region Dynamic Abiatic Temperature Change
+
+            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID]);
+            if (som.ValueRO.PrevDynVolume[cell.ID] == 0) som.ValueRW.PrevDynVolume[cell.ID] = som.ValueRO.DynVolume[cell.ID];
+            som.ValueRW = som.ValueRO;
+            cell.Temperature *= math.pow(som.ValueRO.PrevDynVolume[cell.ID] / som.ValueRO.DynVolume[cell.ID], GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
+            som.ValueRW.PrevDynVolume = som.ValueRO.DynVolume;
+            som.ValueRW = som.ValueRO;
+
+            #endregion
+
+            AirCellManager.PerformVelocity(ref cell, FixedDeltaTime);
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            //To visualize the Air Cells
+            if (flags.ValueRO.AirCellObjects) transform.Position = cell.CellCenter;
+
+            //For interpolation
+            if (interp.Indices.Contains(cell.ID))
+            {
+                if (math.sqrt(math.square(interp.Query.x - cell.CellCenter.x) +
+                    math.square(interp.Query.y - cell.CellCenter.y) +
+                    math.square(interp.Query.z - cell.CellCenter.z)) > interp.R)
+                    interp.Remove(cell.ID);
+            }
+            else if (math.sqrt(math.square(interp.Query.x - cell.CellCenter.x) +
+                    math.square(interp.Query.y - cell.CellCenter.y) +
+                    math.square(interp.Query.z - cell.CellCenter.z)) <= interp.R)
+                interp.Add(cell.ID);
+
+            /*
+            if (i == 0)
+            {
+                UnityEngine.Debug.Log("");
+                UnityEngine.Debug.Log("Velocity: " + cell.Velocity);
+                UnityEngine.Debug.Log("Acceleration: " + cell.Acceleration);
+            }*/
+
+            DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
+
+            #endregion
+
+            som.ValueRW = som.ValueRW;
+        }
+
+        #region Debug
+
+        [BurstCompile]
+        [Conditional("DEV")]
+        public void DebugEverything
+        (
+            int i,
+            in DynamicBuffer<AirCellGroupMember> buffer,
+            in ComponentLookup<AirCell> airCellLookup,
+            in ComponentLookup<AirCellGeometry> geoLookup
+        )
+        {
+            Entity member = buffer[i].Value;
+
+            if
+            (
+                airCellLookup.TryGetComponent(member, out AirCell c)
+                &&
+                geoLookup.TryGetComponent(member, out AirCellGeometry geo)
+            )
+            {
+                float3 vel = c.Velocity;
+
+                if (!float.IsFinite(c.CellCenter.x) || !float.IsFinite(c.CellCenter.y) || !float.IsFinite(c.CellCenter.z))
+                    UnityEngine.Debug.LogError($"NaN Position\ni = {i}");
+
+                if (!float.IsFinite(vel.x) || !float.IsFinite(vel.y) || !float.IsFinite(vel.z))
+                    UnityEngine.Debug.LogError($"Nan Cell Velocity\ni = {i}");
+
+                if (!float.IsFinite(c.Temperature))
+                    UnityEngine.Debug.LogError($"NaN Cell Temperature\ni = {i}");
+
+                if (!float.IsFinite(geo.CellStaticVolume))
+                    UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
+
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
+
+                if (c.CellCenter.y <= -geo.CellHeight / 2f)
+                    UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
+            }
+        }
+
+        [BurstCompile]
+        float SafeValue(float value)
+        {
+            return math.max(value, 1e-2f);
+        }
+
+        #endregion
+    }
+
+    [BurstCompile]
+    public partial struct AirCellInterpolationJob : IJobParallelFor
+    {
+        public float FixedDeltaTime;
+        public RefRO<AirCellSimulation> sim;
+        public RefRO<AirCellGroup> group;
+        public RefRW<AirCellLocalEnvironment> env;
+        public RefRO<AirCellBehaviourFlags> flags;
+        public InverseDistanceWeighting interp;
+
+        public ComponentLookup<AirCell> AirCellLookup;
+        public ComponentLookup<AirCellGeometry> GeoLookup;
+        public DynamicBuffer<AirCellGroupMember> buffer;
+
+        [BurstCompile]
+        public void Execute(int index)
+        {
+            #region Interpolation
+
+            interp.BeginInterpolation(flags.ValueRO.FollowDrone);
+
+            if (flags.ValueRO.InterpolationWithTerrain)
+            {
+                NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+                v[0] = 0;
+                v[1] = 0;
+                v[2] = 0;
+                v[3] = sim.ValueRO.MoleTest;
+                v[4] = env.ValueRO.AverageLocalTemp;
+                v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
+
+                interp.InterpolationStep(flags.ValueRO.FollowDrone ? float3.zero : new float3(interp.Query.x, 0, interp.Query.z), v);
+                v.Dispose();
+            }
+
+            foreach (int ii in interp.Indices)
+            {
+                Entity member = buffer[ii].Value;
+                if (AirCellLookup.TryGetComponent(member, out AirCell interpCell))
+                {
+                    NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+                    v[0] = interpCell.Velocity.x * sim.ValueRO.TimeScale;
+                    v[1] = interpCell.Velocity.y * sim.ValueRO.TimeScale;
+                    v[2] = interpCell.Velocity.z * sim.ValueRO.TimeScale;
+                    v[3] = interpCell.Moles;
+                    v[4] = interpCell.Temperature;
+                    v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
+
+                    interp.InterpolationStep(interpCell.CellCenter, v);
+                    v.Dispose();
+                }
+            }
+
+            if (!interp.BroadcastInterpolation(flags.ValueRO.InterpolationWithTerrain))
+            {
+                int minI = 0;
+                float minD = math.INFINITY;
+
+                for (int i = 0; i < group.ValueRO.CellGroupNumber; i++)
+                {
+                    Entity interpMember = buffer[i].Value;
+                    if (AirCellLookup.TryGetComponent(interpMember, out AirCell interpCell))
+                    {
+                        if (minD > math.sqrt(math.square(interp.Query.x - interpCell.CellCenter.x) +
+                            math.square(interp.Query.y - interpCell.CellCenter.y) +
+                            math.square(interp.Query.z - interpCell.CellCenter.z)))
+                        {
+                            minD = math.sqrt(math.square(interp.Query.x - interpCell.CellCenter.x) +
+                            math.square(interp.Query.y - interpCell.CellCenter.y) +
+                            math.square(interp.Query.z - interpCell.CellCenter.z));
+                            minI = i;
+                        }
+                    }
+                }
+
+                Entity closestMember = buffer[minI].Value;
+                if (AirCellLookup.TryGetComponent(closestMember, out AirCell closestCell))
+                {
+                    NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+                    v[0] = closestCell.Velocity.x * sim.ValueRO.TimeScale;
+                    v[1] = closestCell.Velocity.y * sim.ValueRO.TimeScale;
+                    v[2] = closestCell.Velocity.z * sim.ValueRO.TimeScale;
+                    v[3] = closestCell.Moles;
+                    v[4] = closestCell.Temperature;
+                    v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
+
+                    interp.GetClosestCell(v);
+                    v.Dispose();
+                }
+                   
+            }
+            #endregion
+        }
     }
 }
