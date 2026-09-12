@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using System;
 using System.ComponentModel;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Collections;
-using Mesocyclone.Data;
 
 // this class contains all the components for an air cell
 // alongside the authoring component that prefab has attached to automatically bind

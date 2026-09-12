@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using System;
 using System.ComponentModel;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Collections;
-using Mesocyclone.Data;
-using Mesocyclone.MesoDOTS;
 
 namespace Mesocyclone.MesoDOTS
 {
@@ -22,7 +18,7 @@ namespace Mesocyclone.MesoDOTS
     }
 
     // entity sampled from the simulation singleton prefab
-    [InternalBufferCapacity(30)] // arbitrary value
+    [InternalBufferCapacity(32)] // arbitrary value
     public struct AirCellGroupMember : IBufferElementData
     {
         public Entity Value;
@@ -63,7 +59,6 @@ namespace Mesocyclone.MesoDOTS
         public float GravityScale;
         public float3 DronePosition;
         public float CdTest;
-        public NativeArray<float3> StartingGrid;
         public float MoleTest;
         public float TempTest;
         public float3 VelTest;
@@ -85,6 +80,33 @@ namespace Mesocyclone.MesoDOTS
     #endregion
 
 
+    #region Singleton Components
+
+    public partial struct SingletonInitSystem : ISystem
+    {
+        public void OnCreate(ref SystemState state)
+        {
+            int CellNumber = 32;
+
+            _ = state.EntityManager.CreateSingleton<AirCellGroup>(new AirCellGroup
+            {
+                CellGroupNumber = CellNumber
+            });
+
+            _ = state.EntityManager.CreateSingleton<AirCellOptimization>(new AirCellOptimization
+            {
+                StaticPressure = new(CellNumber, Allocator.Persistent),
+                PrevStatVolume = new(CellNumber, Allocator.Persistent),
+                DynVolume = new(CellNumber, Allocator.Persistent),
+                PrevDynVolume = new(CellNumber, Allocator.Persistent),
+                Temp = new(CellNumber, Allocator.Persistent),
+                CellRepulsion = new(Allocator.Persistent)
+            });
+        }
+    }
+
+    #endregion
+    
     #region Authoring Component
 
     public class AirCellBehaviorAuthoring : MonoBehaviour
@@ -94,9 +116,6 @@ namespace Mesocyclone.MesoDOTS
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
         public bool FollowDrone;
-
-        [Header("Grouping")]
-        public int CellGroupNumber;
 
         [Header("Environment")]
         public float AverageLocalTemp;
@@ -109,7 +128,6 @@ namespace Mesocyclone.MesoDOTS
         public float GravityScale = 1f;
         public Vector3 DronePosition;
         public float CdTest;
-        public float3[] StartingGrid;
         public float MoleTest;
         public float TempTest;
         public Vector3 VelTest;
@@ -118,14 +136,6 @@ namespace Mesocyclone.MesoDOTS
 
         [Header("Bounds")]
         public Vector2 AirCellBounds;
-
-        [Header("Script Optimization")]
-        public float[] StaticPressure;
-        public float[] Temp;
-        public float[] PrevStatVolume;
-        public float[] DynVolume;
-        public float[] PrevDynVolume;
-        public NativeList<float3> CellRepulsion = new();
 
 
         #region Baker
@@ -137,7 +147,7 @@ namespace Mesocyclone.MesoDOTS
             {
                 Entity entity = GetEntity(TransformUsageFlags.None);
 
-                DependsOn(authoring.Prefab);
+                _ = DependsOn(authoring.Prefab);
                 Entity prefab = GetEntity(authoring.Prefab, TransformUsageFlags.Dynamic);
 
                 AddComponent(entity, new AirCellBehaviourFlags
@@ -148,10 +158,6 @@ namespace Mesocyclone.MesoDOTS
                     FollowDrone = authoring.FollowDrone
                 });
 
-                AddComponent(entity, new AirCellGroup
-                {
-                    CellGroupNumber = authoring.CellGroupNumber
-                });
                 _ = AddBuffer<AirCellGroupMember>(entity);
 
                 AddComponent(entity, new AirCellLocalEnvironment
@@ -168,7 +174,6 @@ namespace Mesocyclone.MesoDOTS
                     GravityScale = authoring.GravityScale,
                     DronePosition = authoring.DronePosition,
                     CdTest = authoring.CdTest,
-                    StartingGrid = new NativeArray<float3>(authoring.StartingGrid, Allocator.Temp),
                     MoleTest = authoring.MoleTest,
                     TempTest = authoring.TempTest,
                     VelTest = authoring.VelTest,
@@ -179,21 +184,6 @@ namespace Mesocyclone.MesoDOTS
                 AddComponent(entity, new AirCellBounds
                 {
                     Value = authoring.AirCellBounds
-                });
-
-                AddComponent(entity, new AirCellOptimization
-                {
-                    StaticPressure = new NativeArray<float>(authoring.StaticPressure, Allocator.Temp),
-                    Temp = new NativeArray<float>(authoring.Temp, Allocator.Temp),
-                    PrevStatVolume = new NativeArray<float>(authoring.PrevStatVolume, Allocator.Temp),
-                    DynVolume = new NativeArray<float>(authoring.DynVolume, Allocator.Temp),
-                    PrevDynVolume = new NativeArray<float>(authoring.PrevDynVolume, Allocator.Temp),
-                    CellRepulsion = authoring.CellRepulsion
-                });
-
-                AddComponent(entity, new AirCellBuffer
-                {
-                    Buffer = new()
                 });
 
                 /*
@@ -267,6 +257,7 @@ namespace Mesocyclone.MesoDOTS
     }
 
     #endregion
+
 
     /*public class SetupDataSingletons : SystemBase
     {

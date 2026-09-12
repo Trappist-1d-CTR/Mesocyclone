@@ -1,63 +1,50 @@
 using Unity.Collections;
-using System;
 using System.Linq;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Jobs;
-using UnityEngine.Jobs;
 using Mesocyclone.Data;
 
 namespace Mesocyclone.MesoDOTS
 {
+    //Flah that marks the end of the initialization
+    public struct InitializationComplete : IComponentData
+    { }
+
     [BurstCompile]
     public partial struct AirCellInitializationSystem : ISystem
     {
         private RefRW<AirCellSimulation> sim;
         private RefRW<AirCellBehaviourFlags> flags;
-        private RefRW<AirCellOptimization> som;
-        private RefRW<AirCellGroup> group;
+        private AirCellGroup group;
         private RefRW<AirCellBounds> bounds;
-        private RefRW<AirCellBuffer> buffer;
+        private AirCellBuffer buffer;
         private float b;
         private float h;
 
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<AirCellNeedsInitialization>();
-
             buffer = new();
 
-            //Get Singletons
-            sim = SystemAPI.Query<RefRW<AirCellSimulation>>().First();
-            flags = SystemAPI.Query<RefRW<AirCellBehaviourFlags>>().First();
-            som = SystemAPI.Query<RefRW<AirCellOptimization>>().First();
-            group = SystemAPI.Query<RefRW<AirCellGroup>>().First();
-            bounds = SystemAPI.Query<RefRW<AirCellBounds>>().First();
-            buffer = SystemAPI.Query<RefRW<AirCellBuffer>>().First();
-
-            #region Global setups
-
-            som.ValueRW.PrevStatVolume = new(group.ValueRO.CellGroupNumber, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            som.ValueRW.DynVolume = new(group.ValueRO.CellGroupNumber, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            som.ValueRW.PrevDynVolume = new(group.ValueRO.CellGroupNumber, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            som.ValueRW.StaticPressure = new(group.ValueRO.CellGroupNumber, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            som.ValueRW.Temp = new(group.ValueRO.CellGroupNumber, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            som.ValueRW = som.ValueRO;
-
-            b = bounds.ValueRO.Value.x;
-            h = bounds.ValueRO.Value.y;
-
-            sim.ValueRW.MoleTest = GlobalData.Data.Gale.AtmPressure * 1000000f * h / (GlobalData.Data.Gale.Radius * GlobalData.Data.Gale.SurfTemp * group.ValueRO.CellGroupNumber);
-            sim.ValueRW = sim.ValueRO;
-
-            #endregion
+            state.RequireForUpdate<AirCellNeedsInitialization>();
+            state.RequireForUpdate<AirCellGroup>();
+            state.RequireForUpdate<AirCellBuffer>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            EntityCommandBuffer ECB = new(Allocator.Temp);
+            sim = SystemAPI.Query<RefRW<AirCellSimulation>>().First();
+            flags = SystemAPI.Query<RefRW<AirCellBehaviourFlags>>().First();
+            group = SystemAPI.GetSingleton<AirCellGroup>();
+            bounds = SystemAPI.Query<RefRW<AirCellBounds>>().First();
+            buffer = SystemAPI.GetSingleton<AirCellBuffer>();
+
+            b = bounds.ValueRO.Value.x;
+            h = bounds.ValueRO.Value.y;
+            sim.ValueRW.MoleTest = GlobalData.Data.Gale.AtmPressure * 1000000f * h / (GlobalData.Data.Gale.Radius * GlobalData.Data.Gale.SurfTemp * group.CellGroupNumber);
+
+            EntityCommandBuffer ECB = new(Allocator.Persistent);
 
             foreach
             (
@@ -73,7 +60,7 @@ namespace Mesocyclone.MesoDOTS
                     #region Instantiate Air Cell Objects
 
                     Entity c = ECB.Instantiate(sim.ValueRO.Prefab);
-                    buffer.ValueRW.Buffer.Add(new AirCellGroupMember
+                    _ = buffer.Buffer.Add(new AirCellGroupMember
                     {
                         Value = c
                     });
@@ -103,14 +90,14 @@ namespace Mesocyclone.MesoDOTS
                 cell.ValueRW.Velocity = sim.ValueRO.VelTest + (((RandomValue.NextFloat3() * 2f) - 1f) * 10f);
                 cell.ValueRW = cell.ValueRO;
 
-                som.ValueRW.Temp[cell.ValueRO.ID] = cell.ValueRO.Temperature;
-                som.ValueRW = som.ValueRO;
-
                 ECB.RemoveComponent<AirCellNeedsInitialization>(entity);
             }
 
+            _ = state.EntityManager.CreateSingleton<InitializationComplete>();
+
             // idek what this does
             ECB.Playback(state.EntityManager);
+            ECB.Dispose();
         }
     }
 }
