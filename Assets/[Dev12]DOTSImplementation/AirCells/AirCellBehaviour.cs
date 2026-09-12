@@ -27,8 +27,12 @@ namespace Mesocyclone.MesoDOTS
 
         private PhysicsWorldSingleton physicsWorld;
         public InverseDistanceWeighting interpolation;
+        private RefRO<AirCellSimulation> sim;
+        private RefRW<AirCellLocalEnvironment> env;
+        private RefRO<AirCellBehaviourFlags> flags;
+        private RefRO<AirCellBounds> bounds;
         private AirCellGroup group;
-        private AirCellOptimization som;
+        private RefRW<AirCellOptimization> som;
         private AirCellBuffer buffer;
         private bool GotSingletons;
 
@@ -48,7 +52,6 @@ namespace Mesocyclone.MesoDOTS
 
             // system only starts updating if there's an entity with this component
             state.RequireForUpdate<AirCell>();
-            state.RequireForUpdate<InitializationComplete>();
             state.RequireForUpdate<AirCellGroup>();
             state.RequireForUpdate<AirCellOptimization>();
             state.RequireForUpdate<AirCellBuffer>();
@@ -57,15 +60,19 @@ namespace Mesocyclone.MesoDOTS
 
         public void OnUpdate(ref SystemState state)
         {
-            var sim = SystemAPI.Query<RefRO<AirCellSimulation>>().First();
-            var env = SystemAPI.Query<RefRW<AirCellLocalEnvironment>>().First();
-            var flags = SystemAPI.Query<RefRO<AirCellBehaviourFlags>>().First();
-            var bounds = SystemAPI.Query<RefRO<AirCellBounds>>().First();
+            foreach (var item in SystemAPI.Query<RefRO<AirCellSimulation>>())
+            { sim = item; }
+            foreach (var item in SystemAPI.Query<RefRW<AirCellLocalEnvironment>>())
+            { env = item; }
+            foreach (var item in SystemAPI.Query<RefRO<AirCellBehaviourFlags>>())
+            { flags = item; }
+            foreach (var item in SystemAPI.Query<RefRO<AirCellBounds>>())
+            { bounds = item; }
 
             if (!GotSingletons)
             {
                 group = SystemAPI.GetSingleton<AirCellGroup>();
-                som = SystemAPI.GetSingleton<AirCellOptimization>();
+                som = SystemAPI.GetSingletonRW<AirCellOptimization>();
                 buffer = SystemAPI.GetSingleton<AirCellBuffer>();
                 physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
                 GotSingletons = true;
@@ -115,7 +122,7 @@ namespace Mesocyclone.MesoDOTS
                 AirCellLookup = _airCellLookup,
                 GeoLookup = _geoLookup,
                 buffer = buffer.Buffer
-            }.Schedule(som.CellRepulsion.Length, 15, state.Dependency);
+            }.Schedule(som.ValueRO.CellRepulsion.Length, 15, state.Dependency);
 
             state.Dependency.Complete();
 
@@ -151,6 +158,7 @@ namespace Mesocyclone.MesoDOTS
 
 
         #region Physics Functions
+
         [BurstCompile]
         public static void PerformVelocity(ref AirCell cell, float deltaTime)
         {
@@ -213,7 +221,7 @@ namespace Mesocyclone.MesoDOTS
         public float FixedDeltaTime;
         public AirCellGroup group;
         public RefRW<AirCellLocalEnvironment> env;
-        public AirCellOptimization som;
+        public RefRW<AirCellOptimization> som;
 
         public ComponentLookup<AirCell> AirCellLookup;
         public ComponentLookup<AirCellGeometry> GeoLookup;
@@ -245,13 +253,13 @@ namespace Mesocyclone.MesoDOTS
             DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
 
             #region Calculate Static Pressure
-            som.StaticPressure[cell.ID] = GlobalCalc.StaticPressureAtHeight(cell.CellCenter.y);
+            som.ValueRW.StaticPressure[cell.ID] = GlobalCalc.StaticPressureAtHeight(cell.CellCenter.y);
             #endregion
 
             DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
 
             #region Insolation
-            cell.Temperature = som.Temp[cell.ID];
+            cell.Temperature = som.ValueRO.Temp[cell.ID];
             cell.Temperature += mem = GlobalData.Data.Gale.Insolation * geo.CellCircleArea / (GlobalData.Data.AtmHeatCp * GlobalData.Data.Gale.AtmMM * cell.Moles) * FixedDeltaTime;
             #endregion
 
@@ -266,12 +274,12 @@ namespace Mesocyclone.MesoDOTS
 
             #region Calculate Static Volume
 
-            AirCellManager.SetSizeV(ref geo, cell.Moles * GlobalData.Const.R * cell.Temperature / som.StaticPressure[cell.ID]);
-            if (som.PrevStatVolume[cell.ID] == 0)
+            AirCellManager.SetSizeV(ref geo, cell.Moles * GlobalData.Const.R * cell.Temperature / som.ValueRO.StaticPressure[cell.ID]);
+            if (som.ValueRO.PrevStatVolume[cell.ID] == 0)
             {
-                som.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
+                som.ValueRW.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
             }
-            som.DynVolume[cell.ID] = geo.CellStaticVolume;
+            som.ValueRW.DynVolume[cell.ID] = geo.CellStaticVolume;
 
             #endregion
 
@@ -279,15 +287,15 @@ namespace Mesocyclone.MesoDOTS
 
             #region Static Adiabatic Temperature Changes
 
-            cell.Temperature *= math.pow(som.PrevStatVolume[cell.ID] / geo.CellStaticVolume, GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
-            som.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
+            cell.Temperature *= math.pow(som.ValueRO.PrevStatVolume[cell.ID] / geo.CellStaticVolume, GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
+            som.ValueRW.PrevStatVolume[cell.ID] = geo.CellStaticVolume;
             /*
             if (math.abs(som.Temp[cell.ID] - cell.Temperature) > 10)
             {
                 UnityEngine.Debug.Log("Heavy Abiatic Temperature Change [" + cell.ID + "] ; SOM = " + som.Temp[cell.ID] + " ; Temp = " + cell.Temperature);
             }*/
 
-            som.Temp[cell.ID] = cell.Temperature;
+            som.ValueRW.Temp[cell.ID] = cell.Temperature;
 
             #endregion
 
@@ -331,7 +339,7 @@ namespace Mesocyclone.MesoDOTS
                 if (!float.IsFinite(geo.CellStaticVolume))
                     UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
 
-                if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
 
                 if (c.CellCenter.y <= -geo.CellHeight / 2f)
@@ -355,7 +363,7 @@ namespace Mesocyclone.MesoDOTS
         public RefRO<AirCellSimulation> sim;
         public AirCellGroup group;
         public RefRW<AirCellLocalEnvironment> env;
-        public AirCellOptimization som;
+        public RefRW<AirCellOptimization> som;
         public PhysicsWorldSingleton physicsWorld;
         public RefRO<AirCellBehaviourFlags> flags;
         public RefRO<AirCellBounds> bounds;
@@ -381,8 +389,8 @@ namespace Mesocyclone.MesoDOTS
             #region Air Cell Terrain Repulsion
             if (flags.ValueRO.TerrainAtSeaLevel && cell.CellCenter.y < geo.CellHeight / 2f)
             {
-                som.DynVolume[cell.ID] *= 0.5f + (cell.CellCenter.y / geo.CellHeight);
-                AirCellManager.PerformAcceleration(ref cell, new float3(0, som.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.DynVolume[cell.ID], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
+                som.ValueRW.DynVolume[cell.ID] *= 0.5f + (cell.CellCenter.y / geo.CellHeight);
+                AirCellManager.PerformAcceleration(ref cell, new float3(0, som.ValueRO.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.ValueRO.DynVolume[cell.ID], 1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
             }
             #endregion
 
@@ -405,7 +413,7 @@ namespace Mesocyclone.MesoDOTS
             #region Check for Terrain Collision - to do: improve with bouncing
             if (cell.CellCenter.y <= (-geo.CellHeight / 2f))
             {
-                cell.CellCenter = new float3(cell.CellCenter.x, -geo.CellHeight / 2f + 0.2f, cell.CellCenter.z);
+                cell.CellCenter = new float3(cell.CellCenter.x, (-geo.CellHeight / 2f) + 0.2f, cell.CellCenter.z);
             }
             #endregion
 
@@ -448,8 +456,8 @@ namespace Mesocyclone.MesoDOTS
                     float d3 = math.abs(hit.Position.y - cell.CellCenter.y);
                     if (d3 < geo.CellHeight / 2f)
                     {
-                        som.DynVolume[cell.ID] *= 0.5f + (d3 / geo.CellHeight);
-                        AirCellManager.PerformAcceleration(ref cell, new float3(0, som.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.DynVolume[cell.ID], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
+                        som.ValueRW.DynVolume[cell.ID] *= 0.5f + (d3 / geo.CellHeight);
+                        AirCellManager.PerformAcceleration(ref cell, new float3(0, som.ValueRO.StaticPressure[cell.ID] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / som.ValueRO.DynVolume[cell.ID], (1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R))) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime);
                     }
                 }
             }
@@ -462,7 +470,7 @@ namespace Mesocyclone.MesoDOTS
 
             #region Calculate Inter-Cell Repulsion Forces
 
-            som.CellRepulsion.Clear();
+            som.ValueRW.CellRepulsion.Clear();
             float d, r1, r2, d1, d2, A, h;
 
             for (int i2 = cell.ID + 1; i2 < group.CellGroupNumber; i2++)
@@ -492,17 +500,17 @@ namespace Mesocyclone.MesoDOTS
 
                         #endregion
 
-                        if (h * A > 0 && som.DynVolume[cell.ID] > 0 && som.DynVolume[i2] > 0)
+                        if (h * A > 0 && som.ValueRO.DynVolume[cell.ID] > 0 && som.ValueRO.DynVolume[i2] > 0)
                         {
-                            som.DynVolume[cell.ID] = SafeValue(som.DynVolume[cell.ID] - (A * h / 2f));
-                            som.DynVolume[i2] = SafeValue(som.DynVolume[i2] - (A * h / 2f));
+                            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID] - (A * h / 2f));
+                            som.ValueRW.DynVolume[i2] = SafeValue(som.ValueRO.DynVolume[i2] - (A * h / 2f));
 
-                            som.CellRepulsion.Add(new float3(cell.ID, i2, A * h));
+                            som.ValueRW.CellRepulsion.Add(new float3(cell.ID, i2, A * h));
                         }
                         else
                         {
-                            som.DynVolume[cell.ID] = SafeValue(som.DynVolume[cell.ID]);
-                            som.DynVolume[i2] = SafeValue(som.DynVolume[i2]);
+                            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID]);
+                            som.ValueRW.DynVolume[i2] = SafeValue(som.ValueRO.DynVolume[i2]);
                         }
 
                         DebugEverything(cell.ID, in buffer, in AirCellLookup, in GeoLookup);
@@ -550,7 +558,7 @@ namespace Mesocyclone.MesoDOTS
                 if (!float.IsFinite(geo.CellStaticVolume))
                     UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
 
-                if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
 
                 if (c.CellCenter.y <= -geo.CellHeight / 2f)
@@ -571,30 +579,30 @@ namespace Mesocyclone.MesoDOTS
     public partial struct AirCellRepulsionPhysicsJob : IJobParallelFor
     {
         public float FixedDeltaTime;
-        public AirCellOptimization som;
+        public RefRW<AirCellOptimization> som;
 
         public ComponentLookup<AirCell> AirCellLookup;
         public ComponentLookup<AirCellGeometry> GeoLookup;
-        public DynamicBuffer<AirCellGroupMember> buffer;
+        public NativeList<AirCellGroupMember> buffer;
 
         [BurstCompile]
         public void Execute(int index)
         {
             #region Repulsion Physics
 
-            float3 Repulsion = som.CellRepulsion[index];
+            float3 Repulsion = som.ValueRO.CellRepulsion[index];
 
             int i1 = (int)Repulsion.x;
             int i2 = (int)Repulsion.y;
 
             if (AirCellLookup.TryGetComponent(buffer[i1].Value, out AirCell repulCell) && AirCellLookup.TryGetComponent(buffer[i2].Value, out AirCell repul2Cell) && GeoLookup.TryGetComponent(buffer[i1].Value, out AirCellGeometry repulGeo) && GeoLookup.TryGetComponent(buffer[i2].Value, out AirCellGeometry repul2Geo))
             {
-                float mag = som.StaticPressure[i1] * math.pow(Repulsion.z, 2f / 3f) * (math.pow(repulGeo.CellStaticVolume / som.DynVolume[i1],
+                float mag = som.ValueRO.StaticPressure[i1] * math.pow(Repulsion.z, 2f / 3f) * (math.pow(repulGeo.CellStaticVolume / som.ValueRO.DynVolume[i1],
                     1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) / (repulCell.Moles * GlobalData.Data.Gale.AtmMM);
 
                 AirCellManager.PerformAcceleration(ref repulCell, mag * math.normalize(repulCell.CellCenter - repul2Cell.CellCenter), FixedDeltaTime);
 
-                mag = som.StaticPressure[i2] * math.pow(Repulsion.z, 2f / 3f) * (math.pow(repul2Geo.CellStaticVolume / som.DynVolume[i2],
+                mag = som.ValueRO.StaticPressure[i2] * math.pow(Repulsion.z, 2f / 3f) * (math.pow(repul2Geo.CellStaticVolume / som.ValueRO.DynVolume[i2],
                     1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) / (repul2Cell.Moles * GlobalData.Data.Gale.AtmMM);
 
                 AirCellManager.PerformAcceleration(ref repul2Cell, mag * math.normalize(repul2Cell.CellCenter - repulCell.CellCenter), FixedDeltaTime);
@@ -638,7 +646,7 @@ namespace Mesocyclone.MesoDOTS
                 if (!float.IsFinite(geo.CellStaticVolume))
                     UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
 
-                if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                if (som.ValueRW.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
 
                 if (c.CellCenter.y <= -geo.CellHeight / 2f)
@@ -659,7 +667,7 @@ namespace Mesocyclone.MesoDOTS
     public partial struct AirCellPhysics2Job : IJobEntity
     {
         public float FixedDeltaTime;
-        public AirCellOptimization som;
+        public RefRW<AirCellOptimization> som;
         public RefRO<AirCellBehaviourFlags> flags;
         public InverseDistanceWeighting interp;
 
@@ -683,10 +691,10 @@ namespace Mesocyclone.MesoDOTS
 
             #region Dynamic Abiatic Temperature Change
 
-            som.DynVolume[cell.ID] = SafeValue(som.DynVolume[cell.ID]);
-            if (som.PrevDynVolume[cell.ID] == 0) som.PrevDynVolume[cell.ID] = som.DynVolume[cell.ID];
-            cell.Temperature *= math.pow(som.PrevDynVolume[cell.ID] / som.DynVolume[cell.ID], GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
-            som.PrevDynVolume = som.DynVolume;
+            som.ValueRW.DynVolume[cell.ID] = SafeValue(som.ValueRO.DynVolume[cell.ID]);
+            if (som.ValueRO.PrevDynVolume[cell.ID] == 0) som.ValueRW.PrevDynVolume[cell.ID] = som.ValueRO.DynVolume[cell.ID];
+            cell.Temperature *= math.pow(som.ValueRO.PrevDynVolume[cell.ID] / som.ValueRO.DynVolume[cell.ID], GlobalData.Const.R / GlobalData.Data.MolarHeatCapacity);
+            som.ValueRW.PrevDynVolume = som.ValueRO.DynVolume;
 
             #endregion
 
@@ -754,7 +762,7 @@ namespace Mesocyclone.MesoDOTS
                 if (!float.IsFinite(geo.CellStaticVolume))
                     UnityEngine.Debug.LogError($"NaN Cell Volume\ni = {i}");
 
-                if (som.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
+                if (som.ValueRO.PrevStatVolume[i] <= 0 && c.CellCenter.y < geo.CellHeight / 2f)
                     UnityEngine.Debug.LogError($"Negative/Null PrevStatVolume\ni = {i}");
 
                 if (c.CellCenter.y <= -geo.CellHeight / 2f)
@@ -783,7 +791,7 @@ namespace Mesocyclone.MesoDOTS
 
         public ComponentLookup<AirCell> AirCellLookup;
         public ComponentLookup<AirCellGeometry> GeoLookup;
-        public DynamicBuffer<AirCellGroupMember> buffer;
+        public NativeList<AirCellGroupMember> buffer;
 
         [BurstCompile]
         public void Execute()

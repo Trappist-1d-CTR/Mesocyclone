@@ -1,5 +1,4 @@
 using Unity.Collections;
-using System.Linq;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -8,10 +7,6 @@ using Mesocyclone.Data;
 
 namespace Mesocyclone.MesoDOTS
 {
-    //Flah that marks the end of the initialization
-    public struct InitializationComplete : IComponentData
-    { }
-
     [BurstCompile]
     public partial struct AirCellInitializationSystem : ISystem
     {
@@ -19,7 +14,7 @@ namespace Mesocyclone.MesoDOTS
         private RefRW<AirCellBehaviourFlags> flags;
         private AirCellGroup group;
         private RefRW<AirCellBounds> bounds;
-        private AirCellBuffer buffer;
+        private RefRW<AirCellBuffer> buffer;
         private float b;
         private float h;
 
@@ -29,16 +24,21 @@ namespace Mesocyclone.MesoDOTS
 
             state.RequireForUpdate<AirCellNeedsInitialization>();
             state.RequireForUpdate<AirCellGroup>();
-            state.RequireForUpdate<AirCellBuffer>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            sim = SystemAPI.Query<RefRW<AirCellSimulation>>().First();
-            flags = SystemAPI.Query<RefRW<AirCellBehaviourFlags>>().First();
+            UnityEngine.Debug.Log("IsUpdating");
+
+            foreach (var item in SystemAPI.Query<RefRW<AirCellSimulation>>())
+            { sim = item; }
+            foreach (var item in SystemAPI.Query<RefRW<AirCellBehaviourFlags>>())
+            { flags = item; }
+            foreach (var item in SystemAPI.Query<RefRW<AirCellBounds>>())
+            { bounds = item; }
+
             group = SystemAPI.GetSingleton<AirCellGroup>();
-            bounds = SystemAPI.Query<RefRW<AirCellBounds>>().First();
-            buffer = SystemAPI.GetSingleton<AirCellBuffer>();
+            buffer = SystemAPI.GetSingletonRW<AirCellBuffer>();
 
             b = bounds.ValueRO.Value.x;
             h = bounds.ValueRO.Value.y;
@@ -55,12 +55,14 @@ namespace Mesocyclone.MesoDOTS
                 .WithEntityAccess()
             )
             {
+                UnityEngine.Debug.Log("Is Initializing");
+
                 if (flags.ValueRO.AirCellObjects)
                 {
                     #region Instantiate Air Cell Objects
 
                     Entity c = ECB.Instantiate(sim.ValueRO.Prefab);
-                    _ = buffer.Buffer.Add(new AirCellGroupMember
+                    buffer.ValueRW.Buffer.Add(new AirCellGroupMember
                     {
                         Value = c
                     });
@@ -80,6 +82,8 @@ namespace Mesocyclone.MesoDOTS
                     ECB.SetComponent(c, LocalTransform.FromPosition(InstantiateLocation));
 
                     #endregion
+
+                    UnityEngine.Debug.Log("Completed 1 Initialization");
                 }
 
                 Unity.Mathematics.Random RandomValue = Unity.Mathematics.Random.CreateFromIndex(1);
@@ -92,8 +96,6 @@ namespace Mesocyclone.MesoDOTS
 
                 ECB.RemoveComponent<AirCellNeedsInitialization>(entity);
             }
-
-            _ = state.EntityManager.CreateSingleton<InitializationComplete>();
 
             // idek what this does
             ECB.Playback(state.EntityManager);

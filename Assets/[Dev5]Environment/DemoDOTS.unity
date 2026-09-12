@@ -148,11 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3f679a20d48924ebb24d2dac6d7a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mesocyclone.MesoDOTS.AirCellBehaviorAuthoring
-  AirCellObjects: 0
-  TerrainAtSeaLevel: 0
-  InterpolationWithTerrain: 1
-  FollowDrone: 1
-  CellGroupNumber: 1
+  AirCellObjects: 1
+  TerrainAtSeaLevel: 1
+  InterpolationWithTerrain: 0
+  FollowDrone: 0
   AverageLocalTemp: 0
   AverageLocalWind: 0
   AmbientHeat: 0
@@ -167,12 +166,6 @@ MonoBehaviour:
   CenterTest: {x: 0, y: 0, z: 0}
   Prefab: {fileID: 2920063879423579578, guid: ceacd1eb53d524848961ac5a7a91b934, type: 3}
   AirCellBounds: {x: 1000, y: 1000}
-  StaticPressure: []
-  Temp: []
-  PrevStatVolume: []
-  DynVolume: []
-  PrevDynVolume: []
-  CellRepulsion: []
 --- !u!4 &2050740051
 Transform:
   m_ObjectHideFlags: 0

@@ -74,7 +74,7 @@ namespace Mesocyclone.MesoDOTS
 
     public struct AirCellBuffer : IComponentData
     {
-        public DynamicBuffer<AirCellGroupMember> Buffer;
+        public NativeList<AirCellGroupMember> Buffer;
     }
 
     #endregion
@@ -102,11 +102,18 @@ namespace Mesocyclone.MesoDOTS
                 Temp = new(CellNumber, Allocator.Persistent),
                 CellRepulsion = new(Allocator.Persistent)
             });
+
+            _ = state.EntityManager.CreateSingleton<AirCellBuffer>(new AirCellBuffer
+            {
+                Buffer = new(Allocator.Persistent)
+            });
+
+            UnityEngine.Debug.Log("Singletons Created");
         }
     }
 
     #endregion
-    
+
     #region Authoring Component
 
     public class AirCellBehaviorAuthoring : MonoBehaviour
