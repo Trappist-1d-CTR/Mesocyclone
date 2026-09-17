@@ -47,7 +47,7 @@ namespace Mesocyclone
 
             FOVSlider.value = SimulationSettings.FOV;
             FOVValue.text = SimulationSettings.FOV.ToString();
-            UnityEngine.Debug.Log(SimulationSettings.FPSCap +  " ; " + SimulationSettings.FPSCap / 10);
+            //UnityEngine.Debug.Log(SimulationSettings.FPSCap +  " ; " + SimulationSettings.FPSCap / 10);
             FPSCapDropdown.value = SimulationSettings.FPSCap / 10;
             VSyncToggle.isOn = SimulationSettings.VSync;
 

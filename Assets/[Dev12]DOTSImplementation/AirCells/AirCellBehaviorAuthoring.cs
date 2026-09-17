@@ -1,8 +1,8 @@
 using System.ComponentModel;
-using UnityEngine;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Collections;
+using UnityEngine;
 
 namespace Mesocyclone.MesoDOTS
 {
@@ -42,11 +42,17 @@ namespace Mesocyclone.MesoDOTS
     // for performance
     public struct AirCellOptimization : IComponentData
     {
+        [NativeDisableParallelForRestriction]
         public NativeArray<float> StaticPressure;
+        [NativeDisableParallelForRestriction]
         public NativeArray<float> Temp;
+        [NativeDisableParallelForRestriction]
         public NativeArray<float> PrevStatVolume;
+        [NativeDisableParallelForRestriction]
         public NativeArray<float> DynVolume;
+        [NativeDisableParallelForRestriction]
         public NativeArray<float> PrevDynVolume;
+        [NativeDisableParallelForRestriction]
         public NativeList<float3> CellRepulsion;
     }
 
@@ -55,15 +61,13 @@ namespace Mesocyclone.MesoDOTS
     public struct AirCellSimulation : IComponentData
     {
         public float TimeScale;
-        public float DistanceScale;
-        public float GravityScale;
         public float3 DronePosition;
         public float CdTest;
         public float MoleTest;
         public float TempTest;
         public float3 VelTest;
         public float3 CenterTest;
-        public Entity Prefab; // the prefab entity to be used for all air cells
+        //public Entity Prefab; // the prefab entity to be used for all air cells
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -86,7 +90,7 @@ namespace Mesocyclone.MesoDOTS
     {
         public void OnCreate(ref SystemState state)
         {
-            int CellNumber = 32;
+            int CellNumber = 1;
 
             _ = state.EntityManager.CreateSingleton<AirCellGroup>(new AirCellGroup
             {
@@ -108,7 +112,7 @@ namespace Mesocyclone.MesoDOTS
                 Buffer = new(Allocator.Persistent)
             });
 
-            UnityEngine.Debug.Log("Singletons Created");
+            //UnityEngine.Debug.Log("Singletons Created");
         }
     }
 
@@ -177,15 +181,13 @@ namespace Mesocyclone.MesoDOTS
                 AddComponent(entity, new AirCellSimulation
                 {
                     TimeScale = authoring.TimeScale,
-                    DistanceScale = authoring.DistanceScale,
-                    GravityScale = authoring.GravityScale,
                     DronePosition = authoring.DronePosition,
                     CdTest = authoring.CdTest,
                     MoleTest = authoring.MoleTest,
                     TempTest = authoring.TempTest,
                     VelTest = authoring.VelTest,
                     CenterTest = authoring.CenterTest,
-                    Prefab = prefab
+                    //Prefab = prefab
                 });
 
                 AddComponent(entity, new AirCellBounds

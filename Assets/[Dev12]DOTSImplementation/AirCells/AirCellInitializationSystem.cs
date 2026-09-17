@@ -14,13 +14,14 @@ namespace Mesocyclone.MesoDOTS
         private RefRW<AirCellBehaviourFlags> flags;
         private AirCellGroup group;
         private RefRW<AirCellBounds> bounds;
-        private RefRW<AirCellBuffer> buffer;
         private float b;
         private float h;
 
+        private bool GotSingleton;
+
         public void OnCreate(ref SystemState state)
         {
-            buffer = new();
+            GotSingleton = false;
 
             state.RequireForUpdate<AirCellNeedsInitialization>();
             state.RequireForUpdate<AirCellGroup>();
@@ -37,8 +38,11 @@ namespace Mesocyclone.MesoDOTS
             foreach (var item in SystemAPI.Query<RefRW<AirCellBounds>>())
             { bounds = item; }
 
-            group = SystemAPI.GetSingleton<AirCellGroup>();
-            buffer = SystemAPI.GetSingletonRW<AirCellBuffer>();
+            if (!GotSingleton)
+            {
+                group = SystemAPI.GetSingleton<AirCellGroup>();
+                GotSingleton = true;
+            }
 
             b = bounds.ValueRO.Value.x;
             h = bounds.ValueRO.Value.y;
@@ -48,9 +52,9 @@ namespace Mesocyclone.MesoDOTS
 
             foreach
             (
-                var (cell, transform, entity) in
+                var (transform, cell, entity) in
                 SystemAPI
-                .Query<RefRW<AirCell>, RefRW<LocalTransform>>()
+                .Query<RefRW<LocalTransform>, RefRW<AirCell>>()
                 .WithAll<AirCellNeedsInitialization>()
                 .WithEntityAccess()
             )
@@ -61,16 +65,8 @@ namespace Mesocyclone.MesoDOTS
                 {
                     #region Instantiate Air Cell Objects
 
-                    Entity c = ECB.Instantiate(sim.ValueRO.Prefab);
-                    buffer.ValueRW.Buffer.Add(new AirCellGroupMember
-                    {
-                        Value = c
-                    });
-
                     transform.ValueRW.Rotation = quaternion.identity;
                     transform.ValueRW = transform.ValueRO;
-
-                    float3 InstantiateLocation = transform.ValueRO.Position;
 
                     /*float3 InstantiateLocation = new float3
                     {
@@ -78,8 +74,6 @@ namespace Mesocyclone.MesoDOTS
                         y = ((2f * h / 7f) * (cell.ValueRO.ID / 9)) + (3f * b / 14f),
                         z = (5f * b / 12f) * (((cell.ValueRO.ID / 3) % 3) - 1)
                     };*/
-
-                    ECB.SetComponent(c, LocalTransform.FromPosition(InstantiateLocation));
 
                     #endregion
 

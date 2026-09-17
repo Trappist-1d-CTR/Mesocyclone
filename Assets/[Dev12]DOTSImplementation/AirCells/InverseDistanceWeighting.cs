@@ -16,7 +16,6 @@ namespace Mesocyclone.MesoDOTS
     {
         public float R;
         public float3 Query;
-        public readonly NativeList<int> Indices;
         public NativeArray<float> SUM_wu;
         public float SUM_w;
         public bool FollowDrone;
@@ -27,7 +26,6 @@ namespace Mesocyclone.MesoDOTS
         {
             R = 1000;
             Query = float3.zero;
-            Indices = new(Allocator.Persistent); // wayy too lazy to manually dispose of this  Astraa: NUH UH!
             SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
             SUM_w = 0;
             FollowDrone = false;
@@ -39,18 +37,6 @@ namespace Mesocyclone.MesoDOTS
         public void DronePosition(in float3 position)
         {
             Query = FollowDrone ? new float3(0, position.y, 0) : position;
-        }
-
-        [BurstCompile]
-        public void Add(int index)
-        {
-            Indices.Add(index);
-        }
-
-        [BurstCompile]
-        public void Remove(int index)
-        {
-            Indices.RemoveAt(index);
         }
 
         [BurstCompile]
