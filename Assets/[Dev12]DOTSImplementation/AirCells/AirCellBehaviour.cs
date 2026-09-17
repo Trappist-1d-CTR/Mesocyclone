@@ -1,9 +1,7 @@
 // i fucking hate dots
 
 using Mesocyclone.Data;
-using System;
 using System.Diagnostics;
-using System.Linq;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -12,7 +10,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using Unity.VisualScripting;
 using UnityEngine.Jobs;
 
 // systems for the behaviour of air cell entities
@@ -24,22 +21,35 @@ namespace Mesocyclone.MesoDOTS
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))] // make it every fixed time step
     public partial struct AirCellManager : ISystem
     {
+        #region Lookups
         private ComponentLookup<LocalTransform> _transformLookup;
         private ComponentLookup<AirCell> _airCellLookup;
         private ComponentLookup<AirCellGeometry> _geoLookup;
         private ComponentLookup<AirCellNeedsInitialization> _initLookup;
+        #endregion
 
         private EntityArchetype AirCellArchetype;
 
+        #region Air Cell Lists
         public NativeArray<LocalTransform> AirTransformList;
         public NativeArray<AirCell> AirCellList;
         public NativeArray<AirCellGeometry> AirGeometryList;
         public NativeArray<Entity> AirCellEntities;
+        #endregion
 
-        public NativeList<int> InterpolationIndices;
+        #region Interpolation
+        public NativeArray<bool> IsInInterpolation;
+
+        public float3 InterpolationQuery;
+
+        public NativeArray<float> InterpolationResult;
+        #endregion
+
         public bool GotLists;
         public bool GotAllAirCells;
+        private bool GotSingletons;
 
+        #region Data Components and Singletons
         private PhysicsWorldSingleton physicsWorld;
         public InverseDistanceWeighting interpolation;
         private RefRO<AirCellSimulation> sim;
@@ -48,7 +58,7 @@ namespace Mesocyclone.MesoDOTS
         private RefRO<AirCellBounds> bounds;
         private AirCellGroup group;
         private AirCellOptimization som;
-        private bool GotSingletons;
+        #endregion
 
         public void OnCreate(ref SystemState state)
         {
@@ -59,8 +69,7 @@ namespace Mesocyclone.MesoDOTS
             GotSingletons = false;
 
             //Setup Interpolation
-            interpolation = new(true);
-            InterpolationIndices = new(Allocator.Persistent);
+            interpolation = new();
 
             //Set Air Cell Archetype
             AirCellArchetype = state.EntityManager.CreateArchetype(typeof(LocalTransform), typeof(AirCell),
@@ -79,7 +88,8 @@ namespace Mesocyclone.MesoDOTS
             AirCellList.Dispose();
             AirGeometryList.Dispose();
             AirCellEntities.Dispose();
-            InterpolationIndices.Dispose();
+            IsInInterpolation.Dispose();
+            InterpolationResult.Dispose();
         }
 
         [BurstCompile]
@@ -114,6 +124,8 @@ namespace Mesocyclone.MesoDOTS
                 AirTransformList = new(group.CellGroupNumber, Allocator.Persistent);
                 AirCellList = new(group.CellGroupNumber, Allocator.Persistent);
                 AirGeometryList = new(group.CellGroupNumber, Allocator.Persistent);
+
+                IsInInterpolation = new(group.CellGroupNumber, Allocator.Persistent);
 
                 //UnityEngine.Debug.Log("Lists have been generated");
                 GotLists = true;
@@ -169,7 +181,6 @@ namespace Mesocyclone.MesoDOTS
 
                 env = new() { AverageLocalTemp = 0, AverageLocalWind = float3.zero, AmbientHeat = 0 };
                 som.CellRepulsion.Clear();
-                SetData();
 
                 #region Schedule and Complete Jobs
 
@@ -185,7 +196,6 @@ namespace Mesocyclone.MesoDOTS
                 state.Dependency = SetupJob.Schedule(group.CellGroupNumber, 5, state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 AirCellPhysics1Job Physics1Job = new()
                 {
@@ -202,7 +212,6 @@ namespace Mesocyclone.MesoDOTS
                 state.Dependency = Physics1Job.Schedule(group.CellGroupNumber, 5, state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 AirCellTerrainRepulsionJob TerrainRepulsionJob = new()
                 {
@@ -218,7 +227,6 @@ namespace Mesocyclone.MesoDOTS
                 state.Dependency = TerrainRepulsionJob.Schedule(state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 AirCellRepulsionPhysicsJob PhysicsRepulsionJob = new()
                 {
@@ -232,7 +240,6 @@ namespace Mesocyclone.MesoDOTS
                 state.Dependency = PhysicsRepulsionJob.Schedule(som.CellRepulsion.Length, 15, state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 AirCellPhysics2Job Physics2Job = new()
                 {
@@ -240,7 +247,7 @@ namespace Mesocyclone.MesoDOTS
                     som = som,
                     flags = flags,
                     interp = interpolation,
-                    interpIndices = InterpolationIndices,
+                    isInInterp = IsInInterpolation,
                     transforms = AirTransformList,
                     cells = AirCellList,
                     geos = AirGeometryList
@@ -248,7 +255,6 @@ namespace Mesocyclone.MesoDOTS
                 state.Dependency = Physics2Job.Schedule(group.CellGroupNumber, 5, state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 AirCellInterpolationJob InterpolationJob = new()
                 {
@@ -258,16 +264,18 @@ namespace Mesocyclone.MesoDOTS
                     env = env,
                     flags = flags,
                     interp = interpolation,
-                    interpIndices = InterpolationIndices,
+                    isInInterp = IsInInterpolation,
                     cells = AirCellList,
                     geos = AirGeometryList
                 };
                 state.Dependency = InterpolationJob.Schedule(state.Dependency);
 
                 state.Dependency.Complete();
-                SetData();
 
                 #endregion
+
+                InterpolationResult.Dispose();
+                InterpolationResult = new(interpolation.Values, Allocator.Persistent);
             }
         }
 
@@ -328,15 +336,6 @@ namespace Mesocyclone.MesoDOTS
         }
 
         #endregion
-
-        #region Other Functions
-        [BurstCompile]
-        public void SetData()
-        {
-            SystemAPI.GetSingletonRW<AirCellLocalEnvironment>().ValueRW = env;
-            SystemAPI.GetSingletonRW<AirCellOptimization>().ValueRW = som;
-        }
-        #endregion
     }
 
     [BurstCompile]
@@ -370,7 +369,6 @@ namespace Mesocyclone.MesoDOTS
 
             #endregion
 
-            UnityEngine.Debug.Log("Test");
             DebugEverything(cell.ID, in cells, in geos);
 
             #region Calculate Static Pressure
@@ -457,12 +455,6 @@ namespace Mesocyclone.MesoDOTS
 
             if (c.CellCenter.y <= -geos[i].CellHeight / 2f)
                 UnityEngine.Debug.LogError($"ACDDC - Air Cell Digging Down to China\ni = {i}");
-        }
-
-        [BurstCompile]
-        private float SafeValue(float value)
-        {
-            return math.max(value, 1e-2f);
         }
 
         #endregion
@@ -637,7 +629,7 @@ namespace Mesocyclone.MesoDOTS
         }
 
         [BurstCompile]
-        private float SafeValue(float value)
+        private readonly float SafeValue(float value)
         {
             return math.max(value, 1e-2f);
         }
@@ -789,8 +781,9 @@ namespace Mesocyclone.MesoDOTS
         public AirCellOptimization som;
         [NativeDisableUnsafePtrRestriction]
         public RefRO<AirCellBehaviourFlags> flags;
+        [ReadOnly]
         public InverseDistanceWeighting interp;
-        public NativeList<int> interpIndices;
+        public NativeArray<bool> isInInterp;
 
         public NativeArray<LocalTransform> transforms;
         public NativeArray<AirCell> cells;
@@ -822,17 +815,8 @@ namespace Mesocyclone.MesoDOTS
             //To visualize the Air Cells
             if (flags.ValueRO.AirCellObjects) transform.Position = cell.CellCenter;
 
-            //For interpolation
-            if (interpIndices.Contains(cell.ID))
-            {
-                if (math.length(interp.Query - cell.CellCenter) > interp.R)
-                {
-                    int IndexToRemove = interpIndices.BinarySearch(cell.ID);
-                    interpIndices.RemoveAt(IndexToRemove);
-                }
-            }
-            else if (math.length(interp.Query - cell.CellCenter) <= interp.R)
-                interpIndices.Add(cell.ID);
+            //Check if Within Interpolation Range
+            isInInterp[index] = math.length(interp.Query - cell.CellCenter) <= interp.R;
 
             /*
             if (i == 0)
@@ -882,7 +866,7 @@ namespace Mesocyclone.MesoDOTS
         }
 
         [BurstCompile]
-        private float SafeValue(float value)
+        private readonly float SafeValue(float value)
         {
             return math.max(value, 1e-2f);
         }
@@ -902,7 +886,7 @@ namespace Mesocyclone.MesoDOTS
         [NativeDisableUnsafePtrRestriction]
         public RefRO<AirCellBehaviourFlags> flags;
         public InverseDistanceWeighting interp;
-        public NativeList<int> interpIndices;
+        public NativeArray<bool> isInInterp;
 
         public NativeArray<AirCell> cells;
         public NativeArray<AirCellGeometry> geos;
@@ -912,11 +896,12 @@ namespace Mesocyclone.MesoDOTS
         {
             #region Interpolation
 
+            NativeArray<float> v = new(6, Allocator.Temp);
+
             interp.BeginInterpolation(flags.ValueRO.FollowDrone);
 
             if (flags.ValueRO.InterpolationWithTerrain)
             {
-                NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
                 v[0] = 0;
                 v[1] = 0;
                 v[2] = 0;
@@ -925,23 +910,23 @@ namespace Mesocyclone.MesoDOTS
                 v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
 
                 interp.InterpolationStep(flags.ValueRO.FollowDrone ? float3.zero : new float3(interp.Query.x, 0, interp.Query.z), v);
-                v.Dispose();
             }
 
-            foreach (int i in interpIndices)
+            for (int i = 0; i < group.CellGroupNumber; i++)
             {
-                AirCell interpCell = cells[i];
+                if (isInInterp[i])
+                {
+                    AirCell interpCell = cells[i];
 
-                NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-                v[0] = interpCell.Velocity.x * sim.ValueRO.TimeScale;
-                v[1] = interpCell.Velocity.y * sim.ValueRO.TimeScale;
-                v[2] = interpCell.Velocity.z * sim.ValueRO.TimeScale;
-                v[3] = interpCell.Moles;
-                v[4] = interpCell.Temperature;
-                v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
+                    v[0] = interpCell.Velocity.x * sim.ValueRO.TimeScale;
+                    v[1] = interpCell.Velocity.y * sim.ValueRO.TimeScale;
+                    v[2] = interpCell.Velocity.z * sim.ValueRO.TimeScale;
+                    v[3] = interpCell.Moles;
+                    v[4] = interpCell.Temperature;
+                    v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
 
-                interp.InterpolationStep(interpCell.CellCenter, v);
-                v.Dispose();
+                    interp.InterpolationStep(interpCell.CellCenter, v);
+                }
             }
 
             if (!interp.BroadcastInterpolation(flags.ValueRO.InterpolationWithTerrain))
@@ -962,7 +947,6 @@ namespace Mesocyclone.MesoDOTS
 
                 AirCell closestCell = cells[minI];
 
-                NativeArray<float> v = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
                 v[0] = closestCell.Velocity.x * sim.ValueRO.TimeScale;
                 v[1] = closestCell.Velocity.y * sim.ValueRO.TimeScale;
                 v[2] = closestCell.Velocity.z * sim.ValueRO.TimeScale;
@@ -971,8 +955,8 @@ namespace Mesocyclone.MesoDOTS
                 v[5] = 0; /* Dynamic Volume Should Supposedly Go Here But Still Haven't Found A Use For It (TM) */
 
                 interp.GetClosestCell(v);
-                v.Dispose();
             }
+
             #endregion
         }
     }

@@ -14,24 +14,15 @@ namespace Mesocyclone.MesoDOTS
     // the DOTS compatable version
     public struct InverseDistanceWeighting : IComponentData
     {
-        public float R;
-        public float3 Query;
-        public NativeArray<float> SUM_wu;
-        public float SUM_w;
-        public bool FollowDrone;
-        public NativeArray<float> Values;
-        private bool LockValues;
+        public float R = 1000;
+        public float3 Query = float3.zero;
+        public NativeArray<float> SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        public float SUM_w = 0;
+        public bool FollowDrone = false;
+        public NativeArray<float> Values = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        private bool LockValues = false;
 
-        public InverseDistanceWeighting(bool ParameterToMakeTheCompilerHappy)
-        {
-            R = 1000;
-            Query = float3.zero;
-            SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            SUM_w = 0;
-            FollowDrone = false;
-            LockValues = false;
-            Values = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-        }
+        public InverseDistanceWeighting() { }
 
         [BurstCompile]
         public void DronePosition(in float3 position)
@@ -69,8 +60,7 @@ namespace Mesocyclone.MesoDOTS
                 if (d is 0)
                 {
                     //Values = new(u.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);  wait, why do you even need this if you just set it to 'u' immediately after?
-                    Values.Dispose();
-                    Values = new(u, Allocator.Persistent);
+                    Values = new(u, Allocator.Temp);
                     LockValues = true;
 
                     return;
@@ -97,7 +87,7 @@ namespace Mesocyclone.MesoDOTS
 
             if (!LockValues)
             {
-                NativeArray<float> vals = new(SUM_wu.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+                NativeArray<float> vals = new(SUM_wu.Length, Allocator.Temp);
 
                 for (int i = 0; i < SUM_wu.Length; i++)
                     vals[i] = SUM_wu[i] / SUM_w;
@@ -110,7 +100,6 @@ namespace Mesocyclone.MesoDOTS
                 }
 
                 Values = vals;
-                vals.Dispose();
             }
 
             return true;
@@ -121,8 +110,7 @@ namespace Mesocyclone.MesoDOTS
         {
             if (!LockValues)
             {
-                Values.Dispose();
-                Values = new(u, Allocator.Persistent);
+                Values = new(u, Allocator.Temp);
             }
         }
     }

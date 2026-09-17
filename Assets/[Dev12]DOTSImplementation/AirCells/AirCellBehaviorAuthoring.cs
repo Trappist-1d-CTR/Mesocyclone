@@ -143,7 +143,7 @@ namespace Mesocyclone.MesoDOTS
         public float TempTest;
         public Vector3 VelTest;
         public Vector3 CenterTest;
-        public GameObject Prefab;
+        //public GameObject Prefab;
 
         [Header("Bounds")]
         public Vector2 AirCellBounds;
@@ -157,9 +157,6 @@ namespace Mesocyclone.MesoDOTS
             public override void Bake(AirCellBehaviorAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.None);
-
-                _ = DependsOn(authoring.Prefab);
-                Entity prefab = GetEntity(authoring.Prefab, TransformUsageFlags.Dynamic);
 
                 AddComponent(entity, new AirCellBehaviourFlags
                 {
