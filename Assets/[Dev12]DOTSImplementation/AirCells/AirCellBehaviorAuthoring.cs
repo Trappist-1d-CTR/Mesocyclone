@@ -97,6 +97,13 @@ namespace Mesocyclone.MesoDOTS
                 CellGroupNumber = CellNumber
             });
 
+            _ = state.EntityManager.CreateSingleton<AirCellLocalEnvironment>(new AirCellLocalEnvironment
+            {
+                AverageLocalTemp = 0,
+                AverageLocalWind = 0,
+                AmbientHeat = 0
+            });
+
             _ = state.EntityManager.CreateSingleton<AirCellOptimization>(new AirCellOptimization
             {
                 StaticPressure = new(CellNumber, Allocator.Persistent),
@@ -127,11 +134,6 @@ namespace Mesocyclone.MesoDOTS
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
         public bool FollowDrone;
-
-        [Header("Environment")]
-        public float AverageLocalTemp;
-        public float AverageLocalWind;
-        public float AmbientHeat;
 
         [Header("Simulation")]
         public float TimeScale = 1f;
@@ -167,13 +169,6 @@ namespace Mesocyclone.MesoDOTS
                 });
 
                 _ = AddBuffer<AirCellGroupMember>(entity);
-
-                AddComponent(entity, new AirCellLocalEnvironment
-                {
-                    AverageLocalTemp = authoring.AverageLocalTemp,
-                    AverageLocalWind = authoring.AverageLocalWind,
-                    AmbientHeat = authoring.AmbientHeat
-                });
 
                 AddComponent(entity, new AirCellSimulation
                 {

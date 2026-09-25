@@ -86,7 +86,6 @@ namespace Mesocyclone.MesoDOTS
                 cell.ValueRW.Moles = sim.ValueRO.MoleTest;
                 cell.ValueRW.Temperature = sim.ValueRO.TempTest + (((RandomValue.NextFloat() * 2f) - 1f) * 25f);
                 cell.ValueRW.Velocity = sim.ValueRO.VelTest + (((RandomValue.NextFloat3() * 2f) - 1f) * 10f);
-                cell.ValueRW = cell.ValueRO;
 
                 ECB.RemoveComponent<AirCellNeedsInitialization>(entity);
             }
