@@ -2,14 +2,10 @@ using Mesocyclone.Data;
 using System.Diagnostics;
 using Unity.Burst;
 using Unity.Collections;
-//using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
-using UnityEngine.Jobs;
-
-//using UnityEngine;
 using UnityEngine.Jobs;
 
 namespace Mesocyclone.MesoDOTS
