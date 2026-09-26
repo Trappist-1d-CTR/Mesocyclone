@@ -89,7 +89,7 @@ namespace Mesocyclone.MesoDOTS
     public partial struct SingletonInitSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
-        {
+        {/*
             int CellNumber = 1;
 
             _ = state.EntityManager.CreateSingleton<AirCellGroup>(new AirCellGroup
@@ -117,7 +117,7 @@ namespace Mesocyclone.MesoDOTS
             _ = state.EntityManager.CreateSingleton<AirCellBuffer>(new AirCellBuffer
             {
                 Buffer = new(Allocator.Persistent)
-            });
+            });*/
 
             //UnityEngine.Debug.Log("Singletons Created");
         }
