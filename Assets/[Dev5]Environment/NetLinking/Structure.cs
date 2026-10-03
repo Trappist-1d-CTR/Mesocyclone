@@ -63,7 +63,7 @@ namespace Mesocyclone
             }
         }
 
-        public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range)
+        public bool Attempt2Link(Vector3 AttemptPosition, int TransferRate, float Range, AnimationCurve SignalFalloff)
         {
             while (DroneT != GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>())
             {
@@ -72,23 +72,23 @@ namespace Mesocyclone
 
             if (!Linked)
             {
+                Range = Mathf.Max(1e-3f, Range);
                 Vector3 Antenna = t.position + (t.rotation * AntennaPos);
 
                 RaycastHit hit;
                 Vector3 direction = (Antenna - AttemptPosition).normalized;
                 bool hasLineOfSight = Physics.Raycast(AttemptPosition, direction, out hit, Range);
-                bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.06f; // only link to structures below??   A: Y E S
+                bool isPointingDown = DroneT.InverseTransformDirection(direction).y < -0.0f; // only link to structures below??   A: Y E S
                 if (hasLineOfSight && isPointingDown && hit.transform.IsChildOf(t))
                 {
                     //Debug.Log("Visible: " + Name);
                     if (!Detectable) Detectable = true;
 
                     float distance = Vector3.Distance(AttemptPosition, Antenna);
-                    float effectiveRange = Mathf.Max(1e-3f, Range);
 
-                    float Signal = 1f - Mathf.InverseLerp(0f, effectiveRange, distance);
+                    float Signal = SignalFalloff.Evaluate(distance / Range);
 
-                    if (Signal > Random.Range(0, Random.Range(3, 7)))
+                    if (Signal > Random.Range(0f, Random.Range(3f, 7f)))
                     {
                         LinkedData += Mathf.FloorToInt(TransferRate * Signal) * Time.fixedDeltaTime;
                     }

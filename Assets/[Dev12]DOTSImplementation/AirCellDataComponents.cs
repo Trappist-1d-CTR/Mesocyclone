@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -10,6 +11,7 @@ namespace Mesocyclone.MesoDOTS
     #region ECS Data Components
 
     // base component for all air cells
+    [BurstCompile]
     public struct AirCell : IComponentData
     {
         public int ID;
@@ -18,21 +20,59 @@ namespace Mesocyclone.MesoDOTS
         public float Temperature;
         public float3 Velocity;
         public float3 Acceleration;
+
+        [BurstCompile]
+        public void PerformVelocity(float deltaTime)
+        {
+            CellCenter += Velocity * deltaTime;
+        }
+        [BurstCompile]
+        public void PerformAcceleration(in float3 acc, float deltaTime)
+        {
+            Acceleration = acc;
+            Velocity += Acceleration * deltaTime;
+        }
     }
 
     // the geometry / dimensions of the air cell
+    [BurstCompile]
     public struct AirCellGeometry : IComponentData
     {
         public float CellStaticVolume;
         public float CellCircleArea;
         public float CellRadius;
         public float CellHeight;
+
+        [BurstCompile]
+        public void SetSizeV(float v)
+        {
+            CellStaticVolume = v;
+            CellHeight = math.pow(v, 1f / 3f);
+            CellCircleArea = v / CellHeight;
+            CellRadius = math.sqrt(CellCircleArea / math.PI);
+        }
+        [BurstCompile]
+        public void SetSizeVL(float v, float l)
+        {
+            CellStaticVolume = v;
+            CellHeight = l;
+            CellCircleArea = v / l;
+            CellRadius = math.sqrt(CellCircleArea / math.PI);
+        }
+        [BurstCompile]
+        public void SetSizeRL(float r, float l)
+        {
+            CellRadius = r;
+            CellHeight = l;
+            CellCircleArea = math.pow(r, 2) * math.PI;
+            CellStaticVolume = CellCircleArea * l;
+        }
     }
 
     // self explanatory
     public struct AirCellBehaviourFlags : IComponentData
     {
-        public bool AirCellObjects;
+        public bool AirCellsVisible;
         public bool TerrainAtSeaLevel;
         public bool InterpolationWithTerrain;
         public bool FollowDrone;
@@ -95,6 +135,23 @@ namespace Mesocyclone.MesoDOTS
     public struct AirCellGroup : IComponentData
     {
         public int CellGroupNumber;
+    }
+
+    public struct InterpolationIDW : IComponentData
+    {
+        public float R;
+        public float3 Query;
+        public NativeArray<float> Values;
+    }
+
+    public struct InterpolationQuery : IComponentData
+    {
+        public float3 Query;
+    }
+
+    public struct InterpolationValues : IComponentData
+    {
+        public NativeArray<float> Values;
     }
 
     #endregion

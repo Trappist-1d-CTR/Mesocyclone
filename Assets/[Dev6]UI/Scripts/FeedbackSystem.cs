@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using Mesocyclone.UI;
 
 namespace Mesocyclone.UI.Feedbacking
 {
@@ -72,9 +69,11 @@ namespace Mesocyclone.UI.Feedbacking
 
             string Address = "feedback.unknownsimprograms@gmail.com"; //put address here (NOT A PERSONAL ADDRESS)
             string Password = "ucsgopfqbfkpfcvr"; //put password here (if you're some random person on GitHub, please don't screw us over ;-;)
-            MailMessage mail = new(Address, Address);
-            mail.Subject = "MESOCYCLONE FEEDBACK (" + FeedbackVariable.Version + ")";
-            mail.Body = FormatMessage(FeedbackVariable);
+            MailMessage mail = new(Address, Address)
+            {
+                Subject = "MESOCYCLONE FEEDBACK (" + FeedbackVariable.Version + ")",
+                Body = FormatMessage(FeedbackVariable)
+            };
             if (FeedbackVariable.ScreenshotFilePath != null)
                 mail.Attachments.Add(new Attachment(FeedbackVariable.ScreenshotFilePath));
 

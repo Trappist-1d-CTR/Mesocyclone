@@ -35,7 +35,7 @@ void _33(float2 _32,out float _33_sdf_output) {
 	    float2 randomOffset = hash22(tiled);
 	
 		float2 _36 = tiled;
-		float _38 = hash12(_36 + float2(-475,5123,554,1017));
+		float _38 = hash12(_36 + float2(-326.5407,-478.4026));
 		bool _39 = _37 > _38;
 	
 	    if (_39) {
@@ -60,11 +60,11 @@ void Voxels(float3 position,out float density,out int material) {
 	const float2 _8 = float2(1.0,1.0);
 	const float2 _9 = float2(1.0,1.0);
 	float2 _10 = position.xz;
-	float2 _11 = ((_10 + float3(123,8544f, 32,22354f, -359,4854f).xy) * _8.x);
+	float2 _11 = ((_10 + float3(123.8544f, 32.22354f, -359.4854f).xy) * _8.x);
 	float2 _14 = _13.xx;
 	float _15 = (cellular((_11) * _14).y - 0.5) * _12;
 	float _16 = (_10.x + _15 * _9.x);
-	float2 _17 = ((_10 + float3(65,4238f, -551,1535f, 159,5435f).xy) * _8.y);
+	float2 _17 = ((_10 + float3(65.4238f, -551.1535f, 159.5435f).xy) * _8.y);
 	float _18 = (cellular((_17) * _14).y - 0.5) * _12;
 	float _19 = (_10.y + _18 * _9.y);
 	float2 _20 = float2(_16,_19);
@@ -117,7 +117,7 @@ void Props(float3 position,int dispatch,int type) {
 	const float _69 = 1;
 	const float4 _70 = float4(0,0,0,1);
 	const int _71 = 0;
-	float _72 = hash13(position + float3(303,1082,904,6588,58,20984));
+	float _72 = hash13(position + float3(738.5964,-824.4469,649.9131));
 	const float _73 = 1;
 	const float _74 = 0,2;
 	float _75 = _73 - _74;

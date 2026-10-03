@@ -1,6 +1,8 @@
-using UnityEngine;
+using FMOD.Studio;
+using FMODUnity;
 using Mesocyclone;
 using Mesocyclone.MesoMod;
+using UnityEngine;
 
 public class HangarScript : Tickable
 {
@@ -22,7 +24,7 @@ public class HangarScript : Tickable
 
     private bool WaitForCoverHit;
 
-    private AudioSource CentrifugeSFX;
+    private EventInstance CentrifugeSound;
 
     public enum HangarSituations
     {
@@ -35,7 +37,7 @@ public class HangarScript : Tickable
 
     #endregion
 
-    void Start()
+    private void Start()
     {
         PlatformShelteredPos = new(0, 0.5f, 0);
         AnimationTimer = -1;
@@ -43,13 +45,15 @@ public class HangarScript : Tickable
         if (HangarState == HangarSituations.Sheltered)
             GameObject.FindGameObjectWithTag("Player").SendMessage("InHangar", gameObject);
 
-        CentrifugeSFX = GetComponentInChildren<AudioSource>();
         CoverHinge = transform.GetComponentInChildren<HingeJoint>();
+
+        CentrifugeSound = RuntimeManager.CreateInstance("event:/PhysicalObjects/HangarCentrifuge");
+        _ = CentrifugeSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
     }
 
     public override void FixedTick()
     {
-        #region Platform-Cover Animations and Centrifuge SFX
+        #region Platform-Cover Animations
 
         switch (HangarState)
         {
@@ -68,16 +72,21 @@ public class HangarScript : Tickable
                 break;
 
             case HangarSituations.Launching:
-                Platform.MovePosition(Platform.transform.parent.position + 
+                Platform.MovePosition(Platform.transform.parent.position +
                     ((PlatformShelteredPos + (PlatformExtensionHeight * (AnimationTimer / ClosingTime) * Vector3.up)) * Platform.transform.lossyScale.y));
-                
+
                 if (AnimationTimer >= LaunchingTime)
                 {
-                    Platform.MovePosition(Platform.transform.parent.position + 
+                    Platform.MovePosition(Platform.transform.parent.position +
                         ((PlatformShelteredPos + (PlatformExtensionHeight * Vector3.up)) * Platform.transform.lossyScale.y));
                     AnimationTimer = -1;
                     HangarState = HangarSituations.Standby;
                 }
+                break;
+
+            case HangarSituations.Standby:
+                break;
+            case HangarSituations.Sheltered:
                 break;
 
             default:
@@ -91,34 +100,11 @@ public class HangarScript : Tickable
             if (CoverHinge.angle <= -90)
             {
                 Cover.AddRelativeTorque(-CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
-                if (!CentrifugeSFX.isPlaying)
-                    CentrifugeSFX.Play();
-                else if (CentrifugeSFX.time > 18)
-                    CentrifugeSFX.time = 1;
-
-                if (!WaitForCoverHit) WaitForCoverHit = true;
-            }
-            else if (CentrifugeSFX.isPlaying && CentrifugeSFX.time > 3 && CentrifugeSFX.time < 18)
-            {
-                CentrifugeSFX.time = 18;
             }
         }
         else if (float.IsNaN(CoverHinge.angle) || CoverHinge.angle >= -90)
         {
             Cover.AddRelativeTorque(CoverTorqueForce * Vector3.Cross(Vector3.forward, Vector3.up));
-            if (!CentrifugeSFX.isPlaying)
-                CentrifugeSFX.Play();
-            else if (CentrifugeSFX.time > 18)
-                CentrifugeSFX.time = 1;
-
-            if (!WaitForCoverHit) WaitForCoverHit = true;
-        }
-        else
-        {
-            if (CentrifugeSFX.isPlaying && CentrifugeSFX.time > 3 && CentrifugeSFX.time < 18)
-            {
-                CentrifugeSFX.time = 18;
-            }
         }
 
 
@@ -133,23 +119,63 @@ public class HangarScript : Tickable
     public override void Tick()
     {
         #region Check For Cover Hit
+
         if (WaitForCoverHit && Cover.angularVelocity.magnitude < 0.01f && (CoverHinge.angle > -1f || CoverHinge.angle < -176f || float.IsNaN(CoverHinge.angle)))
         {
             WaitForCoverHit = false;
             //Debug.Log("Cover Hit!");
             CoverHit();
         }
+
+        #endregion
+
+        #region Centrifuge Sound
+
+        _ = CentrifugeSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
+
+        _ = CentrifugeSound.getPlaybackState(out PLAYBACK_STATE state);
+        _ = CentrifugeSound.getTimelinePosition(out int pos);
+
+        if (HangarState is HangarSituations.Closing or HangarSituations.Sheltered)
+        {
+            if (CoverHinge.angle <= -90)
+            {
+                if (state is not PLAYBACK_STATE.STARTING and not PLAYBACK_STATE.PLAYING and not PLAYBACK_STATE.SUSTAINING)
+                { _ = CentrifugeSound.start(); }
+
+                if (!WaitForCoverHit) WaitForCoverHit = true;
+            }
+            else if ((state is PLAYBACK_STATE.STARTING or PLAYBACK_STATE.PLAYING or PLAYBACK_STATE.SUSTAINING) && pos > 3 * 48000 && pos < 18 * 48000)
+            {
+                _ = CentrifugeSound.setTimelinePosition(Mathf.RoundToInt(18.01f * 48000));
+            }
+        }
+        else if (float.IsNaN(CoverHinge.angle) || CoverHinge.angle >= -90)
+        {
+            if (state is not PLAYBACK_STATE.STARTING and not PLAYBACK_STATE.PLAYING and not PLAYBACK_STATE.SUSTAINING)
+            { _ = CentrifugeSound.start(); }
+
+            if (!WaitForCoverHit) WaitForCoverHit = true;
+        }
+        else if ((state is PLAYBACK_STATE.STARTING or PLAYBACK_STATE.PLAYING or PLAYBACK_STATE.SUSTAINING) && pos > 3 * 48000 && pos < 18 * 48000)
+        {
+            _ = CentrifugeSound.setTimelinePosition(Mathf.RoundToInt(18.01f * 48000));
+        }
+
         #endregion
     }
 
     #region Cover Collision Sound
+
     private void CoverHit()
     {
         FMODManager.Collision.PlayHangarCover(Cover.worldCenterOfMass);
     }
+
     #endregion
 
     #region Hangar Commands
+
     public void ShelterHangar()
     {
         if (HangarState == HangarSituations.Standby)

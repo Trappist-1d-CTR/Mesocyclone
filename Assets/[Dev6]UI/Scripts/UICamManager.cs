@@ -20,6 +20,7 @@ namespace Mesocyclone.UI
         public Rigidbody DroneBody;
 
         #region Camera & UI
+
         private InputMap InputControl;
 
         private CinemachineBrain CamBrain;
@@ -36,6 +37,7 @@ namespace Mesocyclone.UI
 
         public Canvas UICanvas;
         public ButtonEventSystem BackgrES;
+
         #endregion
 
         #region Camera Effects
@@ -91,11 +93,15 @@ namespace Mesocyclone.UI
             #endregion
 
             #region Check and Set Time Scale
+
             if (Time.timeScale != 1) Time.timeScale = 1;
+
             #endregion
 
             #region Disable Pause Menus
+
             ToggleMenu(-1);
+
             #endregion
 
             #region Camera Controls
@@ -106,10 +112,12 @@ namespace Mesocyclone.UI
             #endregion
 
             #region Misc Setups
+
             MET = 0;
             NotifSelectedMessage = 1;
             NotifAnimTimer = -1;
             SimulationSettings.Load();
+
             #endregion
         }
 
@@ -295,10 +303,12 @@ namespace Mesocyclone.UI
         public override void FixedTick()
         {
             #region Set Camera Rotations
-            CamTarget.localRotation = Quaternion.Euler(CameraRotation.x, CameraRotation.y + 90, 0);
-            CamTarget.rotation = Quaternion.Euler(CamTarget.rotation.eulerAngles.x, CamTarget.rotation.eulerAngles.y, 0);
+
+            CamTarget.localRotation = Quaternion.Euler(0, CameraRotation.y + 90, 0);
+            CamTarget.rotation = Quaternion.Euler(CameraRotation.x, CamTarget.rotation.eulerAngles.y, 0);
             ThirdCamPanTilt.TiltAxis.Value = ThirdCamPanTilt.TiltAxis.Center + localCamRot.x;
             ThirdCamPanTilt.PanAxis.Value = ThirdCamPanTilt.PanAxis.Center + localCamRot.y;
+
             #endregion
         }
 
@@ -341,6 +351,7 @@ namespace Mesocyclone.UI
         #endregion
 
         #region Play UI SFX
+
         public static void SFX_Click()
         {
             FMODManager.UI.PlayClick();
@@ -355,6 +366,7 @@ namespace Mesocyclone.UI
         {
             FMODManager.UI.PlayLinking();
         }
+
         #endregion
 
         #region Pause Menus Controls
@@ -373,7 +385,6 @@ namespace Mesocyclone.UI
                 FMODManager.Instance.PauseTime(false);
 
                 transform.parent.SendMessage("PauseSFX", false);
-                GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", false);
 
                 UIEventSystem.SetSelectedGameObject(null);
             }
@@ -382,9 +393,6 @@ namespace Mesocyclone.UI
                 ToggleMenu(0);
                 Time.timeScale = 0;
                 FMODManager.Instance.PauseTime(true);
-
-                transform.parent.SendMessage("PauseSFX", true);
-                GameObject.FindGameObjectWithTag("ArtificialStructure").BroadcastMessage("PauseSFX", true);
 
                 UIEventSystem.SetSelectedGameObject(UIEventSystem.transform.parent.GetComponentInChildren<Button>(false).gameObject);
             }
@@ -405,9 +413,11 @@ namespace Mesocyclone.UI
         {
             SceneManager.LoadScene(0, LoadSceneMode.Single);
         }
+
         #endregion
 
         #region Feedback
+        /*
         public void FeedbackUpdate(int value) => FeedbackSystem.SetFeedback(value);
         public void FeedbackUpdate(string value) => FeedbackSystem.SetFeedback(value);
         public void FeedbackUpdate(bool value)
@@ -437,6 +447,7 @@ namespace Mesocyclone.UI
             FeedbackSystem.SendMail(path);
             ToggleMenu(4);
         }
+        */
         #endregion
     }
 }

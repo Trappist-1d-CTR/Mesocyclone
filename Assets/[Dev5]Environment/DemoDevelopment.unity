@@ -1644,59 +1644,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 79602859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &311937291
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 311937293}
-  - component: {fileID: 311937292}
-  m_Layer: 0
-  m_Name: DemoDOTS
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &311937292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 311937291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Scenes::Unity.Scenes.SubScene
-  _SceneAsset: {fileID: 102900000, guid: 76eceb3e32307ae4bb24657b1b68be4f, type: 3}
-  _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  AutoLoadScene: 1
-  _SceneGUID:
-    Value:
-      x: 3820932711
-      y: 1319568163
-      z: 3075883707
-      w: 4109076145
---- !u!4 &311937293
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 311937291}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &320637837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20883,7 +20830,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0.02, y: 0.05, z: 0.02}
+  Damping: {x: 0.02, y: 0.02, z: 0.02}
   ShoulderOffset: {x: 0, y: 0, z: 0}
   VerticalArmLength: 0.3
   CameraSide: 1
@@ -27139,7 +27086,6 @@ MonoBehaviour:
   Wind: {x: -50, y: 0, z: 0}
   AirSpeed: {x: -50, y: 0, z: 0}
   InducedDragAoA: []
-  Air: {fileID: 0}
   CenterOfLiftFound: 0
   CenterOfLift: {x: 0, y: 0, z: 0}
   CenterOfMass: {x: 0, y: 0, z: 0}
@@ -27155,8 +27101,6 @@ MonoBehaviour:
   DataGatherStage: 0
   OutputData:
     TableElements: []
-  EngineSFX: []
-  WindSFX: []
 --- !u!4 &1453793527
 Transform:
   m_ObjectHideFlags: 0
@@ -27200,7 +27144,40 @@ MonoBehaviour:
   Structures: []
   FocusStructure: 0
   NetLinkerRange: 1000
-  DataTransferRate: 15
+  PeakDataTransferRate: 30
+  SignalStrengthFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.11777409
+      outSlope: -0.11777409
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.53481936
+    - serializedVersion: 3
+      time: 0.49644423
+      value: 0.8824356
+      inSlope: -0.89306206
+      outSlope: -0.89306206
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.2143765
+      outWeight: 0.4414837
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.0012871268
+      outSlope: -0.0012871268
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.75281173
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   RadarRange: 5000
   SignalRange: 15000
   StructureName: {fileID: 6887355116645222985}
@@ -36888,7 +36865,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 0
+  UpdateMethod: 2
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 1
@@ -37807,7 +37784,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 6213471445727707516}
-    m_SelectOnDown: {fileID: 9061276382657446939}
+    m_SelectOnDown: {fileID: 1212733874127626155}
     m_SelectOnLeft: {fileID: 4231246099731318312}
     m_SelectOnRight: {fileID: 1212733874127626155}
   m_Transition: 1
@@ -37834,7 +37811,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2795982674159377149}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9061276382657446939}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &370498044339697836
 GameObject:
   m_ObjectHideFlags: 0
@@ -37970,8 +37959,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -97.5}
-  m_SizeDelta: {x: 240, y: 40}
+  m_AnchoredPosition: {x: 0, y: -70}
+  m_SizeDelta: {x: 240, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &486428374490702725
 GameObject:
@@ -39536,7 +39525,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 780137920205518017}
-    m_SelectOnDown: {fileID: 7232450018725514446}
+    m_SelectOnDown: {fileID: 8404516044533216697}
     m_SelectOnLeft: {fileID: 9053534410840739403}
     m_SelectOnRight: {fileID: 3586180405585273387}
   m_Transition: 1
@@ -39563,7 +39552,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6444346937623743768}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7232450018725514446}
+        m_TargetAssemblyTypeName: TMPro.TMP_Dropdown, Unity.TextMeshPro
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!224 &1144265015199014545
 RectTransform:
   m_ObjectHideFlags: 0
@@ -43265,7 +43266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2622974462858079294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45487,7 +45488,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 6222381632810023047}
-    m_SelectOnDown: {fileID: 6795375181988306505}
+    m_SelectOnDown: {fileID: 6213471445727707516}
     m_SelectOnLeft: {fileID: 6222381632810023047}
     m_SelectOnRight: {fileID: 3446296839270279718}
   m_Transition: 1
@@ -45514,7 +45515,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2066986956696823004}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6795375181988306505}
+        m_TargetAssemblyTypeName: TMPro.TMP_Dropdown, Unity.TextMeshPro
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!224 &3446157158687123722
 RectTransform:
   m_ObjectHideFlags: 0
@@ -45551,7 +45564,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 6222381632810023047}
-    m_SelectOnDown: {fileID: 8030102762824448123}
+    m_SelectOnDown: {fileID: 6213471445727707516}
     m_SelectOnLeft: {fileID: 3445793587343806872}
     m_SelectOnRight: {fileID: 6213471445727707516}
   m_Transition: 1
@@ -45578,7 +45591,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8390993873902120084}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8030102762824448123}
+        m_TargetAssemblyTypeName: TMPro.TMP_Dropdown, Unity.TextMeshPro
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &3447967304676518953
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -45846,7 +45871,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 780137920205518017}
-    m_SelectOnDown: {fileID: 3473300029802399010}
+    m_SelectOnDown: {fileID: 8404516044533216697}
     m_SelectOnLeft: {fileID: 1144235756372207928}
     m_SelectOnRight: {fileID: 9053534410840739403}
   m_Transition: 1
@@ -45873,7 +45898,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2309357154786151135}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3473300029802399010}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3601117424941022616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47389,7 +47426,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 6213471445727707516}
-    m_SelectOnDown: {fileID: 3648987187145848376}
+    m_SelectOnDown: {fileID: 1212733874127626155}
     m_SelectOnLeft: {fileID: 1212733874127626155}
     m_SelectOnRight: {fileID: 368677519093016797}
   m_Transition: 1
@@ -47416,7 +47453,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5090547817353349644}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3648987187145848376}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4238484820631037407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47942,8 +47991,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 32.5}
-  m_SizeDelta: {x: 240, y: 40}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 240, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4453755486228818544
 GameObject:
@@ -49194,8 +49243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 97.5}
-  m_SizeDelta: {x: 240, y: 40}
+  m_AnchoredPosition: {x: 0, y: 75}
+  m_SizeDelta: {x: 240, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4779701252491059394
 CanvasRenderer:
@@ -50792,7 +50841,7 @@ MonoBehaviour:
     m_SelectOnUp: {fileID: 5590317633970474936}
     m_SelectOnDown: {fileID: 8477930526418810580}
     m_SelectOnLeft: {fileID: 5590317633970474936}
-    m_SelectOnRight: {fileID: 767347942385636498}
+    m_SelectOnRight: {fileID: 5604976741515798197}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0.5019608}
@@ -50817,7 +50866,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8531361604964671102}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 767347942385636498}
+        m_TargetAssemblyTypeName: TMPro.TMP_InputField, Unity.TextMeshPro
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5298695599213519233
 GameObject:
   m_ObjectHideFlags: 0
@@ -51080,8 +51141,8 @@ RectTransform:
   - {fileID: 8568870062566981198}
   - {fileID: 6581936545954842393}
   - {fileID: 6445240776517228885}
-  - {fileID: 8847527353550237831}
   - {fileID: 8392557705755339556}
+  - {fileID: 8847527353550237831}
   - {fileID: 8361527915063193793}
   - {fileID: 4734757406252057201}
   - {fileID: 6072844357667211049}
@@ -51388,7 +51449,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -807}
+  m_AnchoredPosition: {x: 0, y: -810}
   m_SizeDelta: {x: 60, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5448871864822160725
@@ -52018,7 +52079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5580220484614174846
 RectTransform:
   m_ObjectHideFlags: 0
@@ -52056,7 +52117,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 8404516044533216697}
-    m_SelectOnDown: {fileID: 2508704284443692663}
+    m_SelectOnDown: {fileID: 5285183528816331868}
     m_SelectOnLeft: {fileID: 5285183528816331868}
     m_SelectOnRight: {fileID: 7665357756645956649}
   m_Transition: 1
@@ -52083,7 +52144,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7590510446968650844}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2508704284443692663}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5593724208492462893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52210,7 +52283,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 7665357756645956649}
-    m_SelectOnDown: {fileID: 550094608716541217}
+    m_SelectOnDown: {fileID: 6222381632810023047}
     m_SelectOnLeft: {fileID: 5285183528816331868}
     m_SelectOnRight: {fileID: 6222381632810023047}
   m_Transition: 1
@@ -52237,7 +52310,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3676965627914530634}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 550094608716541217}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &5649112421775420134
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -54282,7 +54367,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 5604976741515798197}
-    m_SelectOnDown: {fileID: 1668186348189178191}
+    m_SelectOnDown: {fileID: 3446296839270279718}
     m_SelectOnLeft: {fileID: 8477930526418810580}
     m_SelectOnRight: {fileID: 3445793587343806872}
   m_Transition: 1
@@ -54309,7 +54394,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1271885046814274676}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1668186348189178191}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &6228666979883174703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54716,7 +54813,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -277}
+  m_AnchoredPosition: {x: 0, y: -272}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &6450044102899468644
@@ -55285,8 +55382,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.5}
-  m_SizeDelta: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6713155458661012030
 GameObject:
@@ -55863,8 +55960,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.5}
-  m_SizeDelta: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6887355116645222985
 MonoBehaviour:
@@ -57349,7 +57446,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 8404516044533216697}
-    m_SelectOnDown: {fileID: 4739991228058994870}
+    m_SelectOnDown: {fileID: 5604976741515798197}
     m_SelectOnLeft: {fileID: 5590317633970474936}
     m_SelectOnRight: {fileID: 5604976741515798197}
   m_Transition: 1
@@ -57376,7 +57473,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4696609674675142673}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4739991228058994870}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7684176351295241662
 GameObject:
   m_ObjectHideFlags: 0
@@ -57529,8 +57638,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.5}
-  m_SizeDelta: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7765215186223129900
 GameObject:
@@ -57841,7 +57950,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 30}
-  m_SizeDelta: {x: 270, y: 280}
+  m_SizeDelta: {x: 270, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7829622576178862115
 GameObject:
@@ -58278,7 +58387,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &7975089417732429500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62193,7 +62302,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 780137920205518017}
-    m_SelectOnDown: {fileID: 988461074510234030}
+    m_SelectOnDown: {fileID: 8404516044533216697}
     m_SelectOnLeft: {fileID: 3586180405585273387}
     m_SelectOnRight: {fileID: 1144235756372207928}
   m_Transition: 1
@@ -62220,7 +62329,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2643604702951621792}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 988461074510234030}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &9061276382657446939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62622,4 +62743,3 @@ SceneRoots:
   - {fileID: 2083857064}
   - {fileID: 1930139999}
   - {fileID: 551337705}
-  - {fileID: 311937293}

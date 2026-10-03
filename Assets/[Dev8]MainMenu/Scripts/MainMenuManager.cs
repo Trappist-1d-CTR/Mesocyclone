@@ -32,7 +32,7 @@ namespace Mesocyclone
 
         #endregion
 
-        void Start()
+        private void Start()
         {
             SimulationSettings.Load();
 
@@ -80,7 +80,7 @@ namespace Mesocyclone
             Application.Quit();
         }
 
-        IEnumerator LoadGameAsync()
+        public IEnumerator LoadGameAsync()
         {
             AsyncOperation Operation = SceneManager.LoadSceneAsync("DemoDevelopment", LoadSceneMode.Single);
 

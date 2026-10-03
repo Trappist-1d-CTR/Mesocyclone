@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Burst;
@@ -14,15 +14,26 @@ namespace Mesocyclone.MesoDOTS
     // the DOTS compatable version
     public struct InverseDistanceWeighting : IComponentData
     {
-        public float R = 1000;
-        public float3 Query = float3.zero;
-        public NativeArray<float> SUM_wu = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-        public float SUM_w = 0;
-        public bool FollowDrone = false;
-        public NativeArray<float> Values = new(6, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-        private bool LockValues = false;
+        public static InverseDistanceWeighting instance;
+        public float R;
+        public float3 Query;
+        public NativeArray<float> SUM_wu;
+        public float SUM_w;
+        public bool FollowDrone;
+        public NativeArray<float> Values;
+        public bool LockValues = false;
 
-        public InverseDistanceWeighting() { }
+        public InverseDistanceWeighting()
+        {
+            R = 25000;
+            Query = 0;
+            SUM_wu = new(6, Allocator.Persistent);
+            SUM_w = 0;
+            FollowDrone = false;
+            Values = new(6, Allocator.Persistent);
+            LockValues = false;
+            instance = this;
+        }
 
         [BurstCompile]
         public void DronePosition(in float3 position)
@@ -54,19 +65,19 @@ namespace Mesocyclone.MesoDOTS
 
             if (!LockValues)
             {
-                float3 diff = Query - xi;
-                float d = math.sqrt(math.square(diff.x) + math.square(diff.y) + math.square(diff.z));
+                float d = math.distance(Query, xi);
 
                 if (d is 0)
                 {
                     //Values = new(u.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);  wait, why do you even need this if you just set it to 'u' immediately after?
-                    Values = new(u, Allocator.Temp);
+                    for (int i = 0; i < u.Length; i++)
+                        Values[i] = u[i];
                     LockValues = true;
 
                     return;
                 }
 
-                float w = math.pow(math.max(R - d, 0) / (R * d), 2);
+                float w = math.pow(math.max(R - d, 0) / (R * d), 2) + 1;
 
                 SUM_w += w;
 
@@ -78,16 +89,18 @@ namespace Mesocyclone.MesoDOTS
         }
 
         [BurstCompile]
-        public bool BroadcastInterpolation(bool terrainAlreadyInterpolated)
+        public void BroadcastInterpolation(bool terrainAlreadyInterpolated)
         {
             if (SUM_w is 0)
             {
-                return false;
+                return;
             }
 
             if (!LockValues)
             {
                 NativeArray<float> vals = new(SUM_wu.Length, Allocator.Temp);
+
+                UnityEngine.Debug.Log($"{SUM_wu[0]} ; {SUM_w}");
 
                 for (int i = 0; i < SUM_wu.Length; i++)
                     vals[i] = SUM_wu[i] / SUM_w;
@@ -99,10 +112,9 @@ namespace Mesocyclone.MesoDOTS
                     vals[2] *= Query.y / 10f;
                 }
 
-                Values = vals;
+                for (int i = 0; i < vals.Length; i++)
+                    Values[i] = vals[i];
             }
-
-            return true;
         }
 
         [BurstCompile]
@@ -110,8 +122,10 @@ namespace Mesocyclone.MesoDOTS
         {
             if (!LockValues)
             {
-                Values = new(u, Allocator.Temp);
+                for (int i = 0; i < u.Length; i++)
+                    Values[i] = u[i];
             }
         }
     }
 }
+*/

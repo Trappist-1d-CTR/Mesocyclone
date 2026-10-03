@@ -16,13 +16,15 @@ namespace Mesocyclone
         public int FocusStructure;
 
         public float NetLinkerRange;
-        public int DataTransferRate;
+        public int PeakDataTransferRate;
+        public AnimationCurve SignalStrengthFalloff;
         public int RadarRange;
         public int SignalRange;
 
         #endregion
 
         #region UI & Animations
+
         public TextMeshProUGUI StructureName;
         public Image SignalMask;
         public Slider LinkingProgress;
@@ -34,6 +36,7 @@ namespace Mesocyclone
 
         public float SignalAnimTimer;
         public float SignalAnimSpeed;
+
         #endregion
 
         // Start is called before the first frame update
@@ -244,7 +247,7 @@ namespace Mesocyclone
 
                 if (!DroneNet.Contains(s))
                 {
-                    if (s.Attempt2Link(transform.position, DataTransferRate, NetLinkerRange))
+                    if (s.Attempt2Link(transform.position, PeakDataTransferRate, NetLinkerRange, SignalStrengthFalloff))
                     {
                         if (i != FocusStructure && SignalAnimTimer == -1)
                         {

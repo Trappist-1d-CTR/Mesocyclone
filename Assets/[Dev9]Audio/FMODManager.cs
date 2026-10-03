@@ -1,10 +1,9 @@
+using FMOD.Studio;
+using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using FMODUnity;
-using FMOD.Studio;
-using Mesocyclone;
 
 namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the modding API btw, that's BepInEx's job
 {
@@ -87,10 +86,10 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         public struct MusicTrack
         {
-            public int TrackVolume;
-            public int TrackIndex;
-            public TrackType TrackType;
-            public string TrackName;
+            public int AlbumVolume;
+            public int Index;
+            public TrackType Type;
+            public string Name;
             public string Artist;
         }
 
@@ -105,43 +104,39 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         public static class Jukebox
         {
-            public static MusicState State;
-            public static int PlayingTrack;
-            public static int SelectedTrack;
-            public static int TrackListLength;
-            public static MusicTrack[] Tracks;
+            public static MusicTrack[] OST;
+            public static int OSTLength;
+            public static EventInstance[] OSTEvents;
+            public static int PlayingID;
+            public static int SelectedID;
             public static string[] Situation;
+            public static float Delay;
 
             #region Functions
+
+            public static void Start(float deltaTime = 0)
+            {
+                if (SelectedID != -1 && PlayingID != SelectedID)
+                {
+                    if (Delay == 0 || deltaTime == 0)
+                    {
+                        Stop();
+                        OSTEvents[SelectedID].start();
+                        PlayingID = SelectedID;
+                    }
+                    else
+                    {
+                        Delay = Mathf.Max(0, Delay - deltaTime);
+                    }
+                }
+            }
+
             public static void Stop()
             {
-                if (State is not MusicState.Idle)
+                if (PlayingID != -1)
                 {
-                    State = MusicState.IsStopping;
-                    Instance.MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE); // holy FMOD naming conventions are so fucked. This isn't C++ my guy
-                    PlayingTrack = -1;
-                    State = MusicState.Idle;
-                }
-            }
-            public static void Start()
-            {
-                if (State is not (MusicState.IsPlaying or MusicState.IsSwitching))
-                {
-                    State = MusicState.IsStarting;
-                    RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
-                    PlayingTrack = SelectedTrack;
-                    State = MusicState.IsPlaying;
-                }
-            }
-            public static void Switch()
-            {
-                if (State is not (MusicState.Idle or MusicState.IsStopping))
-                {
-                    State = MusicState.IsSwitching;
-                    Instance.MusicBus.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
-                    RuntimeManager.PlayOneShot("event:/Music/" + Tracks[SelectedTrack].Artist + "/" + Tracks[SelectedTrack].TrackName);
-                    PlayingTrack = SelectedTrack;
-                    State = MusicState.IsPlaying;
+                    _ = OSTEvents[PlayingID].stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                    PlayingID = -1;
                 }
             }
 
@@ -150,11 +145,11 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 switch (Situation[0])
                 {
                     case "MainMenu":
-                        PickTrack(TrackType.MainMenu);
+                        PickTrack(TrackType.MainMenu, UnityEngine.Random.Range(10f, 30f));
                         break;
 
                     case "DemoDevelopment":
-                        PickTrack(TrackType.Game);
+                        PickTrack(TrackType.Game, UnityEngine.Random.Range(25f, 100f));
                         break;
 
                     default:
@@ -163,21 +158,19 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 }
             }
 
-            public static void PickTrack(TrackType type)
+            public static void PickTrack(TrackType type, float delay = 0)
             {
-                if (PlayingTrack != -1 && Tracks[PlayingTrack].TrackType == type) return;
-
                 List<MusicTrack> pickList = new();
 
-                foreach (MusicTrack item in Tracks)
+                foreach (MusicTrack item in OST)
                 {
-                    if (item.TrackType == type)
+                    if (item.Type == type)
                         pickList.Add(item);
                 }
-                SelectedTrack = pickList[UnityEngine.Random.Range(0, pickList.Count)].TrackIndex;
+                SelectedID = UnityEngine.Random.Range(0, pickList.Count);
 
-                if (PlayingTrack == -1) Start();
-                else Switch();
+                if (delay == 0) Start();
+                else Delay = delay;
             }
 
             #endregion
@@ -186,24 +179,47 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         #endregion
 
+        #region Physical Sounds Manager
+
+        public class PhysicalSound
+        {
+            public string Name;
+            public GameObject LinkedObject;
+            public EventInstance SoundInstance;
+
+            public PhysicalSound(string name, GameObject physicalObject)
+            {
+                Name = name;
+                LinkedObject = physicalObject;
+                SoundInstance = RuntimeManager.CreateInstance("event:/PhysicalObjects/" + name);
+            }
+        }
+
+        #endregion
+
         private void Start()
         {
             #region Init
+
             if (Instance == null)
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
             }
             else DestroyImmediate(gameObject);
+
             #endregion
 
             #region Get Busses
+
             UIBus = RuntimeManager.GetBus("Bus:/UI");
             WorldBus = RuntimeManager.GetBus("Bus:/World");
             MusicBus = RuntimeManager.GetBus("Bus:/Music");
+
             #endregion
 
             #region Get Music Tracks
+
             int DebugStage = 0;
 
             try
@@ -214,26 +230,27 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
                 DebugStage++;
 
-                Jukebox.State = 0;
-                Jukebox.PlayingTrack = -1;
-                Jukebox.SelectedTrack = -1;
-                Jukebox.TrackListLength = int.Parse(data[0]);
-                Jukebox.Tracks = new MusicTrack[Jukebox.TrackListLength];
+                Jukebox.PlayingID = -1;
+                Jukebox.SelectedID = -1;
+                Jukebox.OSTLength = int.Parse(data[0]);
+                Jukebox.OST = new MusicTrack[Jukebox.OSTLength];
+                Jukebox.OSTEvents = new EventInstance[Jukebox.OSTLength];
                 Jukebox.Situation = new string[1] { "" };
 
                 DebugStage++;
 
-                for (int i = 0; i < Jukebox.TrackListLength; i++)
+                for (int i = 0; i < Jukebox.OSTLength; i++)
                 {
                     string[] trackData = data[i + 1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                    Jukebox.Tracks[i] = new()
+                    Jukebox.OST[i] = new()
                     {
-                        TrackVolume = int.Parse(trackData[0]),
-                        TrackIndex = int.Parse(trackData[1]),
-                        TrackType = (TrackType)int.Parse(trackData[2]),
-                        TrackName = trackData[3],
+                        AlbumVolume = int.Parse(trackData[0]),
+                        Index = int.Parse(trackData[1]),
+                        Type = (TrackType)int.Parse(trackData[2]),
+                        Name = trackData[3],
                         Artist = trackData[4]
                     };
+                    Jukebox.OSTEvents[i] = RuntimeManager.CreateInstance("event:/Music/" + Jukebox.OST[i].Artist + "/" + Jukebox.OST[i].Name);
 
                     DebugStage++;
                 }
@@ -242,7 +259,11 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
             {
                 UnityEngine.Debug.LogError("Unable to load music: " + DebugStage);
             }
+
             #endregion
+
+            _ = WorldBus.setPaused(Time.timeScale == 0);
+            _ = MusicBus.setPaused(Time.timeScale == 0);
         }
 
         private void OnDestroy()
@@ -252,21 +273,31 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         private void Update()
         {
+            _ = Jukebox.OSTEvents[Jukebox.OSTLength].getPlaybackState(out PLAYBACK_STATE state);
+            if (state is PLAYBACK_STATE.STOPPED)
+            {
+                if (Jukebox.PlayingID != -1) Jukebox.PlayingID = -1;
+
+                if (Jukebox.Delay == 0) Jukebox.Start(Time.deltaTime);
+            }
+
             if (Jukebox.Situation[0] != SceneManager.GetActiveScene().name)
             {
                 Jukebox.Situation[0] = SceneManager.GetActiveScene().name;
                 Jukebox.Assessment();
             }
 
-            Playing = Jukebox.PlayingTrack;
+            Playing = Jukebox.PlayingID;
         }
 
         #region Pause/Resume
+
         public void PauseTime(bool paused)
         {
             _ = Instance.WorldBus.setPaused(paused);
             _ = Instance.MusicBus.setPaused(paused);
         }
+
         #endregion
 
         public static class UI

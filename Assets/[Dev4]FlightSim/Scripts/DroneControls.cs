@@ -1,11 +1,16 @@
+using FMOD.Studio;
+using FMODUnity;
+using Mesocyclone.Data;
+using Mesocyclone.MesoDOTS;
+using Mesocyclone.MesoMod;
+using Mesocyclone.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Mesocyclone.UI;
-using Mesocyclone.MesoMod;
-using Mesocyclone.Data;
-using Mesocyclone.Deprecated;
 
 namespace Mesocyclone
 {
@@ -219,7 +224,7 @@ namespace Mesocyclone
         #endregion
 
         #region Reference Scripts
-        public AirCellBehavior Air;
+        //public AirCellBehavior Air;
         private AirDataComputer DataComputer;
         private UICamManager UICam;
         #endregion
@@ -294,15 +299,24 @@ namespace Mesocyclone
 
         private float TimeAtGatheringStart;
         #endregion
-        
+
         #region SFX
-        public AudioSource[] EngineSFX;
-        public AudioSource[] WindSFX;
+        private FMOD.Studio.EventInstance DroneEngineSound;
+        private FMOD.Studio.EventInstance AirspeedSound;
         #endregion
+
+        #region DOTS Data
+
+        public static NativeArray<float> InterpValues;
+        private EntityManager _em;
+        private Entity _entity;
+        private EntityQuery _query;
 
         #endregion
 
-        void Start()
+        #endregion
+
+        private void Start()
         {
             #region Get Components and Script Reference
 
@@ -310,8 +324,6 @@ namespace Mesocyclone
             DroneCollider = gameObject.GetComponent<BoxCollider>();
             DataComputer = gameObject.GetComponentInChildren<AirDataComputer>(false);
             UICam = gameObject.GetComponentInChildren<UICamManager>(false);
-            EngineSFX = gameObject.transform.GetChild(4).GetComponents<AudioSource>();
-            WindSFX = gameObject.transform.GetChild(5).GetComponents<AudioSource>();
 
             #endregion
 
@@ -333,9 +345,9 @@ namespace Mesocyclone
                     {
                         NetLinker.Parts.DronePartStats[i].PartObjectb = NetLinker.Parts.DronePartStats[i].PartObject;
 
-                    #if DEV
+#if DEV
                         Debug.Log("PartObject with ID " + NetLinker.Parts.DronePartStats[i].IDb + " not found.");
-                    #endif
+#endif
                     }
                 }
             }
@@ -443,6 +455,21 @@ namespace Mesocyclone
             InputControl.Dev.ResetDrone.performed += ResetDrone;
 
             #endregion
+
+            #region Get Sounds
+
+            DroneEngineSound = RuntimeManager.CreateInstance("event:/PhysicalObjects/DroneEngine");
+            _ = DroneEngineSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, DronePhysics));
+            AirspeedSound = RuntimeManager.CreateInstance("event:/PhysicalObjects/Airspeed");
+            _ = AirspeedSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, DronePhysics));
+
+            #endregion
+
+            #region DOTS Data
+            _em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            _entity = _em.CreateEntity(typeof(InterpolationQuery));
+            _query = _em.CreateEntityQuery(typeof(InterpolationValues));
+            #endregion
         }
 
         private void OnDestroy()
@@ -463,6 +490,13 @@ namespace Mesocyclone
 
             InputControl.Disable();
 
+            #endregion
+
+            #region Remove DOTS
+            if (World.DefaultGameObjectInjectionWorld != null && _em.Exists(_entity))
+                _em.DestroyEntity(_entity);
+
+            InterpValues.Dispose();
             #endregion
         }
 
@@ -487,8 +521,7 @@ namespace Mesocyclone
 
             PhysicsVelocity = DronePhysics.linearVelocity;
             PhysicsPosition = DronePhysics.position;
-            Mesocyclone.Deprecated.InverseDistanceWeighting.DronePos(PhysicsPosition);
-            if (Air != null) Air.DronePosition = PhysicsPosition;
+            SetQuery(new float3(PhysicsPosition.x, PhysicsPosition.y, PhysicsPosition.z));
             PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
             //   Debug.Log("Starting Acceleration: " + PhysicsAcceleration);
             PhysicsRotation = DronePhysics.rotation;
@@ -501,11 +534,30 @@ namespace Mesocyclone
             }
 
             //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
-            if (!AirChamberTest && !SteadyFlightTest && Mesocyclone.Deprecated.InverseDistanceWeighting.Values != null)
-                Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(Mesocyclone.Deprecated.InverseDistanceWeighting.Values[0], Mesocyclone.Deprecated.InverseDistanceWeighting.Values[1], Mesocyclone.Deprecated.InverseDistanceWeighting.Values[2]) : Vector3.zero;
-            else if (!AirChamberTest)
-                Wind = Vector3.zero;
+            if (_query.TryGetSingleton(out InterpolationValues result))
+            {
+                InterpValues.Dispose();
+                InterpValues = new(6, Allocator.Persistent);
+                for (int i = 0; i < 6; i++)
+                {
+                    InterpValues[i] = result.Values[i];
+                }
 
+                if (!AirChamberTest && !SteadyFlightTest)
+                {
+                    Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InterpValues[0], InterpValues[1], InterpValues[2]) : Vector3.zero;
+                }
+                else if (!AirChamberTest)
+                {
+                    Wind = Vector3.zero;
+                }
+            }
+            else
+            {
+                Wind = Vector3.zero;
+            }
+
+            //UnityEngine.Debug.Log("Drone Wind: " + Wind + " ; " + InterpValues[0]);
             #endregion
 
             #region Main Engine Thrust
@@ -634,33 +686,19 @@ namespace Mesocyclone
                         break;
 
                     case HoverModeType.Climb:
-                        if (DronePhysics.linearVelocity.y <= -16.77 + HoverTargetSpeed[0])
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
-                        }
-                        else if (DronePhysics.linearVelocity.y < HoverTargetSpeed[0])
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y + HoverTargetSpeed[0]));
-                        }
-                        else
-                        {
-                            HoverTarget = 0;
-                        }
+                        HoverTarget = DronePhysics.linearVelocity.y <= -16.77 + HoverTargetSpeed[0]
+                            ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust
+                            : DronePhysics.linearVelocity.y < HoverTargetSpeed[0]
+                                ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y + HoverTargetSpeed[0]))
+                                : 0;
                         break;
 
                     case HoverModeType.Hover:
-                        if (DronePhysics.linearVelocity.y <= -16.77)
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
-                        }
-                        else if (DronePhysics.linearVelocity.y < 0)
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * DronePhysics.linearVelocity.y);
-                        }
-                        else
-                        {
-                            HoverTarget = 0;
-                        }
+                        HoverTarget = DronePhysics.linearVelocity.y <= -16.77
+                            ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust
+                            : DronePhysics.linearVelocity.y < 0
+                                ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * DronePhysics.linearVelocity.y)
+                                : 0;
                         break;
 
                     case HoverModeType.Float:
@@ -668,18 +706,11 @@ namespace Mesocyclone
                         break;
 
                     case HoverModeType.Landing:
-                        if (DronePhysics.linearVelocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
-                        }
-                        else if (DronePhysics.linearVelocity.y < (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
-                        {
-                            HoverTarget = NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed));
-                        }
-                        else
-                        {
-                            HoverTarget = 0;
-                        }
+                        HoverTarget = DronePhysics.linearVelocity.y <= -16.77 + (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                            ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust
+                            : DronePhysics.linearVelocity.y < (DronePhysics.position.y > 10 ? -3 : NetLinker.MainBody.DroneBodyStats[0].LandingSpeed)
+                                ? NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust + (mem * (DronePhysics.linearVelocity.y - NetLinker.MainBody.DroneBodyStats[0].LandingSpeed))
+                                : 0;
                         break;
 
                     default:
@@ -886,40 +917,25 @@ namespace Mesocyclone
 
                     #region Pitch
 
-                    if (InputValues[0] ^ InputValues[1])
-                    {
-                        ReactionWheelsTargetTorque[0] = (InputValues[0] ? 1 : -1) * ReactionWheelsDefaultTorque.x;
-                    }
-                    else
-                    {
-                        ReactionWheelsTargetTorque[0] = 0;
-                    }
+                    ReactionWheelsTargetTorque[0] = InputValues[0] ^ InputValues[1]
+                        ? (InputValues[0] ? 1 : -1) * ReactionWheelsDefaultTorque.x
+                        : 0;
 
                     #endregion
 
                     #region Roll
 
-                    if (InputValues[2] ^ InputValues[3])
-                    {
-                        ReactionWheelsTargetTorque[1] = (InputValues[2] ? 1 : -1) * ReactionWheelsDefaultTorque.y;
-                    }
-                    else
-                    {
-                        ReactionWheelsTargetTorque[1] = 0;
-                    }
+                    ReactionWheelsTargetTorque[1] = InputValues[2] ^ InputValues[3] ? (InputValues[2]
+                        ? 1 : -1) * ReactionWheelsDefaultTorque.y
+                        : 0;
 
                     #endregion
 
                     #region Yaw
 
-                    if (InputValues[4] ^ InputValues[5])
-                    {
-                        ReactionWheelsTargetTorque[2] = (InputValues[4] ? 1 : -1) * ReactionWheelsDefaultTorque.z;
-                    }
-                    else
-                    {
-                        ReactionWheelsTargetTorque[2] = 0;
-                    }
+                    ReactionWheelsTargetTorque[2] = InputValues[4] ^ InputValues[5]
+                        ? (InputValues[4] ? 1 : -1) * ReactionWheelsDefaultTorque.z
+                        : 0;
 
                     #endregion
 
@@ -1196,6 +1212,8 @@ namespace Mesocyclone
 
         public override void Tick()
         {
+            //UnityEngine.Debug.Log(InverseDistanceWeighting.instance.Query);
+
             #region Handle Orientation Input
 
             Vector3 OrientationInput = InputControl.FlightControls.Orientation.ReadValue<Vector3>();
@@ -1210,7 +1228,7 @@ namespace Mesocyclone
                 InputValues[0] = OrientationInput.y > 0.3f; //Pitch Up
                 InputValues[1] = OrientationInput.y < -0.3f; //Pitch Down
             }
-            
+
             InputValues[2] = OrientationInput.z > 0.3f; //Roll Clock
             InputValues[3] = OrientationInput.z < -0.3f; //Roll Counter
             InputValues[4] = OrientationInput.x > 0.3f && !ImpulseInput && !AirBrakesInput; //Yaw Right
@@ -1247,6 +1265,9 @@ namespace Mesocyclone
                     UnityEngine.Debug.DrawLine(PhysicsPosition + (DronePhysics.rotation * CenterOfLift) - (DronePhysics.rotation * new Vector3(0, 0.2f)), PhysicsPosition + (DronePhysics.rotation * CenterOfLift) + (DronePhysics.rotation * new Vector3(0, 0.2f)), Color.cyan, 1 / Time.renderedFrameCount);
                     UnityEngine.Debug.DrawLine(PhysicsPosition + (DronePhysics.rotation * CenterOfLift) - (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), PhysicsPosition + (DronePhysics.rotation * CenterOfLift) + (DronePhysics.rotation * new Vector3(0, 0, 0.2f)), Color.cyan, 1 / Time.renderedFrameCount);
                     break;
+
+                default:
+                    break;
             }
             #endregion
 
@@ -1278,17 +1299,26 @@ namespace Mesocyclone
             #endregion
 
             #region SFX
-            foreach (AudioSource source in EngineSFX)
-            {
-                source.volume = 0.7f * (Thrust * 0.2f + (0.25f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust) + (ImpulseActive ? 0.4f : 0) + (FLIPPerforming ? 0.25f : 0));
-                source.pitch = 1f + (0.05f * Mathf.Sin(0.6f + Time.time + Random.Range(-0.3f, 0.3f))) - (0.8f * source.volume);
-            }
 
-            foreach (AudioSource source in WindSFX)
-            {
-                source.volume = Mathf.Pow(AirSpeed.magnitude, 1f / 3f) / 20f;
-                source.pitch = 0.7f + (0.05f * Mathf.Sin(Time.time + Random.Range(-0.2f, 0.2f))) - (0.2f * source.volume);
-            }
+            _ = DroneEngineSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, DronePhysics));
+            _ = AirspeedSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, DronePhysics));
+
+            _ = DroneEngineSound.getPlaybackState(out PLAYBACK_STATE stateEngine);
+            _ = AirspeedSound.getPlaybackState(out PLAYBACK_STATE stateAir);
+
+            if (stateEngine is not PLAYBACK_STATE.STARTING and not PLAYBACK_STATE.PLAYING and not PLAYBACK_STATE.SUSTAINING)
+            { _ = DroneEngineSound.start(); }
+            if (stateAir is not PLAYBACK_STATE.STARTING and not PLAYBACK_STATE.PLAYING and not PLAYBACK_STATE.SUSTAINING)
+            { _ = AirspeedSound.start(); }
+
+            float volume = 0.7f * ((Thrust * 0.2f) + (0.25f * HoverThrust / NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust) + (ImpulseActive ? 0.4f : 0) + (FLIPPerforming ? 0.25f : 0));
+            _ = DroneEngineSound.setVolume(volume);
+            _ = DroneEngineSound.setPitch(1f + (0.05f * Mathf.Sin(0.6f + Time.time + UnityEngine.Random.Range(-0.3f, 0.3f))) - (0.8f * volume));
+
+            volume = Mathf.Pow(AirSpeed.magnitude, 1f / 3f) / 20f;
+            _ = AirspeedSound.setVolume(volume);
+            _ = AirspeedSound.setPitch(0.7f + (0.05f * Mathf.Sin(Time.time + UnityEngine.Random.Range(-0.2f, 0.2f))) - (0.2f * volume));
+
             #endregion
         }
 
@@ -1337,11 +1367,11 @@ namespace Mesocyclone
         #endregion
 
         #region Reset Drone Position, Velocity, and Engines
+
         private void ResetDrone(InputAction.CallbackContext obj)
         {
-            Mesocyclone.Deprecated.InverseDistanceWeighting.Query = PhysicsPosition = DronePhysics.position = ResetTransform.position + (1.3f * Vector3.up);
             PhysicsVelocity = DronePhysics.linearVelocity = Vector3.zero;
-            if (Air != null) Air.DronePosition = PhysicsPosition;
+            SetQuery(new float3(PhysicsPosition.x, PhysicsPosition.y, PhysicsPosition.z));
             PhysicsAcceleration = TotWeight = (GlobalData.Data.Gale.SurfGravity * Vector3.down) + (NetLinker.MainBody.DroneBodyStats[0].DroneVolume * GlobalCalcGO.DensityAtHeight(PhysicsPosition.y) * Vector3.up / DronePhysics.mass);
             PhysicsRotation = DronePhysics.rotation = Quaternion.Euler(0f, 0f, 0f);
             PhysicsAngVelocity = DronePhysics.angularVelocity = Vector3.zero;
@@ -1351,10 +1381,11 @@ namespace Mesocyclone
             Thrust = 0; HoverThrust = 0; HoverTarget = 0; ImpulseCharge = 0;
 
             //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
-            if (!AirChamberTest && Mesocyclone.Deprecated.InverseDistanceWeighting.Values != null)
-                Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(Mesocyclone.Deprecated.InverseDistanceWeighting.Values[0], Mesocyclone.Deprecated.InverseDistanceWeighting.Values[1], Mesocyclone.Deprecated.InverseDistanceWeighting.Values[2]) : Vector3.zero;
+            if (!AirChamberTest && InterpValues != null)
+                Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InterpValues[0], InterpValues[1], InterpValues[2]) : Vector3.zero;
             return;
         }
+
         #endregion
 
         #region Hangar Controls
@@ -1418,20 +1449,6 @@ namespace Mesocyclone
         {
             UICam.EscapeUI();
             return;
-        }
-
-        public void PauseSFX(bool ToPause)
-        {
-            if (ToPause)
-            {
-                foreach (AudioSource source in EngineSFX) source.Pause();
-                foreach (AudioSource source in WindSFX) source.Pause();
-            }
-            else
-            {
-                foreach (AudioSource source in EngineSFX) source.UnPause();
-                foreach (AudioSource source in WindSFX) source.UnPause();
-            }
         }
         #endregion
 
@@ -1525,8 +1542,8 @@ namespace Mesocyclone
                 CT = 0.5f * d.FrontCd * Mathf.Cos(memmoi);
 
                 #region Lift - High AoAs
-                _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep), CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))));
-                _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep) - 180, CN * Mathf.Cos(memmoi) - (CT * Mathf.Sin(memmoi))));
+                _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep), (CN * Mathf.Cos(memmoi)) - (CT * Mathf.Sin(memmoi))));
+                _ = LiftAoA[i].AddKey(new(d.StallAngle + 10 + (i2 * iStep) - 180, (CN * Mathf.Cos(memmoi)) - (CT * Mathf.Sin(memmoi))));
                 #endregion
 
                 #region Induced Drag - High AoAs
@@ -1560,6 +1577,15 @@ namespace Mesocyclone
         {
             FMODManager.Collision.PlayDroneTerrain(gameObject);
         }
+        #endregion
+
+        #region Relay DOTS Data
+
+        public void SetQuery(float3 pos)
+        {
+            _em.SetComponentData(_entity, new InterpolationQuery { Query = pos });
+        }
+
         #endregion
     }
 }
