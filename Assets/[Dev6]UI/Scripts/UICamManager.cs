@@ -384,8 +384,6 @@ namespace Mesocyclone.UI
                 Time.timeScale = 1;
                 FMODManager.Instance.PauseTime(false);
 
-                transform.parent.SendMessage("PauseSFX", false);
-
                 UIEventSystem.SetSelectedGameObject(null);
             }
             else

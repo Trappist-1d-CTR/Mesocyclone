@@ -121,7 +121,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                     if (Delay == 0 || deltaTime == 0)
                     {
                         Stop();
-                        OSTEvents[SelectedID].start();
+                        _ = OSTEvents[SelectedID].start();
                         PlayingID = SelectedID;
                     }
                     else
@@ -141,6 +141,16 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
             }
 
             public static void Assessment()
+            {
+                if (Situation[0] != SceneManager.GetActiveScene().name)
+                {
+                    Situation[0] = SceneManager.GetActiveScene().name;
+
+                    PickTrack();
+                }
+            }
+
+            public static void PickTrack()
             {
                 switch (Situation[0])
                 {
@@ -167,7 +177,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                     if (item.Type == type)
                         pickList.Add(item);
                 }
-                SelectedID = UnityEngine.Random.Range(0, pickList.Count);
+                SelectedID = pickList[UnityEngine.Random.Range(0, pickList.Count)].Index;
 
                 if (delay == 0) Start();
                 else Delay = delay;
@@ -273,19 +283,18 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         private void Update()
         {
-            _ = Jukebox.OSTEvents[Jukebox.OSTLength].getPlaybackState(out PLAYBACK_STATE state);
-            if (state is PLAYBACK_STATE.STOPPED)
-            {
-                if (Jukebox.PlayingID != -1) Jukebox.PlayingID = -1;
+            Jukebox.Assessment();
 
-                if (Jukebox.Delay == 0) Jukebox.Start(Time.deltaTime);
-            }
-
-            if (Jukebox.Situation[0] != SceneManager.GetActiveScene().name)
+            if (Jukebox.PlayingID != -1)
             {
-                Jukebox.Situation[0] = SceneManager.GetActiveScene().name;
-                Jukebox.Assessment();
+                _ = Jukebox.OSTEvents[Jukebox.PlayingID].getPlaybackState(out PLAYBACK_STATE state);
+                if (state is PLAYBACK_STATE.STOPPED)
+                {
+                    Jukebox.PickTrack();
+                    if (Jukebox.PlayingID != -1) Jukebox.PlayingID = -1;
+                }
             }
+            else Jukebox.Start(Time.deltaTime);
 
             Playing = Jukebox.PlayingID;
         }
