@@ -313,7 +313,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Controller"",
                     ""action"": ""ImpulseThrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -324,7 +324,7 @@ public partial class @InputMap: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Controller"",
                     ""action"": ""ImpulseThrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true

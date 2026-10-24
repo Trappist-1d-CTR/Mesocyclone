@@ -72,7 +72,6 @@ namespace Mesocyclone
             {
                 AutoExp.active = true;
             }
-            else throw new Joar();
 
             #endregion
 

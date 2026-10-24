@@ -146,12 +146,17 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 {
                     Situation[0] = SceneManager.GetActiveScene().name;
 
-                    PickTrack();
+                    PickTrack(true);
                 }
             }
 
-            public static void PickTrack()
+            public static void PickTrack(bool SceneSwitch)
             {
+                if (SceneSwitch)
+                {
+                    Stop();
+                }
+
                 switch (Situation[0])
                 {
                     case "MainMenu":
@@ -216,7 +221,11 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
             }
-            else DestroyImmediate(gameObject);
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
 
             #endregion
 
@@ -290,8 +299,8 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 _ = Jukebox.OSTEvents[Jukebox.PlayingID].getPlaybackState(out PLAYBACK_STATE state);
                 if (state is PLAYBACK_STATE.STOPPED)
                 {
-                    Jukebox.PickTrack();
-                    if (Jukebox.PlayingID != -1) Jukebox.PlayingID = -1;
+                    Jukebox.PickTrack(false);
+                    Jukebox.PlayingID = -1;
                 }
             }
             else Jukebox.Start(Time.deltaTime);

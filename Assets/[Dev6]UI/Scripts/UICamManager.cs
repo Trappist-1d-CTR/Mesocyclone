@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -13,6 +12,7 @@ using Mesocyclone.MesoMod;
 
 namespace Mesocyclone.UI
 {
+    [RequireComponent(typeof(CinemachineBrain))]
     public class UICamManager : Tickable
     {
         #region Variables
@@ -69,7 +69,7 @@ namespace Mesocyclone.UI
         #endregion
 
         #region Audio
-        [SerializeField] AudioListener audioListener;
+        [SerializeField] private AudioListener audioListener;
         #endregion
 
         public EventSystem UIEventSystem;
@@ -78,7 +78,7 @@ namespace Mesocyclone.UI
 
         public Process soundTest;
 
-        void Start()
+        private void Start()
         {
             #region Get Components and Values
 
@@ -304,8 +304,9 @@ namespace Mesocyclone.UI
         {
             #region Set Camera Rotations
 
-            CamTarget.localRotation = Quaternion.Euler(0, CameraRotation.y + 90, 0);
-            CamTarget.rotation = Quaternion.Euler(CameraRotation.x, CamTarget.rotation.eulerAngles.y, 0);
+            CamTarget.rotation = Quaternion.Euler(CameraRotation.x,
+                Vector3.SignedAngle(Vector3.right, Vector3.ProjectOnPlane(CamTarget.parent.right, Vector3.up), Vector3.up) +
+                CameraRotation.y + 90, 0);
             ThirdCamPanTilt.TiltAxis.Value = ThirdCamPanTilt.TiltAxis.Center + localCamRot.x;
             ThirdCamPanTilt.PanAxis.Value = ThirdCamPanTilt.PanAxis.Center + localCamRot.y;
 
@@ -333,6 +334,9 @@ namespace Mesocyclone.UI
 
                     case "last":
                         NotifSelectedMessage = NotifierSystem.MainMessageList.Count;
+                        break;
+
+                    default:
                         break;
                 }
 
@@ -378,13 +382,19 @@ namespace Mesocyclone.UI
                 DroneBody = transform.GetComponentInParent<Rigidbody>();
             OtherInfo.text = Application.version + " ; " + DroneBody.position + " ; " + System.DateTime.Today.ToShortDateString();
 
-            if (PauseMenu.activeInHierarchy || FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
+            if (PauseMenu.activeInHierarchy)
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
                 FMODManager.Instance.PauseTime(false);
 
                 UIEventSystem.SetSelectedGameObject(null);
+            }
+            else if (FeedbackMenu.activeInHierarchy || SettingsMenu.activeInHierarchy)
+            {
+                ToggleMenu(0);
+
+                UIEventSystem.SetSelectedGameObject(UIEventSystem.transform.parent.GetComponentInChildren<Button>(false).gameObject);
             }
             else
             {

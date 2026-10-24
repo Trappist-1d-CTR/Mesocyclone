@@ -24,14 +24,20 @@ namespace Mesocyclone.MesoDOTS
         [BurstCompile]
         public void PerformVelocity(float deltaTime)
         {
-            CellCenter += Velocity * deltaTime;
+            if (math.isfinite(Velocity.x) && math.isfinite(Velocity.y) && math.isfinite(Velocity.z))
+                CellCenter += Velocity * deltaTime;
+            else
+                UnityEngine.Debug.LogError("Attempt to apply NaN velocity!");
         }
         [BurstCompile]
-        public void PerformAcceleration(in float3 acc, float deltaTime)
+        public void PerformAcceleration(in float3 acc, float deltaTime, int AccelerationID)
         {
             Acceleration = acc;
-            Velocity += Acceleration * deltaTime;
-        }
+            if (math.isfinite(acc.x) && math.isfinite(acc.y) && math.isfinite(acc.z))
+                Velocity += Acceleration * deltaTime;
+            else
+                UnityEngine.Debug.LogError($"Attempt to apply NaN force! ID: {AccelerationID}");
+        }   //0 is Gravity, 1 is Drag, 2 is Sea Level Repulsion, 3 is Physical Terrain Repulsion, 4 is Air Cell Repulsion
     }
 
     // the geometry / dimensions of the air cell
@@ -46,7 +52,6 @@ namespace Mesocyclone.MesoDOTS
         [BurstCompile]
         public void SetSizeV(float v)
         {
-            CellStaticVolume = v;
             CellHeight = math.pow(v, 1f / 3f);
             CellCircleArea = v / CellHeight;
             CellRadius = math.sqrt(CellCircleArea / math.PI);

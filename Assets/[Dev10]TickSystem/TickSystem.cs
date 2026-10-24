@@ -45,7 +45,7 @@ namespace Mesocyclone
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             if (Instance != null && Instance != this)
             {
@@ -60,7 +60,7 @@ namespace Mesocyclone
         // and Jobs requires NativeArray, which uses structs, and Tickable is a class
         // why am i a programmer
         // ts is too difficult for me
-        void Update()
+        private void Update()
         {
             try
             {
@@ -89,20 +89,24 @@ namespace Mesocyclone
             }
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             try
             {
                 foreach (var tickable in _tickables)
                 {
-                    tickable.FixedAccumulator += Time.fixedDeltaTime;
+                    /*tickable.FixedAccumulator += Time.fixedDeltaTime;
                     float interval = 1f / (tickable.FixedTickRate * Time.timeScale);
 
                     while (tickable.FixedAccumulator >= interval)
                     {
                         tickable.FixedTick();
                         tickable.FixedAccumulator -= interval;
-                    }
+                    }*/
+
+                    //UnityEngine.Debug.Log("FixedTick " + tickable.gameObject.name);
+                    tickable.FixedTick();
+                    //UnityEngine.Debug.Log("Completed");
                 }
             }
             catch
@@ -111,7 +115,7 @@ namespace Mesocyclone
             }
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             try
             {

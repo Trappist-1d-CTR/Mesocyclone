@@ -1,9 +1,5 @@
-using UnityEngine;
-using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Burst;
-using Unity.Jobs;
-using UnityEngine.Jobs;
 
 // do we even use a single unity thing here??
 
@@ -215,7 +211,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
 
             public const float MolarHeatCapacity = 27f;
 
-            public const float AtmSpecificEmissivity = 300f;
+            public const float AtmSpecificEmissivity = 1e-3f;
 
             public const float AtmHeatCp = 950.6951f;
         }

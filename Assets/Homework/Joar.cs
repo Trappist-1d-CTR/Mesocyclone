@@ -13,7 +13,7 @@ namespace Mesocyclone
             // awwww, why you comment out :(
             // UnityEngine.Debug.LogError(base.Message);
 
-            UnityEngine.Debug.LogException(this);
+            // UnityEngine.Debug.LogException(this);
 
             #if DEV
                 UnityEditor.EditorApplication.isPaused = true;
