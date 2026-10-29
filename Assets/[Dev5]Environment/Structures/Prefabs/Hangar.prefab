@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8339160848303416360
 Transform:
@@ -143,7 +143,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9141338521191768282
 Transform:
@@ -268,10 +268,10 @@ GameObject:
   - component: {fileID: 8685793417216249814}
   m_Layer: 0
   m_Name: Hangar
-  m_TagString: Untagged
+  m_TagString: ArtificialStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &946671935360170562
 Transform:
@@ -385,7 +385,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8048119972127475304
 Transform:
@@ -552,6 +552,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DroneHangar_Walls
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5abb166cb31f14343b937416e9be2b21, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -678,6 +682,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DroneHangar_Machinery
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c326b9055257d3340b355c3cf3daef15, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -803,6 +811,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 3e64a8595f3fa4f49a974cf377cd9b0a, type: 3}
       propertyPath: m_Name
       value: DroneHangar_Cover
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3e64a8595f3fa4f49a974cf377cd9b0a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -975,6 +987,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 6ea64983c85f5494b99707e9638a19bd, type: 3}
       propertyPath: m_Name
       value: DroneHangar_Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6ea64983c85f5494b99707e9638a19bd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

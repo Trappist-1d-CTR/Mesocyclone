@@ -181,7 +181,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
                 /// <summary>
                 /// Insolation: amount of radiation the planet receives from its star. Unit: W / m^2
                 /// </summary>
-                public const float Insolation = (Const.StefBoltz * (Glare.SurfTemp * Glare.SurfTemp * Glare.SurfTemp * Glare.SurfTemp)) * (Glare.Radius / SemiMajor) * (Glare.Radius / SemiMajor);
+                public const float Insolation = Const.StefBoltz * (Glare.SurfTemp * Glare.SurfTemp * Glare.SurfTemp * Glare.SurfTemp) * (Glare.Radius / SemiMajor) * (Glare.Radius / SemiMajor);
 
                 /// <summary>
                 /// Planetary Heat Capacity: amount of heat required to heat up the planet by 1 K. Unit: J / K
@@ -211,7 +211,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
 
             public const float MolarHeatCapacity = 27f;
 
-            public const float AtmSpecificEmissivity = 1e-3f;
+            public const float AtmSpecificEmissivity = 1e-7f;
 
             public const float AtmHeatCp = 950.6951f;
         }
@@ -228,7 +228,7 @@ namespace Mesocyclone.Data // changed from GlobalData to make namespace and clas
         {
             return GlobalData.Data.Gale.AtmPressure * math.exp(-GlobalData.Data.Gale.SurfGravity * GlobalData.Data.Gale.AtmMM * Height / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp));
         }
-        
+
         [BurstCompile]
         public static float DensityAtHeight(float Height)
         {

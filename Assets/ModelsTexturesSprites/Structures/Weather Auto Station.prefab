@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1947054094854429183}
   m_Layer: 0
   m_Name: Weather Auto Station
-  m_TagString: Untagged
+  m_TagString: ArtificialStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

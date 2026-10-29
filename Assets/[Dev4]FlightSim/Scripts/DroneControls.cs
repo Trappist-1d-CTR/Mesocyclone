@@ -164,7 +164,6 @@ namespace Mesocyclone
 
         public float DynamicPressure;
         public float ReferenceDynPressure;
-        private float PrevDynamicPressure;
 
         #endregion
 
@@ -1153,7 +1152,6 @@ namespace Mesocyclone
             */
             #endregion
 
-            PrevDynamicPressure = DynamicPressure;
             AirSpeed = -PhysicsVelocity + Wind;
 
             #region Drag Physics

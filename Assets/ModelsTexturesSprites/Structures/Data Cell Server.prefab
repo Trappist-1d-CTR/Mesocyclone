@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4676640531194186717}
   m_Layer: 0
   m_Name: Data Cell Server
-  m_TagString: Untagged
+  m_TagString: ArtificialStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

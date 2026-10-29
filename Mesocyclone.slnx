@@ -68,6 +68,7 @@
   <Project Path="Unity.Entities.Editor.Properties.csproj" />
   <Project Path="Unity.2D.Sprite.Editor.csproj" />
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
+  <Project Path="Unity.AdaptivePerformance.csproj" />
   <Project Path="FMODUnityResonanceEditor.csproj" />
   <Project Path="Unity.Multiplayer.Center.Common.csproj" />
   <Project Path="jedjoud.voxelterrain.editor.csproj" />

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,19 +39,16 @@ namespace Mesocyclone
         #endregion
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             #region Setup Structures
 
-            Transform t = GameObject.FindGameObjectWithTag("ArtificialStructure").transform;
+            GameObject[] structures = GameObject.FindGameObjectsWithTag("ArtificialStructure");
             Structures = new();
 
-            for (int i = 0; i < t.childCount; i++)
+            for (int i = 0; i < structures.Length; i++)
             {
-                Transform c = t.GetChild(i).transform;
-                Structure s;
-
-                if (c.TryGetComponent(out s))
+                if (structures[i].TryGetComponent(out Structure s))
                 {
                     Structures.Add(s);
                 }
@@ -69,15 +65,16 @@ namespace Mesocyclone
             NotifierSystem.Send("Structures connected: 0/10", System.DateTime.Now.ToLongTimeString(), 1);
         }
 
-        override public void Tick()
+        public override void Tick()
         {
             #region Run Animation Timers
 
-            if (SignalAnimTimer != -1 && SignalAnimTimer != 2)
+            if (SignalAnimTimer is not -1 and not 2)
             {
                 SignalAnimTimer += Time.deltaTime * SignalAnimSpeed;
                 if (SignalAnimTimer >= 1) SignalAnimTimer = 0;
             }
+
             #endregion
 
             #region Linking UI
@@ -117,7 +114,7 @@ namespace Mesocyclone
                         {
                             if (radarChild != null)
                                 Destroy(radarChild.gameObject);
-                            SignalList.Remove(s.Name);
+                            _ = SignalList.Remove(s.Name);
                         }
                         #endregion
 
@@ -141,7 +138,7 @@ namespace Mesocyclone
                             {
                                 // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
                                 UnityEngine.Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
-                                RadarList.Remove(s.Name);
+                                _ = RadarList.Remove(s.Name);
 
                                 radarRect = CreateRadarImage(true, 7, i, out radarImage);
                             }
@@ -177,7 +174,7 @@ namespace Mesocyclone
                     {
                         if (radarChild != null)
                             Destroy(radarChild.gameObject);
-                        RadarList.Remove(s.Name);
+                        _ = RadarList.Remove(s.Name);
                     }
                     else
                     {
@@ -203,7 +200,7 @@ namespace Mesocyclone
                                 {
                                     // throw new System.Exception("Unable to find corresponding image"); // exceptions r dookie dookie IMO; yes, my vocabulary is consisted of a toddler, so as my cognitive abilities
                                     UnityEngine.Debug.LogWarning($"Radar element for {s.Name} not found!! Recreating {s.Name}");
-                                    SignalList.Remove(s.Name);
+                                    _ = SignalList.Remove(s.Name);
 
                                     radarRect = CreateRadarImage(false, 4, i, out radarImage);
                                 }
@@ -228,7 +225,7 @@ namespace Mesocyclone
                         {
                             if (radarChild != null)
                                 Destroy(radarChild.gameObject);
-                            SignalList.Remove(s.Name);
+                            _ = SignalList.Remove(s.Name);
                         }
                     }
                 }
@@ -237,7 +234,7 @@ namespace Mesocyclone
             #endregion
         }
 
-        override public void FixedTick()
+        public override void FixedTick()
         {
             #region NetLink Structures
 

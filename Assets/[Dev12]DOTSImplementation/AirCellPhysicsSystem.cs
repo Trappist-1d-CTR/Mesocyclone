@@ -30,21 +30,21 @@ namespace Mesocyclone.MesoDOTS
         public AirCellOptimization som;
         public AirCellLocalEnvironment env;
 
-        public static readonly AirCellGroup group = new() { CellGroupNumber = 3 };
+        public static readonly AirCellGroup group = new() { CellGroupNumber = 100 };
         public static readonly AirCellBounds bounds = new() { Value = new(10000, 2000) };
         public static readonly AirCellSimulation sim = new()
         {
             TimeScale = 1,
             DronePosition = float3.zero,
-            CdTest = 10000f,
+            CdTest = 1f,
             MoleTest = 0.1f * GlobalData.Data.Gale.AtmPressure * math.square(2 * bounds.Value.x) * bounds.Value.y / (GlobalData.Const.R * GlobalData.Data.Gale.SurfTemp * group.CellGroupNumber),
-            TempTest = 1500,
+            TempTest = 1300,
             VelTest = float3.zero,
             CenterTest = float3.zero
         };
         public static readonly AirCellBehaviourFlags flags = new()
         {
-            AirCellsVisible = true,
+            AirCellsVisible = false,
             FollowDrone = false,
             InterpolationWithTerrain = true,
             TerrainAtSeaLevel = true
@@ -89,10 +89,17 @@ namespace Mesocyclone.MesoDOTS
                 AirCell cell = new()
                 { ID = i };
 
+                int IterationCheck = 0;
+
                 float3 InstantiateLocation;
                 bool PositionSet;
                 do
                 {
+                    if (IterationCheck > 50)
+                    {
+                        throw new Joar();
+                    }
+
                     InstantiateLocation = new()
                     {
                         /*x = (5f * bounds.Value.x / 12f) * ((i % 3) - 1),
@@ -105,12 +112,13 @@ namespace Mesocyclone.MesoDOTS
                     PositionSet = true;
                     foreach (var item in TakenPositions)
                     {
-                        if (math.distance(InstantiateLocation, item) < 500)
+                        if (math.distance(InstantiateLocation, item) < 1200)
                         {
                             PositionSet = false;
                             break;
                         }
                     }
+                    IterationCheck++;
 
                 } while (!PositionSet);
                 TakenPositions.Add(InstantiateLocation);
@@ -185,6 +193,8 @@ namespace Mesocyclone.MesoDOTS
             #region Schedule and Complete Jobs
 
             interpolation.Query = SystemAPI.GetSingleton<InterpolationQuery>().Query;
+
+            //UnityEngine.Debug.Log($"{env.AverageLocalTemp}");
 
             //UnityEngine.Debug.Log($"Initial: {CellList[0].Velocity}");
 
@@ -337,7 +347,7 @@ namespace Mesocyclone.MesoDOTS
         [BurstCompile]
         public static float SafeValue(float value)
         {
-            return math.max(value, 1e-2f);
+            return math.max(value, 1f);
         }
 
         #endregion
@@ -354,10 +364,6 @@ namespace Mesocyclone.MesoDOTS
             [BurstCompile]
             public void Execute(int index)
             {
-                // only lads with true ball know this is not the original
-                //double mem; // ...he glazes afar into the distance, as he realizes he is amongst the only double left...
-                float mem; // nevermind
-
                 AirCell cell = inst.CellList[index];
                 AirCellGeometry geo = inst.GeometryList[index];
 
@@ -369,19 +375,25 @@ namespace Mesocyclone.MesoDOTS
 
                 #endregion
 
+                //if (index == 0) UnityEngine.Debug.Log($"381, StatPressure: {inst.som.StaticPressure[index]} = StatPressAtHeight({cell.CellCenter.y})");
+
                 #region Insolation
 
                 if (inst.som.Temp[cell.ID] == 0) inst.som.Temp[cell.ID] = cell.Temperature;
                 else cell.Temperature = inst.som.Temp[cell.ID];
-                cell.Temperature += mem = GlobalData.Data.Gale.Insolation * geo.CellCircleArea / (GlobalData.Data.AtmHeatCp * GlobalData.Data.Gale.AtmMM * cell.Moles) * FixedDeltaTime;
+                cell.Temperature += GlobalData.Data.Gale.Insolation * geo.CellCircleArea / (GlobalData.Data.AtmHeatCp * GlobalData.Data.Gale.AtmMM * cell.Moles) * FixedDeltaTime;
 
                 #endregion
+
+                //if (index == 0) UnityEngine.Debug.Log($"391, Temp: {cell.Temperature}");
 
                 #region Radiative Cooling
 
                 cell.Temperature += -GlobalData.Const.StefBoltz * GlobalData.Data.AtmSpecificEmissivity * math.pow(cell.Temperature, 4f) * FixedDeltaTime;
 
                 #endregion
+
+                //if (index == 0) UnityEngine.Debug.Log($"399, Temp: {cell.Temperature}");
 
                 #region Calculate Static Volume
 
@@ -390,6 +402,8 @@ namespace Mesocyclone.MesoDOTS
                 inst.som.DynVolume[index] = geo.CellStaticVolume;
 
                 #endregion
+
+                //if (index == 0) UnityEngine.Debug.Log($"409, DynVol: {inst.som.DynVolume[index]} = {cell.Moles}*{GlobalData.Const.R}*{cell.Temperature}/{inst.som.StaticPressure[index]}");
 
                 #endregion
 
@@ -421,19 +435,12 @@ namespace Mesocyclone.MesoDOTS
 
                 #region Perform Air Cell Drag
 
-                cell.PerformAcceleration(-math.sign(cell.Velocity.x) * new float3(sim.CdTest * math.pow(cell.Velocity.x - inst.env.AverageLocalWind.x, 2f) / (4f * geo.CellRadius),
-                    -math.sign(cell.Velocity.y) * sim.CdTest * math.pow(cell.Velocity.y - inst.env.AverageLocalWind.y, 2f) / (2f * geo.CellHeight),
-                    -math.sign(cell.Velocity.z) * sim.CdTest * math.pow(cell.Velocity.z - inst.env.AverageLocalWind.z, 2f) / (4f * geo.CellRadius)), FixedDeltaTime, 1);
-
-                #endregion
-
-                #region Check for Terrain Collision - to do: improve with bouncing
-
-                if (cell.CellCenter.y <= (-geo.CellHeight / 2f))
-                {
-                    cell.CellCenter = new float3(cell.CellCenter.x, (-geo.CellHeight / 2f) + 0.2f, cell.CellCenter.z);
-                }
-
+                cell.PerformAcceleration(new float3(
+                    -math.sign(cell.Velocity.x) * sim.CdTest * math.square(cell.Velocity.x) / (4f * geo.CellRadius),
+                    -math.sign(cell.Velocity.y) * sim.CdTest * math.square(cell.Velocity.y) / (2f * geo.CellHeight),
+                    -math.sign(cell.Velocity.z) * sim.CdTest * math.square(cell.Velocity.z) / (4f * geo.CellRadius)),
+                    FixedDeltaTime, 1);
+                //if (index == 0) UnityEngine.Debug.Log($"442, AccelerationY: {-math.sign(cell.Velocity.y)}*{sim.CdTest}*{cell.Velocity.y}^2/(2*{geo.CellHeight})");
                 #endregion
 
                 #region Keep Within Boundaries
@@ -448,9 +455,13 @@ namespace Mesocyclone.MesoDOTS
                     cell.Velocity += new float3(0, 0, -math.sign(cell.CellCenter.z) * 200f * FixedDeltaTime);
                 }
 
-                if (cell.CellCenter.y >= bounds.Value.y + 0.1)
+                if (cell.CellCenter.y >= bounds.Value.y + 0.1f)
                 {
                     cell.Velocity += new float3(0, -200 * FixedDeltaTime, 0);
+                }
+                else if (cell.CellCenter.y <= -geo.CellHeight + 1f)
+                {
+                    cell.CellCenter.y = -geo.CellHeight + 1f;
                 }
 
                 #endregion
@@ -461,11 +472,14 @@ namespace Mesocyclone.MesoDOTS
                 {
                     inst.som.DynVolume[index] *= 0.5f + (cell.CellCenter.y / geo.CellHeight);
                     geo.SetSizeV(inst.som.DynVolume[index]);
-                    //UnityEngine.Debug.Log($"DynVol: {inst.som.DynVolume[index]}");
+                    //UnityEngine.Debug.Log($"DynVol {index}: {inst.som.DynVolume[index]} ; {cell.CellCenter.y} ; {geo.CellHeight}");
                     cell.PerformAcceleration(new float3(0, inst.som.StaticPressure[index] * geo.CellCircleArea * (math.pow(geo.CellStaticVolume / inst.som.DynVolume[index],
                         1f + (GlobalData.Data.MolarHeatCapacity / GlobalData.Const.R)) - 1f) / (cell.Moles * GlobalData.Data.Gale.AtmMM), 0), FixedDeltaTime, 2);
                 }
+
                 #endregion
+
+                //if (index == 0) UnityEngine.Debug.Log($"485, DynVol: {inst.som.DynVolume[index]}");
 
                 #endregion
 
@@ -574,6 +588,9 @@ namespace Mesocyclone.MesoDOTS
                             if (h * A > 0 && inst.som.DynVolume[index] > 0 && inst.som.DynVolume[i2] > (A * h / 2f))
                             {
                                 inst.som.DynVolume[index] = SafeValue(inst.som.DynVolume[index] - (A * h / 2f));
+
+                                //if (index == 0) UnityEngine.Debug.Log($"595, DynVol: {inst.som.DynVolume[index]}");
+
                                 geo.SetSizeV(inst.som.DynVolume[index]);
                                 //UnityEngine.Debug.Log($"DynVol: {inst.som.DynVolume[index]}");
 
@@ -595,7 +612,7 @@ namespace Mesocyclone.MesoDOTS
                             }
                             else
                             {
-                                UnityEngine.Debug.LogError("Null Dyn Volume at Repulsion Attempt");
+                                //UnityEngine.Debug.LogError("Null Dyn Volume at Repulsion Attempt");
                             }
                         }
 
@@ -743,7 +760,12 @@ namespace Mesocyclone.MesoDOTS
 
                 #endregion
 
+                //if (index == 0) UnityEngine.Debug.Log($"765, Temp: {cell.Temperature}");
+
                 cell.PerformVelocity(FixedDeltaTime);
+
+                //if (index == 0) UnityEngine.Debug.Log($"770, Pos: ({cell.CellCenter.x},{cell.CellCenter.y},{cell.CellCenter.z})");
+                //if (index == 0) UnityEngine.Debug.Log($"771, Vel: ({cell.Velocity.x},{cell.Velocity.y},{cell.Velocity.z})");
 
                 //To visualize position
                 if (flags.AirCellsVisible)

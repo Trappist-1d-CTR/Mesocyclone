@@ -133,7 +133,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &24052581
 Transform:
@@ -164,7 +164,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &24932305
 Transform:
@@ -199,7 +199,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 0
 --- !u!4 &27122709
 Transform:
@@ -625,7 +625,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 0
 --- !u!4 &79602859
 Transform:
@@ -817,6 +817,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Doppler Radar #1
       objectReference: {fileID: 0}
+    - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: Name
       value: "DpplrRdr 1\xB7"
@@ -870,7 +874,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &134136195
 MonoBehaviour:
@@ -1276,6 +1280,10 @@ PrefabInstance:
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #106
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1761,7 +1769,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &188777890
 Transform:
@@ -1936,6 +1944,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Data Cell Server
       objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: Name
       value: "Str11000\xB7DataCells"
@@ -2105,7 +2117,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &228277503
 Transform:
@@ -2136,7 +2148,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &310285337
 Transform:
@@ -2205,6 +2217,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Data Cell Server
       objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: Name
       value: "Str10000\xB7DataCells"
@@ -2265,7 +2281,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &343491233
 Transform:
@@ -2614,7 +2630,7 @@ GameObject:
   - component: {fileID: 402507381}
   - component: {fileID: 402507383}
   - component: {fileID: 402507382}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FLIP Engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7485,7 +7501,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &411065034
 Transform:
@@ -7517,6 +7533,10 @@ PrefabInstance:
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #99
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7582,7 +7602,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &449133432
 Transform:
@@ -7946,7 +7966,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &481305514
 Transform:
@@ -7971,6 +7991,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2083857064}
     m_Modifications:
+    - target: {fileID: 140114400101350066, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 946671935360170562, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: m_LocalPosition.x
       value: 592.78
@@ -8011,9 +8035,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1157200803741835798, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205811342481253325, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480168492064903540, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4112522905129203211, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: m_Name
       value: Hangar (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112522905129203211, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5111387473833217770, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677438253119854005, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672686579340594111, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: Name
@@ -8321,7 +8373,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &519782563
 Transform:
@@ -8352,7 +8404,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &527215723
 Transform:
@@ -8624,6 +8676,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #1413
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8822,6 +8878,10 @@ PrefabInstance:
     - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
       propertyPath: m_Name
       value: Weather Auto Station #1493
+      objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9032,6 +9092,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #2052
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9143,7 +9207,7 @@ GameObject:
   - component: {fileID: 631822282}
   - component: {fileID: 631822284}
   - component: {fileID: 631822283}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hover Engine Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14127,7 +14191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 661760901}
   - component: {fileID: 661760902}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14387,7 +14451,7 @@ GameObject:
   m_Component:
   - component: {fileID: 719317522}
   - component: {fileID: 719317523}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14542,7 +14606,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &728213674
 Transform:
@@ -14568,7 +14632,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 750310703}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Engine Trails
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14682,7 +14746,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 801891219}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hover Engine Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14722,7 +14786,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 802191784}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hover Engine Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14776,6 +14840,10 @@ PrefabInstance:
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #71
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
@@ -14852,7 +14920,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &816659709
 Transform:
@@ -14879,7 +14947,7 @@ GameObject:
   m_Component:
   - component: {fileID: 826643698}
   - component: {fileID: 826643699}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15140,7 +15208,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &862564113
 Transform:
@@ -15171,7 +15239,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &874382341
 Transform:
@@ -15467,6 +15535,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Data Cell Server
       objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: Name
       value: "Str1111\xB7DataCells"
@@ -15722,6 +15794,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #2298
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15794,6 +15870,10 @@ PrefabInstance:
     - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: m_Name
       value: Doppler Radar #5
+      objectReference: {fileID: 0}
+    - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: Name
@@ -15904,6 +15984,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #1655
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15935,7 +16019,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1022896688}
   - component: {fileID: 1022896689}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16086,7 +16170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1027833117}
   - component: {fileID: 1027833118}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16246,7 +16330,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1049635324
 Transform:
@@ -16454,7 +16538,7 @@ GameObject:
   - component: {fileID: 1077374098}
   - component: {fileID: 1077374100}
   - component: {fileID: 1077374099}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21348,6 +21432,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #954
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21611,7 +21699,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1138264886}
   - component: {fileID: 1138264887}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21847,13 +21935,13 @@ MonoBehaviour:
   CameraSide: 1
   CameraDistance: 3
   AvoidObstacles:
-    Enabled: 0
+    Enabled: 1
     CollisionFilter:
       serializedVersion: 2
-      m_Bits: 1
-    IgnoreTag: 
-    CameraRadius: 0.2
-    DampingIntoCollision: 0
+      m_Bits: 8
+    IgnoreTag: Player
+    CameraRadius: 0.03
+    DampingIntoCollision: 0.1
     DampingFromCollision: 0.5
 --- !u!114 &1138501486
 MonoBehaviour:
@@ -21904,7 +21992,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1173251147}
   - component: {fileID: 1173251148}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22096,6 +22184,10 @@ PrefabInstance:
     - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: m_Name
       value: Doppler Radar #4
+      objectReference: {fileID: 0}
+    - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: Name
@@ -22493,7 +22585,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1205236708
 Transform:
@@ -23020,7 +23112,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1276209573}
   - component: {fileID: 1276209574}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23175,7 +23267,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1361761933
 Transform:
@@ -23265,6 +23357,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #1254
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23300,7 +23396,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1425852243
 Transform:
@@ -23328,7 +23424,7 @@ GameObject:
   - component: {fileID: 1427072926}
   - component: {fileID: 1427072928}
   - component: {fileID: 1427072927}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hover Engine Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28515,7 +28611,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 9
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -28621,7 +28717,7 @@ GameObject:
   - component: {fileID: 1469085645}
   - component: {fileID: 1469085647}
   - component: {fileID: 1469085646}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wind Visibility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33520,7 +33616,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1472316472}
   - component: {fileID: 1472316473}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33685,6 +33781,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Starlight Collector #88
       objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5812.5
@@ -33760,7 +33860,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1507879732
 Transform:
@@ -33791,7 +33891,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1537901483
 Transform:
@@ -33961,7 +34061,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1548900944
 Transform:
@@ -33992,7 +34092,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1571167340
 Transform:
@@ -34036,6 +34136,10 @@ PrefabInstance:
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #67
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34112,7 +34216,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1587124213
 Transform:
@@ -34519,7 +34623,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1639655090}
   - component: {fileID: 1639655091}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34979,7 +35083,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1683247654
 Transform:
@@ -35006,7 +35110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1688171794}
   - component: {fileID: 1688171795}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35309,7 +35413,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1741641583
 Transform:
@@ -35426,7 +35530,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1758159188}
   - component: {fileID: 1758159189}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35581,7 +35685,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 0
 --- !u!4 &1760016175
 Transform:
@@ -35708,7 +35812,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1767841810}
   - component: {fileID: 1767841811}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35863,7 +35967,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1774438210
 Transform:
@@ -35939,7 +36043,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1788626600}
   - component: {fileID: 1788626601}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36251,6 +36355,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station #2150
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -36372,6 +36480,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Starlight Collector #53
       objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5983.7
@@ -36447,7 +36559,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1878619559
 Transform:
@@ -36578,6 +36690,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Starlight Collector #41
       objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7206.5
@@ -36648,12 +36764,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1901281956}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TerrainGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1901281956
 Transform:
@@ -36684,7 +36800,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1903484224}
   - component: {fileID: 1903484225}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36839,7 +36955,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1917175414
 Transform:
@@ -36872,7 +36988,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1930139997
 MonoBehaviour:
@@ -37099,7 +37215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1966379289}
   - component: {fileID: 1966379290}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HER.2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37250,7 +37366,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1981563428}
   - component: {fileID: 1981563429}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37401,7 +37517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1995596040}
   - component: {fileID: 1995596041}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HEL.1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37556,7 +37672,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1998965742
 Transform:
@@ -37588,6 +37704,10 @@ PrefabInstance:
     - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_Name
       value: Starlight Collector #61
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
@@ -37702,6 +37822,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Data Cell Server
       objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4676640531194186717, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: Name
       value: "Str210\xB7DataCells"
@@ -37754,10 +37878,10 @@ GameObject:
   - component: {fileID: 2083857064}
   m_Layer: 0
   m_Name: Structures (Demo)
-  m_TagString: ArtificialStructure
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2083857064
 Transform:
@@ -37906,7 +38030,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &2102394926
 MonoBehaviour:
@@ -38093,7 +38217,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2115301936}
   - component: {fileID: 2115301937}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38248,7 +38372,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2143149313
 Transform:
@@ -39052,6 +39176,10 @@ PrefabInstance:
     - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
       propertyPath: m_Name
       value: Data Cell Server
+      objectReference: {fileID: 0}
+    - target: {fileID: 649193244706203992, guid: 7bdaa64c2f69f1149aa55e710355828a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -40005,6 +40133,10 @@ PrefabInstance:
     - target: {fileID: 9154125923079488533, guid: bc8643542443d0b47885bb6c6c3580de, type: 3}
       propertyPath: m_Name
       value: Planetary Cooling Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: 9154125923079488533, guid: bc8643542443d0b47885bb6c6c3580de, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42983,6 +43115,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weather Auto Station
       objectReference: {fileID: 0}
+    - target: {fileID: 6537580558502128485, guid: 048d14491edec894fb04fd271408c907, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -45557,6 +45693,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Starlight Collector
       objectReference: {fileID: 0}
+    - target: {fileID: 8174398673879239130, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8807524524918526816, guid: e14d88e9c73c7af44ba36a5c4c6f9c29, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2772
@@ -45999,6 +46139,10 @@ PrefabInstance:
     - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: m_Name
       value: Doppler Radar
+      objectReference: {fileID: 0}
+    - target: {fileID: 745844146980868746, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7844920585682593704, guid: cda731e9b6282c749a229992cbafd0b6, type: 3}
       propertyPath: Name

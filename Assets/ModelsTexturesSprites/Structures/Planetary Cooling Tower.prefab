@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8827874481591399830}
   m_Layer: 0
   m_Name: Planetary Cooling Tower
-  m_TagString: Untagged
+  m_TagString: ArtificialStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

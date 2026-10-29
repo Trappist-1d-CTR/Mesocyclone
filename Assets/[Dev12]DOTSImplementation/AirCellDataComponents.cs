@@ -19,7 +19,6 @@ namespace Mesocyclone.MesoDOTS
         public float Moles;
         public float Temperature;
         public float3 Velocity;
-        public float3 Acceleration;
 
         [BurstCompile]
         public void PerformVelocity(float deltaTime)
@@ -32,11 +31,12 @@ namespace Mesocyclone.MesoDOTS
         [BurstCompile]
         public void PerformAcceleration(in float3 acc, float deltaTime, int AccelerationID)
         {
-            Acceleration = acc;
             if (math.isfinite(acc.x) && math.isfinite(acc.y) && math.isfinite(acc.z))
-                Velocity += Acceleration * deltaTime;
+                Velocity += acc * deltaTime;
             else
                 UnityEngine.Debug.LogError($"Attempt to apply NaN force! ID: {AccelerationID}");
+
+            //if (ID == 0) UnityEngine.Debug.Log($"Acceleration: {acc} ; Velocity: {Velocity}");
         }   //0 is Gravity, 1 is Drag, 2 is Sea Level Repulsion, 3 is Physical Terrain Repulsion, 4 is Air Cell Repulsion
     }
 
