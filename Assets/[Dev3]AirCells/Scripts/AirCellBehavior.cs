@@ -16,8 +16,8 @@ namespace Mesocyclone.Deprecated
         #endregion
 
         #region Cell Fundamentals
-        private AirCell AirCellTest;
-        private List<AirCell> AirCellGroup = new();
+        private AirCellGO AirCellTest;
+        private List<AirCellGO> AirCellGroup = new();
         private List<GameObject> CellObjectGroup = new();
 
         public GameObject CubeObject;

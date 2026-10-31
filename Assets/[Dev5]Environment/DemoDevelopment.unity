@@ -21938,7 +21938,7 @@ MonoBehaviour:
     Enabled: 1
     CollisionFilter:
       serializedVersion: 2
-      m_Bits: 8
+      m_Bits: 9
     IgnoreTag: Player
     CameraRadius: 0.03
     DampingIntoCollision: 0.1
@@ -40023,7 +40023,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 69790163125904075}
         m_TargetAssemblyTypeName: Mesocyclone.GameSettingsManager, Assembly-CSharp
-        m_MethodName: SetGamma
+        m_MethodName: SetContrast
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -41006,6 +41006,14 @@ PrefabInstance:
     - target: {fileID: 4112522905129203211, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: m_Name
       value: Hangar
+      objectReference: {fileID: 0}
+    - target: {fileID: 5111387473833217770, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672686579340594111, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8685793417216249814, guid: 750f01442f507de4ea34ee0c34fe5004, type: 3}
       propertyPath: 'DetectableAfterLinked.Array.data[0]'

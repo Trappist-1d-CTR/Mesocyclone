@@ -493,6 +493,13 @@ namespace Mesocyclone
 
             #endregion
 
+            #region Disable SFX
+
+            _ = DroneEngineSound.release();
+            _ = AirspeedSound.release();
+
+            #endregion
+
             #region Remove DOTS
             if (World.DefaultGameObjectInjectionWorld != null && _em.Exists(_entity))
                 _em.DestroyEntity(_entity);
@@ -533,34 +540,28 @@ namespace Mesocyclone
             }
 
             //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
-            try
+            if (_query.TryGetSingleton(out InterpolationValues result) && result.Values.IsCreated)
             {
-                if (_query.TryGetSingleton(out InterpolationValues result))
+                UnityEngine.Debug.Log(result);
+                if (InterpValues.IsCreated) InterpValues.Dispose();
+                InterpValues = new(6, Allocator.Persistent);
+                for (int i = 0; i < 6; i++)
                 {
-                    InterpValues.Dispose();
-                    InterpValues = new(6, Allocator.Persistent);
-                    for (int i = 0; i < 6; i++)
-                    {
-                        InterpValues[i] = result.Values[i];
-                    }
-
-                    if (!AirChamberTest && !SteadyFlightTest)
-                    {
-                        Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InterpValues[0], InterpValues[1], InterpValues[2]) : Vector3.zero;
-                    }
-                    else if (!AirChamberTest)
-                    {
-                        Wind = Vector3.zero;
-                    }
+                    InterpValues[i] = result.Values[i];
                 }
-                else
+
+                if (!AirChamberTest && !SteadyFlightTest)
+                {
+                    Wind = (NetLinker.MainBody.DroneBodyStats[0].YesWind && Time.time > 2) ? new Vector3(InterpValues[0], InterpValues[1], InterpValues[2]) : Vector3.zero;
+                }
+                else if (!AirChamberTest)
                 {
                     Wind = Vector3.zero;
                 }
             }
-            catch
+            else
             {
-
+                Wind = Vector3.zero;
             }
 
             //UnityEngine.Debug.Log("Drone Wind: " + Wind + " ; " + InterpValues[0]);
@@ -1472,7 +1473,6 @@ namespace Mesocyclone
         private void SendEscapeUI(InputAction.CallbackContext obj)
         {
             UICam.EscapeUI();
-            return;
         }
         #endregion
 

@@ -40,6 +40,8 @@ namespace Mesocyclone
 
         private void Start()
         {
+            Time.timeScale = 1;
+
             if (DefaultSettings) SimulationSettings.Default();
             SimulationSettings.Load();
 
@@ -59,7 +61,7 @@ namespace Mesocyclone
             ContrastSlider.value = SimulationSettings.Contrast;
             ContrastValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
             GammaSlider.value = SimulationSettings.Gamma;
-            GammaValue.text = (Mathf.Round(SimulationSettings.Contrast * 10f) / 10f).ToString();
+            GammaValue.text = (Mathf.Round(SimulationSettings.Gamma * 10f) / 10f).ToString();
             AntiAliasingDropdown.value = SimulationSettings.AntiAliasing;
             AnisotropicFilteringDropdown.value = SimulationSettings.AnisotropicFiltering;
 
@@ -67,8 +69,7 @@ namespace Mesocyclone
             CamSensitivitySlider.value = SimulationSettings.CameraSensitivity * 10f;
             CamSensitivityValue.text = (Mathf.Round(SimulationSettings.CameraSensitivity * 100f) / 10f).ToString();
 
-            AutoExposure AutoExp;
-            if (VolumeSettings.profile.TryGet(out AutoExp))
+            if (VolumeSettings.profile.TryGet(out AutoExposure AutoExp))
             {
                 AutoExp.active = true;
             }
@@ -164,15 +165,14 @@ namespace Mesocyclone
         {
             SimulationSettings.Brightness = Value;
             SimulationSettings.Save();
-            
+
             BrightnessValue.text = (Mathf.Round(Value * 20f) / 20f).ToString();
             SetBrightness();
         }
 
         public void SetBrightness()
         {
-            ColorAdjustments ColorAdj;
-            if (VolumeSettings.profile.TryGet(out ColorAdj))
+            if (VolumeSettings.profile.TryGet(out ColorAdjustments ColorAdj))
             {
                 ColorAdj.postExposure.value = (gameObject.CompareTag("MainMenuManager") ? 1.5f : 0) + SimulationSettings.Brightness;
             }
@@ -182,15 +182,14 @@ namespace Mesocyclone
         {
             SimulationSettings.Contrast = Value;
             SimulationSettings.Save();
-            
+
             ContrastValue.text = (Mathf.Round(Value * 10f) / 10f).ToString();
             SetContrast();
         }
 
         public void SetContrast()
         {
-            ColorAdjustments ColorAdj;
-            if (VolumeSettings.profile.TryGet(out ColorAdj))
+            if (VolumeSettings.profile.TryGet(out ColorAdjustments ColorAdj))
             {
                 ColorAdj.contrast.value = SimulationSettings.Contrast;
             }
@@ -207,8 +206,7 @@ namespace Mesocyclone
 
         public void SetGamma()
         {
-            LiftGammaGain LGG;
-            if (VolumeSettings.profile.TryGet(out LGG))
+            if (VolumeSettings.profile.TryGet(out LiftGammaGain LGG))
             {
                 LGG.gamma.Override(new(1, 1, 1, SimulationSettings.Gamma));
             }
@@ -237,7 +235,7 @@ namespace Mesocyclone
 
         public void SetAnisotropicFiltering()
         {
-            QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(SimulationSettings.AnisotropicFiltering);
+            QualitySettings.anisotropicFiltering = (AnisotropicFiltering)SimulationSettings.AnisotropicFiltering;
         }
 
         #endregion

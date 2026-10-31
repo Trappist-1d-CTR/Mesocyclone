@@ -2,6 +2,7 @@ using FMOD.Studio;
 using FMODUnity;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +16,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
         #region Variables
 
         public static FMODManager Instance { get; private set; }
+        private bool InstanceCheckDone;
 
         public Bus UIBus;
         public Bus WorldBus;
@@ -118,11 +120,13 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
             {
                 if (SelectedID != -1 && PlayingID != SelectedID)
                 {
-                    if (Delay == 0 || deltaTime == 0)
+                    if (Delay == 0)
                     {
                         Stop();
                         _ = OSTEvents[SelectedID].start();
                         PlayingID = SelectedID;
+                        UnityEngine.Debug.Log(Delay + " ; " + deltaTime);
+                        UnityEngine.Debug.Log(PlayingID);
                     }
                     else
                     {
@@ -184,8 +188,12 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                 }
                 SelectedID = pickList[UnityEngine.Random.Range(0, pickList.Count)].Index;
 
-                if (delay == 0) Start();
-                else Delay = delay;
+                UnityEngine.Debug.Log(SelectedID + " ; " + delay);
+
+                if (delay == 0)
+                    Start();
+                else
+                    Delay = delay;
             }
 
             #endregion
@@ -216,10 +224,12 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
         {
             #region Init
 
+            InstanceCheckDone = false;
             if (Instance == null)
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                InstanceCheckDone = true;
             }
             else
             {
@@ -287,11 +297,24 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
 
         private void OnDestroy()
         {
-            Instance = null;
+            if (InstanceCheckDone) Instance = null;
         }
 
         private void Update()
         {
+            _ = WorldBus.getPaused(out bool WorldPaused);
+            _ = MusicBus.getPaused(out bool MusicPaused);
+            if (Time.timeScale == 0)
+            {
+                if (!WorldPaused) _ = WorldBus.setPaused(true);
+                if (!MusicPaused) _ = MusicBus.setPaused(true);
+            }
+            else
+            {
+                if (WorldPaused) _ = WorldBus.setPaused(false);
+                if (MusicPaused) _ = MusicBus.setPaused(false);
+            }
+
             Jukebox.Assessment();
 
             if (Jukebox.PlayingID != -1)
@@ -303,20 +326,13 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
                     Jukebox.PlayingID = -1;
                 }
             }
-            else Jukebox.Start(Time.deltaTime);
+            else
+            {
+                Jukebox.Start(Time.deltaTime);
+            }
 
             Playing = Jukebox.PlayingID;
         }
-
-        #region Pause/Resume
-
-        public void PauseTime(bool paused)
-        {
-            _ = Instance.WorldBus.setPaused(paused);
-            _ = Instance.MusicBus.setPaused(paused);
-        }
-
-        #endregion
 
         public static class UI
         {
@@ -350,7 +366,7 @@ namespace Mesocyclone.MesoMod // yknow; FMOD, MesoFMOD, MesoMod? This isn't the 
             {
                 RuntimeManager.PlayOneShot("event:/Collisions/HangarCover", pos);
             }
-            
+
             public static void PlayDroneTerrain(GameObject drone)
             {
                 RuntimeManager.PlayOneShotAttached("event:/Collisions/DroneTerrain", drone);

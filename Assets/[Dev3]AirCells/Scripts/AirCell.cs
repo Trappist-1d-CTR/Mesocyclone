@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
 // put here to avoid type conflicts
 namespace Mesocyclone.Deprecated
 {
-    public class AirCell
+    public class AirCellGO
     {
         /*  Definitions
                 dynamic: different for every cell and for every moment in time
@@ -23,6 +22,7 @@ namespace Mesocyclone.Deprecated
         #endregion
 
         #region Cell Values
+
         public Vector3 CellCenter;      //Center of the air cell, dynamic
         public float Moles;            //Number of particles, static
         public float Temperature;      //Temperature of the center, dynamic
@@ -37,20 +37,19 @@ namespace Mesocyclone.Deprecated
         public float CellHeight;
 
         public float StiffnessConstant;
+
         #endregion
 
         #endregion
 
         #region Constructor
 
-        public AirCell
-        (
+        public AirCellGO(
             Vector3 CenterPoint = default,
             float nMoles = 1000,
             float TempK = 300,
             Vector3 CellVelocity = default,
-            float Stiffness = 0.5f
-        )
+            float Stiffness = 0.5f)
         {
             CellCenter = CenterPoint;
             Moles = nMoles;

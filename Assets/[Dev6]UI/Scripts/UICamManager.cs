@@ -386,7 +386,6 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(-1);
                 Time.timeScale = 1;
-                FMODManager.Instance.PauseTime(false);
 
                 UIEventSystem.SetSelectedGameObject(null);
             }
@@ -400,7 +399,6 @@ namespace Mesocyclone.UI
             {
                 ToggleMenu(0);
                 Time.timeScale = 0;
-                FMODManager.Instance.PauseTime(true);
 
                 UIEventSystem.SetSelectedGameObject(UIEventSystem.transform.parent.GetComponentInChildren<Button>(false).gameObject);
             }
@@ -419,6 +417,7 @@ namespace Mesocyclone.UI
 
         public void QuitToMenu()
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(0, LoadSceneMode.Single);
         }
 
