@@ -51,6 +51,11 @@ public class HangarScript : Tickable
         _ = CentrifugeSound.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
     }
 
+    public void OnDestroy()
+    {
+        _ = CentrifugeSound.release();
+    }
+
     public override void FixedTick()
     {
         #region Platform-Cover Animations
