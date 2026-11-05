@@ -3,7 +3,6 @@
   <Project Path="Unity.RenderPipelines.GPUDriven.Runtime.csproj" />
   <Project Path="Unity.PlasticSCM.Editor.csproj" />
   <Project Path="Unity.VisualScripting.Flow.csproj" />
-  <Project Path="jedjoud.voxelterrain.runtime.csproj" />
   <Project Path="Unity.ShaderGraph.Editor.csproj" />
   <Project Path="Unity.Entities.Graphics.csproj" />
   <Project Path="Unity.Physics.csproj" />
@@ -71,7 +70,6 @@
   <Project Path="Unity.AdaptivePerformance.csproj" />
   <Project Path="FMODUnityResonanceEditor.csproj" />
   <Project Path="Unity.Multiplayer.Center.Common.csproj" />
-  <Project Path="jedjoud.voxelterrain.editor.csproj" />
   <Project Path="FMODUnityEditor.csproj" />
   <Project Path="FMODUnity.csproj" />
   <Project Path="Unity.Physics.Editor.csproj" />

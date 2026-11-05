@@ -1,67 +1,50 @@
-/*using UnityEngine;
-using Unity.Collections;
-using System; // since for whatever reason Unity doesn't compile this implicitly -.-
-
-// normally i'd use Unity's own custom cursor API, but for custom cursor animation/logic it doesn't work that well...
-// so that's why i use Image
+using UnityEngine;
+using System.ComponentModel;
 
 namespace Mesocyclone
 {
-    /// <summary>
-    /// Singleton that handles the custom cursor appearance in-game.
-    /// </summary>
-    public class CursorHandler : MonoBehaviour
+    // handles custom cursor stuff
+    [EditorBrowsable(EditorBrowsableState.Never)] // don't show in IntelliSense
+    public sealed class CursorHandler : MonoBehaviour
     {
-        // singleton
-        public static CursorHandler main { get; private set; }
-
-        // Resources/Cursor
-        [field: SerializeField, ReadOnly, Tooltip("The texture of the cursor.")]
-        public Texture2D cursorTexture { get; protected set; }
-
-        [field: SerializeField, ReadOnly, Tooltip("The path to the texture of the cursor.\nType for textures.")]
-        public string cursorPath { get; protected set; }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Initialize()
-        {
-            if (main is null)
-            {
-                GameObject cursorHandler = new("CursorHandler");
-                main = cursorHandler.AddComponent<CursorHandler>();
-                DontDestroyOnLoad(cursorHandler);
-            }
-        }
+        public static Texture2D cursorTexture;
+        public static string cursorPath;
 
         private void Awake()
         {
-            main ??= this;
-
-            cursorPath = "Cursor/MCursor";
+            DontDestroyOnLoad(gameObject);
+        }
+        
+        private void Start()
+        {
+            cursorPath = DefaultCursorPath();
             cursorTexture = Resources.Load<Texture2D>(cursorPath);
         }
 
         private void OnEnable()
         {
-            main ??= this;
-
-            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto); // assuming auto is the correct one
-            Logger.Log($"A custom cursor has been set!\n{cursorPath}");
+            if (cursorTexture != null)
+            {
+                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+                print("Cursor applies succsessfully!");
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning(
+                    $"Failed to set cursor!\n" +
+                    $"{nameof(cursorTexture)} ({cursorPath}) is null"
+                );
+            }
         }
 
         private void OnDisable()
         {
-            main = null!;
-
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
-        private void OnDestroy()
+        private string DefaultCursorPath()
         {
-            main = null!;
-
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            return "Cursor/cursor";
         }
     }
 }
-*/
