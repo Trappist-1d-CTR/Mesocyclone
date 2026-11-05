@@ -7,8 +7,13 @@ namespace Mesocyclone
     [EditorBrowsable(EditorBrowsableState.Never)] // don't show in IntelliSense
     public sealed class CursorHandler : MonoBehaviour
     {
-        public static Texture2D cursorTexture;
-        public static string cursorPath;
+        public static CursorHandler instance { get; private set; }
+
+        [HideInInspector]
+        public Texture2D cursorTexture;
+
+        [HideInInspector]
+        public string cursorPath;
 
         private void Awake()
         {
@@ -23,6 +28,8 @@ namespace Mesocyclone
 
         private void OnEnable()
         {
+            instance = this;
+
             if (cursorTexture != null)
             {
                 Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
@@ -40,6 +47,8 @@ namespace Mesocyclone
         private void OnDisable()
         {
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+
+            instance = null;
         }
 
         private string DefaultCursorPath()
