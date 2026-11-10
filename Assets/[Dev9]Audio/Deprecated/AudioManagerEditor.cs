@@ -1,4 +1,4 @@
-// yknow what, im not adding a namespace to this, >/Format Document can suck my ass
+/*// yknow what, im not adding a namespace to this, >/Format Document can suck my ass
 //DO YOU HAVE ANY IDEA HOW MUCH YOU HAVE DOOMED ME TO DESPAIR WITH THIS ONE CHOICE??!??!?!?!?
 
 #if UNITY_EDITOR
@@ -130,7 +130,7 @@ namespace Mesocyclone.Deprecated
                 {
                     if (clip != null)
                     {
-                        Mesocyclone.Debug.Process process = AudioManager.Instance.PlayRepeating
+                        Mesocyclone.Process process = AudioManager.Instance.PlayRepeating
                         (
                             clip, minPitch, maxPitch, windowPosition, is2D, volume, minDistance, maxDistance, rolloffMode
                         );
@@ -387,3 +387,4 @@ namespace Mesocyclone.Deprecated
 #nullable disable
 }
 #endif
+*/

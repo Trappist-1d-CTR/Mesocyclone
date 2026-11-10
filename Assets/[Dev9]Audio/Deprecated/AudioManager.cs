@@ -1,4 +1,4 @@
-// deprecated
+/*// deprecated
 
 using System.Collections;
 using System.Collections.Generic;
@@ -59,12 +59,12 @@ namespace Mesocyclone.Deprecated
 
         [Header("Process Stuff")]
         [Tooltip("Collectiom (List<>) of Processes repeating clips")]
-        public List<Mesocyclone.Debug.Process> RepeatingClips = new();
+        public List<Mesocyclone.Process> RepeatingClips = new();
 
         [Space(10)]
         [Tooltip("Process that's currently interrupting all other sounds")]
         [SerializeField]
-        private Mesocyclone.Debug.Process? InterruptingRepeatingClip;
+        private Mesocyclone.Process? InterruptingRepeatingClip;
 
         [Header("Audio Listener & Raycasting")]
         [Tooltip("Reference to any objects with the Audio Listener component")]
@@ -94,7 +94,7 @@ namespace Mesocyclone.Deprecated
 
         private void Start()
         {
-            /*if (Instance is not null and not this)
+            *//*if (Instance is not null and not this)
             {
                 Destroy(gameObject);
                 return;
@@ -103,7 +103,7 @@ namespace Mesocyclone.Deprecated
             Instance = this;
             DontDestroyOnLoad(gameObject);
             Listener = FindFirstObjectByType<AudioListener>();
-            OcclusionMask = LayerMask.GetMask("Terrain");*/
+            OcclusionMask = LayerMask.GetMask("Terrain");*//*
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Mesocyclone.Deprecated
 
         #region Play Repeating Functions
 
-        public Mesocyclone.Debug.Process PlayRepeating
+        public Mesocyclone.Process PlayRepeating
         (
             AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
             Vector3 Position = default, // Position in space
@@ -264,13 +264,13 @@ namespace Mesocyclone.Deprecated
             AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
         )
         {
-            Mesocyclone.Debug.Process _Process = new(() => PlayRepeatingRoutine(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
+            Mesocyclone.Process _Process = new(() => PlayRepeatingRoutine(Clip, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
             RepeatingClips.Add(_Process);
             _Process.Start();
             return _Process;
         }
 
-        public Mesocyclone.Debug.Process PlayRepeating
+        public Mesocyclone.Process PlayRepeating
         (
             AudioClip Clip, // Audio Clip (MP3, WAV, OGG, etc.) to play
             float MinPitch,
@@ -283,7 +283,7 @@ namespace Mesocyclone.Deprecated
             AudioRolloffMode RolloffMode = AudioRolloffMode.Linear // how the sound rolls off from MinDistance to MaxDistance
         )
         {
-            Mesocyclone.Debug.Process _Process = new(() => PlayRepeatingRoutine(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
+            Mesocyclone.Process _Process = new(() => PlayRepeatingRoutine(Clip, MinPitch, MaxPitch, Position, Is2D, Volume, MinDistance, MaxDistance, RolloffMode));
             RepeatingClips.Add(_Process);
             _Process.Start();
             return _Process;
@@ -294,7 +294,7 @@ namespace Mesocyclone.Deprecated
 
         #region Stop Repeating
 
-        public void StopRepeating(Mesocyclone.Debug.Process process) // sry 4 the out of place naming, don't wanna encounter naming conflicts ;-;
+        public void StopRepeating(Mesocyclone.Process process) // sry 4 the out of place naming, don't wanna encounter naming conflicts ;-;
         {
             process.Stop();
             RepeatingClips.Remove(process);
@@ -519,4 +519,4 @@ namespace Mesocyclone.Deprecated
     }
 }
 
-#nullable disable
+#nullable disable*/

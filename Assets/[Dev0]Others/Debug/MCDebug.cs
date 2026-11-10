@@ -1,25 +1,9 @@
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    #define ONWINDOWS
-#endif
-
-#if UNITY_STANDALONE_MAC || UNITY_EDITOR_MAC
-    #define ONMAC
-#endif
-
-#if UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
-    #define ONLINUX
-#endif
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-    #define DEV
-#endif
-
-using System.Diagnostics;
+/*using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace Mesocyclone.Debug
+namespace Mesocyclone.Deprecated.Debug
 {
     /// <summary>
     /// Used for debugging and profiling aspects of the game
@@ -60,7 +44,7 @@ namespace Mesocyclone.Debug
 
         #if ONWINDOWS
 
-        public static PerformanceCounter w_cpuCounter { get; private set; } = new("Processor", "% Processor Time", "_Total");
+        public static  w_cpuCounter { get; private set; } = new("Processor", "% Processor Time", "_Total");
         public static float w_usage { get; private set; }
 
         #endif
@@ -218,4 +202,4 @@ namespace Mesocyclone.Debug
             Application.quitting -= MCDebug.OnQuit;
         }
     }
-}
+}*/

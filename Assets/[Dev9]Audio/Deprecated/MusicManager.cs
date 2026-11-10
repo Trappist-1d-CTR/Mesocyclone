@@ -1,9 +1,9 @@
-// extremely original lol
+/*// extremely original lol
 //shut it-
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mesocyclone.Debug;
+using Mesocyclone;
 using System;
 
 #nullable enable // i hate this
@@ -42,14 +42,14 @@ namespace Mesocyclone.Deprecated
             DestroyImmediate(gameObject);
 
             #region Init
-            /*if (Instance is not null and not this) // what a mouthful
+            *//*if (Instance is not null and not this) // what a mouthful
             {
                 Destroy(gameObject);
                 return;
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);*/
+            DontDestroyOnLoad(gameObject);*//*
             #endregion
 
             #region Setup and Components
@@ -174,3 +174,4 @@ namespace Mesocyclone.Deprecated
 }
 
 #nullable disable
+*/

@@ -1,3 +1,7 @@
+// i think this is completely fucking broken
+// you can't make any actual interactions & it engulfs your ENTIRE screen with no window
+// and the only way to exit the window AFAIK is to just Alt F4 -.-
+
 //Credits to fnuecke for providing this script on the Github https://gist.github.com/fnuecke/d4275087cc7969257eae0f939fac3d2f
 
 #if UNITY_EDITOR
