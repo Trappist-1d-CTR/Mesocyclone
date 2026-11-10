@@ -1,0 +1,18 @@
+{
+    "name": "AirCells",
+    "rootNamespace": "Mesocyclone.Deprecated",
+    "references": [
+        "GUID:550cf55a6e8d59141a541425dcaaef01"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

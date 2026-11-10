@@ -1,0 +1,16 @@
+{
+    "name": "TickSystem",
+    "rootNamespace": "Mesocyclone",
+    "references": [
+        "GUID:a05b4286fee75094e8b109ba34d4b998"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

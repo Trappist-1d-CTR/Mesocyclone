@@ -8,10 +8,10 @@ namespace Mesocyclone.Unused // change to just "Mesocyclone" if this is in fact 
 {
     public class Structures_Demo : MonoBehaviour
     {
-        // Start is called before the first frame update
-        private void Start()
+        // remove redundant event functions cuz unity still calls em
+        /*private void Start()
         {
 
-        }
+        }*/
     }
 }

@@ -1,0 +1,18 @@
+{
+    "name": "HexaGrids",
+    "rootNamespace": "Mesocyclone.Deprecated",
+    "references": [
+        "GUID:1d6c3623ccbe3de4b9142cf58678d718"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
