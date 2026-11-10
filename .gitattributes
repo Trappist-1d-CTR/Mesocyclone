@@ -1,5 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
 Assets/Plugins/FMOD/**/*.bundle text eol=lf
 Assets/Plugins/FMOD/**/Info.plist text eol=lf
+*.aar filter=lfs diff=lfs merge=lfs -text
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.dbg filter=lfs diff=lfs merge=lfs -text
