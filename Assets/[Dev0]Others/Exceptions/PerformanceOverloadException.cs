@@ -61,7 +61,7 @@ namespace Mesocyclone
                     CreateNoWindow = true
                 };
 
-                using (Process process = Process.Start(PSI))
+                using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(PSI))
                 {
                     process.WaitForExit(500);
                     return process.ExitCode == 0;
@@ -130,17 +130,17 @@ namespace Mesocyclone
             {
                 try
                 {
-                    Process.Start
+                    System.Diagnostics.Process.Start
                     (
                         new ProcessStartInfo
                         {
-                            // still no idea why none of these variables appear for me :/
                             FileName = player,
                             Arguments = $"\"{soundPath}\"", // i think this is how you write it
                             UseShellExecute = false,
                             CreateNoWindow = true
                         }
                     );
+
                     return; // use the first one that launches
                 }
                 catch
