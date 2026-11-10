@@ -2,7 +2,7 @@ fileFormatVersion: 2
 guid: c7d8e9f0a1b2c3d4e5c7d8e9f0a1b2c3
 PluginImporter:
   externalObjects: {}
-  serializedVersion: 2
+  serializedVersion: 3
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
@@ -11,9 +11,7 @@ PluginImporter:
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
-  - first:
-      : Any
-    second:
+    Any:
       enabled: 0
       settings:
         Exclude Editor: 1
@@ -22,22 +20,13 @@ PluginImporter:
         Exclude Win: 1
         Exclude Win64: 1
         Exclude iOS: 0
-  - first:
-      Any: 
-    second:
-      enabled: 0
-      settings: {}
-  - first:
-      Editor: Editor
-    second:
+    Editor:
       enabled: 0
       settings:
         CPU: AnyCPU
         DefaultValueInitialized: true
         OS: AnyOS
-  - first:
-      iPhone: iOS
-    second:
+    iOS:
       enabled: 1
       settings:
         AddToEmbeddedBinaries: true
