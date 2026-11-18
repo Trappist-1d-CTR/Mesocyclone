@@ -19,7 +19,7 @@ namespace Mesocyclone
         {
             DontDestroyOnLoad(gameObject);
         }
-        
+
         private void Start()
         {
             cursorPath = DefaultCursorPath();
@@ -53,7 +53,7 @@ namespace Mesocyclone
 
         private string DefaultCursorPath()
         {
-            return "Cursor/cursor";
+            return "Cursor/cursor.png";
         }
     }
 }

@@ -15,14 +15,16 @@ namespace Mesocyclone.UI
         private DroneControls DroneScript;
 
         #region Data
+        public float a = 0; //Altitude
         public float h = 0; //Height
-        public float prev_h = Mathf.Infinity;
-        public float delta_h;
+        public float prev_a = Mathf.Infinity;
+        public float delta_a;
 
         public float v = 0; //Speed / Velocity
         public float prev_v = Mathf.Infinity;
         public float delta_v;
 
+        public Quaternion Attitude;
         public float p = 0; //Pitch
         public float r = 0; //Roll
         public float y = 0; //Yaw
@@ -30,6 +32,9 @@ namespace Mesocyclone.UI
         public Vector3 deltaPRY;
 
         public float mt = 0; //Main Thrust
+        public bool htog = false; //Hover Toggled
+        public float htg = 0; //Hover Target
+        public float ht = 0; //Hover Thrust
         public int hm = 1; //Hover Mode
         public int sas = 1; //SAS Mode
 
@@ -43,22 +48,42 @@ namespace Mesocyclone.UI
         #endregion
 
         #region Displays
-        public TextMeshProUGUI[] SAO;
+
+        public RectTransform ASAE;
+
+        public Transform AttitudeIndicator;
+        public TextMeshProUGUI Airspeed;
+        public RectTransform Acceleration;
+        public TextMeshProUGUI AccValue;
+        public TextMeshProUGUI Altitude;
+        public TextMeshProUGUI RadarHeight;
+        public RectTransform VerticalSpeed;
+        public TextMeshProUGUI VertSpeedValue;
         public Slider MainThrust;
-        public Slider HoverMode;
+        public Slider HoverTarget;
+        public Slider HoverThrust;
         public TextMeshProUGUI SASMode;
+        public Image[] HoverMode;
+        public Image HoverToggled;
         public Image FLIPStatus;
         public TextMeshProUGUI[] Performance;
+
+        #endregion
+
+        #region Customization
+
+        public Color BaseColor;
+
         #endregion
 
         #region Performance
-        int FPS, PhFPS;
-        float t = 0;
+        private int FPS, PhFPS;
+        private float t = 0;
         #endregion
 
         #endregion
 
-        void Start()
+        private void Start()
         {
             #region Get Components and Vectors
 
@@ -66,20 +91,26 @@ namespace Mesocyclone.UI
             DroneScript = transform.GetComponentInParent<DroneControls>();
 
             #endregion
+
+            SetUIBaseColor();
         }
 
         public override void FixedTick()
         {
             #region Calculate Data
-            if (prev_h == Mathf.Infinity)
+
+            _ = Physics.Raycast(origin: DroneBody.position, direction: Vector3.down, hitInfo: out RaycastHit hit, layerMask: LayerMask.GetMask("Default", "Terrain"), maxDistance: 5e5f);
+            h = hit.distance;
+
+            if (prev_a == Mathf.Infinity)
             {
-                prev_h = h = DroneBody.position.y;
+                prev_a = a = DroneBody.position.y;
             }
             else
             {
-                h = DroneBody.position.y;
-                delta_h = (h - prev_h) / Time.fixedDeltaTime;
-                prev_h = h;
+                a = DroneBody.position.y;
+                delta_a = (a - prev_a) / Time.fixedDeltaTime;
+                prev_a = a;
             }
 
             if (prev_v == Mathf.Infinity)
@@ -95,11 +126,25 @@ namespace Mesocyclone.UI
 
             deltaPRY = DroneBody.angularVelocity * Mathf.Rad2Deg;
 
+            Attitude = DroneBody.rotation;
+
             p = (DroneBody.rotation.eulerAngles.z > 180 ? -1 : 1) * Mathf.Rad2Deg * Mathf.Asin(Vector3.Project(DroneBody.transform.right, Vector3.up).magnitude);
             r = (DroneBody.rotation.eulerAngles.x > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.up, DroneBody.transform.right), Vector3.ProjectOnPlane(Vector3.up, DroneBody.transform.right));
-            y = (DroneBody.rotation.eulerAngles.y > 180 ? -1 : 1) * Vector3.Angle(Vector3.ProjectOnPlane(DroneBody.transform.right, Vector3.up), Vector3.right);
+            y = Vector3.SignedAngle(Vector3.right, Vector3.ProjectOnPlane(DroneBody.transform.right, Vector3.up), Vector3.up);
+
+            #endregion
+        }
+
+        public override void Tick()
+        {
+            #region Calculate Data
+
+            float hmt = DroneScript.NetLinker.MainBody.DroneBodyStats[0].HoverMaxThrust;
 
             mt = DroneScript.Thrust;
+            htog = DroneScript.HoverActive;
+            htg = htog ? DroneScript.HoverTarget / hmt : 0;
+            ht = DroneScript.HoverThrust / hmt;
 
             hm = (int)DroneScript.HoverMode;
 
@@ -107,25 +152,49 @@ namespace Mesocyclone.UI
 
             flipstate = DroneScript.FLIPPerforming ? Status.Performing :
                 DroneScript.FLIPCharge == DroneScript.NetLinker.MainBody.DroneBodyStats[0].FLIPMaxCharge ? Status.Ready : Status.Unavailable;
+
             #endregion
 
             #region Display Data
-            SAO[0].text = h.ToString("n1");
-            SAO[1].text = delta_h.ToString("n1");
-            SAO[2].text = v.ToString("n1");
-            SAO[3].text = delta_v.ToString("n1");
-            SAO[4].text = p.ToString("n1");
-            SAO[5].text = r.ToString("n1");
-            SAO[6].text = y.ToString("n1");
-            MainThrust.value = mt;
-            SASMode.text = sas switch { 1 => "Heli", 2 => "Plane", _ => "None" };
-            HoverMode.value = 1 - ((hm - 1) / 4f);
-            FLIPStatus.color = flipstate switch { Status.Performing => Color.red, Status.Ready => Color.green, _ => Color.gray5 };
-            #endregion
-        }
 
-        public override void Tick()
-        {
+            AttitudeIndicator.rotation = Quaternion.Euler(0, 0, 0);
+            AttitudeIndicator.Rotate(Vector3.forward, p);
+            AttitudeIndicator.Rotate(Vector3.right, -r);
+            AttitudeIndicator.Rotate(Vector3.up, y);
+            Debug.Log(p + " ; " + r + " ; " + y + "\n" + AttitudeIndicator.rotation.eulerAngles);
+
+            Airspeed.text = v < 10 ? v.ToString("0.0") : v.ToString("###0");
+            Altitude.text = a < 1000 ? (10 * Mathf.Round(a / 10f)).ToString("##0") : a < 10000
+                ? (a / 1000f).ToString("0.00") + "k"
+                : (a / 1000f).ToString("00.0") + "k";
+            RadarHeight.text = h.ToString("f0");
+
+            AccValue.text = Mathf.Abs(delta_v) < 1 ? delta_v.ToString("0.0") : delta_v.ToString("##0");
+            VertSpeedValue.text = Mathf.Abs(delta_a) < 1 ? delta_a.ToString("0.0") : delta_a.ToString("##0");
+
+            float pos_acc = Mathf.Sign(delta_v) * ((Mathf.Abs(delta_v) / 20f) / ((Mathf.Abs(delta_v) / 20f) + 1));
+            float pos_vs = Mathf.Sign(delta_a) * ((Mathf.Abs(delta_a) / 20f) / ((Mathf.Abs(delta_a) / 20f) + 1));
+
+            Acceleration.anchoredPosition = pos_acc < 0 ? new Vector2(1, 121 - (120 * -pos_acc))
+                : new Vector2(1 + (71.373f * pos_acc), 121 + (71.408f * pos_acc));
+
+            VerticalSpeed.anchoredPosition = pos_vs < 0 ? new Vector2(-1, 121 - (120 * -pos_vs))
+                : new Vector2(-1 - (71.373f * pos_vs), 121 + (71.408f * pos_vs));
+
+            MainThrust.value = mt;
+            HoverTarget.value = htg;
+            HoverThrust.value = ht;
+
+            SASMode.text = sas switch { 1 => "Heli", 2 => "Plane", _ => "None" };
+            HoverToggled.color = BaseColor * (htog ? 1 : 0.15f);
+            for (int i = 1; i < HoverMode.Length + 1; i++)
+            {
+                HoverMode[i - 1].color = BaseColor * (hm == i ? 1 : 0.15f);
+            }
+            FLIPStatus.color = flipstate switch { Status.Performing => Color.red, Status.Ready => Color.green, _ => Color.gray5 };
+
+            #endregion
+
             #region Performance Stats
 
             t += Time.unscaledDeltaTime;
@@ -148,6 +217,15 @@ namespace Mesocyclone.UI
             }
 
             #endregion
+        }
+
+        public void SetUIBaseColor()
+        {
+            foreach (var image in ASAE.GetComponentsInChildren<Image>(true))
+            {
+                image.color = BaseColor;
+            }
+            AttitudeIndicator.GetComponent<MeshRenderer>().material.color = BaseColor;
         }
     }
 }

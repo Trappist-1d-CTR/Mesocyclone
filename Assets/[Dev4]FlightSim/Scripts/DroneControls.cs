@@ -542,7 +542,7 @@ namespace Mesocyclone
             //Wind Vector: Tailwind is a Positive X while Headwind is a Negative X ; Climbing is a Negative Y while Descending is a Positive Y
             if (_query.TryGetSingleton(out InterpolationValues result) && result.Values.IsCreated)
             {
-                UnityEngine.Debug.Log(result);
+                //Debug.Log(result);
                 if (InterpValues.IsCreated) InterpValues.Dispose();
                 InterpValues = new(6, Allocator.Persistent);
                 for (int i = 0; i < 6; i++)
